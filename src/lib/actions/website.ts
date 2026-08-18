@@ -12,7 +12,6 @@ import { requireOrgSession } from "@/lib/require-org";
 
 const websiteSchema = z.object({
   publicUrl: z.string().trim().max(500),
-  provider: z.enum(["siteground", "wordpress", "other"]),
 });
 
 export async function saveWebsiteConnection(formData: FormData) {
@@ -23,7 +22,6 @@ export async function saveWebsiteConnection(formData: FormData) {
 
   const parsed = websiteSchema.parse({
     publicUrl: formData.get("publicUrl") ?? "",
-    provider: formData.get("provider") ?? "other",
   });
 
   let publicUrl = parsed.publicUrl;
@@ -45,7 +43,6 @@ export async function saveWebsiteConnection(formData: FormData) {
       .update(websites)
       .set({
         publicUrl,
-        provider: parsed.provider,
         kind: "connected",
         status: publicUrl ? "active" : "draft",
         updatedAt: new Date(),
@@ -61,7 +58,7 @@ export async function saveWebsiteConnection(formData: FormData) {
       organizationId: session.organizationId,
       kind: "connected",
       publicUrl,
-      provider: parsed.provider,
+      provider: "other",
       trackingId: crypto.randomUUID(),
       status: publicUrl ? "active" : "draft",
     });
@@ -72,7 +69,7 @@ export async function saveWebsiteConnection(formData: FormData) {
     actorUserId: session.userId,
     action: "website.connected",
     targetType: "website",
-    metadata: { provider: parsed.provider, publicUrl },
+    metadata: { publicUrl },
   });
 
   revalidatePath("/app/website");

@@ -16,9 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const selectClassName =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm";
-
 export default async function WebsitePage() {
   const session = await getAppSession();
   const db = getDb();
@@ -55,8 +52,8 @@ export default async function WebsitePage() {
         <CardHeader>
           <CardTitle>Existing website</CardTitle>
           <CardDescription>
-            SiteGround, WordPress, or any public URL. Tracking is a small
-            snippet you paste once.
+            Paste the public address of the site customers already use. GroMogia
+            does not need to know who hosts it.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -69,19 +66,6 @@ export default async function WebsitePage() {
                 placeholder="https://example.com"
                 defaultValue={website?.publicUrl ?? ""}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="provider">Where it is hosted</Label>
-              <select
-                id="provider"
-                name="provider"
-                className={selectClassName}
-                defaultValue={website?.provider ?? "other"}
-              >
-                <option value="siteground">SiteGround</option>
-                <option value="wordpress">WordPress</option>
-                <option value="other">Other</option>
-              </select>
             </div>
             <Button type="submit" disabled={!session.organizationId}>
               Save website
