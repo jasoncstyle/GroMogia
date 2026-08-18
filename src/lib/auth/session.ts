@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 
 import { ensureCatalog, provisionOrganization } from "@/lib/db/bootstrap";
 import { getDb } from "@/lib/db";
+import { ensureSchema } from "@/lib/db/ensure-schema";
 import {
   memberships,
   organizationModules,
@@ -81,83 +82,102 @@ export async function getAppSession(): Promise<AppSession> {
     };
   }
 
-  await ensureCatalog();
+  try {
+    await ensureSchema();
+    await ensureCatalog();
 
-  const existingUsers = await db
-    .select()
-    .from(users)
-    .where(eq(users.clerkUserId, clerkUserId))
-    .limit(1);
+    const existingUsers = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkUserId, clerkUserId))
+      .limit(1);
 
-  let user = existingUsers[0];
-  if (!user) {
-    const inserted = await db
-      .insert(users)
-      .values({ clerkUserId, email, name })
-      .returning();
-    user = inserted[0];
-  }
+    let user = existingUsers[0];
+    if (!user) {
+      await db.insert(users).values({ clerkUserId, email, name });
+      const createdUsers = await db
+        .select()
+        .from(users)
+        .where(eq(users.clerkUserId, clerkUserId))
+        .limit(1);
+      user = createdUsers[0];
+    }
+    if (!user) {
+      throw new Error("Could not create the GroMogia user record.");
+    }
 
-  const existingMemberships = await db
-    .select({
-      membership: memberships,
-      organization: organizations,
-    })
-    .from(memberships)
-    .innerJoin(organizations, eq(memberships.organizationId, organizations.id))
-    .where(
-      and(eq(memberships.userId, user.id), eq(memberships.status, "active")),
-    )
-    .limit(1);
+    const existingMemberships = await db
+      .select({
+        membership: memberships,
+        organization: organizations,
+      })
+      .from(memberships)
+      .innerJoin(organizations, eq(memberships.organizationId, organizations.id))
+      .where(
+        and(eq(memberships.userId, user.id), eq(memberships.status, "active")),
+      )
+      .limit(1);
 
-  let organization = existingMemberships[0]?.organization;
-  if (!organization) {
-    const slug = `org-${user.id.slice(0, 8)}`;
-    const created = await db
-      .insert(organizations)
-      .values({
+    let organization = existingMemberships[0]?.organization;
+    if (!organization) {
+      const slug = `org-${user.id.slice(0, 8)}`;
+      await db.insert(organizations).values({
         slug,
         name: name ? `${name}'s organization` : "New organization",
-      })
-      .returning();
-    organization = created[0];
-    await db.insert(memberships).values({
-      organizationId: organization.id,
-      userId: user.id,
-      status: "active",
-    });
-    await provisionOrganization(organization.id, organization.name);
-    for (const moduleId of PHASE_1_MODULES) {
-      await db.insert(organizationModules).values({
+      });
+      const createdOrgs = await db
+        .select()
+        .from(organizations)
+        .where(eq(organizations.slug, slug))
+        .limit(1);
+      organization = createdOrgs[0];
+      if (!organization) {
+        throw new Error("Could not create the organization record.");
+      }
+      await db.insert(memberships).values({
         organizationId: organization.id,
-        moduleId,
-        status: "enabled",
-        source: "manual",
-      }).onConflictDoNothing();
+        userId: user.id,
+        status: "active",
+      });
+      await provisionOrganization(organization.id, organization.name);
+      for (const moduleId of PHASE_1_MODULES) {
+        await db
+          .insert(organizationModules)
+          .values({
+            organizationId: organization.id,
+            moduleId,
+            status: "enabled",
+            source: "manual",
+          })
+          .onConflictDoNothing();
+      }
     }
+
+    const enabled = await db
+      .select()
+      .from(organizationModules)
+      .where(
+        and(
+          eq(organizationModules.organizationId, organization.id),
+          eq(organizationModules.status, "enabled"),
+        ),
+      );
+
+    return {
+      setupIncomplete: false,
+      missingServices: [],
+      clerkUserId,
+      email,
+      name,
+      userId: user.id,
+      organizationId: organization.id,
+      organizationName: organization.name,
+      permissions: [...ROLE_PERMISSIONS.owner],
+      enabledModules: enabled.map((row) => row.moduleId),
+      isPlatformAdmin: user.platformRole === "super_admin",
+    };
+  } catch (error) {
+    console.error("Failed to load GroMogia workspace", error);
+    throw error;
   }
-
-  const enabled = await db
-    .select()
-    .from(organizationModules)
-    .where(
-      and(
-        eq(organizationModules.organizationId, organization.id),
-        eq(organizationModules.status, "enabled"),
-      ),
-    );
-
-  return {
-    setupIncomplete: false,
-    missingServices: [],
-    clerkUserId,
-    email,
-    name,
-    userId: user.id,
-    organizationId: organization.id,
-    organizationName: organization.name,
-    permissions: [...ROLE_PERMISSIONS.owner],
-    enabledModules: enabled.map((row) => row.moduleId),
-    isPlatformAdmin: user.platformRole === "super_admin",
-  };
 }
