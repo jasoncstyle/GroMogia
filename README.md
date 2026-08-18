@@ -2,21 +2,30 @@
 
 Cloud-based modular business platform from Mogia Group. Connect the business. Understand the business. Grow the business.
 
-**Domain:** [gromogia.com](https://gromogia.com) · **Parent:** [mogiagroup.com](https://mogiagroup.com)
+**Live (Vercel):** [https://gro-mogia.vercel.app](https://gro-mogia.vercel.app)  
+**Domain (later):** gromogia.com · **Parent:** mogiagroup.com
 
-GitHub is the source of truth. Vercel is where the software runs. Cursor is the development environment only.
+GitHub is the source of truth. Vercel is where the software runs. Cursor is development only.
 
 ## Current status
 
-**Phase 0 — architecture and planning.** No application yet. Full product implementation waits for approval of [docs/phase-0/](docs/phase-0/).
+**Phase 1 — foundation.** Next.js app shell, organizations, roles, modules, brand settings, integrations list, audit log, and feature-flag tables.
+
+Sign-in (Clerk) and the database (Neon) still need to be added on the Vercel project. Until then the public site works and the app shows what is missing.
 
 | Doc | For |
 | --- | --- |
-| [Master brief](docs/MASTER_BRIEF.md) | Product vision and constraints |
-| [Phase 0 index](docs/phase-0/README.md) | Architecture for review |
-| [What you need to do](docs/phase-0/09-user-actions.md) | Account and Vercel steps |
-| [Agent rules](AGENTS.md) | How Cloud Agents must work |
+| [Master brief](docs/MASTER_BRIEF.md) | Product vision |
+| [Phase 0 architecture](docs/phase-0/README.md) | Approved plan |
+| [Clerk + Neon setup](docs/phase-1/USER_SETUP.md) | What you do in Vercel |
+| [Agent rules](AGENTS.md) | How Cloud Agents work |
 
-## Architecture in one line
+## Scripts
 
-You review in Cursor. A Cloud Agent develops on a branch. GitHub stores the code. Vercel Preview deploys that branch. Merging to `main` deploys production, which talks to hosted Postgres, Clerk, Resend, Stripe, and Blob.
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run typecheck
+npm test
+```
