@@ -5,6 +5,7 @@ import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { websites } from "@/lib/db/schema";
 import { appUrl } from "@/lib/env";
+import { TrackingSnippet } from "@/components/tracking-snippet";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -79,24 +80,12 @@ export default async function WebsitePage() {
           <CardHeader>
             <CardTitle>Tracking snippet</CardTitle>
             <CardDescription>
-              Paste this before the closing body tag on the existing site. It
-              records visits and campaign links without storing card data.
+              Add this once on the existing site. Keep this page open while you
+              do it. No popup — the steps stay here.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <textarea
-              readOnly
-              className="min-h-24 w-full rounded-lg border bg-muted/40 p-3 font-mono text-xs"
-              value={snippet}
-            />
-            {leadFormUrl ? (
-              <p className="text-sm text-muted-foreground">
-                Public lead form:{" "}
-                <a className="underline" href={leadFormUrl}>
-                  {leadFormUrl}
-                </a>
-              </p>
-            ) : null}
+          <CardContent>
+            <TrackingSnippet snippet={snippet} leadFormUrl={leadFormUrl} />
           </CardContent>
         </Card>
       ) : null}
