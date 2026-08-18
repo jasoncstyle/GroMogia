@@ -20,4 +20,13 @@ describe("module catalog", () => {
       false,
     );
   });
+
+  it("shows Phase 2 work modules when they are enabled", () => {
+    const items = navModules(
+      ["website_connect", "events", "crm", "commerce"],
+      "work",
+    );
+    assert.equal(items.some((item) => item.id === "crm"), true);
+    assert.equal(items.some((item) => item.id === "website_builder"), false);
+  });
 });

@@ -1,17 +1,18 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 
-import { ensureCatalog, provisionOrganization } from "@/lib/db/bootstrap";
+import {
+  ensureCatalog,
+  ensureLeadStages,
+  ensureOrganizationModules,
+  getEnabledModuleIds,
+  provisionOrganization,
+} from "@/lib/db/bootstrap";
 import { getDb } from "@/lib/db";
 import { ensureSchema } from "@/lib/db/ensure-schema";
-import {
-  memberships,
-  organizationModules,
-  organizations,
-  users,
-} from "@/lib/db/schema";
+import { memberships, organizations, users } from "@/lib/db/schema";
 import { isClerkConfigured, isDatabaseConfigured } from "@/lib/env";
-import { PHASE_1_MODULES } from "@/lib/modules/catalog";
+import { ENABLED_BY_DEFAULT_MODULES } from "@/lib/modules/catalog";
 import { ROLE_PERMISSIONS } from "@/lib/permissions";
 
 export type AppSession = {
@@ -23,6 +24,7 @@ export type AppSession = {
   userId?: string
   organizationId?: string
   organizationName?: string
+  organizationSlug?: string
   permissions: string[]
   enabledModules: string[]
   isPlatformAdmin: boolean
@@ -42,7 +44,7 @@ export async function getAppSession(): Promise<AppSession> {
       setupIncomplete: true,
       missingServices: missing,
       permissions: [],
-      enabledModules: [...PHASE_1_MODULES],
+      enabledModules: [...ENABLED_BY_DEFAULT_MODULES],
       isPlatformAdmin: false,
     };
   }
@@ -53,7 +55,7 @@ export async function getAppSession(): Promise<AppSession> {
       setupIncomplete: false,
       missingServices: [],
       permissions: [],
-      enabledModules: [...PHASE_1_MODULES],
+      enabledModules: [...ENABLED_BY_DEFAULT_MODULES],
       isPlatformAdmin: false,
     };
   }
@@ -77,7 +79,7 @@ export async function getAppSession(): Promise<AppSession> {
       email,
       name,
       permissions: [],
-      enabledModules: [...PHASE_1_MODULES],
+      enabledModules: [...ENABLED_BY_DEFAULT_MODULES],
       isPlatformAdmin: false,
     };
   }
@@ -140,28 +142,11 @@ export async function getAppSession(): Promise<AppSession> {
         status: "active",
       });
       await provisionOrganization(organization.id, organization.name);
-      for (const moduleId of PHASE_1_MODULES) {
-        await db
-          .insert(organizationModules)
-          .values({
-            organizationId: organization.id,
-            moduleId,
-            status: "enabled",
-            source: "manual",
-          })
-          .onConflictDoNothing();
-      }
     }
 
-    const enabled = await db
-      .select()
-      .from(organizationModules)
-      .where(
-        and(
-          eq(organizationModules.organizationId, organization.id),
-          eq(organizationModules.status, "enabled"),
-        ),
-      );
+    await ensureOrganizationModules(organization.id);
+    await ensureLeadStages(organization.id);
+    const enabledModules = await getEnabledModuleIds(organization.id);
 
     return {
       setupIncomplete: false,
@@ -172,8 +157,9 @@ export async function getAppSession(): Promise<AppSession> {
       userId: user.id,
       organizationId: organization.id,
       organizationName: organization.name,
+      organizationSlug: organization.slug,
       permissions: [...ROLE_PERMISSIONS.owner],
-      enabledModules: enabled.map((row) => row.moduleId),
+      enabledModules,
       isPlatformAdmin: user.platformRole === "super_admin",
     };
   } catch (error) {

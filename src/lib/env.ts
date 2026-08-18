@@ -9,6 +9,10 @@ export function isDatabaseConfigured(): boolean {
   return Boolean(process.env.DATABASE_URL);
 }
 
+export function isStripeConfigured(): boolean {
+  return Boolean(process.env.STRIPE_SECRET_KEY);
+}
+
 export function missingFoundationServices(): string[] {
   const missing: string[] = [];
   if (!isClerkConfigured()) missing.push("Clerk (sign-in)");

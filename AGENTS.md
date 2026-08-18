@@ -42,5 +42,6 @@ Approved architecture (until superseded): [docs/phase-0/](docs/phase-0/).
 ## Phase gate
 
 - Phase 0 architecture is approved in `docs/phase-0/`.
-- Current implementation phase is **Phase 1 foundation**. Do not skip ahead to the website builder, ads, SEO, or autonomous AI.
-- After Phase 1, wait for human approval before Phase 2 (first real business data).
+- Current implementation phase is **Phase 2 first real business data**.
+- Do not skip ahead to the website builder, ads, SEO, or autonomous AI.
+- After Phase 2, wait for human approval before Phase 3 (marketing / attribution).

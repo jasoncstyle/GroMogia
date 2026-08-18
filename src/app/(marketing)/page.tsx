@@ -2,11 +2,16 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { isClerkConfigured, isDatabaseConfigured } from "@/lib/env";
+import {
+  isClerkConfigured,
+  isDatabaseConfigured,
+  isStripeConfigured,
+} from "@/lib/env";
 
 export default function MarketingPage() {
   const clerkReady = isClerkConfigured();
   const databaseReady = isDatabaseConfigured();
+  const stripeReady = isStripeConfigured();
 
   return (
     <div className="flex min-h-full flex-col">
@@ -25,17 +30,17 @@ export default function MarketingPage() {
       </header>
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-6 py-16">
         <div className="max-w-2xl space-y-4">
-          <Badge variant="secondary">Phase 1 foundation</Badge>
+          <Badge variant="secondary">Phase 2 business data</Badge>
           <h1 className="text-4xl font-semibold tracking-tight text-pretty">
             Connect the business. Understand the business. Grow the business.
           </h1>
           <p className="text-lg text-muted-foreground text-pretty">
             GroMogia is a modular platform for small and medium-sized businesses.
-            Use only the parts you need. Production runs on Vercel, not on a
-            laptop.
+            Connect the website and Stripe you already use. Production runs on
+            Vercel, not on a laptop.
           </p>
         </div>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatusCard
             title="Vercel"
             ok
@@ -57,6 +62,15 @@ export default function MarketingPage() {
               databaseReady
                 ? "Database is configured."
                 : "Add Neon in the Vercel project, then redeploy."
+            }
+          />
+          <StatusCard
+            title="Stripe payments"
+            ok={stripeReady}
+            detail={
+              stripeReady
+                ? "Stripe keys are present. Connect them inside the app."
+                : "Optional for first login. Add test keys when you are ready to sync bookings."
             }
           />
         </div>

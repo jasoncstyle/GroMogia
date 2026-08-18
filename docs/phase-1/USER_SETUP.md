@@ -36,4 +36,4 @@ Vercel usually redeploys when env vars change. If the homepage still says Clerk/
 
 ## Not yet
 
-Stripe, Resend, custom domain gromogia.com, and the website builder wait for later phases.
+Custom domain gromogia.com and the website builder wait for later phases. Stripe test keys are added in Phase 2 using [docs/phase-2/USER_SETUP.md](../phase-2/USER_SETUP.md).

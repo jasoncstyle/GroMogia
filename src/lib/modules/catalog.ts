@@ -27,6 +27,19 @@ export type ModuleDefinition = {
 
 export const PHASE_1_MODULES: ModuleId[] = ["brand", "integrations", "media"];
 
+export const PHASE_2_MODULES: ModuleId[] = [
+  "website_connect",
+  "events",
+  "crm",
+  "commerce",
+  "analytics",
+];
+
+export const ENABLED_BY_DEFAULT_MODULES: ModuleId[] = [
+  ...PHASE_1_MODULES,
+  ...PHASE_2_MODULES,
+];
+
 export const MODULE_CATALOG: ModuleDefinition[] = [
   {
     id: "brand",
@@ -174,8 +187,6 @@ export function navModules(
   group: ModuleDefinition["navGroup"],
 ): ModuleDefinition[] {
   return MODULE_CATALOG.filter(
-    (module) =>
-      module.navGroup === group &&
-      (PHASE_1_MODULES.includes(module.id) || enabled.includes(module.id)),
+    (module) => module.navGroup === group && enabled.includes(module.id),
   );
 }

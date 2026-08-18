@@ -11,18 +11,52 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { missingFoundationServices } from "@/lib/env";
+import { formatMoney } from "@/lib/money";
+import { isModuleEnabled } from "@/lib/modules/catalog";
+import { getDashboardSnapshot } from "@/lib/phase2/queries";
 
 export default async function DashboardPage() {
   const session = await getAppSession();
   const missing = missingFoundationServices();
+  const snapshot = session.organizationId
+    ? await getDashboardSnapshot(session.organizationId)
+    : null;
+
+  const happening = snapshot
+    ? `${snapshot.openLeadCount} open lead${snapshot.openLeadCount === 1 ? "" : "s"}, ${snapshot.customerCount} customer${snapshot.customerCount === 1 ? "" : "s"}, and ${formatMoney(snapshot.paymentTotalCents)} in payments this month.`
+    : "Sign in to see live counts for this organization.";
+
+  const why = snapshot
+    ? snapshot.topChannels.length > 0
+      ? `Recent activity is coming from ${snapshot.topChannels.map((row) => `${row.channel} (${row.count})`).join(", ")}.`
+      : snapshot.website?.publicUrl
+        ? "A website is connected, but GroMogia has not recorded visits or campaign clicks yet. Add the tracking snippet and share the lead form."
+        : "No website visits or campaign sources yet. Connect the existing website to start attributing leads."
+    : "Context needs a connected website and Stripe data.";
+
+  const attention = missing.length
+    ? `Connect ${missing.join(" and ")} so people can sign in and organizations can be stored.`
+    : snapshot && !snapshot.stripeConnected
+      ? snapshot.stripeConfigured
+        ? "Stripe keys are on Vercel, but this organization has not been marked as connected. Open Bookings & payments and connect Stripe."
+        : "Stripe is not connected yet. Add test keys in Vercel, then connect Stripe so bookings become customers."
+      : snapshot && snapshot.openLeadCount > 0
+        ? `${snapshot.openLeadCount} lead${snapshot.openLeadCount === 1 ? "" : "s"} still need a next step.`
+        : "Brand, website, and Stripe are in a good starting place. Add an event or a lead to see the dashboard fill in.";
+
+  const nextStep = !snapshot?.website?.publicUrl
+    ? "Connect the existing website and paste the tracking snippet."
+    : !snapshot.stripeConnected
+      ? "Connect Stripe and sync recent test payments."
+      : "Share the public lead form and keep events up to date.";
 
   return (
-    <div className="mx-auto flex max-w-4xl flex-col gap-6">
+    <div className="mx-auto flex max-w-5xl flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          GroMogia answers four questions. Charts wait until real business data
-          is connected in Phase 2.
+          GroMogia answers four questions from real connected data, not empty
+          charts.
         </p>
       </div>
 
@@ -50,45 +84,102 @@ export default async function DashboardPage() {
               {session.organizationName ?? "Your organization"}
             </CardTitle>
             <CardDescription>
-              Signed in as {session.email}. Foundation modules are on: brand,
-              integrations, and media.
+              Signed in as {session.email}. Phase 2 modules are on: website,
+              events, leads, bookings, and analytics.
             </CardDescription>
           </CardHeader>
         </Card>
       )}
 
+      {snapshot ? (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Stat label="Open leads" value={String(snapshot.openLeadCount)} />
+          <Stat label="Customers" value={String(snapshot.customerCount)} />
+          <Stat label="Contacts" value={String(snapshot.contactCount)} />
+          <Stat
+            label="Payments this month"
+            value={formatMoney(snapshot.paymentTotalCents)}
+          />
+        </div>
+      ) : null}
+
       <div className="grid gap-4 md:grid-cols-2">
-        <QuestionCard
-          title="What is happening?"
-          body="No connected website, leads, or Stripe data yet. Phase 2 will show activity from a real Mogia Group business."
-        />
-        <QuestionCard
-          title="Why is it happening?"
-          body="Context needs marketing, website, and payment sources. Those adapters are not enabled in Phase 1."
-        />
-        <QuestionCard
-          title="What needs attention?"
-          body={
-            missing.length > 0
-              ? "Connect Clerk and Neon so people can sign in and organizations can be stored."
-              : "Invite your team and complete brand settings so later modules have a single source of truth."
-          }
-        />
-        <QuestionCard
-          title="What should I do next?"
-          body="Open Brand settings, then Integrations. Leave the website builder off until the core platform is useful."
-        />
+        <QuestionCard title="What is happening?" body={happening} />
+        <QuestionCard title="Why is it happening?" body={why} />
+        <QuestionCard title="What needs attention?" body={attention} />
+        <QuestionCard title="What should I do next?" body={nextStep} />
       </div>
 
+      {snapshot ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Recent leads</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              {snapshot.recentLeads.length === 0 ? (
+                <p className="text-muted-foreground">
+                  No leads yet. Use Leads & customers or the public form.
+                </p>
+              ) : (
+                snapshot.recentLeads.map((lead) => (
+                  <p key={lead.id}>
+                    <span className="font-medium">{lead.name}</span>
+                    {lead.email ? ` · ${lead.email}` : ""} · {lead.source}
+                  </p>
+                ))
+              )}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Upcoming events</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              {snapshot.upcomingEvents.length === 0 ? (
+                <p className="text-muted-foreground">
+                  No events yet. Add a class, workshop, or appointment.
+                </p>
+              ) : (
+                snapshot.upcomingEvents.map((event) => (
+                  <p key={event.id}>
+                    <span className="font-medium">{event.title}</span>
+                    {event.startsAt
+                      ? ` · ${event.startsAt.toLocaleString()}`
+                      : ""}
+                  </p>
+                ))
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      ) : null}
+
       <div className="flex flex-wrap gap-2">
-        <Button asChild>
-          <Link href="/app/settings/brand">Brand settings</Link>
+        {isModuleEnabled(session.enabledModules, "website_connect") ? (
+          <Button asChild>
+            <Link href="/app/website">Connect website</Link>
+          </Button>
+        ) : null}
+        <Button asChild variant="outline">
+          <Link href="/app/crm">Leads & customers</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link href="/app/integrations">Integrations</Link>
+          <Link href="/app/commerce">Bookings & payments</Link>
         </Button>
       </div>
     </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <Card>
+      <CardHeader className="pb-2">
+        <CardDescription>{label}</CardDescription>
+        <CardTitle className="text-2xl">{value}</CardTitle>
+      </CardHeader>
+    </Card>
   );
 }
 

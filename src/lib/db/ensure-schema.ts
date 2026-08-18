@@ -7,22 +7,11 @@ import { isDatabaseConfigured } from "@/lib/env";
 
 type RegistryRow = { name: string | null };
 
-export async function ensureSchema(): Promise<void> {
-  if (!isDatabaseConfigured()) return;
-
-  const sql = neon(process.env.DATABASE_URL!);
-  const existing = (await sql.query(
-    "select to_regclass('public.users') as name",
-  )) as RegistryRow[];
-
-  if (existing[0]?.name) {
-    return;
-  }
-
-  const migrationPath = join(
-    process.cwd(),
-    "drizzle/0000_phase1_foundation.sql",
-  );
+async function applyMigration(
+  sql: { query: (query: string) => Promise<unknown> },
+  fileName: string,
+) {
+  const migrationPath = join(process.cwd(), "drizzle", fileName);
   const file = await readFile(migrationPath, "utf8");
   const statements = file
     .split("--> statement-breakpoint")
@@ -31,5 +20,26 @@ export async function ensureSchema(): Promise<void> {
 
   for (const statement of statements) {
     await sql.query(statement);
+  }
+}
+
+export async function ensureSchema(): Promise<void> {
+  if (!isDatabaseConfigured()) return;
+
+  const sql = neon(process.env.DATABASE_URL!);
+  const users = (await sql.query(
+    "select to_regclass('public.users') as name",
+  )) as RegistryRow[];
+
+  if (!users[0]?.name) {
+    await applyMigration(sql, "0000_phase1_foundation.sql");
+  }
+
+  const contacts = (await sql.query(
+    "select to_regclass('public.contacts') as name",
+  )) as RegistryRow[];
+
+  if (!contacts[0]?.name) {
+    await applyMigration(sql, "0001_phase2_business_data.sql");
   }
 }
