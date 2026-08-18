@@ -1,4 +1,14 @@
 {
   "name": "GroMogia",
-  "install": "if [ -f package-lock.json ]; then npm ci; elif [ -f package.json ]; then npm install; else echo 'Phase 0: no application package.json yet'; fi"
+  "install": "npm ci",
+  "ports": [
+    { "name": "web", "port": 3000 }
+  ],
+  "terminals": [
+    {
+      "name": "dev-server",
+      "command": "npm run dev",
+      "description": "Next.js development server on port 3000"
+    }
+  ]
 }

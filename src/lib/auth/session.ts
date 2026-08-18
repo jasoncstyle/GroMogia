@@ -1,0 +1,163 @@
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { and, eq } from "drizzle-orm";
+
+import { ensureCatalog, provisionOrganization } from "@/lib/db/bootstrap";
+import { getDb } from "@/lib/db";
+import {
+  memberships,
+  organizationModules,
+  organizations,
+  users,
+} from "@/lib/db/schema";
+import { isClerkConfigured, isDatabaseConfigured } from "@/lib/env";
+import { PHASE_1_MODULES } from "@/lib/modules/catalog";
+import { ROLE_PERMISSIONS } from "@/lib/permissions";
+
+export type AppSession = {
+  setupIncomplete: boolean
+  missingServices: string[]
+  clerkUserId?: string
+  email?: string
+  name?: string
+  userId?: string
+  organizationId?: string
+  organizationName?: string
+  permissions: string[]
+  enabledModules: string[]
+  isPlatformAdmin: boolean
+};
+
+function missingServices(): string[] {
+  const missing: string[] = [];
+  if (!isClerkConfigured()) missing.push("Clerk");
+  if (!isDatabaseConfigured()) missing.push("Neon");
+  return missing;
+}
+
+export async function getAppSession(): Promise<AppSession> {
+  const missing = missingServices();
+  if (missing.length > 0) {
+    return {
+      setupIncomplete: true,
+      missingServices: missing,
+      permissions: [],
+      enabledModules: [...PHASE_1_MODULES],
+      isPlatformAdmin: false,
+    };
+  }
+
+  const { userId: clerkUserId } = await auth();
+  if (!clerkUserId) {
+    return {
+      setupIncomplete: false,
+      missingServices: [],
+      permissions: [],
+      enabledModules: [...PHASE_1_MODULES],
+      isPlatformAdmin: false,
+    };
+  }
+
+  const clerkUser = await currentUser();
+  const email =
+    clerkUser?.primaryEmailAddress?.emailAddress ??
+    clerkUser?.emailAddresses[0]?.emailAddress ??
+    "";
+  const name =
+    [clerkUser?.firstName, clerkUser?.lastName].filter(Boolean).join(" ") ||
+    clerkUser?.username ||
+    email;
+
+  const db = getDb();
+  if (!db) {
+    return {
+      setupIncomplete: true,
+      missingServices: ["Neon"],
+      clerkUserId,
+      email,
+      name,
+      permissions: [],
+      enabledModules: [...PHASE_1_MODULES],
+      isPlatformAdmin: false,
+    };
+  }
+
+  await ensureCatalog();
+
+  const existingUsers = await db
+    .select()
+    .from(users)
+    .where(eq(users.clerkUserId, clerkUserId))
+    .limit(1);
+
+  let user = existingUsers[0];
+  if (!user) {
+    const inserted = await db
+      .insert(users)
+      .values({ clerkUserId, email, name })
+      .returning();
+    user = inserted[0];
+  }
+
+  const existingMemberships = await db
+    .select({
+      membership: memberships,
+      organization: organizations,
+    })
+    .from(memberships)
+    .innerJoin(organizations, eq(memberships.organizationId, organizations.id))
+    .where(
+      and(eq(memberships.userId, user.id), eq(memberships.status, "active")),
+    )
+    .limit(1);
+
+  let organization = existingMemberships[0]?.organization;
+  if (!organization) {
+    const slug = `org-${user.id.slice(0, 8)}`;
+    const created = await db
+      .insert(organizations)
+      .values({
+        slug,
+        name: name ? `${name}'s organization` : "New organization",
+      })
+      .returning();
+    organization = created[0];
+    await db.insert(memberships).values({
+      organizationId: organization.id,
+      userId: user.id,
+      status: "active",
+    });
+    await provisionOrganization(organization.id, organization.name);
+    for (const moduleId of PHASE_1_MODULES) {
+      await db.insert(organizationModules).values({
+        organizationId: organization.id,
+        moduleId,
+        status: "enabled",
+        source: "manual",
+      }).onConflictDoNothing();
+    }
+  }
+
+  const enabled = await db
+    .select()
+    .from(organizationModules)
+    .where(
+      and(
+        eq(organizationModules.organizationId, organization.id),
+        eq(organizationModules.status, "enabled"),
+      ),
+    );
+
+  return {
+    setupIncomplete: false,
+    missingServices: [],
+    clerkUserId,
+    email,
+    name,
+    userId: user.id,
+    organizationId: organization.id,
+    organizationName: organization.name,
+    permissions: [...ROLE_PERMISSIONS.owner],
+    enabledModules: enabled.map((row) => row.moduleId),
+    isPlatformAdmin: user.platformRole === "super_admin",
+  };
+}
