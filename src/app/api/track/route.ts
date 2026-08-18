@@ -3,22 +3,36 @@ import { and, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import { attributionTouches, websites } from "@/lib/db/schema";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "content-type",
+};
+
+function json(data: unknown, status = 200) {
+  return Response.json(data, { status, headers: corsHeaders });
+}
+
+export function OPTIONS() {
+  return new Response(null, { status: 204, headers: corsHeaders });
+}
+
 export async function POST(request: Request) {
   const db = getDb();
   if (!db) {
-    return Response.json({ ok: false }, { status: 503 });
+    return json({ ok: false }, 503);
   }
 
   let body: Record<string, unknown>;
   try {
     body = (await request.json()) as Record<string, unknown>;
   } catch {
-    return Response.json({ ok: false, error: "invalid_json" }, { status: 400 });
+    return json({ ok: false, error: "invalid_json" }, 400);
   }
 
   const trackingId = typeof body.trackingId === "string" ? body.trackingId : "";
   if (!trackingId) {
-    return Response.json({ ok: false, error: "missing_tracking_id" }, { status: 400 });
+    return json({ ok: false, error: "missing_tracking_id" }, 400);
   }
 
   const [website] = await db
@@ -28,7 +42,7 @@ export async function POST(request: Request) {
     .limit(1);
 
   if (!website) {
-    return Response.json({ ok: false }, { status: 404 });
+    return json({ ok: false }, 404);
   }
 
   const utmSource = typeof body.utm_source === "string" ? body.utm_source : "";
@@ -61,5 +75,5 @@ export async function POST(request: Request) {
     },
   });
 
-  return Response.json({ ok: true });
+  return json({ ok: true });
 }
