@@ -62,7 +62,7 @@ If only one organization exists, incoming webhooks go there. If you later have m
 ## 5. Connect the existing website
 
 1. In GroMogia, open **Website connection**.
-2. Paste the public website address (SiteGround, WordPress, or other).
+2. Paste the public website address.
 3. Save.
 4. Copy the tracking snippet and paste it before the closing `</body>` tag on that site.
 5. Share the public lead form link shown on the same page.
