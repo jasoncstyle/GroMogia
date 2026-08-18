@@ -9,15 +9,14 @@ GitHub is the source of truth. Vercel is where the software runs. Cursor is deve
 
 ## Current status
 
-**Phase 1 — foundation.** Next.js app shell, organizations, roles, modules, brand settings, integrations list, audit log, and feature-flag tables.
-
-Sign-in (Clerk) and the database (Neon) still need to be added on the Vercel project. Until then the public site works and the app shows what is missing.
+**Phase 2 — first real business data.** Sign in, connect an existing website, capture leads and customers as one contact record, add generic events, and sync Stripe bookings without storing card numbers.
 
 | Doc | For |
 | --- | --- |
 | [Master brief](docs/MASTER_BRIEF.md) | Product vision |
-| [Phase 0 architecture](docs/phase-0/README.md) | Approved plan |
-| [Clerk + Neon setup](docs/phase-1/USER_SETUP.md) | What you do in Vercel |
+| [Phase 0 architecture](docs/phase-0/) | Approved plan |
+| [Clerk + Neon setup](docs/phase-1/USER_SETUP.md) | Sign-in and database |
+| [Stripe + website setup](docs/phase-2/USER_SETUP.md) | Payments and tracking |
 | [Agent rules](AGENTS.md) | How Cloud Agents work |
 
 ## Scripts

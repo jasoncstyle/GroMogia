@@ -301,3 +301,242 @@ export const aiActionLogs = pgTable(
   },
   (table) => [index("ai_action_logs_org_idx").on(table.organizationId)],
 );
+
+export const websites = pgTable(
+  "websites",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull().default("connected"),
+    publicUrl: text("public_url").notNull().default(""),
+    provider: text("provider").notNull().default("other"),
+    trackingId: text("tracking_id").notNull(),
+    status: text("status").notNull().default("active"),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("websites_tracking_id_idx").on(table.trackingId),
+    index("websites_org_idx").on(table.organizationId),
+  ],
+);
+
+export const contacts = pgTable(
+  "contacts",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    displayName: text("display_name").notNull().default(""),
+    email: text("email"),
+    phone: text("phone"),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("contacts_org_email_idx").on(table.organizationId, table.email),
+    index("contacts_org_idx").on(table.organizationId),
+  ],
+);
+
+export const leadStages = pgTable(
+  "lead_stages",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    key: text("key").notNull(),
+    name: text("name").notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+    isWon: boolean("is_won").notNull().default(false),
+    isLost: boolean("is_lost").notNull().default(false),
+  },
+  (table) => [
+    uniqueIndex("lead_stages_org_key_idx").on(table.organizationId, table.key),
+    index("lead_stages_org_idx").on(table.organizationId),
+  ],
+);
+
+export const leadRecords = pgTable(
+  "lead_records",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    contactId: uuid("contact_id")
+      .notNull()
+      .references(() => contacts.id, { onDelete: "cascade" }),
+    stageId: uuid("stage_id")
+      .notNull()
+      .references(() => leadStages.id),
+    source: text("source").notNull().default("manual"),
+    campaignId: text("campaign_id"),
+    landingPage: text("landing_page"),
+    formId: text("form_id"),
+    assignedUserId: uuid("assigned_user_id").references(() => users.id),
+    estimatedValueCents: integer("estimated_value_cents"),
+    notes: text("notes").notNull().default(""),
+    convertedAt: timestamp("converted_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (table) => [
+    index("lead_records_org_idx").on(table.organizationId),
+    index("lead_records_contact_idx").on(table.contactId),
+  ],
+);
+
+export const leadActivities = pgTable(
+  "lead_activities",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    leadId: uuid("lead_id")
+      .notNull()
+      .references(() => leadRecords.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
+    body: text("body").notNull().default(""),
+    actorUserId: uuid("actor_user_id").references(() => users.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("lead_activities_lead_idx").on(table.leadId)],
+);
+
+export const customers = pgTable(
+  "customers",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    contactId: uuid("contact_id")
+      .notNull()
+      .references(() => contacts.id, { onDelete: "cascade" }),
+    firstConvertedAt: timestamp("first_converted_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    ltvCents: integer("ltv_cents").notNull().default(0),
+    marketingSource: text("marketing_source"),
+  },
+  (table) => [
+    uniqueIndex("customers_contact_idx").on(table.contactId),
+    index("customers_org_idx").on(table.organizationId),
+  ],
+);
+
+export const attributionTouches = pgTable(
+  "attribution_touches",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    contactId: uuid("contact_id").references(() => contacts.id, {
+      onDelete: "set null",
+    }),
+    sessionId: text("session_id"),
+    occurredAt: timestamp("occurred_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    channel: text("channel").notNull().default("direct"),
+    campaignId: text("campaign_id"),
+    landingPage: text("landing_page"),
+    referrer: text("referrer"),
+    raw: jsonb("raw").$type<Record<string, unknown>>().notNull().default({}),
+  },
+  (table) => [
+    index("attribution_touches_org_idx").on(table.organizationId),
+    index("attribution_touches_session_idx").on(table.sessionId),
+  ],
+);
+
+export const events = pgTable(
+  "events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    eventType: text("event_type").notNull().default("event"),
+    location: text("location").notNull().default(""),
+    startsAt: timestamp("starts_at", { withTimezone: true }),
+    endsAt: timestamp("ends_at", { withTimezone: true }),
+    capacity: integer("capacity"),
+    priceCents: integer("price_cents").notNull().default(0),
+    currency: text("currency").notNull().default("usd"),
+    registrationUrl: text("registration_url").notNull().default(""),
+    featuredAssetId: uuid("featured_asset_id"),
+    visibility: text("visibility").notNull().default("public"),
+    status: text("status").notNull().default("draft"),
+    ...timestamps,
+  },
+  (table) => [index("events_org_idx").on(table.organizationId)],
+);
+
+export const bookings = pgTable(
+  "bookings",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    contactId: uuid("contact_id").references(() => contacts.id, {
+      onDelete: "set null",
+    }),
+    eventId: uuid("event_id").references(() => events.id, {
+      onDelete: "set null",
+    }),
+    externalProvider: text("external_provider").notNull().default("stripe"),
+    externalId: text("external_id").notNull(),
+    startsAt: timestamp("starts_at", { withTimezone: true }),
+    status: text("status").notNull().default("confirmed"),
+    source: text("source").notNull().default("stripe"),
+    campaignId: text("campaign_id"),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("bookings_provider_external_idx").on(
+      table.externalProvider,
+      table.externalId,
+    ),
+    index("bookings_org_idx").on(table.organizationId),
+  ],
+);
+
+export const payments = pgTable(
+  "payments",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    bookingId: uuid("booking_id").references(() => bookings.id, {
+      onDelete: "set null",
+    }),
+    contactId: uuid("contact_id").references(() => contacts.id, {
+      onDelete: "set null",
+    }),
+    provider: text("provider").notNull().default("stripe"),
+    providerObjectId: text("provider_object_id").notNull(),
+    amountCents: integer("amount_cents").notNull(),
+    currency: text("currency").notNull().default("usd"),
+    kind: text("kind").notNull().default("charge"),
+    status: text("status").notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("payments_provider_object_idx").on(
+      table.provider,
+      table.providerObjectId,
+    ),
+    index("payments_org_idx").on(table.organizationId),
+  ],
+);
