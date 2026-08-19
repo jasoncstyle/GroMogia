@@ -39,7 +39,7 @@ Optional later: `AI_GATEWAY_API_KEY`, Google/Meta OAuth client secrets.
 
 Same names. Set separately for **Preview** (test keys, preview database) and **Production** (live keys, production database).
 
-`NEXT_PUBLIC_APP_URL` should be the Preview URL or production `https://app.gromogia.com` as appropriate. Clerk and Stripe webhook endpoints must match.
+`NEXT_PUBLIC_APP_URL` should be `https://gro-mogia.vercel.app` until the custom domain is attached, then `https://groovgro.com`. Clerk and Stripe webhook endpoints must match.
 
 ## `.env.example`
 

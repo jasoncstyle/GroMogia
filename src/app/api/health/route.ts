@@ -7,7 +7,7 @@ import {
 export function GET() {
   return Response.json({
     ok: true,
-    service: "gromogia",
+    service: "groovgro",
     phase: 2,
     clerk: isClerkConfigured(),
     database: isDatabaseConfigured(),

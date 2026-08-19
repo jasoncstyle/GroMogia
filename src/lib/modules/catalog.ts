@@ -140,7 +140,7 @@ export const MODULE_CATALOG: ModuleDefinition[] = [
   {
     id: "website_builder",
     name: "Website builder",
-    description: "Optional section-based GroMogia sites.",
+    description: "Optional section-based GroovGro sites.",
     phase: 7,
     href: "/app/website-builder",
     navGroup: "work",
@@ -164,7 +164,7 @@ export const MODULE_CATALOG: ModuleDefinition[] = [
   {
     id: "billing",
     name: "Billing",
-    description: "GroMogia subscriptions via Stripe.",
+    description: "GroovGro subscriptions via Stripe.",
     phase: 10,
     href: "/app/settings/billing",
     navGroup: "settings",

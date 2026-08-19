@@ -105,7 +105,7 @@ export async function getAppSession(): Promise<AppSession> {
       user = createdUsers[0];
     }
     if (!user) {
-      throw new Error("Could not create the GroMogia user record.");
+      throw new Error("Could not create the GroovGro user record.");
     }
 
     const existingMemberships = await db
@@ -163,7 +163,7 @@ export async function getAppSession(): Promise<AppSession> {
       isPlatformAdmin: user.platformRole === "super_admin",
     };
   } catch (error) {
-    console.error("Failed to load GroMogia workspace", error);
+    console.error("Failed to load GroovGro workspace", error);
     throw error;
   }
 }

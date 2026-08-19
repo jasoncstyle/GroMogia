@@ -21,7 +21,7 @@ export default function AppError({
         The workspace could not load
       </h1>
       <p className="text-muted-foreground">
-        You are signed in. GroMogia hit a server error while opening your
+        You are signed in. GroovGro hit a server error while opening your
         organization. Reload after a minute. If it still fails, send this page
         to the Cloud Agent.
       </p>

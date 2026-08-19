@@ -35,7 +35,7 @@ export default async function PublicLeadPage({
   return (
     <div className="mx-auto flex min-h-full max-w-lg flex-col gap-6 px-6 py-16">
       <div>
-        <p className="text-sm text-muted-foreground">GroMogia</p>
+        <p className="text-sm text-muted-foreground">GroovGro</p>
         <h1 className="text-3xl font-semibold tracking-tight">
           {brand?.businessName || organization.name}
         </h1>

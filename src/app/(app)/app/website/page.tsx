@@ -31,7 +31,7 @@ export default async function WebsitePage() {
 
   const base = appUrl();
   const snippet = website
-    ? `<script src="${base}/t.js" data-gromogia-id="${website.trackingId}" async></script>`
+    ? `<script src="${base}/t.js" data-groovgro-id="${website.trackingId}" data-gromogia-id="${website.trackingId}" async></script>`
     : "";
   const leadFormUrl = session.organizationSlug
     ? `${base}/l/${session.organizationSlug}`
@@ -44,7 +44,7 @@ export default async function WebsitePage() {
           Website connection
         </h1>
         <p className="text-muted-foreground">
-          Connect the site you already have. GroMogia does not replace it in
+          Connect the site you already have. GroovGro does not replace it in
           this phase, and this is not the website builder.
         </p>
       </div>
@@ -53,7 +53,7 @@ export default async function WebsitePage() {
         <CardHeader>
           <CardTitle>Existing website</CardTitle>
           <CardDescription>
-            Paste the public address of the site customers already use. GroMogia
+            Paste the public address of the site customers already use. GroovGro
             does not need to know who hosts it.
           </CardDescription>
         </CardHeader>

@@ -38,7 +38,7 @@ export async function createLead(formData: FormData) {
   });
 
   if (!parsed.displayName && !parsed.email) {
-    throw new Error("Add a name or an email so GroMogia can identify this person.");
+    throw new Error("Add a name or an email so GroovGro can identify this person.");
   }
 
   const db = getDb();
@@ -80,7 +80,7 @@ export async function createLead(formData: FormData) {
     organizationId: session.organizationId,
     leadId,
     type: "created",
-    body: "Lead created in GroMogia.",
+    body: "Lead created in GroovGro.",
     actorUserId: session.userId,
   });
 

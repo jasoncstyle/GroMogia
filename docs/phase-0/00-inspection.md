@@ -1,6 +1,6 @@
 # Phase 0 inspection
 
-Inspected on 17 August 2026 by the Cloud Agent run [GroMogia project architecture](https://cursor.com/agents/bc-2dcf22b7-dc3a-455b-968d-27785ffca329).
+Inspected on 17 August 2026 by the Cloud Agent run [GroovGro project architecture](https://cursor.com/agents/bc-2dcf22b7-dc3a-455b-968d-27785ffca329).
 
 The [master brief](../MASTER_BRIEF.md) was provided in a follow-up message and is now stored in git.
 
@@ -32,15 +32,15 @@ The [master brief](../MASTER_BRIEF.md) was provided in a follow-up message and i
 
 These are real systems Mogia Group already uses. They are **not** in this repository today. Phase 1–2 will connect to them; Phase 0 does not touch them.
 
-| System | Role in GroMogia |
+| System | Role in GroovGro |
 | --- | --- |
-| GitHub | Source of truth for GroMogia code (this repo) |
+| GitHub | Source of truth for GroovGro code (this repo) |
 | Vercel | Intended production and preview host (not connected yet) |
 | SiteGround | Existing WordPress / customer sites that should be connectable, not forcibly migrated |
 | Stripe | Payments and later SaaS billing; Ocean Sailing Adventures already has a Stripe booking system |
 | Resend | Transactional email |
 | Expo | Native mobile later — out of scope until Phase 10+ |
-| gromogia.com / mogiagroup.com | Product and parent domains; DNS not configured in this repo |
+| groovgro.com / mogiagroup.com | Product and parent domains; DNS not configured in this repo |
 
 ## What is already true about the setup sequence
 
@@ -55,7 +55,7 @@ Not done:
 
 1. Saved Cloud Agent environment (install/start, secrets).
 2. Vercel project linked to GitHub, so Preview and Production cannot deploy yet.
-3. Neon, Clerk, Resend, and Stripe are not connected to a GroMogia Vercel project.
+3. Neon, Clerk, Resend, and Stripe are not connected to a GroovGro Vercel project.
 4. Architecture approval (this PR).
 
 ## Stack today vs stack after approval

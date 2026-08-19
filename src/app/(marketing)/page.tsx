@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { PRODUCT_NAME } from "@/lib/brand";
 import {
   isClerkConfigured,
   isDatabaseConfigured,
@@ -18,7 +19,7 @@ export default function MarketingPage() {
       <header className="border-b">
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between px-6 py-4">
           <div>
-            <p className="text-lg font-semibold tracking-tight">GroMogia</p>
+            <p className="text-lg font-semibold tracking-tight">{PRODUCT_NAME}</p>
             <p className="text-xs text-muted-foreground">
               Marketing · Operations · Growth · Intelligence · Analytics
             </p>
@@ -35,7 +36,7 @@ export default function MarketingPage() {
             Connect the business. Understand the business. Grow the business.
           </h1>
           <p className="text-lg text-muted-foreground text-pretty">
-            GroMogia is a modular platform for small and medium-sized businesses.
+            {PRODUCT_NAME} is a modular platform for small and medium-sized businesses.
             Connect the website and Stripe you already use. Production runs on
             Vercel, not on a laptop.
           </p>
@@ -44,7 +45,7 @@ export default function MarketingPage() {
           <StatusCard
             title="Vercel"
             ok
-            detail="This page is the live GroMogia deployment."
+            detail={`This page is the live ${PRODUCT_NAME} deployment.`}
           />
           <StatusCard
             title="Clerk sign-in"

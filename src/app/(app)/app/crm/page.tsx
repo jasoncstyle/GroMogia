@@ -99,7 +99,7 @@ export default async function CrmPage() {
         <CardHeader>
           <CardTitle>Add a person</CardTitle>
           <CardDescription>
-            If the email already exists in this organization, GroMogia reuses
+            If the email already exists in this organization, GroovGro reuses
             that contact.
           </CardDescription>
         </CardHeader>

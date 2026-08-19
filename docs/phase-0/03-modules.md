@@ -19,7 +19,7 @@ Modules are independently enabled capabilities. The codebase may contain a modul
 | `brand` | Brand management | 1 | Central name, logo, colors, contact, locations |
 | `integrations` | Integration framework | 1 | Connect / status / disconnect; adapters added over time |
 | `website_connect` | Connect existing website | 2 | SiteGround, WordPress, or any URL + tracking |
-| `website_builder` | GroMogia website builder | 7 | Section-based; optional; not required for other modules |
+| `website_builder` | GroovGro website builder | 7 | Section-based; optional; not required for other modules |
 | `events` | Events and calendar | 2 if the test business needs it | Generic engine; industry templates configure it |
 | `crm` | Leads and customers | 2 | Shared contact identity (see data model) |
 | `commerce` | Bookings / purchases / Stripe | 2 | Adapter to existing OSA Stripe booking; not a new Stripe |
@@ -30,7 +30,7 @@ Modules are independently enabled capabilities. The codebase may contain a modul
 | `reviews` | Reputation | 8 | Official APIs only |
 | `intelligence` | Mogia intelligence | 4 | Reads other modules; does not replace them |
 | `brand_voice` | Brand voice / content | 5 | Approved examples only |
-| `billing` | SaaS subscriptions | 10 | Stripe Billing for GroMogia itself |
+| `billing` | SaaS subscriptions | 10 | Stripe Billing for GroovGro itself |
 | `media` | Media library | 1 (stub), used by all later | Vercel Blob, tenant-keyed |
 
 ## Entitlement rules

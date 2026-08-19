@@ -1,13 +1,16 @@
-# GroMogia agent operating rules
+# GroovGro agent operating rules
 
 These rules apply to every Cloud Agent and every human working in this repository.
 
 Product intent: [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md).  
-Approved architecture (until superseded): [docs/phase-0/](docs/phase-0/).
+Approved architecture (until superseded): [docs/phase-0/](docs/phase-0/).  
+Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
+
+The product is **GroovGro** (domain groovgro.com). The GitHub repository may still be named GroMogia until it is renamed on GitHub.
 
 ## Cloud-first
 
-- Develop GroMogia with Cursor Cloud Agents for substantial work.
+- Develop GroovGro with Cursor Cloud Agents for substantial work.
 - GitHub is the source of truth.
 - Do not create any production dependency on a local computer.
 - A local computer may be used for review, testing, debugging, or occasional development. Production must keep running when that computer and Cursor Desktop are shut down.
@@ -42,6 +45,6 @@ Approved architecture (until superseded): [docs/phase-0/](docs/phase-0/).
 ## Phase gate
 
 - Phase 0 architecture is approved in `docs/phase-0/`.
-- Current implementation phase is **Phase 2 first real business data**.
+- Current implementation phase is **Phase 2 first real business data**. See [docs/STATUS.md](docs/STATUS.md).
 - Do not skip ahead to the website builder, ads, SEO, or autonomous AI.
 - After Phase 2, wait for human approval before Phase 3 (marketing / attribution).

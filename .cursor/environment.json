@@ -1,5 +1,5 @@
 {
-  "name": "GroMogia",
+  "name": "GroovGro",
   "install": "npm ci",
   "ports": [
     { "name": "web", "port": 3000 }

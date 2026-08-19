@@ -4,9 +4,9 @@
 
 **Clerk** hosts identity: sign-up, sign-in, sessions, MFA, password reset.
 
-GroMogia stores a `users` row keyed by `clerk_user_id` and treats Clerk as the identity provider, not the source of truth for organizations, roles, modules, or billing.
+GroovGro stores a `users` row keyed by `clerk_user_id` and treats Clerk as the identity provider, not the source of truth for organizations, roles, modules, or billing.
 
-Why not Clerk Organizations as the only org model? GroMogia orgs need module entitlements, Stripe customer IDs, brand, AI context, and audit. Those belong in Neon. Clerk orgs can be adopted later as a convenience; they must not become the only tenant key.
+Why not Clerk Organizations as the only org model? GroovGro orgs need module entitlements, Stripe customer IDs, brand, AI context, and audit. Those belong in Neon. Clerk orgs can be adopted later as a convenience; they must not become the only tenant key.
 
 Session flow:
 
@@ -87,7 +87,7 @@ If it changes access, money, publishing, integrations, or AI execution, it is an
 7. **Platform admin** — phishing or a stolen super-admin session is catastrophic; MFA required, separate from org Owner.
 8. **SiteGround / WordPress credentials** — if we ever store WP application passwords, they are as sensitive as Stripe keys.
 9. **PII** — leads and customers are personal data. Minimize logs; do not send PII to AI providers beyond what the org has enabled.
-10. **Card data** — Stripe.js / Checkout / Elements only. GroMogia never sees PAN.
+10. **Card data** — Stripe.js / Checkout / Elements only. GroovGro never sees PAN.
 
 ## What we will not build for security theater
 

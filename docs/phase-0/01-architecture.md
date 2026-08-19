@@ -1,6 +1,6 @@
 # Technical architecture and initial stack
 
-GroMogia is a **multi-tenant modular SaaS monolith** hosted on Vercel. Cursor develops it. GitHub stores it. Vercel, Neon, Clerk, Stripe, Resend, and Blob operate it.
+GroovGro is a **multi-tenant modular SaaS monolith** hosted on Vercel. Cursor develops it. GitHub stores it. Vercel, Neon, Clerk, Stripe, Resend, and Blob operate it.
 
 This matches the brief’s preference for a well-structured modular monolith (§35) and the constraint that production must run when any local computer is off (§21–22).
 
@@ -42,7 +42,7 @@ Cursor is never in the production path.
 | App | Next.js App Router, TypeScript | UI + API in one deployable unit. Native on Vercel. |
 | Runtime | Node.js on Vercel Fluid Compute | Webhooks, cron, streaming, AI. Do not default to Edge runtime. |
 | UI | React, Tailwind CSS, shadcn/ui | Professional, fast for agents to extend, accessible patterns. |
-| Auth | Clerk (Vercel Marketplace) | Hosted identity, sessions, MFA. GroMogia still owns orgs, roles, and entitlements in Postgres. |
+| Auth | Clerk (Vercel Marketplace) | Hosted identity, sessions, MFA. GroovGro still owns orgs, roles, and entitlements in Postgres. |
 | Database | Neon Postgres (Vercel Marketplace) | Cloud Postgres, branching later if useful, no laptop database. |
 | ORM / migrations | Drizzle ORM + Drizzle Kit | SQL-shaped, typed, reviewable migrations in git. |
 | Validation | Zod | Shared input validation for forms, APIs, and webhooks. |
@@ -51,7 +51,7 @@ Cursor is never in the production path.
 | Files | Vercel Blob | Tenant-keyed object storage. No local disk. |
 | Jobs | Vercel Cron for schedules; Vercel Workflow for durable multi-step jobs; Functions for webhooks | Cloud-native, retryable, no always-on worker on a laptop. |
 | AI | Vercel AI SDK + AI Gateway | Provider-flexible. Intelligence layer, not a chatbot product. |
-| Feature flags | Database-backed flags in GroMogia | Enough for Mogia Group / beta / plan targeting. No extra vendor in Phase 1. |
+| Feature flags | Database-backed flags in GroovGro | Enough for Mogia Group / beta / plan targeting. No extra vendor in Phase 1. |
 | Observability | Vercel logs + structured JSON logs in-app | Add a dedicated error tracker later if noise requires it. |
 | Package manager | npm, Node 22 | Already available in Cloud Agents. |
 
@@ -63,9 +63,9 @@ Three surfaces in one Next.js app (route groups), not three services:
 
 | Surface | Audience | Example routes |
 | --- | --- | --- |
-| Marketing site | Public | `gromogia.com` — later commercialization (Phase 10) |
-| Organization app | Org users | `app.gromogia.com` — dashboard, modules, settings |
-| Platform admin | Mogia Group super admins only | `app.gromogia.com/platform` — orgs, flags, health |
+| Marketing site | Public | `groovgro.com` |
+| Organization app | Org users | `groovgro.com/app` — dashboard, modules, settings |
+| Platform admin | Mogia Group super admins only | `groovgro.com/platform` — orgs, flags, health |
 
 Tenant-built public websites (Phase 7) are a later hosting decision. Until then, organizations **connect** existing SiteGround / WordPress / other sites.
 
@@ -129,7 +129,7 @@ Phase 1 builds the rails (org, auth, modules, audit). Phase 2 lands the first ca
 | Database | Neon; separate production vs preview/dev databases or branches |
 | Auth | Clerk production vs development instances |
 | Secrets | Vercel env (Preview / Production) + Cursor Cloud Agent secrets for development |
-| Domains | `gromogia.com` marketing; `app.gromogia.com` product (recommended) |
+| Domains | `groovgro.com` (current); optional `app.groovgro.com` later |
 | Cron | Vercel Cron hitting authenticated route handlers |
 | Webhooks | Stripe (and later Google/Meta) → Vercel URLs only |
 | Backups | Neon PITR / backups; do not rely on a laptop dump |

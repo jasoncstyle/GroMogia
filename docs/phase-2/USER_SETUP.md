@@ -5,7 +5,7 @@ Phase 1 sign-in and the database are already live. Phase 2 adds website tracking
 Project: **gro-mogia** at [https://vercel.com/dashboard](https://vercel.com/dashboard)  
 Live app: [https://gro-mogia.vercel.app](https://gro-mogia.vercel.app)
 
-Use **test keys** first. GroMogia never stores card numbers.
+Use **test keys** first. GroovGro never stores card numbers.
 
 ## 1. Add Stripe test keys in Vercel
 
@@ -50,24 +50,36 @@ Preview deployments have different URLs. The production webhook above is enough 
 
 `NEXT_PUBLIC_` values are baked in at build time. A cache-off redeploy is required after adding them.
 
-## 4. Connect Stripe inside GroMogia
+## 4. Connect Stripe inside GroovGro
 
 1. Open [https://gro-mogia.vercel.app/app](https://gro-mogia.vercel.app/app) and sign in.
 2. Open **Integrations** or **Bookings & payments**.
 3. Click **Connect Stripe**.
 4. Click **Sync recent Stripe activity** if you already have test checkouts or charges.
 
-If only one organization exists, incoming webhooks go there. If you later have more than one organization, put `organization_id` in the Stripe Checkout Session metadata so GroMogia knows which business the payment belongs to.
+If only one organization exists, incoming webhooks go there. If you later have more than one organization, put `organization_id` in the Stripe Checkout Session metadata so GroovGro knows which business the payment belongs to.
 
 ## 5. Connect the existing website
 
-1. In GroMogia, open **Website connection**.
+1. In GroovGro, open **Website connection**.
 2. Paste the public website address.
 3. Save.
 4. Copy the tracking snippet and paste it before the closing `</body>` tag on that site.
 5. Share the public lead form link shown on the same page.
 
 This does **not** build a new website. The website builder is a later phase.
+
+## 6. Attach groovgro.com (after this rename is on Production)
+
+The Vercel project is still named **gro-mogia**. You do not have to rename the project.
+
+1. Open the **gro-mogia** project in Vercel.
+2. Left sidebar → **Domains**.
+3. Add `groovgro.com` and `www.groovgro.com`. Follow Vercel’s DNS instructions at the registrar where you bought the domain.
+4. In Clerk, add `https://groovgro.com` and `https://www.groovgro.com` as allowed origins / redirect URLs, same as you did for `https://gro-mogia.vercel.app`.
+5. In Vercel **Environment Variables**, set `NEXT_PUBLIC_APP_URL` = `https://groovgro.com` (Production and Preview).
+6. **Deployments → Redeploy** with **Use existing Build Cache** off.
+7. Keep the existing Stripe test webhook on `https://gro-mogia.vercel.app/api/stripe/webhook`. After the domain works, you may **add** a second endpoint `https://groovgro.com/api/stripe/webhook` — do not delete or edit the Ocean Sailing Adventures live-site webhook.
 
 ## What you should see
 
@@ -79,4 +91,4 @@ After a test payment or a form submit:
 
 ## Not yet
 
-Custom domain `gromogia.com`, ads, SEO, AI automation, and the GroMogia website builder wait for later phases.
+Ads, SEO, AI automation, and the GroovGro website builder wait for later phases.
