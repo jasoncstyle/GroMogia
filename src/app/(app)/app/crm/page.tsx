@@ -5,7 +5,9 @@ import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { contacts, customers, leadRecords, leadStages } from "@/lib/db/schema";
 import { appUrl } from "@/lib/env";
+import { resolveOrganizationSlug } from "@/lib/org";
 import { formatMoney } from "@/lib/money";
+import { CopyLink } from "@/components/copy-link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -71,9 +73,11 @@ export default async function CrmPage() {
           .orderBy(desc(customers.firstConvertedAt))
       : [];
 
-  const leadFormUrl = session.organizationSlug
-    ? `${appUrl()}/l/${session.organizationSlug}`
-    : "";
+  const slug = await resolveOrganizationSlug(
+    session.organizationId,
+    session.organizationSlug,
+  );
+  const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -85,15 +89,22 @@ export default async function CrmPage() {
           One person is one contact. A lead and a customer are states of that
           person, not duplicate records.
         </p>
-        {leadFormUrl ? (
-          <p className="mt-2 text-sm text-muted-foreground">
-            Public form:{" "}
-            <a className="underline" href={leadFormUrl}>
-              {leadFormUrl}
-            </a>
-          </p>
-        ) : null}
       </div>
+
+      {leadFormUrl ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Public lead form</CardTitle>
+            <CardDescription>
+              Customers fill this in without signing in. Open it in a private
+              window to send a test lead.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CopyLink url={leadFormUrl} />
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Card>
         <CardHeader>

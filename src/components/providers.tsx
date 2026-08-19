@@ -2,6 +2,8 @@
 
 import { ClerkProvider } from "@clerk/nextjs";
 
+import { clerkLocalization } from "@/lib/clerk-localization";
+
 export function Providers({
   children,
   clerkEnabled,
@@ -13,5 +15,7 @@ export function Providers({
     return children;
   }
 
-  return <ClerkProvider>{children}</ClerkProvider>;
+  return (
+    <ClerkProvider localization={clerkLocalization}>{children}</ClerkProvider>
+  );
 }

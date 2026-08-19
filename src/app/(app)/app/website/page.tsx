@@ -5,6 +5,8 @@ import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { websites } from "@/lib/db/schema";
 import { appUrl } from "@/lib/env";
+import { resolveOrganizationSlug } from "@/lib/org";
+import { CopyLink } from "@/components/copy-link";
 import { TrackingSnippet } from "@/components/tracking-snippet";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,9 +35,11 @@ export default async function WebsitePage() {
   const snippet = website
     ? `<script src="${base}/t.js" data-groovgro-id="${website.trackingId}" data-gromogia-id="${website.trackingId}" async></script>`
     : "";
-  const leadFormUrl = session.organizationSlug
-    ? `${base}/l/${session.organizationSlug}`
-    : "";
+  const slug = await resolveOrganizationSlug(
+    session.organizationId,
+    session.organizationSlug,
+  );
+  const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -48,6 +52,32 @@ export default async function WebsitePage() {
           this phase, and this is not the website builder.
         </p>
       </div>
+
+      {leadFormUrl ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Public lead form</CardTitle>
+            <CardDescription>
+              This is a GroovGro page customers can open without signing in.
+              Copy the link, open it in a private window, and send a test lead
+              with an email that is not yours.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <CopyLink url={leadFormUrl} />
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <CardTitle>Public lead form</CardTitle>
+            <CardDescription>
+              Sign in with the database connected, then this page will show a
+              shareable form link for this organization.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
@@ -85,7 +115,7 @@ export default async function WebsitePage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <TrackingSnippet snippet={snippet} leadFormUrl={leadFormUrl} />
+            <TrackingSnippet snippet={snippet} />
           </CardContent>
         </Card>
       ) : null}

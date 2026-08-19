@@ -1,11 +1,19 @@
+import type { Metadata } from "next";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 
+import { PRODUCT_NAME } from "@/lib/brand";
 import { getDb } from "@/lib/db";
 import { brandSettings, organizations } from "@/lib/db/schema";
 import { PublicLeadForm } from "@/components/public-lead-form";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: `Contact · ${PRODUCT_NAME}`,
+  description: `Send a message through ${PRODUCT_NAME}.`,
+  robots: { index: false, follow: false },
+};
 
 export default async function PublicLeadPage({
   params,
@@ -35,7 +43,7 @@ export default async function PublicLeadPage({
   return (
     <div className="mx-auto flex min-h-full max-w-lg flex-col gap-6 px-6 py-16">
       <div>
-        <p className="text-sm text-muted-foreground">GroovGro</p>
+        <p className="text-sm text-muted-foreground">{PRODUCT_NAME}</p>
         <h1 className="text-3xl font-semibold tracking-tight">
           {brand?.businessName || organization.name}
         </h1>

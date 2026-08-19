@@ -7,10 +7,8 @@ import { PRODUCT_NAME } from "@/lib/brand";
 
 export function TrackingSnippet({
   snippet,
-  leadFormUrl,
 }: {
   snippet: string
-  leadFormUrl: string
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -60,15 +58,6 @@ export function TrackingSnippet({
         This does not replace the current site. It only records visits. It never stores card
         numbers.
       </p>
-
-      {leadFormUrl ? (
-        <p className="text-sm text-muted-foreground">
-          Public lead form (share this link, or add it as a button on the site):{" "}
-          <a className="text-foreground underline" href={leadFormUrl}>
-            {leadFormUrl}
-          </a>
-        </p>
-      ) : null}
     </div>
   );
 }
