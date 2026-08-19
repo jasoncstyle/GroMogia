@@ -36,23 +36,29 @@ export function TrackingSnippet({
 
       <ol className="list-decimal space-y-2 pl-5 text-sm text-muted-foreground">
         <li>Click Copy snippet.</li>
-        <li>Open the existing website&apos;s admin in another tab. Leave this GroMogia page open.</li>
         <li>
-          <span className="text-foreground">WordPress:</span> go to{" "}
-          <span className="text-foreground">Appearance → Theme File Editor → footer.php</span>.
-          Paste the snippet just above <code className="text-foreground">&lt;/body&gt;</code>, then
-          click Update File.
+          Open the existing website&apos;s host in another tab (often SiteGround
+          Site Tools → File Manager). Leave this GroMogia page open.
         </li>
         <li>
-          <span className="text-foreground">If you cannot find footer.php:</span> in WordPress go to{" "}
-          <span className="text-foreground">Plugins → Add New</span>, install{" "}
-          <span className="text-foreground">WPCode</span>, add a Footer snippet, paste, and save.
+          Open the HTML or layout file that appears on every page. This is often{" "}
+          <code className="text-foreground">index.html</code>, a footer file, or
+          a header/footer &quot;custom code&quot; box.
+        </li>
+        <li>
+          Paste the snippet just above{" "}
+          <code className="text-foreground">&lt;/body&gt;</code>, then save.
         </li>
         <li>
           Open the public website in a new tab, then come back to GroMogia{" "}
-          <span className="text-foreground">Analytics</span>. A visit should appear within a minute.
+          <span className="text-foreground">Analytics</span>. A visit should
+          appear within a minute.
         </li>
       </ol>
+      <p className="text-sm text-muted-foreground">
+        Skip WordPress steps. This test site is not WordPress. If a later site
+        is WordPress, we will add those steps then.
+      </p>
 
       <p className="text-sm text-muted-foreground">
         This does not replace the current site. It only records visits. It never stores card
