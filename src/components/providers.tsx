@@ -2,6 +2,7 @@
 
 import { ClerkProvider } from "@clerk/nextjs";
 
+import { Toaster } from "@/components/ui/sonner";
 import { clerkLocalization } from "@/lib/clerk-localization";
 
 export function Providers({
@@ -11,11 +12,18 @@ export function Providers({
   children: React.ReactNode
   clerkEnabled: boolean
 }) {
+  const tree = (
+    <>
+      {children}
+      <Toaster />
+    </>
+  );
+
   if (!clerkEnabled) {
-    return children;
+    return tree;
   }
 
   return (
-    <ClerkProvider localization={clerkLocalization}>{children}</ClerkProvider>
+    <ClerkProvider localization={clerkLocalization}>{tree}</ClerkProvider>
   );
 }

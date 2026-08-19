@@ -6,7 +6,7 @@ import { getDb } from "@/lib/db";
 import { integrationConnections } from "@/lib/db/schema";
 import { isStripeConfigured } from "@/lib/env";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
   CardDescription,
@@ -68,15 +68,15 @@ export default async function IntegrationsPage() {
                       Add STRIPE_SECRET_KEY in Vercel, then redeploy.
                     </p>
                   ) : connected ? (
-                    <form action={disconnectStripe}>
-                      <Button type="submit" variant="outline">
+                    <SaveForm action={disconnectStripe} successMessage="Stripe disconnected">
+                      <SaveButton type="submit" variant="outline">
                         Disconnect Stripe
-                      </Button>
-                    </form>
+                      </SaveButton>
+                    </SaveForm>
                   ) : (
-                    <form action={connectStripe}>
-                      <Button type="submit">Connect Stripe</Button>
-                    </form>
+                    <SaveForm action={connectStripe} successMessage="Stripe connected">
+                      <SaveButton type="submit">Connect Stripe</SaveButton>
+                    </SaveForm>
                   )}
                 </CardFooter>
               ) : null}

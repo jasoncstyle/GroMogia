@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 
@@ -11,9 +12,11 @@ export function CopyLink({ url }: { url: string }) {
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
+      toast.success("Link copied");
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
+      toast.error("Could not copy the link.");
     }
   }
 

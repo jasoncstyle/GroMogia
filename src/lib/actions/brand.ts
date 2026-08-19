@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { recordAudit } from "@/lib/audit";
+import { runAction, type ActionResult } from "@/lib/action-result";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { brandSettings, organizations } from "@/lib/db/schema";
@@ -16,7 +17,8 @@ const brandSchema = z.object({
   targetCustomers: z.string().max(500).optional().default(""),
 });
 
-export async function updateBrandSettings(formData: FormData) {
+export async function updateBrandSettings(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not save brand settings.", async () => {
   const session = await getAppSession();
   if (!session.organizationId || !session.userId) {
     throw new Error("Sign in and connect the database before saving brand settings.");
@@ -67,4 +69,6 @@ export async function updateBrandSettings(formData: FormData) {
 
   revalidatePath("/app/settings/brand");
   revalidatePath("/app");
+    return "Brand saved";
+  });
 }

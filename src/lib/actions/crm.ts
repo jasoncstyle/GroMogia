@@ -5,6 +5,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { recordAudit } from "@/lib/audit";
+import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import { leadActivities, leadRecords, leadStages } from "@/lib/db/schema";
 import { dollarsToCents } from "@/lib/money";
@@ -22,7 +23,8 @@ const contactSchema = z.object({
   estimatedValue: z.string().optional().default(""),
 });
 
-export async function createLead(formData: FormData) {
+export async function createLead(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not save the lead.", async () => {
   const session = await requireOrgSession();
   if (!hasPermission(session.permissions, "manage_leads")) {
     throw new Error("You do not have permission to manage leads.");
@@ -94,9 +96,12 @@ export async function createLead(formData: FormData) {
 
   revalidatePath("/app/crm");
   revalidatePath("/app");
+    return "Lead saved";
+  });
 }
 
-export async function moveLead(formData: FormData) {
+export async function moveLead(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not move the lead.", async () => {
   const session = await requireOrgSession();
   if (!hasPermission(session.permissions, "manage_leads")) {
     throw new Error("You do not have permission to manage leads.");
@@ -156,9 +161,12 @@ export async function moveLead(formData: FormData) {
 
   revalidatePath("/app/crm");
   revalidatePath("/app");
+    return "Lead moved";
+  });
 }
 
-export async function convertLeadToCustomer(formData: FormData) {
+export async function convertLeadToCustomer(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not mark this person as a customer.", async () => {
   const session = await requireOrgSession();
   if (!hasPermission(session.permissions, "manage_customers")) {
     throw new Error("You do not have permission to manage customers.");
@@ -193,4 +201,6 @@ export async function convertLeadToCustomer(formData: FormData) {
 
   revalidatePath("/app/crm");
   revalidatePath("/app");
+    return "Marked as customer";
+  });
 }
