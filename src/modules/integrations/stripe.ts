@@ -12,8 +12,38 @@ export function getStripe(): Stripe | null {
   return new Stripe(key);
 }
 
+export function webhookSigningSecrets(): string[] {
+  return [
+    process.env.STRIPE_WEBHOOK_SECRET,
+    process.env.STRIPE_LIVE_WEBHOOK_SECRET,
+  ].filter((value): value is string => Boolean(value));
+}
+
 export function isStripeWebhookConfigured(): boolean {
-  return Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET);
+  return Boolean(process.env.STRIPE_SECRET_KEY && webhookSigningSecrets().length > 0);
+}
+
+export function constructSignedStripeEvent(
+  stripe: Stripe,
+  payload: string,
+  signature: string,
+) {
+  const secrets = webhookSigningSecrets();
+  if (secrets.length === 0) {
+    throw new Error("Stripe webhook secret is not configured");
+  }
+
+  let lastError: unknown;
+  for (const secret of secrets) {
+    try {
+      return stripe.webhooks.constructEvent(payload, signature, secret);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("invalid_signature");
 }
 
 export async function syncStripeForOrganization(organizationId: string) {

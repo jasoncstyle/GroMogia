@@ -79,7 +79,32 @@ The Vercel project is still named **gro-mogia**. You do not have to rename the p
 4. In Clerk, add `https://groovgro.com` and `https://www.groovgro.com` as allowed origins / redirect URLs, same as you did for `https://gro-mogia.vercel.app`.
 5. In Vercel **Environment Variables**, set `NEXT_PUBLIC_APP_URL` = `https://groovgro.com` (Production and Preview).
 6. **Deployments → Redeploy** with **Use existing Build Cache** off.
-7. Keep the existing Stripe test webhook on `https://gro-mogia.vercel.app/api/stripe/webhook`. After the domain works, you may **add** a second endpoint `https://groovgro.com/api/stripe/webhook` — do not delete or edit the Ocean Sailing Adventures live-site webhook.
+7. Keep the existing Stripe **test** webhook on `https://gro-mogia.vercel.app/api/stripe/webhook`. After the domain works, **add** a second **test** endpoint `https://www.groovgro.com/api/stripe/webhook`. Put that destination’s signing secret in `STRIPE_WEBHOOK_SECRET`. Do not delete or edit the Ocean Sailing Adventures **live** webhook.
+
+## 7. Add a GroovGro Live webhook later (extra destination)
+
+Do this only after groovgro.com already receives **test** payments. GroovGro keeps using **test** API keys. Live events need a second signing secret.
+
+1. Merge the “live extra webhook” code to Production and wait until that deploy is Ready.
+2. In Stripe, switch from sandbox/test to **Live**.
+3. Open the Live webhook / event destination list. Screenshot it before clicking anything.
+4. Find the Ocean Sailing Adventures live destination. **Do not click, edit, or delete it.**
+5. Click **Add destination**.
+6. Endpoint URL: `https://www.groovgro.com/api/stripe/webhook`
+7. Name: `GroovGro live`
+8. Same four events as test: `checkout.session.completed`, `payment_intent.succeeded`, `charge.succeeded`, `charge.refunded`
+9. Save.
+10. Copy the new Live signing secret (`whsec_`). Do not paste it into chat.
+11. In Vercel **gro-mogia** → **Settings** → **Environment Variables**, **add** a new variable:
+    - Name: `STRIPE_LIVE_WEBHOOK_SECRET`
+    - Value: the Live `whsec_`
+    - Environments: Production and Preview
+12. Do **not** change `STRIPE_SECRET_KEY` (keep `sk_test_`).
+13. Do **not** change `STRIPE_WEBHOOK_SECRET` (keep the test secret).
+14. **Deployments → Redeploy** the latest Production deploy with **Use existing Build Cache** off.
+15. Switch Stripe back to sandbox/test when you are done.
+
+Live Ocean Sailing Adventures payments can then appear in GroovGro **Jason's Test** next to the test $5/$10 rows. That is expected until there is a separate organization. One real payment may still show as more than one GroovGro row (payment intent + charge).
 
 ## What you should see
 
