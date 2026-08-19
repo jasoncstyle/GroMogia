@@ -1,3 +1,5 @@
+import { CURRENT_VERCEL_URL } from "@/lib/brand";
+
 export function isClerkConfigured(): boolean {
   return Boolean(
     process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
@@ -21,5 +23,5 @@ export function missingFoundationServices(): string[] {
 }
 
 export function appUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? "https://gro-mogia.vercel.app";
+  return process.env.NEXT_PUBLIC_APP_URL ?? CURRENT_VERCEL_URL;
 }

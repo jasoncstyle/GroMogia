@@ -1,6 +1,6 @@
 # Operating model
 
-How GroMogia gets built and how it stays running.
+How GroovGro gets built and how it stays running.
 
 ## The important distinction
 

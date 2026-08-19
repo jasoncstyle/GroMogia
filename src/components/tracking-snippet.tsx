@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { PRODUCT_NAME } from "@/lib/brand";
 
 export function TrackingSnippet({
   snippet,
@@ -36,21 +37,22 @@ export function TrackingSnippet({
 
       <ol className="list-decimal space-y-2 pl-5 text-sm text-muted-foreground">
         <li>Click Copy snippet.</li>
-        <li>Open the existing website&apos;s admin in another tab. Leave this GroMogia page open.</li>
         <li>
-          <span className="text-foreground">WordPress:</span> go to{" "}
-          <span className="text-foreground">Appearance → Theme File Editor → footer.php</span>.
-          Paste the snippet just above <code className="text-foreground">&lt;/body&gt;</code>, then
-          click Update File.
+          Open the existing website project in another tab. Leave this{" "}
+          {PRODUCT_NAME} page open.
         </li>
         <li>
-          <span className="text-foreground">If you cannot find footer.php:</span> in WordPress go to{" "}
-          <span className="text-foreground">Plugins → Add New</span>, install{" "}
-          <span className="text-foreground">WPCode</span>, add a Footer snippet, paste, and save.
+          If the site is Next.js / Vercel, paste the snippet in the site-wide
+          layout (often <code className="text-foreground">app/layout.tsx</code>{" "}
+          inside <code className="text-foreground">&lt;body&gt;</code>). If it
+          is static HTML, paste just above{" "}
+          <code className="text-foreground">&lt;/body&gt;</code>. Save and
+          deploy that site.
         </li>
         <li>
-          Open the public website in a new tab, then come back to GroMogia{" "}
-          <span className="text-foreground">Analytics</span>. A visit should appear within a minute.
+          Open the public website in a new tab, then come back to {PRODUCT_NAME}{" "}
+          <span className="text-foreground">Analytics</span>. A visit should
+          appear within a minute.
         </li>
       </ol>
 

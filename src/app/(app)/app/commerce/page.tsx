@@ -36,7 +36,7 @@ export default async function CommercePage() {
           Bookings & payments
         </h1>
         <p className="text-muted-foreground">
-          GroMogia stores amounts, status, and Stripe IDs. It never stores card
+          GroovGro stores amounts, status, and Stripe IDs. It never stores card
           numbers, CVC codes, or bank account numbers.
         </p>
       </div>

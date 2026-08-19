@@ -42,7 +42,7 @@ Lead **stages** are rows (`lead_stages`) per organization, seeded with New / Con
 
 | Column | Type | Notes |
 | --- | --- | --- |
-| id | uuid pk | GroMogia user id |
+| id | uuid pk | GroovGro user id |
 | clerk_user_id | text unique | Clerk subject |
 | email | citext | Cached from Clerk |
 | name | text | Cached |
@@ -134,7 +134,7 @@ organization_id, level (1–5), action_type, input_summary, output, status (`obs
 
 ### `websites`
 
-organization_id, kind (`connected` | `built`), public_url, provider (`siteground` | `wordpress` | `gromogia` | `other`), tracking_id, status.
+organization_id, kind (`connected` | `built`), public_url, provider (`siteground` | `wordpress` | `groovgro` | `other`), tracking_id, status.
 
 ### `contacts`
 
@@ -155,7 +155,7 @@ organization_id, title, description, event_type (generic string), location, star
 
 ### `bookings`
 
-organization_id, contact_id, event_id nullable, external_provider (`stripe_osa` | `gromogia` | …), external_id, starts_at, status, source, campaign_id.
+organization_id, contact_id, event_id nullable, external_provider (`stripe` | `groovgro` | …), external_id, starts_at, status, source, campaign_id.
 
 ### `payments`
 

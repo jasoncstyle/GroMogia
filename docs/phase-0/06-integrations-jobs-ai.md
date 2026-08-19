@@ -51,7 +51,7 @@ Job rules (brief §23):
 - **Observable** — `job_runs` table: name, organization_id, started_at, finished_at, status, error, payload cursor.
 - **Failure-aware** — failed runs notify org admins and platform admin when systemic.
 
-Do not use `node-cron` inside a Function. Do not SSH to SiteGround to run GroMogia jobs.
+Do not use `node-cron` inside a Function. Do not SSH to SiteGround to run GroovGro jobs.
 
 Webhook processing should acknowledge quickly, then continue work in a workflow/queue if it cannot finish safely in one invocation. Stripe event IDs are the idempotency key.
 
@@ -82,7 +82,7 @@ Prompt and retrieval context:
 - Include: org brand, enabled modules, recent canonical metrics, approved voice examples.
 - Exclude: other tenants, secrets, raw OAuth tokens, card data, unapproved writing samples.
 
-Natural-language questions (“Why were sales lower this month?”) must return **evidence citations** to GroMogia records (campaign X, landing page Y), not unsupported chat.
+Natural-language questions (“Why were sales lower this month?”) must return **evidence citations** to GroovGro records (campaign X, landing page Y), not unsupported chat.
 
 ## Notifications
 

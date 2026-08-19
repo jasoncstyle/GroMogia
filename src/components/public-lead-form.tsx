@@ -29,8 +29,8 @@ export function PublicLeadForm({
       landingRef.current.value = window.location.href;
     }
     try {
-      const key = "gromogia_sid";
-      let value = window.localStorage.getItem(key);
+      const key = "groovgro_sid";
+      let value = window.localStorage.getItem(key) || window.localStorage.getItem("gromogia_sid");
       if (!value) {
         value = window.crypto.randomUUID();
         window.localStorage.setItem(key, value);

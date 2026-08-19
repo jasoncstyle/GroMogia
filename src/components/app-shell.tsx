@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import type { AppSession } from "@/lib/auth/session";
+import { PRODUCT_NAME } from "@/lib/brand";
 import { navModules, type ModuleId } from "@/lib/modules/catalog";
 import { cn } from "@/lib/utils";
 
@@ -79,7 +80,7 @@ export function AppShell({
       <aside className="hidden w-60 shrink-0 border-r bg-sidebar md:flex md:flex-col">
         <div className="border-b px-4 py-4">
           <Link href="/app" className="font-semibold tracking-tight">
-            GroMogia
+            {PRODUCT_NAME}
           </Link>
           <p className="mt-1 truncate text-xs text-muted-foreground">
             {session.organizationName ?? "Workspace"}
@@ -157,7 +158,7 @@ export function AppShell({
         <header className="flex items-center justify-between border-b px-4 py-3 md:px-6">
           <div>
             <p className="text-sm font-medium">
-              {session.name ?? "GroMogia workspace"}
+              {session.name ?? `${PRODUCT_NAME} workspace`}
             </p>
             <p className="text-xs text-muted-foreground">
               What is happening, why, what needs attention, what to do next.

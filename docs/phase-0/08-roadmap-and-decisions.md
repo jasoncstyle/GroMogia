@@ -16,7 +16,7 @@ Connect one Mogia Group business (recommended: Ocean Sailing Adventures).
 
 Website connection, Stripe booking/payment sync, contacts, leads, customers, basic activity, events if they help that business.
 
-**Done when:** external data → GroMogia → normalized records → a dashboard that is useful for that business.
+**Done when:** external data → GroovGro → normalized records → a dashboard that is useful for that business.
 
 ### Phase 3 — Marketing / attribution
 
@@ -61,7 +61,7 @@ Approve these now or name an alternative **before** Phase 1.
 | Decision | Recommendation | Cost of reversing later |
 | --- | --- | --- |
 | Tenancy | Shared schema + `organization_id` + RLS | Very high (data migration of every table) |
-| Identity | Clerk for auth; GroMogia DB for orgs/roles | High (session and user rewrite) |
+| Identity | Clerk for auth; GroovGro DB for orgs/roles | High (session and user rewrite) |
 | App shape | One Next.js modular monolith on Vercel | High (split services, networking, auth) |
 | Contacts | One `contacts` person; leads/customers are states | High (duplicate merge) |
 | Money | Integer cents + currency; Stripe IDs as external keys | High |
@@ -70,7 +70,7 @@ Approve these now or name an alternative **before** Phase 1.
 | Files | Vercel Blob, tenant-prefixed keys | Medium |
 | Email | Adapter; Resend first | Low–medium |
 | Payments | Adapter; Stripe first; never store PAN | High if you store cards (don’t) |
-| Product hostname | `app.gromogia.com` + `gromogia.com` marketing | Medium (cookies, Clerk URLs, CORS) |
+| Product hostname | `groovgro.com` (optional `app.` later) | Medium (cookies, Clerk URLs, CORS) |
 | Website builder hosting | Defer; connect existing sites first | High if you bet the company on a canvas in v1 |
 | AI | AI SDK + Gateway; no execute until Phase 9 | Medium |
 | Repo visibility | Public GitHub — treat as public forever | Medium (secret hygiene, not architecture) |
@@ -91,7 +91,7 @@ These are recommendations, not rejections of the vision.
 
 6. **Platform Super Admin is not an organization role.** Keep it off the org role list in the UI.
 
-7. **GitHub as a customer integration vs source control.** GitHub is GroMogia’s source of truth. It is not a Phase 1 customer-facing integration unless Mogia Group wants repo stats in the product (unlikely).
+7. **GitHub as a customer integration vs source control.** GitHub is GroovGro’s source of truth. It is not a Phase 1 customer-facing integration unless Mogia Group wants repo stats in the product (unlikely).
 
 8. **Expo.** Agree it stays out of this repository until a mobile phase exists.
 
@@ -99,9 +99,9 @@ These are recommendations, not rejections of the vision.
 
 10. **Public repository.** Fine for a startup codebase; requires perfect secret hygiene. If customer data samples ever appear, they must not be committed.
 
-11. **Attribution identity.** Phase 3 will need a first-party tracking approach for connected websites (a small GroMogia script) rather than hoping Google Analytics alone reconstructs the journey. Call that out now so SiteGround customers know a script snippet is coming.
+11. **Attribution identity.** Phase 3 will need a first-party tracking approach for connected websites (a small GroovGro script) rather than hoping Google Analytics alone reconstructs the journey. Call that out now so SiteGround customers know a script snippet is coming.
 
-12. **Custom domains for GroMogia-built sites.** Phase 7 problem. Do not design Phase 1 around it.
+12. **Custom domains for GroovGro-built sites.** Phase 7 problem. Do not design Phase 1 around it.
 
 13. **Pricing.** Correctly deferred. Still add `organization_modules` now so billing has something to attach to later.
 

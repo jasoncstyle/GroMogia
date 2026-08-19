@@ -1,6 +1,6 @@
 # What you need to do
 
-Most GroMogia work will be done by Cloud Agents after you approve this architecture. These steps need **you**, because they involve accounts, billing, and DNS.
+Most GroovGro work will be done by Cloud Agents after you approve this architecture. These steps need **you**, because they involve accounts, billing, and DNS.
 
 You do **not** need to keep a development computer running for production. You do **not** need to paste the master brief again; it is in `docs/MASTER_BRIEF.md` on this branch.
 
@@ -36,9 +36,9 @@ Use Vercel Marketplace where possible so env vars are injected for you:
 | Neon | Postgres | Marketplace: `vercel integration add neon` after the project is linked |
 | Clerk | Sign-in | Marketplace: `vercel integration add clerk` |
 | Stripe | Payments / later SaaS billing | Test mode for Preview; live later |
-| Resend | Transactional email | Verify `gromogia.com` when you are ready to send |
+| Resend | Transactional email | Verify `groovgro.com` when you are ready to send |
 
-You already use Stripe and Resend elsewhere. Create **GroMogia-specific** test keys rather than mixing Ocean Sailing Adventures live keys into this app.
+You already use Stripe and Resend elsewhere. Create **GroovGro-specific** test keys rather than mixing Ocean Sailing Adventures live keys into this app.
 
 ### 5. Save Cloud Agent environment secrets
 
@@ -52,18 +52,18 @@ Tell the agent if that is wrong.
 
 ## Do later (not required to approve Phase 0)
 
-### 7. DNS for gromogia.com
+### 7. DNS for groovgro.com
 
-When there is an app to show:
+When there is an app to show, attach the domain in the existing Vercel project **gro-mogia**:
 
-- `gromogia.com` → Vercel (marketing)
-- `app.gromogia.com` → Vercel (product)
+- `groovgro.com` → Vercel (product + marketing, same project)
+- `www.groovgro.com` → Vercel (optional redirect)
 
-Clerk allowed origins and Stripe webhook URLs will need those hostnames.
+Clerk allowed origins and Stripe webhook URLs will need those hostnames. The live `gro-mogia.vercel.app` URL can keep working.
 
 ### 8. Keep SiteGround sites where they are
 
-Do not migrate WordPress off SiteGround for GroMogia to work. Phase 2 connects them.
+Do not migrate WordPress off SiteGround for GroovGro to work. Phase 2 connects them.
 
 ### 9. Merge this PR when you are happy
 

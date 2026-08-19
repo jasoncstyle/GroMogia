@@ -1,23 +1,24 @@
+import { CURRENT_VERCEL_URL } from "@/lib/brand";
+
 const SCRIPT = `(function () {
-  var script = document.currentScript || document.querySelector("script[data-gromogia-id]");
-  var trackingId = script && script.getAttribute("data-gromogia-id");
+  var script = document.currentScript || document.querySelector("script[data-groovgro-id],script[data-gromogia-id]");
+  var trackingId = script && (script.getAttribute("data-groovgro-id") || script.getAttribute("data-gromogia-id"));
   if (!trackingId) return;
-  var endpoint = "https://gro-mogia.vercel.app/api/track";
+  var endpoint = "${CURRENT_VERCEL_URL}/api/track";
   if (script && script.src) {
     try {
       endpoint = new URL("/api/track", script.src).toString();
     } catch (error) {}
   }
-  var storageKey = "gromogia_sid";
   var sessionId = null;
   try {
-    sessionId = window.localStorage.getItem(storageKey);
+    sessionId = window.localStorage.getItem("groovgro_sid") || window.localStorage.getItem("gromogia_sid");
     if (!sessionId) {
       sessionId = (window.crypto && window.crypto.randomUUID)
         ? window.crypto.randomUUID()
         : String(Date.now()) + Math.random().toString(16).slice(2);
-      window.localStorage.setItem(storageKey, sessionId);
     }
+    window.localStorage.setItem("groovgro_sid", sessionId);
   } catch (error) {
     sessionId = String(Date.now());
   }

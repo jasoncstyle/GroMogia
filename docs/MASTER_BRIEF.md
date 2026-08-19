@@ -1,10 +1,10 @@
-# GroMogia — Project Master Brief
+# GroovGro — Project Master Brief
 
 Source of truth for product intent. Architecture and implementation must follow this document unless a later approved decision supersedes it.
 
-**Product:** GroMogia  
+**Product:** GroovGro (formerly GroMogia)  
 **Parent company:** Mogia Group  
-**Product domain:** gromogia.com  
+**Product domain:** groovgro.com  
 **Parent domain:** mogiagroup.com  
 
 **MOGIA:** Marketing · Operations · Growth · Intelligence · Analytics
@@ -13,13 +13,13 @@ Source of truth for product intent. Architecture and implementation must follow 
 
 ## 1. Vision
 
-Build GroMogia as a professional, cloud-based, modular business management, marketing, website, automation, analytics, and AI platform.
+Build GroovGro as a professional, cloud-based, modular business management, marketing, website, automation, analytics, and AI platform.
 
-GroMogia should help a business connect the systems it already uses, optionally build and manage its website, manage marketing, capture and understand leads, manage customers, analyze business performance, and use AI to recommend and eventually automate actions that improve the business.
+GroovGro should help a business connect the systems it already uses, optionally build and manage its website, manage marketing, capture and understand leads, manage customers, analyze business performance, and use AI to recommend and eventually automate actions that improve the business.
 
 **CONNECT THE BUSINESS. UNDERSTAND THE BUSINESS. GROW THE BUSINESS.**
 
-GroMogia should not simply become another website builder, CRM, marketing platform, or analytics dashboard. Its primary value comes from connecting these functions and understanding the relationships between them.
+GroovGro should not simply become another website builder, CRM, marketing platform, or analytics dashboard. Its primary value comes from connecting these functions and understanding the relationships between them.
 
 Example journey:
 
@@ -40,11 +40,11 @@ The platform should eventually understand that entire journey and answer questio
 - What problems need attention?
 - What should the business owner do next?
 
-Eventually GroMogia should move beyond reporting and recommendations and, with appropriate user permissions, assist with or automate selected actions.
+Eventually GroovGro should move beyond reporting and recommendations and, with appropriate user permissions, assist with or automate selected actions.
 
 ## 2. Modular product
 
-A customer must not be required to use every GroMogia feature.
+A customer must not be required to use every GroovGro feature.
 
 Examples:
 
@@ -52,20 +52,20 @@ Examples:
 - Customer B: already has WordPress; wants analytics, marketing, leads, and AI
 - Customer C: advertising management and reporting only
 - Customer D: website management and SEO only
-- Customer E: external booking platform connected to GroMogia
+- Customer E: external booking platform connected to GroovGro
 - Customer F: events/calendar but not the website builder
 
 Database, permissions, navigation, billing, and application structure must treat modules as independently enabled. Do not tightly couple modules unnecessarily.
 
 ## 3. Multi-tenant architecture
 
-GroMogia is a commercial SaaS product and must be multi-tenant.
+GroovGro is a commercial SaaS product and must be multi-tenant.
 
 | Term | Meaning |
 | --- | --- |
 | Organization | Customer / business account |
 | User | Person with access to an organization |
-| Module | GroMogia capability enabled for an organization |
+| Module | GroovGro capability enabled for an organization |
 | Integration | External service connected by an organization |
 
 One user may belong to multiple organizations.
@@ -114,7 +114,7 @@ Editable without coding: text, images, spacing, backgrounds, fonts, brand colors
 
 Websites must be responsive, fast, SEO-friendly, accessible, and secure.
 
-A business must also be able to connect an existing website rather than using GroMogia’s builder.
+A business must also be able to connect an existing website rather than using GroovGro’s builder.
 
 ## 7. Industry-specific website modules
 
@@ -188,7 +188,7 @@ Connect activity to outcomes (spend → visitors → leads → customers → rev
 
 ## 18. Mogia intelligence layer
 
-AI operates across GroMogia, not as a bolted-on chatbot. It should understand organization, brand voice, website, marketing, SEO, customers, leads, analytics, events, history, and integrations.
+AI operates across GroovGro, not as a bolted-on chatbot. It should understand organization, brand voice, website, marketing, SEO, customers, leads, analytics, events, history, and integrations.
 
 Capabilities: summarize, detect anomalies, identify opportunities, explain analytics, generate content, recommend campaigns/SEO/website changes, draft communication, compare periods, suggest next actions, answer natural-language questions with evidence.
 
@@ -285,7 +285,7 @@ Enable experimental features for Mogia Group, test orgs, beta customers, specifi
 
 Use Mogia Group businesses as real test cases (websites, marketing, customers, bookings, Stripe, events, content, analytics, SEO).
 
-Do not hard-code GroMogia around sailing. Generalize into reusable commercial functionality (for example “Events Module” with a sailing template, not a sailing-only calendar).
+Do not hard-code GroovGro around sailing. Generalize into reusable commercial functionality (for example “Events Module” with a sailing template, not a sailing-only calendar).
 
 ## 35. Development philosophy
 
@@ -322,7 +322,7 @@ Avoid jargon and overwhelming dashboards. Use plain English, explain recommendat
 
 ## 39. Critical design principle
 
-GroMogia should not merely display data. It should create understanding.
+GroovGro should not merely display data. It should create understanding.
 
 - Bad: “Google Ads clicks increased 17%.”
 - Better: “Google Ads clicks increased 17%, but leads remained flat.”
@@ -342,7 +342,7 @@ Before substantial production code: review this specification; inspect the repos
 
 ## 42. Long-term product goal
 
-GroMogia should become the intelligent operating layer connecting the digital side of a small or medium-sized business. It does not need to replace everything the customer already has.
+GroovGro should become the intelligent operating layer connecting the digital side of a small or medium-sized business. It does not need to replace everything the customer already has.
 
 **CONNECT → COLLECT → UNDERSTAND → RECOMMEND → ACT → LEARN → IMPROVE**
 

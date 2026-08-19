@@ -30,7 +30,7 @@ export default async function DashboardPage() {
     ? snapshot.topChannels.length > 0
       ? `Recent activity is coming from ${snapshot.topChannels.map((row) => `${row.channel} (${row.count})`).join(", ")}.`
       : snapshot.website?.publicUrl
-        ? "A website is connected, but GroMogia has not recorded visits or campaign clicks yet. Add the tracking snippet and share the lead form."
+        ? "A website is connected, but GroovGro has not recorded visits or campaign clicks yet. Add the tracking snippet and share the lead form."
         : "No website visits or campaign sources yet. Connect the existing website to start attributing leads."
     : "Context needs a connected website and Stripe data.";
 
@@ -55,7 +55,7 @@ export default async function DashboardPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          GroMogia answers four questions from real connected data, not empty
+          GroovGro answers four questions from real connected data, not empty
           charts.
         </p>
       </div>

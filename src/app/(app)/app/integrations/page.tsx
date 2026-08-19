@@ -34,7 +34,7 @@ export default async function IntegrationsPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Integrations</h1>
         <p className="text-muted-foreground">
-          GroMogia stores canonical business data. Vendors plug in through
+          GroovGro stores canonical business data. Vendors plug in through
           adapters. Nothing is tightly coupled to one email, ads, or website
           host.
         </p>
@@ -57,7 +57,7 @@ export default async function IntegrationsPage() {
                 <CardDescription>
                   Capabilities: {provider.capabilities.join(", ")}.
                   {provider.key === "stripe"
-                    ? " Phase 2 uses Stripe for bookings and payments. Card numbers never enter GroMogia."
+                    ? " Phase 2 uses Stripe for bookings and payments. Card numbers never enter GroovGro."
                     : " Connect in a later phase using OAuth or official APIs. Tokens stay in Vercel, never in git."}
                 </CardDescription>
               </CardHeader>

@@ -11,7 +11,7 @@ export default function SignInPage() {
           <CardHeader>
             <CardTitle>Sign-in is not connected yet</CardTitle>
             <CardDescription>
-              Add the Clerk integration on the GroMogia Vercel project, then
+              Add the Clerk integration on the GroovGro Vercel project, then
               redeploy. Do not build a login system on your computer.
             </CardDescription>
           </CardHeader>

@@ -1,6 +1,6 @@
 # Phase 1 — what you add in Vercel
 
-The GroMogia app is already deploying from GitHub. You still need two hosted services so people can sign in and organizations can be stored. Do this in the browser. Do not install Postgres or Clerk on your computer.
+The GroovGro app is already deploying from GitHub. You still need two hosted services so people can sign in and organizations can be stored. Do this in the browser. Do not install Postgres or Clerk on your computer.
 
 Project: **gro-mogia** at [https://vercel.com/dashboard](https://vercel.com/dashboard)
 
@@ -25,7 +25,7 @@ In the Clerk dashboard, add allowed origins for `https://gro-mogia.vercel.app` a
 ## 2. Add Neon (database)
 
 1. In the same Vercel project, add the **Neon** integration.
-2. Create a new project/database for GroMogia (not an Ocean Sailing Adventures database).
+2. Create a new project/database for GroovGro (not an Ocean Sailing Adventures database).
 3. Confirm `DATABASE_URL` appears in Vercel environment variables.
 
 After merge of Phase 1, we will run database migrations against that URL.
@@ -36,4 +36,4 @@ Vercel usually redeploys when env vars change. If the homepage still says Clerk/
 
 ## Not yet
 
-Custom domain gromogia.com and the website builder wait for later phases. Stripe test keys are added in Phase 2 using [docs/phase-2/USER_SETUP.md](../phase-2/USER_SETUP.md).
+Custom domain groovgro.com and the website builder wait for later phases. Stripe test keys are added in Phase 2 using [docs/phase-2/USER_SETUP.md](../phase-2/USER_SETUP.md).

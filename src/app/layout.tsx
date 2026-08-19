@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { Providers } from "@/components/providers";
+import { PRODUCT_NAME } from "@/lib/brand";
 import { isClerkConfigured } from "@/lib/env";
 
 import "./globals.css";
@@ -17,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GroMogia",
+  title: PRODUCT_NAME,
   description:
     "Connect the business. Understand the business. Grow the business.",
 };
