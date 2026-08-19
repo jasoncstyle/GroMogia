@@ -10,14 +10,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
-import { missingFoundationServices } from "@/lib/env";
+import { appUrl, missingFoundationServices } from "@/lib/env";
 import { formatMoney } from "@/lib/money";
+import { resolveOrganizationSlug } from "@/lib/org";
 import { isModuleEnabled } from "@/lib/modules/catalog";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 
 export default async function DashboardPage() {
   const session = await getAppSession();
   const missing = missingFoundationServices();
+  const slug = await resolveOrganizationSlug(
+    session.organizationId,
+    session.organizationSlug,
+  );
+  const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
   const snapshot = session.organizationId
     ? await getDashboardSnapshot(session.organizationId)
     : null;
@@ -159,6 +165,13 @@ export default async function DashboardPage() {
         {isModuleEnabled(session.enabledModules, "website_connect") ? (
           <Button asChild>
             <Link href="/app/website">Connect website</Link>
+          </Button>
+        ) : null}
+        {leadFormUrl ? (
+          <Button asChild variant="outline">
+            <a href={leadFormUrl} target="_blank" rel="noreferrer">
+              Open public lead form
+            </a>
           </Button>
         ) : null}
         <Button asChild variant="outline">
