@@ -7,8 +7,8 @@ import { websites } from "@/lib/db/schema";
 import { appUrl } from "@/lib/env";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { CopyLink } from "@/components/copy-link";
+import { SaveButton, SaveForm } from "@/components/save-form";
 import { TrackingSnippet } from "@/components/tracking-snippet";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -88,7 +88,7 @@ export default async function WebsitePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={saveWebsiteConnection} className="space-y-4">
+          <SaveForm action={saveWebsiteConnection} successMessage="Website saved" className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="publicUrl">Website address</Label>
               <Input
@@ -98,10 +98,10 @@ export default async function WebsitePage() {
                 defaultValue={website?.publicUrl ?? ""}
               />
             </div>
-            <Button type="submit" disabled={!session.organizationId}>
+            <SaveButton type="submit" disabled={!session.organizationId}>
               Save website
-            </Button>
-          </form>
+            </SaveButton>
+          </SaveForm>
         </CardContent>
       </Card>
 

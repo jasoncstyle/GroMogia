@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { PRODUCT_NAME } from "@/lib/brand";
@@ -16,9 +17,11 @@ export function TrackingSnippet({
     try {
       await navigator.clipboard.writeText(snippet);
       setCopied(true);
+      toast.success("Snippet copied");
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
       setCopied(false);
+      toast.error("Could not copy the snippet.");
     }
   }
 

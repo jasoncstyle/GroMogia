@@ -8,7 +8,7 @@ import { appUrl } from "@/lib/env";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { formatMoney } from "@/lib/money";
 import { CopyLink } from "@/components/copy-link";
-import { Button } from "@/components/ui/button";
+import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
   CardContent,
@@ -115,7 +115,11 @@ export default async function CrmPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={createLead} className="grid gap-4 md:grid-cols-2">
+          <SaveForm
+            action={createLead}
+            successMessage="Lead saved"
+            className="grid gap-4 md:grid-cols-2"
+          >
             <div className="space-y-2">
               <Label htmlFor="displayName">Name</Label>
               <Input id="displayName" name="displayName" />
@@ -140,10 +144,10 @@ export default async function CrmPage() {
               <Label htmlFor="notes">Notes</Label>
               <Textarea id="notes" name="notes" rows={3} />
             </div>
-            <Button type="submit" disabled={!organizationId}>
+            <SaveButton type="submit" disabled={!organizationId}>
               Save as new lead
-            </Button>
-          </form>
+            </SaveButton>
+          </SaveForm>
         </CardContent>
       </Card>
 
@@ -177,7 +181,7 @@ export default async function CrmPage() {
                     <TableCell>{lead.source}</TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-2">
-                        <form action={moveLead}>
+                        <SaveForm action={moveLead} successMessage="Lead moved">
                           <input type="hidden" name="leadId" value={lead.id} />
                           <select
                             name="stageId"
@@ -190,17 +194,17 @@ export default async function CrmPage() {
                               </option>
                             ))}
                           </select>
-                          <Button type="submit" variant="outline" className="ml-2">
+                          <SaveButton type="submit" variant="outline" className="ml-2">
                             Move
-                          </Button>
-                        </form>
+                          </SaveButton>
+                        </SaveForm>
                         {!stage.isWon ? (
-                          <form action={convertLeadToCustomer}>
+                          <SaveForm action={convertLeadToCustomer} successMessage="Marked as customer">
                             <input type="hidden" name="leadId" value={lead.id} />
-                            <Button type="submit" variant="secondary">
+                            <SaveButton type="submit" variant="secondary">
                               Mark customer
-                            </Button>
-                          </form>
+                            </SaveButton>
+                          </SaveForm>
                         ) : null}
                       </div>
                     </TableCell>

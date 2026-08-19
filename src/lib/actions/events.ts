@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { recordAudit } from "@/lib/audit";
+import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import { events } from "@/lib/db/schema";
 import { dollarsToCents } from "@/lib/money";
@@ -30,54 +31,57 @@ function parseDate(value: string): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-export async function createEvent(formData: FormData) {
-  const session = await requireOrgSession();
-  if (!hasPermission(session.permissions, "manage_events")) {
-    throw new Error("You do not have permission to manage events.");
-  }
+export async function createEvent(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not save the event.", async () => {
+    const session = await requireOrgSession();
+    if (!hasPermission(session.permissions, "manage_events")) {
+      throw new Error("You do not have permission to manage events.");
+    }
 
-  const parsed = eventSchema.parse({
-    title: formData.get("title"),
-    description: formData.get("description") ?? "",
-    eventType: formData.get("eventType") ?? "event",
-    location: formData.get("location") ?? "",
-    startsAt: formData.get("startsAt") ?? "",
-    endsAt: formData.get("endsAt") ?? "",
-    capacity: formData.get("capacity") ?? "",
-    price: formData.get("price") ?? "",
-    registrationUrl: formData.get("registrationUrl") ?? "",
-    visibility: formData.get("visibility") ?? "public",
-    status: formData.get("status") ?? "draft",
+    const parsed = eventSchema.parse({
+      title: formData.get("title"),
+      description: formData.get("description") ?? "",
+      eventType: formData.get("eventType") ?? "event",
+      location: formData.get("location") ?? "",
+      startsAt: formData.get("startsAt") ?? "",
+      endsAt: formData.get("endsAt") ?? "",
+      capacity: formData.get("capacity") ?? "",
+      price: formData.get("price") ?? "",
+      registrationUrl: formData.get("registrationUrl") ?? "",
+      visibility: formData.get("visibility") ?? "public",
+      status: formData.get("status") ?? "draft",
+    });
+
+    const db = getDb();
+    if (!db) throw new Error("Database is not configured");
+
+    const eventId = crypto.randomUUID();
+    await db.insert(events).values({
+      id: eventId,
+      organizationId: session.organizationId,
+      title: parsed.title,
+      description: parsed.description,
+      eventType: parsed.eventType || "event",
+      location: parsed.location,
+      startsAt: parseDate(parsed.startsAt),
+      endsAt: parseDate(parsed.endsAt),
+      capacity: parsed.capacity ? Number.parseInt(parsed.capacity, 10) : null,
+      priceCents: parsed.price ? dollarsToCents(parsed.price) : 0,
+      registrationUrl: parsed.registrationUrl,
+      visibility: parsed.visibility,
+      status: parsed.status,
+    });
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "event.created",
+      targetType: "event",
+      targetId: eventId,
+    });
+
+    revalidatePath("/app/events");
+    revalidatePath("/app");
+    return "Event saved";
   });
-
-  const db = getDb();
-  if (!db) throw new Error("Database is not configured");
-
-  const eventId = crypto.randomUUID();
-  await db.insert(events).values({
-    id: eventId,
-    organizationId: session.organizationId,
-    title: parsed.title,
-    description: parsed.description,
-    eventType: parsed.eventType || "event",
-    location: parsed.location,
-    startsAt: parseDate(parsed.startsAt),
-    endsAt: parseDate(parsed.endsAt),
-    capacity: parsed.capacity ? Number.parseInt(parsed.capacity, 10) : null,
-    priceCents: parsed.price ? dollarsToCents(parsed.price) : 0,
-    registrationUrl: parsed.registrationUrl,
-    visibility: parsed.visibility,
-    status: parsed.status,
-  });
-
-  await recordAudit({
-    organizationId: session.organizationId,
-    actorUserId: session.userId,
-    action: "event.created",
-    targetType: "event",
-    targetId: eventId,
-  });
-
-  revalidatePath("/app/events");
-  revalidatePath("/app");
 }

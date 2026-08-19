@@ -4,7 +4,7 @@ import { isStripeConfigured } from "@/lib/env";
 import { formatMoney } from "@/lib/money";
 import { getCommerceSnapshot } from "@/lib/phase2/queries";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
   CardContent,
@@ -62,19 +62,21 @@ export default async function CommercePage() {
             </p>
           ) : connected ? (
             <>
-              <form action={syncStripePayments}>
-                <Button type="submit">Sync recent Stripe activity</Button>
-              </form>
-              <form action={disconnectStripe}>
-                <Button type="submit" variant="outline">
+              <SaveForm action={syncStripePayments} successMessage="Stripe synced">
+                <SaveButton type="submit" pendingLabel="Syncing…">
+                  Sync recent Stripe activity
+                </SaveButton>
+              </SaveForm>
+              <SaveForm action={disconnectStripe} successMessage="Stripe disconnected">
+                <SaveButton type="submit" variant="outline">
                   Disconnect
-                </Button>
-              </form>
+                </SaveButton>
+              </SaveForm>
             </>
           ) : (
-            <form action={connectStripe}>
-              <Button type="submit">Connect Stripe</Button>
-            </form>
+            <SaveForm action={connectStripe} successMessage="Stripe connected">
+              <SaveButton type="submit">Connect Stripe</SaveButton>
+            </SaveForm>
           )}
           {snapshot.stripe?.lastError ? (
             <p className="w-full text-sm text-destructive">

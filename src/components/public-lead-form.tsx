@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 import { submitPublicLead } from "@/lib/actions/public-lead";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,12 @@ export function PublicLeadForm({
   const sessionRef = useRef<HTMLInputElement>(null);
   const landingRef = useRef<HTMLInputElement>(null);
   const [state, action, pending] = useActionState(
-    async (_previous: State, formData: FormData) => submitPublicLead(formData),
+    async (_previous: State, formData: FormData) => {
+      const result = await submitPublicLead(formData);
+      if (result.ok) toast.success("Message sent");
+      else toast.error(result.error);
+      return result;
+    },
     null,
   );
 

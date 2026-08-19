@@ -5,7 +5,7 @@ import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { events } from "@/lib/db/schema";
 import { formatMoney } from "@/lib/money";
-import { Button } from "@/components/ui/button";
+import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
   CardContent,
@@ -60,7 +60,11 @@ export default async function EventsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={createEvent} className="grid gap-4 md:grid-cols-2">
+          <SaveForm
+            action={createEvent}
+            successMessage="Event saved"
+            className="grid gap-4 md:grid-cols-2"
+          >
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="title">Title</Label>
               <Input id="title" name="title" required />
@@ -113,10 +117,10 @@ export default async function EventsPage() {
               <Label htmlFor="description">Description</Label>
               <Textarea id="description" name="description" rows={3} />
             </div>
-            <Button type="submit" disabled={!session.organizationId}>
+            <SaveButton type="submit" disabled={!session.organizationId}>
               Save event
-            </Button>
-          </form>
+            </SaveButton>
+          </SaveForm>
         </CardContent>
       </Card>
 

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { recordAudit } from "@/lib/audit";
 import { getDb } from "@/lib/db";
 import { websites } from "@/lib/db/schema";
+import { runAction, type ActionResult } from "@/lib/action-result";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
@@ -14,11 +15,12 @@ const websiteSchema = z.object({
   publicUrl: z.string().trim().max(500),
 });
 
-export async function saveWebsiteConnection(formData: FormData) {
-  const session = await requireOrgSession();
-  if (!hasPermission(session.permissions, "manage_website")) {
-    throw new Error("You do not have permission to connect a website.");
-  }
+export async function saveWebsiteConnection(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not save the website.", async () => {
+    const session = await requireOrgSession();
+    if (!hasPermission(session.permissions, "manage_website")) {
+      throw new Error("You do not have permission to connect a website.");
+    }
 
   const parsed = websiteSchema.parse({
     publicUrl: formData.get("publicUrl") ?? "",
@@ -75,4 +77,6 @@ export async function saveWebsiteConnection(formData: FormData) {
   revalidatePath("/app/website");
   revalidatePath("/app");
   revalidatePath("/app/analytics");
+    return "Website saved";
+  });
 }
