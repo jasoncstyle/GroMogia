@@ -1,6 +1,10 @@
 import { getDb } from "@/lib/db";
 import { ensureSchema } from "@/lib/db/ensure-schema";
-import { getStripe, isStripeWebhookConfigured } from "@/modules/integrations/stripe";
+import {
+  constructSignedStripeEvent,
+  getStripe,
+  isStripeWebhookConfigured,
+} from "@/modules/integrations/stripe";
 import {
   ingestStripeEvent,
   resolveStripeOrganizationId,
@@ -21,8 +25,7 @@ export async function POST(request: Request) {
   }
 
   const stripe = getStripe();
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
-  if (!stripe || !secret) {
+  if (!stripe) {
     return Response.json({ ok: false }, { status: 503 });
   }
 
@@ -34,7 +37,7 @@ export async function POST(request: Request) {
   const payload = await request.text();
   let event;
   try {
-    event = stripe.webhooks.constructEvent(payload, signature, secret);
+    event = constructSignedStripeEvent(stripe, payload, signature);
   } catch {
     return Response.json({ ok: false, error: "invalid_signature" }, { status: 400 });
   }
