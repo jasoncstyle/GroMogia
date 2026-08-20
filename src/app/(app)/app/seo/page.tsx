@@ -7,6 +7,7 @@ import { explainSeoCheck } from "@/lib/seo/explain";
 import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
 import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
+import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default async function SeoPage() {
+export default async function SeoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ gsc?: string; error?: string }>
+}) {
+  const params = await searchParams;
   const session = await getAppSession();
   const data = session.organizationId
     ? await getSeoPageData(session.organizationId)
@@ -53,8 +59,8 @@ export default async function SeoPage() {
         <h1 className="text-2xl font-semibold tracking-tight">SEO</h1>
         <p className="text-muted-foreground">
           Check the connected homepage, see how the score changes over time,
-          then draft improvements for you to approve. GroovGro will not buy ads
-          or change Stripe checkout.
+          then draft improvements for you to approve. Search Console is
+          read-only. GroovGro will not buy ads or change Stripe checkout.
         </p>
       </div>
 
@@ -99,6 +105,11 @@ export default async function SeoPage() {
               )}
             </CardContent>
           </Card>
+
+          <SearchConsolePanel
+            searchConsole={data.searchConsole}
+            notice={searchConsoleNotice(params.gsc, params.error)}
+          />
 
           {latest && explanation ? (
             <>

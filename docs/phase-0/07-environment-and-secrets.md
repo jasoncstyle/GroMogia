@@ -33,7 +33,7 @@ Required for Phase 2:
 - `RESEND_API_KEY`
 - `RESEND_FROM_EMAIL`
 
-Optional later: `AI_GATEWAY_API_KEY`, Google/Meta OAuth client secrets.
+Optional later: `AI_GATEWAY_API_KEY`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`.
 
 ## Vercel project env
 

@@ -36,6 +36,13 @@
       "when": 1787241959394,
       "tag": "0004_phase6_seo_drafts",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1787244000000,
+      "tag": "0005_phase6_search_console",
+      "breakpoints": true
     }
   ]
 }

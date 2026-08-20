@@ -1,11 +1,14 @@
+import Link from "next/link";
 import { eq } from "drizzle-orm";
 
+import { disconnectSearchConsole } from "@/lib/actions/search-console";
 import { connectStripe, disconnectStripe } from "@/lib/actions/stripe";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { integrationConnections } from "@/lib/db/schema";
-import { isStripeConfigured } from "@/lib/env";
+import { isGoogleOAuthConfigured, isStripeConfigured } from "@/lib/env";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
@@ -28,6 +31,7 @@ export default async function IntegrationsPage() {
       : [];
 
   const stripeReady = isStripeConfigured();
+  const googleReady = isGoogleOAuthConfigured();
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -58,7 +62,9 @@ export default async function IntegrationsPage() {
                   Capabilities: {provider.capabilities.join(", ")}.
                   {provider.key === "stripe"
                     ? " Phase 2 uses Stripe for bookings and payments. Card numbers never enter GroovGro."
-                    : " Connect in a later phase using OAuth or official APIs. Tokens stay in Vercel, never in git."}
+                    : provider.key === "google"
+                      ? " Phase 6 uses Google only for Search Console (read-only). Ads stay off."
+                      : " Connect in a later phase using OAuth or official APIs. Tokens stay in Vercel, never in git."}
                 </CardDescription>
               </CardHeader>
               {provider.key === "stripe" ? (
@@ -77,6 +83,29 @@ export default async function IntegrationsPage() {
                     <SaveForm action={connectStripe} successMessage="Stripe connected">
                       <SaveButton type="submit">Connect Stripe</SaveButton>
                     </SaveForm>
+                  )}
+                </CardFooter>
+              ) : null}
+              {provider.key === "google" ? (
+                <CardFooter className="gap-2">
+                  {!googleReady ? (
+                    <p className="text-sm text-muted-foreground">
+                      Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel,
+                      then redeploy. Steps: docs/phase-6/USER_SETUP.md.
+                    </p>
+                  ) : connected ? (
+                    <SaveForm
+                      action={disconnectSearchConsole}
+                      successMessage="Search Console disconnected."
+                    >
+                      <SaveButton type="submit" variant="outline">
+                        Disconnect Search Console
+                      </SaveButton>
+                    </SaveForm>
+                  ) : (
+                    <Button asChild>
+                      <Link href="/api/google/start">Connect Search Console</Link>
+                    </Button>
                   )}
                 </CardFooter>
               ) : null}

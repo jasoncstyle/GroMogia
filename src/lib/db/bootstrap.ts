@@ -86,7 +86,7 @@ export async function ensureCatalog(): Promise<void> {
     },
     {
       key: "phase_6_seo",
-      description: "Homepage SEO check of the connected website; no site edits",
+      description: "Homepage SEO check, drafts, monitoring, and Search Console read-only",
     },
   ]) {
     await db
