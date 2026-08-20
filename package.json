@@ -10,12 +10,13 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "test": "tsx --test src/lib/permissions.test.ts src/lib/modules/catalog.test.ts src/lib/db/tenant.test.ts src/modules/contacts/identity.test.ts src/modules/integrations/stripe-normalize.test.ts src/modules/integrations/stripe.test.ts src/lib/attribution.test.ts"
+    "test": "tsx --test src/lib/permissions.test.ts src/lib/modules/catalog.test.ts src/lib/db/tenant.test.ts src/modules/contacts/identity.test.ts src/modules/integrations/stripe-normalize.test.ts src/modules/integrations/stripe.test.ts src/lib/attribution.test.ts src/lib/intelligence/observe.test.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.7.6",
     "@neondatabase/serverless": "^1.1.0",
     "@vercel/config": "^0.6.1",
+    "ai": "^7.0.70",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.2",

@@ -11,30 +11,28 @@ Last updated: 20 August 2026.
 
 ## Current phase
 
-**Phase 3 — marketing / attribution**, first slice.
+**Phase 4 — intelligence**, first slice (observe + recommend only).
 
-Do not start ads, SEO, the website builder, or autonomous AI.
+Do not start ads, SEO, the website builder, brand voice, or autonomous AI.
 
-## What is already working (Phase 2)
+## Stripe (do not mix, do not replace)
 
-- Homepage is Coming soon; the app is at `/app`
-- Sign-in shows GroovGro
-- Jason's Test: website, snippet, public lead form, events, dashboard
-- Stripe **sandbox** GroovGro test webhook on the personal-email **Coastal Sailing Adventures LLC** account
-- Stripe **Live** GroovGro live webhook is an extra destination on **Ocean Sailing Adventures**, beside **stripe-osa endpoint**. The sailing checkout for bunks is unchanged.
-- GroovGro keeps `sk_test_` keys. Live events use `STRIPE_LIVE_WEBHOOK_SECRET`.
-
-## Stripe accounts (do not mix)
+Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa endpoint**. GroovGro only **added** a second Live destination. GroovGro never charges a card and never replaces that checkout.
 
 | Login | Stripe account | Use |
 | --- | --- | --- |
-| Personal email | Coastal Sailing Adventures LLC | GroovGro test webhooks |
+| Personal email | Coastal Sailing Adventures LLC | GroovGro **test** webhooks |
 | Ocean Sailing Adventures | Ocean Sailing Adventures | Live sailing payments. **stripe-osa endpoint** stays. GroovGro live is extra. |
 
-## This Phase 3 slice
+GroovGro keeps `sk_test_` keys. Live events use `STRIPE_LIVE_WEBHOOK_SECRET`.
 
-Marketing page: source → visits → leads → customers → revenue (Stripe `ch_` charges only, so one checkout is not triple-counted). Snippet remembers UTM on the connected site.
+## What is already working
+
+- Homepage is Coming soon; the app is at `/app`
+- Jason's Test: website, snippet, public lead form, events, dashboard
+- Marketing: source → visits → leads → customers → revenue (`ch_` charges only)
+- Intelligence: observations and recommended next steps from those records. No email, ads, website edits, or payments.
 
 ## Still later
 
-Phase 4 intelligence, 5 brand voice, 6 SEO, 7 website builder, 8 more integrations, 9 AI execute, 10 commercialization.
+Phase 5 brand voice, 6 SEO, 7 website builder, 8 more integrations, 9 AI execute, 10 commercialization.
