@@ -50,4 +50,12 @@ export async function ensureSchema(): Promise<void> {
   if (!brandVoice[0]?.name) {
     await applyMigration(sql, "0002_phase5_brand_voice.sql");
   }
+
+  const seo = (await sql.query(
+    "select to_regclass('public.seo_audits') as name",
+  )) as RegistryRow[];
+
+  if (!seo[0]?.name) {
+    await applyMigration(sql, "0003_phase6_seo.sql");
+  }
 }
