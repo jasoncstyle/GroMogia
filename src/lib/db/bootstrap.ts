@@ -84,6 +84,10 @@ export async function ensureCatalog(): Promise<void> {
       key: "phase_5_brand_voice",
       description: "Approved examples and draft copy that is not sent or published",
     },
+    {
+      key: "phase_6_seo",
+      description: "Homepage SEO check of the connected website; no site edits",
+    },
   ]) {
     await db
       .insert(featureFlags)

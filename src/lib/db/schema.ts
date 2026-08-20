@@ -567,3 +567,34 @@ export const brandVoiceExamples = pgTable(
   },
   (table) => [index("brand_voice_examples_org_idx").on(table.organizationId)],
 );
+
+export type SeoAuditFinding = {
+  id: string
+  severity: "ok" | "warn" | "fail"
+  title: string
+  detail: string
+  recommendation: string
+};
+
+export const seoAudits = pgTable(
+  "seo_audits",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    websiteId: uuid("website_id").references(() => websites.id, {
+      onDelete: "set null",
+    }),
+    url: text("url").notNull(),
+    status: text("status").notNull().default("ok"),
+    score: integer("score").notNull().default(0),
+    summary: text("summary").notNull().default(""),
+    findings: jsonb("findings").$type<SeoAuditFinding[]>().notNull().default([]),
+    createdBy: uuid("created_by").references(() => users.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("seo_audits_org_idx").on(table.organizationId)],
+);

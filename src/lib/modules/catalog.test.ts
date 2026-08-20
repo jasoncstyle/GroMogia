@@ -47,4 +47,10 @@ describe("module catalog", () => {
     assert.equal(items.some((item) => item.id === "brand_voice"), true);
     assert.equal(items.some((item) => item.id === "seo"), false);
   });
+
+  it("shows Phase 6 SEO in grow nav when entitled", () => {
+    const items = navModules(["seo", "brand_voice"], "grow");
+    assert.equal(items.some((item) => item.id === "seo"), true);
+    assert.equal(items.some((item) => item.id === "website_builder"), false);
+  });
 });
