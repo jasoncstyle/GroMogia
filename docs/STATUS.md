@@ -11,28 +11,27 @@ Last updated: 20 August 2026.
 
 ## Current phase
 
-**Phase 4 — intelligence**, first slice (observe + recommend only).
+**Phase 5 — brand voice**, first slice (drafts only).
 
-Do not start ads, SEO, the website builder, brand voice, or autonomous AI.
+Do not start ads, SEO, the website builder, or autonomous AI.
 
 ## Stripe (do not mix, do not replace)
 
-Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa endpoint**. GroovGro only **added** a second Live destination. GroovGro never charges a card and never replaces that checkout.
+Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa endpoint**. GroovGro only **reads a copy** of those events for marketing and intelligence. It never charges a card and never replaces checkout.
 
 | Login | Stripe account | Use |
 | --- | --- | --- |
 | Personal email | Coastal Sailing Adventures LLC | GroovGro **test** webhooks |
 | Ocean Sailing Adventures | Ocean Sailing Adventures | Live sailing payments. **stripe-osa endpoint** stays. GroovGro live is extra. |
 
-GroovGro keeps `sk_test_` keys. Live events use `STRIPE_LIVE_WEBHOOK_SECRET`.
-
 ## What is already working
 
 - Homepage is Coming soon; the app is at `/app`
-- Jason's Test: website, snippet, public lead form, events, dashboard
+- Website, snippet, public lead form, events, CRM, dashboard
 - Marketing: source → visits → leads → customers → revenue (`ch_` charges only)
-- Intelligence: observations and recommended next steps from those records. No email, ads, website edits, or payments.
+- Intelligence: observe and recommend only
+- Brand voice: profile, more/less examples, draft copy that stays in GroovGro
 
 ## Still later
 
-Phase 5 brand voice, 6 SEO, 7 website builder, 8 more integrations, 9 AI execute, 10 commercialization.
+Phase 6 SEO, 7 website builder, 8 more integrations, 9 AI execute, 10 commercialization.
