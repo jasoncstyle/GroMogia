@@ -7,6 +7,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { purposeLabel } from "@/lib/brand-voice/draft";
 import { getBrandVoicePageData, readDraftOutput } from "@/lib/phase5/queries";
+import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
@@ -148,8 +149,11 @@ export default async function BrandVoicePage() {
             <Card>
               <CardHeader>
                 <CardTitle>Saved examples</CardTitle>
+                <CardDescription>
+                  Each sample stays closed. Click the name to open it.
+                </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-2">
                 {data.examples.length === 0 ? (
                   <p className="text-sm text-muted-foreground">
                     No examples yet. A welcome email or homepage paragraph you
@@ -157,13 +161,15 @@ export default async function BrandVoicePage() {
                   </p>
                 ) : (
                   data.examples.map((example) => (
-                    <div key={example.id} className="space-y-2 rounded-lg border p-3">
-                      <p className="text-sm font-medium">{example.title}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {example.direction === "less_like_this"
+                    <FoldableSample
+                      key={example.id}
+                      title={example.title}
+                      subtitle={
+                        example.direction === "less_like_this"
                           ? "Less like this"
-                          : "More like this"}
-                      </p>
+                          : "More like this"
+                      }
+                    >
                       <p className="whitespace-pre-wrap text-sm text-muted-foreground">
                         {example.body}
                       </p>
@@ -173,7 +179,7 @@ export default async function BrandVoicePage() {
                           Remove
                         </SaveButton>
                       </SaveForm>
-                    </div>
+                    </FoldableSample>
                   ))
                 )}
               </CardContent>
@@ -230,19 +236,21 @@ export default async function BrandVoicePage() {
                   const stored = readDraftOutput(row.output);
                   if (!stored) return null;
                   return (
-                    <div key={row.id} className="space-y-2 rounded-lg border p-3">
-                      <p className="text-sm font-medium">
-                        {stored.purpose ? purposeLabelSafe(stored.purpose) : "Draft"}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {row.createdAt.toLocaleString()}
-                        {stored.usedAi ? " · rewritten in your voice" : " · from your voice notes"}
-                        {stored.topic ? ` · ${stored.topic}` : ""}
-                      </p>
+                    <FoldableSample
+                      key={row.id}
+                      title={stored.purpose ? purposeLabelSafe(stored.purpose) : "Draft"}
+                      subtitle={[
+                        row.createdAt.toLocaleString(),
+                        stored.usedAi ? "rewritten in your voice" : "from your voice notes",
+                        stored.topic,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    >
                       <p className="whitespace-pre-wrap text-sm text-muted-foreground">
                         {stored.draft}
                       </p>
-                    </div>
+                    </FoldableSample>
                   );
                 })
               )}
