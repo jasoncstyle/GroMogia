@@ -144,7 +144,7 @@ export const MODULE_CATALOG: ModuleDefinition[] = [
   {
     id: "seo",
     name: "SEO",
-    description: "Audits and recommendations in plain English.",
+    description: "Homepage checks, score over time, and drafts in plain English.",
     phase: 6,
     href: "/app/seo",
     navGroup: "grow",

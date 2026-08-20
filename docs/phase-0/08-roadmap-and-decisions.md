@@ -36,6 +36,8 @@ Approved examples, profile, generation, “more like this / less like this.”
 
 Audit, recommendations, technical monitoring, Search Console when OAuth is ready, plain-language AI explanation.
 
+**Now in the app:** homepage check, drafts you approve, score over time, and a plain-language explanation of the latest check. Search Console still waits for OAuth. Do not start Phase 7 until a human approves it.
+
 ### Phase 7 — Website builder
 
 Section-based builder. Not before the core platform is useful. Existing-site customers never need this module.
