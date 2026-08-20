@@ -44,7 +44,7 @@ export async function getSeoPageData(organizationId: string) {
     .from(seoAudits)
     .where(eq(seoAudits.organizationId, organizationId))
     .orderBy(desc(seoAudits.createdAt))
-    .limit(5);
+    .limit(12);
 
   const drafts = await db
     .select()

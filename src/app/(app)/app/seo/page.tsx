@@ -3,6 +3,8 @@ import Link from "next/link";
 import { createSeoDrafts, decideSeoDraft, runSeoAudit } from "@/lib/actions/seo";
 import { getAppSession } from "@/lib/auth/session";
 import { getSeoPageData } from "@/lib/phase6/queries";
+import { explainSeoCheck } from "@/lib/seo/explain";
+import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
 import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -22,6 +24,23 @@ export default async function SeoPage() {
     ? await getSeoPageData(session.organizationId)
     : null;
   const latest = data?.audits[0] ?? null;
+  const previous = data?.audits[1] ?? null;
+  const comparison = latest
+    ? compareSeoChecks(
+        { score: latest.score, findings: latest.findings },
+        previous
+          ? { score: previous.score, findings: previous.findings }
+          : null,
+      )
+    : null;
+  const explanation =
+    latest && comparison
+      ? explainSeoCheck({
+          score: latest.score,
+          findings: latest.findings,
+          comparison,
+        })
+      : null;
   const openDrafts = data?.drafts.filter((draft) => draft.status === "draft") ?? [];
   const decidedDrafts =
     data?.drafts.filter((draft) => draft.status !== "draft").slice(0, 8) ?? [];
@@ -33,8 +52,9 @@ export default async function SeoPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">SEO</h1>
         <p className="text-muted-foreground">
-          Check the connected homepage, then draft improvements for you to
-          approve. GroovGro will not buy ads or change Stripe checkout.
+          Check the connected homepage, see how the score changes over time,
+          then draft improvements for you to approve. GroovGro will not buy ads
+          or change Stripe checkout.
         </p>
       </div>
 
@@ -80,34 +100,81 @@ export default async function SeoPage() {
             </CardContent>
           </Card>
 
-          {latest ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Latest score: {latest.score}</CardTitle>
-                <CardDescription>
-                  {latest.createdAt.toLocaleString()} · {latest.url}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-muted-foreground">{latest.summary}</p>
-                {latest.findings.map((finding) => (
-                  <FoldableSample
-                    key={finding.id}
-                    title={finding.title}
-                    subtitle={severityLabel(finding.severity)}
-                  >
-                    <p className="text-sm text-muted-foreground">{finding.detail}</p>
-                    <p className="text-sm">{finding.recommendation}</p>
-                  </FoldableSample>
-                ))}
-              </CardContent>
-            </Card>
+          {latest && explanation ? (
+            <>
+              <Card>
+                <CardHeader>
+                  <CardTitle>What this means</CardTitle>
+                  <CardDescription>
+                    {explanation.headline} · {latest.createdAt.toLocaleString()}{" "}
+                    · {latest.url}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {explanation.paragraphs.map((paragraph) => (
+                    <p key={paragraph} className="text-sm text-muted-foreground">
+                      {paragraph}
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Latest check details</CardTitle>
+                  <CardDescription>
+                    Score {latest.score}. Open a row for the technical detail.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {latest.findings.map((finding) => (
+                    <FoldableSample
+                      key={finding.id}
+                      title={finding.title}
+                      subtitle={severityLabel(finding.severity)}
+                    >
+                      <p className="text-sm text-muted-foreground">{finding.detail}</p>
+                      <p className="text-sm">{finding.recommendation}</p>
+                    </FoldableSample>
+                  ))}
+                </CardContent>
+              </Card>
+            </>
           ) : (
             <p className="text-sm text-muted-foreground">
               Run a check to see titles, descriptions, headings, robots.txt, and
               sitemap on the connected homepage.
             </p>
           )}
+
+          {data.audits.length > 0 ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Checks over time</CardTitle>
+                <CardDescription>
+                  Technical monitoring from saved homepage checks. GroovGro does
+                  not use Search Console yet.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {data.audits.map((audit, index) => {
+                  const older = data.audits[index + 1];
+                  const change = older ? audit.score - older.score : null;
+                  return (
+                    <p key={audit.id} className="text-sm">
+                      <span className="font-medium">{audit.score}</span>
+                      {" · "}
+                      {audit.createdAt.toLocaleString()}
+                      {" · "}
+                      <span className="text-muted-foreground">
+                        {scoreTrendLabel(change)}
+                      </span>
+                    </p>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          ) : null}
 
           {openDrafts.length > 0 ? (
             <Card>
