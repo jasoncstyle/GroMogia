@@ -9,6 +9,7 @@ import { resolveOrganizationSlug } from "@/lib/org";
 import { CopyLink } from "@/components/copy-link";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { TrackingSnippet } from "@/components/tracking-snippet";
+import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
 import {
   Card,
   CardContent,
@@ -52,6 +53,8 @@ export default async function WebsitePage() {
           this phase, and this is not the website builder.
         </p>
       </div>
+
+      <WebsiteUpdateExpectation />
 
       {leadFormUrl ? (
         <Card>

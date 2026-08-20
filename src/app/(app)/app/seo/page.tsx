@@ -6,6 +6,7 @@ import { getSeoPageData } from "@/lib/phase6/queries";
 import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
+import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,10 +34,11 @@ export default async function SeoPage() {
         <h1 className="text-2xl font-semibold tracking-tight">SEO</h1>
         <p className="text-muted-foreground">
           Check the connected homepage, then draft improvements for you to
-          approve. GroovGro will not edit the site, buy ads, or change Stripe
-          checkout.
+          approve. GroovGro will not buy ads or change Stripe checkout.
         </p>
       </div>
+
+      <WebsiteUpdateExpectation />
 
       {!data || !session.organizationId ? (
         <p className="text-sm text-muted-foreground">
@@ -112,8 +114,9 @@ export default async function SeoPage() {
               <CardHeader>
                 <CardTitle>Approve or do not approve</CardTitle>
                 <CardDescription>
-                  Approval keeps the draft in GroovGro. It does not publish to
-                  the connected website.
+                  Open each item for the exact text and where to put it.
+                  Approval keeps the draft in GroovGro. It does not publish
+                  unless a later official connection can apply it for you.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">

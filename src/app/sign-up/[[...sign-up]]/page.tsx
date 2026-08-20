@@ -1,6 +1,7 @@
 import { SignUp } from "@clerk/nextjs";
 
 import { AuthFrame } from "@/components/auth-frame";
+import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PRODUCT_NAME } from "@/lib/brand";
 import { isClerkConfigured } from "@/lib/env";
@@ -23,6 +24,9 @@ export default function SignUpPage() {
 
   return (
     <AuthFrame title="Create an account">
+      <div className="w-full max-w-md">
+        <WebsiteUpdateExpectation compact />
+      </div>
       <SignUp />
     </AuthFrame>
   );

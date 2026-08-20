@@ -116,6 +116,14 @@ Websites must be responsive, fast, SEO-friendly, accessible, and secure.
 
 A business must also be able to connect an existing website rather than using GroovGro’s builder.
 
+**How GroovGro applies website changes**
+
+- Suggest → the user approves or rejects → apply only when a real connector allows it.
+- GroovGro website builder, WordPress, or a similar official API: approved updates can be applied automatically later.
+- Custom or code-hosted sites: GroovGro drafts the change and shows how and where to apply it. The owner updates the site manually.
+- Daily jobs may re-check and suggest. They must not rewrite the live site overnight.
+- Say this in onboarding and, when public signup exists, in the features section. The public homepage stays Coming soon until commercialization.
+
 ## 7. Industry-specific website modules
 
 Support optional industry modules (for example sailing schools/clubs) on top of a **generic** event system. Do not make the database sailing-specific.

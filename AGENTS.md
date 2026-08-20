@@ -51,3 +51,4 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 - Do not change Ocean Sailing Adventures live Stripe checkout or **stripe-osa endpoint**.
 - Brand voice drafts must not send email, post to social, edit a website, or take a payment.
 - SEO checks and approved drafts must not edit the connected website.
+- Website apply model: suggest → user approves or rejects → apply only if an official connector exists (GroovGro builder, WordPress, or similar). Custom/code-hosted sites stay manual; show how and where to make the change. Do not silently rewrite a live site.
