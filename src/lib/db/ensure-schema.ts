@@ -42,4 +42,12 @@ export async function ensureSchema(): Promise<void> {
   if (!contacts[0]?.name) {
     await applyMigration(sql, "0001_phase2_business_data.sql");
   }
+
+  const brandVoice = (await sql.query(
+    "select to_regclass('public.brand_voice_profiles') as name",
+  )) as RegistryRow[];
+
+  if (!brandVoice[0]?.name) {
+    await applyMigration(sql, "0002_phase5_brand_voice.sql");
+  }
 }

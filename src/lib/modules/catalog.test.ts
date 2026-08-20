@@ -41,4 +41,10 @@ describe("module catalog", () => {
     assert.equal(items.some((item) => item.id === "intelligence"), true);
     assert.equal(items.some((item) => item.id === "website_builder"), false);
   });
+
+  it("shows Phase 5 brand voice in grow nav when entitled", () => {
+    const items = navModules(["brand_voice", "intelligence"], "grow");
+    assert.equal(items.some((item) => item.id === "brand_voice"), true);
+    assert.equal(items.some((item) => item.id === "seo"), false);
+  });
 });

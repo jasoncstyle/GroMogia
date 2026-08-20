@@ -39,11 +39,14 @@ export const PHASE_3_MODULES: ModuleId[] = ["marketing"];
 
 export const PHASE_4_MODULES: ModuleId[] = ["intelligence"];
 
+export const PHASE_5_MODULES: ModuleId[] = ["brand_voice"];
+
 export const ENABLED_BY_DEFAULT_MODULES: ModuleId[] = [
   ...PHASE_1_MODULES,
   ...PHASE_2_MODULES,
   ...PHASE_3_MODULES,
   ...PHASE_4_MODULES,
+  ...PHASE_5_MODULES,
 ];
 
 export const MODULE_CATALOG: ModuleDefinition[] = [

@@ -540,3 +540,30 @@ export const payments = pgTable(
     index("payments_org_idx").on(table.organizationId),
   ],
 );
+
+export const brandVoiceProfiles = pgTable("brand_voice_profiles", {
+  organizationId: uuid("organization_id")
+    .primaryKey()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  tone: text("tone").notNull().default(""),
+  audience: text("audience").notNull().default(""),
+  doSay: text("do_say").notNull().default(""),
+  dontSay: text("dont_say").notNull().default(""),
+  ...timestamps,
+});
+
+export const brandVoiceExamples = pgTable(
+  "brand_voice_examples",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    title: text("title").notNull().default(""),
+    body: text("body").notNull(),
+    direction: text("direction").notNull(),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [index("brand_voice_examples_org_idx").on(table.organizationId)],
+);

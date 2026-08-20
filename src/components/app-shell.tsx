@@ -17,6 +17,7 @@ import {
   Settings,
   Sparkles,
   Users,
+  Quote,
 } from "lucide-react";
 
 import type { AppSession } from "@/lib/auth/session";
@@ -33,6 +34,7 @@ const ICONS: Partial<Record<ModuleId | "dashboard" | "settings" | "audit" | "not
   analytics: BarChart3,
   marketing: Megaphone,
   intelligence: Sparkles,
+  brand_voice: Quote,
   integrations: Plug,
   brand: Building2,
   settings: Settings,
