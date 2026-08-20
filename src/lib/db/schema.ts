@@ -623,3 +623,50 @@ export const seoDrafts = pgTable(
   },
   (table) => [index("seo_drafts_org_idx").on(table.organizationId)],
 );
+
+export type SearchConsoleTotals = {
+  clicks: number
+  impressions: number
+  ctr: number
+  position: number
+};
+
+export type SearchConsoleMetricRow = {
+  key: string
+  clicks: number
+  impressions: number
+  ctr: number
+  position: number
+};
+
+export const searchConsoleSnapshots = pgTable(
+  "search_console_snapshots",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    propertyUrl: text("property_url").notNull(),
+    startDate: text("start_date").notNull(),
+    endDate: text("end_date").notNull(),
+    totals: jsonb("totals").$type<SearchConsoleTotals>().notNull().default({
+      clicks: 0,
+      impressions: 0,
+      ctr: 0,
+      position: 0,
+    }),
+    topQueries: jsonb("top_queries")
+      .$type<SearchConsoleMetricRow[]>()
+      .notNull()
+      .default([]),
+    topPages: jsonb("top_pages")
+      .$type<SearchConsoleMetricRow[]>()
+      .notNull()
+      .default([]),
+    createdBy: uuid("created_by").references(() => users.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("search_console_snapshots_org_idx").on(table.organizationId)],
+);

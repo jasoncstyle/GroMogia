@@ -15,6 +15,10 @@ export function isStripeConfigured(): boolean {
   return Boolean(process.env.STRIPE_SECRET_KEY);
 }
 
+export function isGoogleOAuthConfigured(): boolean {
+  return Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+}
+
 export function missingFoundationServices(): string[] {
   const missing: string[] = [];
   if (!isClerkConfigured()) missing.push("Clerk (sign-in)");

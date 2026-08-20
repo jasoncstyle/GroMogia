@@ -1,15 +1,29 @@
 import { and, desc, eq } from "drizzle-orm";
 
+import { readGoogleSecret } from "@/lib/actions/search-console";
 import { getDb } from "@/lib/db";
 import {
   brandSettings,
   brandVoiceProfiles,
+  integrationConnections,
+  searchConsoleSnapshots,
   seoAudits,
   seoDrafts,
   websites,
 } from "@/lib/db/schema";
+import { isGoogleOAuthConfigured } from "@/lib/env";
 
 export async function getSeoPageData(organizationId: string) {
+  const emptySearchConsole = {
+    configured: isGoogleOAuthConfigured(),
+    connected: false,
+    propertyUrl: null as string | null,
+    candidates: [] as string[],
+    lastSyncAt: null as Date | null,
+    lastError: null as string | null,
+    snapshots: [] as (typeof searchConsoleSnapshots.$inferSelect)[],
+  };
+
   const db = getDb();
   if (!db) {
     return {
@@ -18,6 +32,7 @@ export async function getSeoPageData(organizationId: string) {
       voice: null,
       audits: [] as (typeof seoAudits.$inferSelect)[],
       drafts: [] as (typeof seoDrafts.$inferSelect)[],
+      searchConsole: emptySearchConsole,
     };
   }
 
@@ -49,13 +64,32 @@ export async function getSeoPageData(organizationId: string) {
   const drafts = await db
     .select()
     .from(seoDrafts)
-    .where(
-      and(
-        eq(seoDrafts.organizationId, organizationId),
-      ),
-    )
+    .where(and(eq(seoDrafts.organizationId, organizationId)))
     .orderBy(desc(seoDrafts.createdAt))
     .limit(30);
+
+  const [google] = await db
+    .select()
+    .from(integrationConnections)
+    .where(
+      and(
+        eq(integrationConnections.organizationId, organizationId),
+        eq(integrationConnections.providerKey, "google"),
+      ),
+    )
+    .limit(1);
+
+  const secret =
+    google?.status === "connected"
+      ? await readGoogleSecret(organizationId)
+      : null;
+
+  const snapshots = await db
+    .select()
+    .from(searchConsoleSnapshots)
+    .where(eq(searchConsoleSnapshots.organizationId, organizationId))
+    .orderBy(desc(searchConsoleSnapshots.createdAt))
+    .limit(8);
 
   return {
     website: website ?? null,
@@ -63,5 +97,15 @@ export async function getSeoPageData(organizationId: string) {
     voice: voice ?? null,
     audits,
     drafts,
+    searchConsole: {
+      configured: isGoogleOAuthConfigured(),
+      connected: google?.status === "connected",
+      propertyUrl: secret?.siteUrl ?? null,
+      candidates: secret?.candidates ?? [],
+      lastSyncAt: google?.lastSyncAt ?? null,
+      lastError: google?.lastError ?? null,
+      snapshots,
+    },
   };
 }
+
