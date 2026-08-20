@@ -58,4 +58,12 @@ export async function ensureSchema(): Promise<void> {
   if (!seo[0]?.name) {
     await applyMigration(sql, "0003_phase6_seo.sql");
   }
+
+  const seoDrafts = (await sql.query(
+    "select to_regclass('public.seo_drafts') as name",
+  )) as RegistryRow[];
+
+  if (!seoDrafts[0]?.name) {
+    await applyMigration(sql, "0004_phase6_seo_drafts.sql");
+  }
 }

@@ -1,8 +1,9 @@
 import Link from "next/link";
 
-import { runSeoAudit } from "@/lib/actions/seo";
+import { createSeoDrafts, decideSeoDraft, runSeoAudit } from "@/lib/actions/seo";
 import { getAppSession } from "@/lib/auth/session";
 import { getSeoPageData } from "@/lib/phase6/queries";
+import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Button } from "@/components/ui/button";
@@ -20,15 +21,20 @@ export default async function SeoPage() {
     ? await getSeoPageData(session.organizationId)
     : null;
   const latest = data?.audits[0] ?? null;
+  const openDrafts = data?.drafts.filter((draft) => draft.status === "draft") ?? [];
+  const decidedDrafts =
+    data?.drafts.filter((draft) => draft.status !== "draft").slice(0, 8) ?? [];
+  const needsDrafts =
+    Boolean(latest?.findings.some((finding) => finding.severity !== "ok"));
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">SEO</h1>
         <p className="text-muted-foreground">
-          A first technical check of the connected website. GroovGro will not
-          edit the site, buy ads, or change Stripe checkout. Search Console
-          comes later.
+          Check the connected homepage, then draft improvements for you to
+          approve. GroovGro will not edit the site, buy ads, or change Stripe
+          checkout.
         </p>
       </div>
 
@@ -49,9 +55,21 @@ export default async function SeoPage() {
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               {data.website?.publicUrl ? (
-                <SaveForm action={runSeoAudit} successMessage="Check saved.">
-                  <SaveButton pendingLabel="Checking…">Run homepage check</SaveButton>
-                </SaveForm>
+                <>
+                  <SaveForm action={runSeoAudit} successMessage="Check saved.">
+                    <SaveButton pendingLabel="Checking…">Run homepage check</SaveButton>
+                  </SaveForm>
+                  {needsDrafts ? (
+                    <SaveForm
+                      action={createSeoDrafts}
+                      successMessage="Drafts ready to approve."
+                    >
+                      <SaveButton pendingLabel="Drafting…" variant="outline">
+                        Draft improvements
+                      </SaveButton>
+                    </SaveForm>
+                  ) : null}
+                </>
               ) : (
                 <Button asChild>
                   <Link href="/app/website">Connect website</Link>
@@ -88,6 +106,74 @@ export default async function SeoPage() {
               sitemap on the connected homepage.
             </p>
           )}
+
+          {openDrafts.length > 0 ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Approve or do not approve</CardTitle>
+                <CardDescription>
+                  Approval keeps the draft in GroovGro. It does not publish to
+                  the connected website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {openDrafts.map((draft) => (
+                  <FoldableSample
+                    key={draft.id}
+                    title={draft.title}
+                    subtitle="Waiting for your decision"
+                  >
+                    <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+                      {draft.proposedChange}
+                    </pre>
+                    <p className="text-sm text-muted-foreground">{draft.howToApply}</p>
+                    <div className="flex flex-wrap gap-2">
+                      <CopyText text={draft.proposedChange} label="Copy draft" />
+                      <SaveForm action={decideSeoDraft} successMessage="Approved.">
+                        <input type="hidden" name="draftId" value={draft.id} />
+                        <input type="hidden" name="decision" value="approved" />
+                        <SaveButton size="sm">Approve</SaveButton>
+                      </SaveForm>
+                      <SaveForm
+                        action={decideSeoDraft}
+                        successMessage="Marked as do not approve."
+                      >
+                        <input type="hidden" name="draftId" value={draft.id} />
+                        <input type="hidden" name="decision" value="rejected" />
+                        <SaveButton size="sm" variant="outline">
+                          Do not approve
+                        </SaveButton>
+                      </SaveForm>
+                    </div>
+                  </FoldableSample>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {decidedDrafts.length > 0 ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Earlier decisions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {decidedDrafts.map((draft) => (
+                  <FoldableSample
+                    key={draft.id}
+                    title={draft.title}
+                    subtitle={draft.status === "approved" ? "Approved" : "Not approved"}
+                  >
+                    <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+                      {draft.proposedChange}
+                    </pre>
+                    {draft.status === "approved" ? (
+                      <CopyText text={draft.proposedChange} label="Copy draft" />
+                    ) : null}
+                  </FoldableSample>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
         </>
       )}
     </div>

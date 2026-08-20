@@ -11,7 +11,7 @@ Last updated: 20 August 2026.
 
 ## Current phase
 
-**Phase 6 — SEO**, first slice (homepage check only).
+**Phase 6 — SEO**, drafts you approve (still no live-site edits).
 
 Do not start ads, the website builder, Search Console, or autonomous AI.
 
@@ -24,7 +24,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Website, snippet, public lead form, events, CRM, dashboard
 - Marketing attribution and Intelligence (observe + recommend)
 - Brand voice: profile, examples, drafts that stay in GroovGro
-- SEO: technical check of the connected homepage. GroovGro does not edit the site.
+- SEO: homepage check plus drafts you approve or reject. GroovGro does not edit the site.
 
 ## Still later
 
