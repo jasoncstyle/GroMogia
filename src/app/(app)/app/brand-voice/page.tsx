@@ -6,6 +6,11 @@ import {
 } from "@/lib/actions/brand-voice";
 import { getAppSession } from "@/lib/auth/session";
 import { purposeLabel } from "@/lib/brand-voice/draft";
+import {
+  VOICE_AUDIENCE_MAX,
+  VOICE_GUIDELINE_MAX,
+  VOICE_TONE_MAX,
+} from "@/lib/brand-voice/limits";
 import { getBrandVoicePageData, readDraftOutput } from "@/lib/phase5/queries";
 import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -64,28 +69,39 @@ export default async function BrandVoicePage() {
               >
                 <div className="space-y-2">
                   <Label htmlFor="tone">Tone</Label>
-                  <Input
+                  <Textarea
                     id="tone"
                     name="tone"
+                    rows={3}
+                    maxLength={VOICE_TONE_MAX}
                     defaultValue={data.profile?.tone ?? ""}
                     placeholder="warm, direct, practical"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Up to {VOICE_TONE_MAX} characters.
+                  </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="audience">Who you are speaking to</Label>
-                  <Input
+                  <Textarea
                     id="audience"
                     name="audience"
+                    rows={3}
+                    maxLength={VOICE_AUDIENCE_MAX}
                     defaultValue={data.profile?.audience ?? ""}
                     placeholder="first-time guests, returning customers"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Up to {VOICE_AUDIENCE_MAX} characters.
+                  </p>
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="doSay">Do say</Label>
                   <Textarea
                     id="doSay"
                     name="doSay"
-                    rows={3}
+                    rows={4}
+                    maxLength={VOICE_GUIDELINE_MAX}
                     defaultValue={data.profile?.doSay ?? ""}
                   />
                 </div>
@@ -94,7 +110,8 @@ export default async function BrandVoicePage() {
                   <Textarea
                     id="dontSay"
                     name="dontSay"
-                    rows={3}
+                    rows={4}
+                    maxLength={VOICE_GUIDELINE_MAX}
                     defaultValue={data.profile?.dontSay ?? ""}
                   />
                 </div>

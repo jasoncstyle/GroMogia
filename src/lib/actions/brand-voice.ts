@@ -8,6 +8,13 @@ import { recordAudit } from "@/lib/audit";
 import { runAction, type ActionResult } from "@/lib/action-result";
 import { writeBrandVoiceDraft } from "@/lib/brand-voice/generate";
 import { isDraftPurpose } from "@/lib/brand-voice/draft";
+import {
+  VOICE_AUDIENCE_MAX,
+  VOICE_EXAMPLE_BODY_MAX,
+  VOICE_EXAMPLE_TITLE_MAX,
+  VOICE_GUIDELINE_MAX,
+  VOICE_TONE_MAX,
+} from "@/lib/brand-voice/limits";
 import { getDb } from "@/lib/db";
 import {
   aiActionLogs,
@@ -19,15 +26,41 @@ import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
 const profileSchema = z.object({
-  tone: z.string().trim().max(200).default(""),
-  audience: z.string().trim().max(200).default(""),
-  doSay: z.string().trim().max(2000).default(""),
-  dontSay: z.string().trim().max(2000).default(""),
+  tone: z
+    .string()
+    .trim()
+    .max(VOICE_TONE_MAX, `Keep Tone to ${VOICE_TONE_MAX} characters or fewer.`),
+  audience: z
+    .string()
+    .trim()
+    .max(
+      VOICE_AUDIENCE_MAX,
+      `Keep “Who you are speaking to” to ${VOICE_AUDIENCE_MAX} characters or fewer.`,
+    ),
+  doSay: z
+    .string()
+    .trim()
+    .max(VOICE_GUIDELINE_MAX, `Keep “Do say” to ${VOICE_GUIDELINE_MAX} characters or fewer.`),
+  dontSay: z
+    .string()
+    .trim()
+    .max(
+      VOICE_GUIDELINE_MAX,
+      `Keep “Do not say” to ${VOICE_GUIDELINE_MAX} characters or fewer.`,
+    ),
 });
 
 const exampleSchema = z.object({
-  title: z.string().trim().min(1).max(120),
-  body: z.string().trim().min(1).max(4000),
+  title: z
+    .string()
+    .trim()
+    .min(1)
+    .max(VOICE_EXAMPLE_TITLE_MAX, "Keep the short name to 120 characters or fewer."),
+  body: z
+    .string()
+    .trim()
+    .min(1)
+    .max(VOICE_EXAMPLE_BODY_MAX, "Keep the writing to 4,000 characters or fewer."),
   direction: z.enum(["more_like_this", "less_like_this"]),
 });
 
