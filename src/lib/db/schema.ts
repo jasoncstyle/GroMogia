@@ -598,3 +598,28 @@ export const seoAudits = pgTable(
   },
   (table) => [index("seo_audits_org_idx").on(table.organizationId)],
 );
+
+export const seoDrafts = pgTable(
+  "seo_drafts",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    auditId: uuid("audit_id").references(() => seoAudits.id, {
+      onDelete: "set null",
+    }),
+    findingId: text("finding_id").notNull(),
+    title: text("title").notNull(),
+    proposedChange: text("proposed_change").notNull(),
+    howToApply: text("how_to_apply").notNull().default(""),
+    status: text("status").notNull().default("draft"),
+    createdBy: uuid("created_by").references(() => users.id),
+    decidedBy: uuid("decided_by").references(() => users.id),
+    decidedAt: timestamp("decided_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("seo_drafts_org_idx").on(table.organizationId)],
+);
