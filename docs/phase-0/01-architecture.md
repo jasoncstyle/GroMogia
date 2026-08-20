@@ -69,6 +69,8 @@ Three surfaces in one Next.js app (route groups), not three services:
 
 Tenant-built public websites (Phase 7) are a later hosting decision. Until then, organizations **connect** existing SiteGround / WordPress / other sites.
 
+**Website apply model:** GroovGro may read a connected site and draft changes. Automatic apply is only for GroovGro-hosted pages or official APIs (WordPress and similar). Custom/code-hosted sites stay read + draft + how-to-apply. Never scrape or silently overwrite a live site.
+
 ## Modular monolith layout
 
 Modules are packages of UI, domain logic, and jobs **inside one deploy**. Enabling a module is an entitlement + navigation + job registration problem, not a new server.

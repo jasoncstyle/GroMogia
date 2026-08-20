@@ -24,7 +24,8 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Website, snippet, public lead form, events, CRM, dashboard
 - Marketing attribution and Intelligence (observe + recommend)
 - Brand voice: profile, examples, drafts that stay in GroovGro
-- SEO: homepage check plus drafts you approve or reject. GroovGro does not edit the site.
+- SEO: homepage check plus drafts you approve or reject. GroovGro does not edit the site today.
+- Website updates: GroovGro builder, WordPress, or similar can get automatic apply later. Custom/code sites stay manual, with how-and-where on each draft. Stated on sign-up, Website connection, and SEO. Public homepage stays Coming soon (no features section yet).
 
 ## Still later
 

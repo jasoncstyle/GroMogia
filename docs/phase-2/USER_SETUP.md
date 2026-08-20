@@ -69,6 +69,8 @@ If only one organization exists, incoming webhooks go there. If you later have m
 
 This does **not** build a new website. The website builder is a later phase.
 
+**How updates work:** GroovGro can check the site and draft changes. If you later use the GroovGro builder, WordPress, or a similar official connection, approved updates can be applied automatically. Otherwise you copy the change onto the connected site yourself. Each SEO draft says what to change and where.
+
 ## 6. Attach groovgro.com (after this rename is on Production)
 
 The Vercel project is still named **gro-mogia**. You do not have to rename the project.
@@ -116,4 +118,4 @@ After a test payment or a form submit:
 
 ## Not yet
 
-Ads, SEO, AI automation, and the GroovGro website builder wait for later phases.
+Ads, AI that executes without approval, and the GroovGro website builder wait for later phases.
