@@ -670,3 +670,51 @@ export const searchConsoleSnapshots = pgTable(
   },
   (table) => [index("search_console_snapshots_org_idx").on(table.organizationId)],
 );
+
+export type BuilderSectionType = "hero" | "text" | "cta" | "lead";
+
+export type BuilderSectionContent = {
+  heading?: string
+  subheading?: string
+  body?: string
+  buttonLabel?: string
+  buttonHref?: string
+};
+
+export const builderSites = pgTable(
+  "builder_sites",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    title: text("title").notNull().default(""),
+    status: text("status").notNull().default("draft"),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [uniqueIndex("builder_sites_org_idx").on(table.organizationId)],
+);
+
+export const builderSections = pgTable(
+  "builder_sections",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    siteId: uuid("site_id")
+      .notNull()
+      .references(() => builderSites.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
+    visible: boolean("visible").notNull().default(true),
+    content: jsonb("content").$type<BuilderSectionContent>().notNull().default({}),
+    ...timestamps,
+  },
+  (table) => [
+    index("builder_sections_org_idx").on(table.organizationId),
+    index("builder_sections_site_idx").on(table.siteId),
+  ],
+);
+

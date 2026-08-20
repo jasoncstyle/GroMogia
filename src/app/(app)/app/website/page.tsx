@@ -50,7 +50,8 @@ export default async function WebsitePage() {
         </h1>
         <p className="text-muted-foreground">
           Connect the site you already have. GroovGro does not replace it in
-          this phase, and this is not the website builder.
+          this phase. The optional GroovGro website builder is a separate page
+          and does not overwrite this connection.
         </p>
       </div>
 

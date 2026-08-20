@@ -43,6 +43,8 @@ export const PHASE_5_MODULES: ModuleId[] = ["brand_voice"];
 
 export const PHASE_6_MODULES: ModuleId[] = ["seo"];
 
+export const PHASE_7_MODULES: ModuleId[] = ["website_builder"];
+
 export const ENABLED_BY_DEFAULT_MODULES: ModuleId[] = [
   ...PHASE_1_MODULES,
   ...PHASE_2_MODULES,
@@ -50,6 +52,7 @@ export const ENABLED_BY_DEFAULT_MODULES: ModuleId[] = [
   ...PHASE_4_MODULES,
   ...PHASE_5_MODULES,
   ...PHASE_6_MODULES,
+  ...PHASE_7_MODULES,
 ];
 
 export const MODULE_CATALOG: ModuleDefinition[] = [
@@ -152,7 +155,7 @@ export const MODULE_CATALOG: ModuleDefinition[] = [
   {
     id: "website_builder",
     name: "Website builder",
-    description: "Optional section-based GroovGro sites.",
+    description: "Optional section-based GroovGro-hosted pages.",
     phase: 7,
     href: "/app/website-builder",
     navGroup: "work",

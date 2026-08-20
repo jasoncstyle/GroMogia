@@ -67,7 +67,7 @@ Three surfaces in one Next.js app (route groups), not three services:
 | Organization app | Org users | `groovgro.com/app` — dashboard, modules, settings |
 | Platform admin | Mogia Group super admins only | `groovgro.com/platform` — orgs, flags, health |
 
-Tenant-built public websites (Phase 7) are a later hosting decision. Until then, organizations **connect** existing SiteGround / WordPress / other sites.
+Tenant-built public websites are hosted first at `/w/[orgSlug]` on groovgro.com. Custom domains wait. Organizations can still **connect** existing SiteGround / WordPress / other sites. The builder must not overwrite a connected site.
 
 **Website apply model:** GroovGro may read a connected site and draft changes. Automatic apply is only for GroovGro-hosted pages or official APIs (WordPress and similar). Custom/code-hosted sites stay read + draft + how-to-apply. Never scrape or silently overwrite a live site.
 

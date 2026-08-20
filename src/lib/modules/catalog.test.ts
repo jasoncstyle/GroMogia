@@ -53,4 +53,10 @@ describe("module catalog", () => {
     assert.equal(items.some((item) => item.id === "seo"), true);
     assert.equal(items.some((item) => item.id === "website_builder"), false);
   });
+
+  it("shows Phase 7 website builder in work nav when entitled", () => {
+    const items = navModules(["website_builder", "website_connect"], "work");
+    assert.equal(items.some((item) => item.id === "website_builder"), true);
+    assert.equal(items.some((item) => item.id === "website_connect"), true);
+  });
 });

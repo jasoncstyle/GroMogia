@@ -11,6 +11,7 @@ import {
   CreditCard,
   Globe,
   LayoutDashboard,
+  LayoutTemplate,
   Megaphone,
   Plug,
   ScrollText,
@@ -29,6 +30,7 @@ import { cn } from "@/lib/utils";
 const ICONS: Partial<Record<ModuleId | "dashboard" | "settings" | "audit" | "notifications", typeof LayoutDashboard>> = {
   dashboard: LayoutDashboard,
   website_connect: Globe,
+  website_builder: LayoutTemplate,
   events: CalendarDays,
   crm: Users,
   commerce: CreditCard,
