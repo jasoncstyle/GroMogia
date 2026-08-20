@@ -23,6 +23,18 @@ const SCRIPT = `(function () {
     sessionId = String(Date.now());
   }
   var params = new URLSearchParams(window.location.search);
+  try {
+    ["utm_source", "utm_medium", "utm_campaign"].forEach(function (key) {
+      var value = params.get(key);
+      if (value) window.localStorage.setItem("groovgro_" + key, value);
+    });
+  } catch (error) {}
+  function remembered(key) {
+    try { return window.localStorage.getItem("groovgro_" + key); } catch (error) { return null; }
+  }
+  var utmSource = params.get("utm_source") || remembered("utm_source");
+  var utmMedium = params.get("utm_medium") || remembered("utm_medium");
+  var utmCampaign = params.get("utm_campaign") || remembered("utm_campaign");
   fetch(endpoint, {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -31,10 +43,10 @@ const SCRIPT = `(function () {
       sessionId: sessionId,
       landingPage: window.location.href,
       referrer: document.referrer,
-      utm_source: params.get("utm_source"),
-      utm_medium: params.get("utm_medium"),
-      utm_campaign: params.get("utm_campaign"),
-      channel: params.get("utm_source") || undefined
+      utm_source: utmSource,
+      utm_medium: utmMedium,
+      utm_campaign: utmCampaign,
+      channel: utmSource || undefined
     }),
     keepalive: true,
     mode: "cors"

@@ -20,6 +20,7 @@ export function PublicLeadForm({
 }) {
   const sessionRef = useRef<HTMLInputElement>(null);
   const landingRef = useRef<HTMLInputElement>(null);
+  const campaignRef = useRef<HTMLInputElement>(null);
   const [state, action, pending] = useActionState(
     async (_previous: State, formData: FormData) => {
       const result = await submitPublicLead(formData);
@@ -42,6 +43,12 @@ export function PublicLeadForm({
         window.localStorage.setItem(key, value);
       }
       if (sessionRef.current) sessionRef.current.value = value;
+      if (campaignRef.current && !campaignRef.current.value) {
+        campaignRef.current.value =
+          window.localStorage.getItem("groovgro_utm_campaign") ||
+          window.localStorage.getItem("groovgro_utm_source") ||
+          "";
+      }
     } catch {
       // Tracking session is optional for the form to submit.
     }
@@ -58,7 +65,7 @@ export function PublicLeadForm({
   return (
     <form action={action} className="space-y-4">
       <input type="hidden" name="orgSlug" value={orgSlug} />
-      <input type="hidden" name="campaign" value={campaign} />
+      <input ref={campaignRef} type="hidden" name="campaign" defaultValue={campaign} />
       <input ref={sessionRef} type="hidden" name="sessionId" defaultValue="" />
       <input ref={landingRef} type="hidden" name="landingPage" defaultValue="" />
       <div className="space-y-2">

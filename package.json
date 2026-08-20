@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "test": "tsx --test src/lib/permissions.test.ts src/lib/modules/catalog.test.ts src/lib/db/tenant.test.ts src/modules/contacts/identity.test.ts src/modules/integrations/stripe-normalize.test.ts src/modules/integrations/stripe.test.ts"
+    "test": "tsx --test src/lib/permissions.test.ts src/lib/modules/catalog.test.ts src/lib/db/tenant.test.ts src/modules/contacts/identity.test.ts src/modules/integrations/stripe-normalize.test.ts src/modules/integrations/stripe.test.ts src/lib/attribution.test.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.7.6",

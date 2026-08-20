@@ -1,10 +1,11 @@
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import {
   bookings,
   events,
   integrationConnections,
+  leadRecords,
   organizations,
   payments,
 } from "@/lib/db/schema";
@@ -78,11 +79,21 @@ export async function ingestNormalizedPayment(
       email: payment.email,
       displayName: payment.displayName,
     });
-    await ensureCustomer(
-      organizationId,
-      contactId,
-      payment.metadata.utm_source ?? payment.metadata.source ?? "stripe",
-    );
+    let source =
+      payment.metadata.utm_source ?? payment.metadata.source ?? "stripe";
+    const [firstLead] = await db
+      .select({ source: leadRecords.source })
+      .from(leadRecords)
+      .where(
+        and(
+          eq(leadRecords.organizationId, organizationId),
+          eq(leadRecords.contactId, contactId),
+        ),
+      )
+      .orderBy(asc(leadRecords.createdAt))
+      .limit(1);
+    if (firstLead?.source) source = firstLead.source;
+    await ensureCustomer(organizationId, contactId, source);
     if (payment.kind === "charge") {
       await addCustomerLtv(contactId, payment.amountCents);
       await markOpenLeadsWon(organizationId, contactId);
