@@ -54,7 +54,7 @@ export default async function DashboardPage() {
     ? "Connect the existing website and paste the tracking snippet."
     : !snapshot.stripeConnected
       ? "Connect Stripe and sync recent test payments."
-      : "Share the public lead form and keep events up to date.";
+      : "Open Intelligence for observe-and-recommend next steps, and keep the public lead form in use.";
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -90,8 +90,8 @@ export default async function DashboardPage() {
               {session.organizationName ?? "Your organization"}
             </CardTitle>
             <CardDescription>
-              Signed in as {session.email}. Phase 2 modules are on: website,
-              events, leads, bookings, and analytics.
+              Signed in as {session.email}. Connected data, marketing
+              attribution, and observe-only intelligence are on.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -180,6 +180,11 @@ export default async function DashboardPage() {
         <Button asChild variant="outline">
           <Link href="/app/commerce">Bookings & payments</Link>
         </Button>
+        {isModuleEnabled(session.enabledModules, "intelligence") ? (
+          <Button asChild variant="outline">
+            <Link href="/app/intelligence">Intelligence</Link>
+          </Button>
+        ) : null}
       </div>
     </div>
   );

@@ -72,6 +72,14 @@ export async function ensureCatalog(): Promise<void> {
       key: "phase_2_business_data",
       description: "Website connection, CRM, events, Stripe, and analytics",
     },
+    {
+      key: "phase_3_attribution",
+      description: "Campaign to lead to customer to revenue",
+    },
+    {
+      key: "phase_4_intelligence",
+      description: "Observe and recommend on connected records only",
+    },
   ]) {
     await db
       .insert(featureFlags)

@@ -11,9 +11,11 @@ import {
   CreditCard,
   Globe,
   LayoutDashboard,
+  Megaphone,
   Plug,
   ScrollText,
   Settings,
+  Sparkles,
   Users,
 } from "lucide-react";
 
@@ -29,6 +31,8 @@ const ICONS: Partial<Record<ModuleId | "dashboard" | "settings" | "audit" | "not
   crm: Users,
   commerce: CreditCard,
   analytics: BarChart3,
+  marketing: Megaphone,
+  intelligence: Sparkles,
   integrations: Plug,
   brand: Building2,
   settings: Settings,

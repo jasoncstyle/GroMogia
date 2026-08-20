@@ -29,4 +29,16 @@ describe("module catalog", () => {
     assert.equal(items.some((item) => item.id === "crm"), true);
     assert.equal(items.some((item) => item.id === "website_builder"), false);
   });
+
+  it("shows Phase 3 marketing in grow nav when entitled", () => {
+    const items = navModules(["marketing", "analytics"], "grow");
+    assert.equal(items.some((item) => item.id === "marketing"), true);
+    assert.equal(items.some((item) => item.id === "seo"), false);
+  });
+
+  it("shows Phase 4 intelligence in grow nav when entitled", () => {
+    const items = navModules(["intelligence", "marketing"], "grow");
+    assert.equal(items.some((item) => item.id === "intelligence"), true);
+    assert.equal(items.some((item) => item.id === "website_builder"), false);
+  });
 });
