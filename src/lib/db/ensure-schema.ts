@@ -74,4 +74,12 @@ export async function ensureSchema(): Promise<void> {
   if (!searchConsole[0]?.name) {
     await applyMigration(sql, "0005_phase6_search_console.sql");
   }
+
+  const builder = (await sql.query(
+    "select to_regclass('public.builder_sites') as name",
+  )) as RegistryRow[];
+
+  if (!builder[0]?.name) {
+    await applyMigration(sql, "0006_phase7_website_builder.sql");
+  }
 }

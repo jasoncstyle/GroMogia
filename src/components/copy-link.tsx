@@ -5,7 +5,13 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 
-export function CopyLink({ url }: { url: string }) {
+export function CopyLink({
+  url,
+  openLabel = "Open form",
+}: {
+  url: string
+  openLabel?: string
+}) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -29,7 +35,7 @@ export function CopyLink({ url }: { url: string }) {
         </Button>
         <Button type="button" variant="outline" asChild>
           <a href={url} target="_blank" rel="noreferrer">
-            Open form
+            {openLabel}
           </a>
         </Button>
       </div>

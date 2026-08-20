@@ -88,6 +88,10 @@ export async function ensureCatalog(): Promise<void> {
       key: "phase_6_seo",
       description: "Homepage SEO check, drafts, monitoring, and Search Console read-only",
     },
+    {
+      key: "phase_7_website_builder",
+      description: "Optional section-based GroovGro-hosted pages; does not replace a connected site",
+    },
   ]) {
     await db
       .insert(featureFlags)

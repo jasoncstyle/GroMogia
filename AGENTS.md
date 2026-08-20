@@ -45,10 +45,11 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 ## Phase gate
 
 - Phase 0 architecture is approved in `docs/phase-0/`.
-- Current implementation phase is **Phase 6 SEO complete** (homepage check, drafts, monitoring, plain-language explanation, Search Console read-only). See [docs/STATUS.md](docs/STATUS.md).
-- Do not skip ahead to the website builder, ads, or autonomous AI.
+- Current implementation phase is **Phase 7 website builder** (optional section-based GroovGro-hosted pages). See [docs/STATUS.md](docs/STATUS.md).
+- Do not skip ahead to ads or autonomous AI.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.
-- After Phase 6, wait for human approval before Phase 7 (website builder).
+- The website builder must not overwrite a connected existing website or change Stripe checkout.
+- Custom domains for GroovGro-built sites wait for a later Phase 7 slice.
 - Do not change Ocean Sailing Adventures live Stripe checkout or **stripe-osa endpoint**.
 - Brand voice drafts must not send email, post to social, edit a website, or take a payment.
 - SEO checks and approved drafts must not edit the connected website.
