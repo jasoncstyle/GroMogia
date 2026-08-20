@@ -76,7 +76,7 @@ export async function getDashboardSnapshot(organizationId: string) {
   const [paymentAgg] = await db
     .select({
       count: sql<number>`count(*)::int`,
-      total: sql<number>`coalesce(sum(case when ${payments.kind} = 'refund' then 0 else ${payments.amountCents} end), 0)::int`,
+      total: sql<number>`coalesce(sum(case when ${payments.kind} = 'refund' then 0 when ${payments.providerObjectId} like 'ch_%' then ${payments.amountCents} else 0 end), 0)::int`,
     })
     .from(payments)
     .where(

@@ -45,6 +45,6 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 ## Phase gate
 
 - Phase 0 architecture is approved in `docs/phase-0/`.
-- Current implementation phase is **Phase 2 first real business data**. See [docs/STATUS.md](docs/STATUS.md).
+- Current implementation phase is **Phase 3 marketing / attribution**. See [docs/STATUS.md](docs/STATUS.md).
 - Do not skip ahead to the website builder, ads, SEO, or autonomous AI.
-- After Phase 2, wait for human approval before Phase 3 (marketing / attribution).
+- After Phase 3, wait for human approval before Phase 4 (intelligence).

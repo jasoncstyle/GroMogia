@@ -29,4 +29,10 @@ describe("module catalog", () => {
     assert.equal(items.some((item) => item.id === "crm"), true);
     assert.equal(items.some((item) => item.id === "website_builder"), false);
   });
+
+  it("shows Phase 3 marketing in grow nav when entitled", () => {
+    const items = navModules(["marketing", "analytics"], "grow");
+    assert.equal(items.some((item) => item.id === "marketing"), true);
+    assert.equal(items.some((item) => item.id === "seo"), false);
+  });
 });

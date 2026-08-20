@@ -1,6 +1,6 @@
 # Build status
 
-Last updated: 19 August 2026.
+Last updated: 20 August 2026.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -11,26 +11,30 @@ Last updated: 19 August 2026.
 
 ## Current phase
 
-**Phase 2 — first real business data**, accepted for the test workspace.
+**Phase 3 — marketing / attribution**, first slice.
 
-Do not start Phase 3 (marketing / attribution), the website builder, ads, SEO, or autonomous AI.
+Do not start ads, SEO, the website builder, or autonomous AI.
 
-## What is already working
+## What is already working (Phase 2)
 
-- Sign-in shows GroovGro; Clerk application name was renamed
-- Jason can sign in and use **Jason's Test**
-- Website connected: https://www.oceansailingadventures.com/
-- Tracking visits record in Analytics
-- Public lead form creates a lead
-- Generic events save, with a confirmation popup
-- Dashboard answers the four questions from real data
-- Stripe **sandbox/test** webhook on `https://www.groovgro.com/api/stripe/webhook` (destination name GroovGro test)
-- Test payments appear in Bookings & payments. One checkout can show as more than one row (payment intent + charge). Card numbers are never stored.
+- Homepage is Coming soon; the app is at `/app`
+- Sign-in shows GroovGro
+- Jason's Test: website, snippet, public lead form, events, dashboard
+- Stripe **sandbox** GroovGro test webhook on the personal-email **Coastal Sailing Adventures LLC** account
+- Stripe **Live** GroovGro live webhook is an extra destination on **Ocean Sailing Adventures**, beside **stripe-osa endpoint**. The sailing checkout for bunks is unchanged.
+- GroovGro keeps `sk_test_` keys. Live events use `STRIPE_LIVE_WEBHOOK_SECRET`.
 
-## Next
+## Stripe accounts (do not mix)
 
-Add a **Live** Stripe destination for GroovGro as an extra webhook, without editing or deleting the Ocean Sailing Adventures live webhook. GroovGro keeps test API keys. Put the Live signing secret in `STRIPE_LIVE_WEBHOOK_SECRET` only after the matching code is on Production.
+| Login | Stripe account | Use |
+| --- | --- | --- |
+| Personal email | Coastal Sailing Adventures LLC | GroovGro test webhooks |
+| Ocean Sailing Adventures | Ocean Sailing Adventures | Live sailing payments. **stripe-osa endpoint** stays. GroovGro live is extra. |
+
+## This Phase 3 slice
+
+Marketing page: source → visits → leads → customers → revenue (Stripe `ch_` charges only, so one checkout is not triple-counted). Snippet remembers UTM on the connected site.
 
 ## Still later
 
-Phase 3 marketing, 4 intelligence, 5 brand voice, 6 SEO, 7 website builder, 8 more integrations, 9 AI execute, 10 commercialization.
+Phase 4 intelligence, 5 brand voice, 6 SEO, 7 website builder, 8 more integrations, 9 AI execute, 10 commercialization.

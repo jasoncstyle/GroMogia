@@ -20,8 +20,8 @@ export default async function AnalyticsPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
         <p className="text-muted-foreground">
-          Basic outcomes from connected data. Marketing attribution gets richer
-          in the next phase.
+          Basic outcomes from connected data. Open Marketing for campaign →
+          lead → customer → revenue.
         </p>
       </div>
 
