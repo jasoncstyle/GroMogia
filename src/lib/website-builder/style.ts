@@ -32,6 +32,7 @@ export const BUILDER_BACKGROUND_SWATCHES = [
   { label: "Navy", value: "#0f2744" },
   { label: "Forest", value: "#14352c" },
   { label: "Charcoal", value: "#18181b" },
+  { label: "Black", value: "#111111" },
   { label: "Brick", value: "#6b2d2d" },
 ] as const;
 
@@ -95,6 +96,19 @@ export function isDarkBuilderColor(value: string): boolean {
   const green = Number.parseInt(color.slice(3, 5), 16);
   const blue = Number.parseInt(color.slice(5, 7), 16);
   return (red * 299 + green * 587 + blue * 114) / 1000 < 140;
+}
+
+export function inheritRowBackgrounds(
+  rowBackgrounds: string[],
+  previousPageBackground: string,
+  applyToAllRows: boolean,
+): string[] {
+  if (applyToAllRows) return rowBackgrounds.map(() => "");
+  const previous = parseBuilderColor(previousPageBackground);
+  return rowBackgrounds.map((color) => {
+    const parsed = parseBuilderColor(color);
+    return previous && parsed === previous ? "" : parsed;
+  });
 }
 
 export function builderButtonColors(

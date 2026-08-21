@@ -58,6 +58,7 @@ import {
   isDarkBuilderColor,
   type BuilderTheme,
 } from "@/lib/website-builder/style";
+import { builderTemplateLabel } from "@/lib/website-builder/templates";
 import type { BuilderLayoutRow, BuilderLayoutWidget } from "@/lib/website-builder/types";
 import { cn } from "@/lib/utils";
 
@@ -95,6 +96,7 @@ export function BuilderStudio({
     metaDescription: string
     status: string
     theme: BuilderTheme
+    templateId?: string
   }
   rows: BuilderLayoutRow[]
   orgSlug: string
@@ -185,11 +187,11 @@ export function BuilderStudio({
       <header className="flex flex-wrap items-center gap-2 border-b px-4 py-3">
         <div className="min-w-0 flex-1">
           <h2 id="builder-studio-title" className="text-base font-semibold tracking-tight">
-            Page editor
+            Page editor · {builderTemplateLabel(site.templateId)}
           </h2>
           <p className="text-xs text-muted-foreground">
-            Add a row and pick the columns. Row width makes a photo go across
-            the whole screen or stay in a box.
+            Home page. Add a row and pick the columns. Row width makes a photo
+            go across the whole screen or stay in a box.
           </p>
         </div>
         <Button type="button" variant="outline" asChild>
@@ -218,7 +220,10 @@ export function BuilderStudio({
         </Button>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
+      <div
+        className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6"
+        style={{ backgroundColor: site.theme.pageBackground || undefined }}
+      >
         {rows.length === 0 ? (
           <div className="mx-auto max-w-xl rounded-xl border border-dashed p-10 text-center">
             <p className="text-sm font-medium">This page has no rows yet.</p>
@@ -443,8 +448,8 @@ export function BuilderStudio({
           <DialogHeader>
             <DialogTitle>Page colors</DialogTitle>
             <DialogDescription>
-              These colors apply to the whole GroovGro page. You can still
-              change one box in its edit window.
+              Page background sits behind every row. Leave “use on every row”
+              on so Preview matches. A row can still have its own Row color.
             </DialogDescription>
           </DialogHeader>
           <SaveForm
@@ -456,6 +461,18 @@ export function BuilderStudio({
             <input type="hidden" name="title" value={site.title} />
             <input type="hidden" name="metaDescription" value={site.metaDescription} />
             <BuilderThemeFields theme={site.theme} onChange={onThemeChange} />
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="applyPageBackgroundToRows"
+                defaultChecked
+                className="mt-1"
+              />
+              <span>
+                Use this page background on every row. Leave this on so Preview
+                matches what you pick.
+              </span>
+            </label>
             <SaveButton>Save colors</SaveButton>
           </SaveForm>
         </DialogContent>

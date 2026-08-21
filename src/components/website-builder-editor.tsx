@@ -28,6 +28,7 @@ import {
 import { rowGridTemplate } from "@/lib/website-builder/layout";
 import { builderSectionLabel } from "@/lib/website-builder/sections";
 import { EMPTY_BUILDER_THEME, parseBuilderTheme, type BuilderTheme } from "@/lib/website-builder/style";
+import { builderTemplateLabel } from "@/lib/website-builder/templates";
 import type { BuilderLayoutRow } from "@/lib/website-builder/types";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +44,7 @@ export function WebsiteBuilderEditor({
     metaDescription: string
     status: string
     theme?: BuilderTheme
+    templateId?: string
   }
   rows: BuilderLayoutRow[]
   brandName: string | null
@@ -51,6 +53,8 @@ export function WebsiteBuilderEditor({
 }) {
   const [studioOpen, setStudioOpen] = useState(true);
   const [theme, setTheme] = useState(() => parseBuilderTheme(site.theme ?? EMPTY_BUILDER_THEME));
+
+  const templateLabel = builderTemplateLabel(site.templateId);
 
   return (
     <div className="space-y-6">
@@ -68,10 +72,14 @@ export function WebsiteBuilderEditor({
               Preview
             </a>
           </Button>
-        <p className="text-sm text-muted-foreground">
-          The editor covers this screen so you can add rows and columns. Close
-          it to change the page title or search description.
-        </p>
+        <div className="min-w-0">
+          <p className="text-sm font-medium">Using {templateLabel}</p>
+          <p className="text-sm text-muted-foreground">
+            This is the Home page. The editor covers this screen so you can add
+            rows and columns. Close it to change the page title or search
+            description.
+          </p>
+        </div>
       </div>
 
       <Card>
@@ -117,6 +125,19 @@ export function WebsiteBuilderEditor({
             <input type="hidden" name="metaDescription" value={site.metaDescription} />
             <p className="text-sm font-medium">Page colors</p>
             <BuilderThemeFields theme={theme} onChange={setTheme} />
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="applyPageBackgroundToRows"
+                defaultChecked
+                className="mt-1"
+              />
+              <span>
+                Use this page background on every row. Leave this on so Preview
+                matches what you pick. Turn it off only if some rows should keep
+                their own Row color.
+              </span>
+            </label>
             <SaveButton variant="outline">Save colors</SaveButton>
           </SaveForm>
           <div className="flex flex-wrap gap-2">
@@ -211,15 +232,47 @@ export function WebsiteBuilderEditor({
             title="Replace current layout"
             subtitle="Closed until you choose a layout"
           >
+            <p className="text-sm font-medium">Current starting layout: {templateLabel}</p>
             <SaveForm
               action={applyBuilderTemplate}
               successMessage="Template applied to the GroovGro page."
               className="space-y-4"
             >
-              <BuilderTemplatePicker />
+              <BuilderTemplatePicker defaultValue={site.templateId || "1"} />
               <SaveButton variant="outline">Use this template</SaveButton>
             </SaveForm>
           </FoldableSample>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Pages</CardTitle>
+          <CardDescription>
+            Today this organization has one GroovGro page: Home. Extra pages
+            (About, a service page, and so on) come next. They will work like
+            this:
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 text-sm text-muted-foreground">
+          <p>
+            <span className="font-medium text-foreground">Create.</span> You
+            will click Add a page, give it a name, and pick a starting layout.
+            It starts as a draft.
+          </p>
+          <p>
+            <span className="font-medium text-foreground">Draft.</span> Edits
+            stay in GroovGro until you click Publish on that page. Home already
+            works that way.
+          </p>
+          <p>
+            <span className="font-medium text-foreground">Remove.</span> A draft
+            or unpublished page can be deleted. Home cannot be deleted. You can
+            Unpublish Home to hide it.
+          </p>
+          <p>
+            This does not create pages on the connected existing website.
+          </p>
         </CardContent>
       </Card>
 
@@ -231,6 +284,7 @@ export function WebsiteBuilderEditor({
           metaDescription: site.metaDescription,
           status: site.status,
           theme,
+          templateId: site.templateId,
         }}
         rows={rows}
         orgSlug={orgSlug}

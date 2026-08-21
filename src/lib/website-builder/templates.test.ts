@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 
 import { layoutIdForWidths, moveSectionId, ROW_LAYOUTS, widthsForLayout } from "./layout";
 import {
+  builderTemplateLabel,
   BUILDER_TEMPLATES,
   DEFAULT_BUILDER_TEMPLATE_ID,
   layoutForTemplate,
@@ -23,7 +24,8 @@ describe("website builder templates", () => {
       ["1", "2", "3", "4"],
     );
     assert.equal(DEFAULT_BUILDER_TEMPLATE_ID, "1");
-    assert.equal(BUILDER_TEMPLATES[0]?.name, "Template 1");
+    assert.equal(builderTemplateLabel("1"), "Template 1");
+    assert.equal(builderTemplateLabel(""), "Custom layout");
     assert.deepEqual(widthsForLayout("1-1-1"), [34, 33, 33]);
     assert.equal(ROW_LAYOUTS.some((layout) => layout.id === "1-1-1"), true);
     assert.equal(layoutIdForWidths([34, 33, 33]), "1-1-1");
@@ -47,10 +49,10 @@ describe("website builder templates", () => {
 
   it("gives Template 1 a dark edge-to-edge welcome and three offer columns", () => {
     const rows = layoutForTemplate("1", brand);
-    assert.equal(themeForTemplate("1").pageBackground, "#111111");
+    assert.equal(themeForTemplate("1").pageBackground, "#18181b");
     assert.equal(rows[0]?.contentWidth, "full");
     assert.ok(rows.some((row) => row.columnWidths.length === 3));
-    assert.ok(rows.some((row) => row.backgroundColor === "#111111" || row.backgroundColor === "#18181b"));
+    assert.ok(rows.every((row) => !row.backgroundColor));
   });
 
   it("falls back to Template 1 when the template is unknown", () => {

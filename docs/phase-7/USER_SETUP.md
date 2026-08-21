@@ -27,11 +27,14 @@ The builder works in two layers:
    - On a Text widget, add **Link text** and **Link address**.
    - Paste a public https:// image. GroovGro fetches the photo so other sites cannot block it in Chrome. File upload comes later.
 9. Click **Done**.
-10. **Page colors** (in the editor bar) sets colors for the whole page. **Row color** sets one row’s background. **Row width** is how far that row stretches across the screen.
-11. Click **Preview** to see the page as visitors would, with a yellow bar that says it is not live. Close that tab when you are done.
-12. Click **Publish** when you are ready. Then **Open page** is the live GroovGro address. Confirm https://www.oceansailingadventures.com/ is unchanged.
+10. **Page colors** (in the editor bar) sets colors for the whole page. Leave **Use this page background on every row** on so Preview matches. If you pick a light page, also pick dark **Page text** and **Headings**. **Row color** is only for one row that should be different.
+11. The top of Website builder shows **Using Template 1** (or 2, 3, 4). That is the starting layout for this Home page.
+12. Click **Preview** to see the page as visitors would, with a yellow bar that says it is not live. Close that tab when you are done.
+13. Click **Publish** when you are ready. Then **Open page** is the live GroovGro address. Confirm https://www.oceansailingadventures.com/ is unchanged.
 
 To switch the whole page, open **Start from a different template**, pick Template 1–4, and click **Use this template**. That replaces the GroovGro page and its page colors only. Template 1 is the dark full-screen starting layout.
+
+Today there is one GroovGro page: **Home**. Extra pages (About, a service page) come next. You will **Add a page**, it starts as a **draft**, **Publish** makes that page live, and you can **Remove** a draft or unpublished page. Home cannot be deleted; **Unpublish** hides it.
 
 ## Widgets in this slice
 

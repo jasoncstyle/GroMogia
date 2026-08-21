@@ -733,6 +733,7 @@ export const builderSites = pgTable(
     metaDescription: text("meta_description").notNull().default(""),
     status: text("status").notNull().default("draft"),
     theme: jsonb("theme").$type<BuilderTheme>().notNull().default({}),
+    templateId: text("template_id").notNull().default(""),
     createdBy: uuid("created_by").references(() => users.id),
     ...timestamps,
   },
