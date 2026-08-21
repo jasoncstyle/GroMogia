@@ -9,6 +9,7 @@ import { getDb } from "@/lib/db";
 import {
   brandSettings,
   brandVoiceProfiles,
+  builderSites,
   seoAudits,
   seoDrafts,
   websites,
@@ -18,6 +19,7 @@ import { requireOrgSession } from "@/lib/require-org";
 import { auditConnectedPage, isSafePublicHttpUrl } from "@/lib/seo/audit";
 import { buildSeoChangeDrafts } from "@/lib/seo/drafts";
 import { fetchPublicText, originFromWebsiteUrl } from "@/lib/seo/fetch";
+import { builderApplyHint } from "@/lib/website-builder/apply-seo";
 
 function revalidateSeo() {
   revalidatePath("/app/seo");
@@ -119,6 +121,11 @@ export async function createSeoDrafts(): Promise<ActionResult> {
       .from(brandVoiceProfiles)
       .where(eq(brandVoiceProfiles.organizationId, session.organizationId))
       .limit(1);
+    const [builderSite] = await db
+      .select({ id: builderSites.id })
+      .from(builderSites)
+      .where(eq(builderSites.organizationId, session.organizationId))
+      .limit(1);
 
     const drafts = buildSeoChangeDrafts(audit.findings, {
       pageUrl: audit.url,
@@ -148,7 +155,9 @@ export async function createSeoDrafts(): Promise<ActionResult> {
         findingId: draft.findingId,
         title: draft.title,
         proposedChange: draft.proposedChange,
-        howToApply: draft.howToApply,
+        howToApply: builderSite
+          ? `${draft.howToApply}\n${builderApplyHint(draft.findingId)}`
+          : draft.howToApply,
         status: "draft",
         createdBy: session.userId,
       });
@@ -217,7 +226,7 @@ export async function decideSeoDraft(formData: FormData): Promise<ActionResult> 
 
     revalidateSeo();
     return decision === "approved"
-      ? "Approved. Copy it onto the connected website yourself. GroovGro did not update the live site."
+      ? "Approved. You can apply title, description, or heading drafts to a GroovGro website. GroovGro did not change the connected existing website."
       : "Marked as do not approve. GroovGro did not change the website.";
   });
 }

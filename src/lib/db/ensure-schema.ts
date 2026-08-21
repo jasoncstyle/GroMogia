@@ -82,4 +82,16 @@ export async function ensureSchema(): Promise<void> {
   if (!builder[0]?.name) {
     await applyMigration(sql, "0006_phase7_website_builder.sql");
   }
+
+  const builderMeta = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'builder_sites'
+       and column_name = 'meta_description'`,
+  )) as RegistryRow[];
+
+  if (!builderMeta[0]?.name) {
+    await applyMigration(sql, "0007_phase7_builder_seo.sql");
+  }
 }

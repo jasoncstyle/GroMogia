@@ -42,7 +42,7 @@ Audit, recommendations, technical monitoring, Search Console when OAuth is ready
 
 Section-based builder. Not before the core platform is useful. Existing-site customers never need this module.
 
-**Now in the app (first slice):** optional GroovGro-hosted page at `/w/[org]`. Add, edit, reorder, hide, and publish sections. Does not replace a connected site. Custom domains wait.
+**Now in the app:** optional GroovGro-hosted page at `/w/[org]`. Add, edit, reorder, hide, and publish sections (including image + text, features, testimonials, FAQ, and contact). Approved SEO title, description, and heading drafts can be applied onto that GroovGro page only. Custom domains wait.
 
 ### Phase 8 — Additional integrations
 

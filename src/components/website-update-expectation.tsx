@@ -35,8 +35,9 @@ export function WebsiteUpdateExpectation({
         </p>
         {compact ? null : (
           <p>
-            Today: check and draft only. Approve keeps the draft in GroovGro. It
-            does not publish.
+            Today: approved title, description, and heading drafts can be applied
+            to a GroovGro-hosted page. Connected custom sites still need a
+            manual paste. GroovGro does not overwrite Stripe checkout.
           </p>
         )}
       </CardContent>

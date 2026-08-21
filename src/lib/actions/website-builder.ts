@@ -11,17 +11,24 @@ import {
   brandSettings,
   builderSections,
   builderSites,
+  seoDrafts,
 } from "@/lib/db/schema";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 import {
+  applyApprovedSeoDraftToBuilderState,
+  isBuilderApplyableFinding,
+} from "@/lib/website-builder/apply-seo";
+import {
   defaultBuilderSections,
+  defaultContentForType,
   isBuilderSectionType,
   parseBuilderSectionContent,
 } from "@/lib/website-builder/sections";
 
-function revalidateBuilder() {
+function revalidateBuilder(organizationSlug?: string | null) {
   revalidatePath("/app/website-builder");
+  if (organizationSlug) revalidatePath(`/w/${organizationSlug}`);
 }
 
 async function requireBuilderEditor() {
@@ -88,15 +95,20 @@ export async function createBuilderSite(): Promise<ActionResult> {
       targetType: "builder_site",
       targetId: site.id,
     });
-    revalidateBuilder();
+    revalidateBuilder(session.organizationSlug);
     return "Draft website created. It is not public until you publish.";
   });
 }
 
 export async function saveBuilderSite(formData: FormData): Promise<ActionResult> {
-  return runAction("Could not save the website title.", async () => {
+  return runAction("Could not save the website details.", async () => {
     const { session, db } = await requireBuilderEditor();
     const title = z.string().trim().min(1).max(120).parse(formData.get("title"));
+    const metaDescription = z
+      .string()
+      .trim()
+      .max(160)
+      .parse(formData.get("metaDescription") ?? "");
     const [site] = await db
       .select()
       .from(builderSites)
@@ -106,15 +118,15 @@ export async function saveBuilderSite(formData: FormData): Promise<ActionResult>
 
     await db
       .update(builderSites)
-      .set({ title, updatedAt: new Date() })
+      .set({ title, metaDescription, updatedAt: new Date() })
       .where(
         and(
           eq(builderSites.id, site.id),
           eq(builderSites.organizationId, session.organizationId),
         ),
       );
-    revalidateBuilder();
-    return "Website title saved.";
+    revalidateBuilder(session.organizationSlug);
+    return "Website details saved.";
   });
 }
 
@@ -143,6 +155,9 @@ export async function saveBuilderSection(formData: FormData): Promise<ActionResu
       body: String(formData.get("body") ?? ""),
       buttonLabel: String(formData.get("buttonLabel") ?? ""),
       buttonHref: String(formData.get("buttonHref") ?? ""),
+      imageUrl: String(formData.get("imageUrl") ?? ""),
+      imageAlt: String(formData.get("imageAlt") ?? ""),
+      items: String(formData.get("items") ?? ""),
     });
     const visible = formData.get("visible") === "on";
 
@@ -150,7 +165,7 @@ export async function saveBuilderSection(formData: FormData): Promise<ActionResu
       .update(builderSections)
       .set({ content, visible, updatedAt: new Date() })
       .where(eq(builderSections.id, section.id));
-    revalidateBuilder();
+    revalidateBuilder(session.organizationSlug);
     return "Section saved.";
   });
 }
@@ -175,12 +190,10 @@ export async function addBuilderSection(formData: FormData): Promise<ActionResul
       .where(eq(builderSections.siteId, site.id))
       .orderBy(asc(builderSections.sortOrder));
     const nextOrder = (existing.at(-1)?.sortOrder ?? -1) + 1;
-    const content = parseBuilderSectionContent(type, {
-      heading: type === "hero" ? site.title : "New section",
-      body: type === "text" || type === "cta" || type === "lead" ? "Add your copy here." : "",
-      buttonLabel: type === "hero" || type === "cta" ? "Get in touch" : "",
-      buttonHref: type === "hero" || type === "cta" ? "#lead" : "",
-    });
+    const content = parseBuilderSectionContent(
+      type,
+      defaultContentForType(type, site.title),
+    );
 
     await db.insert(builderSections).values({
       organizationId: session.organizationId,
@@ -190,7 +203,7 @@ export async function addBuilderSection(formData: FormData): Promise<ActionResul
       visible: true,
       content,
     });
-    revalidateBuilder();
+    revalidateBuilder(session.organizationSlug);
     return "Section added.";
   });
 }
@@ -220,7 +233,7 @@ export async function moveBuilderSection(formData: FormData): Promise<ActionResu
       .update(builderSections)
       .set({ sortOrder: current.sortOrder, updatedAt: new Date() })
       .where(eq(builderSections.id, other.id));
-    revalidateBuilder();
+    revalidateBuilder(session.organizationSlug);
     return "Section order saved.";
   });
 }
@@ -239,7 +252,7 @@ export async function removeBuilderSection(formData: FormData): Promise<ActionRe
       )
       .returning({ id: builderSections.id });
     if (deleted.length === 0) throw new Error("That section was not found.");
-    revalidateBuilder();
+    revalidateBuilder(session.organizationSlug);
     return "Section removed.";
   });
 }
@@ -268,8 +281,7 @@ export async function publishBuilderSite(): Promise<ActionResult> {
       targetType: "builder_site",
       targetId: site.id,
     });
-    revalidateBuilder();
-    revalidatePath(`/w/${session.organizationSlug ?? ""}`);
+    revalidateBuilder(session.organizationSlug);
     return "Published. This GroovGro page is live. The connected existing website was not changed.";
   });
 }
@@ -298,8 +310,96 @@ export async function unpublishBuilderSite(): Promise<ActionResult> {
       targetType: "builder_site",
       targetId: site.id,
     });
-    revalidateBuilder();
-    revalidatePath(`/w/${session.organizationSlug ?? ""}`);
+    revalidateBuilder(session.organizationSlug);
     return "Unpublished. The GroovGro page is hidden. The connected existing website was not changed.";
+  });
+}
+
+export async function applySeoDraftToBuilder(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not apply that draft to the GroovGro website.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    if (!hasPermission(session.permissions, "manage_seo")) {
+      throw new Error("You do not have permission to apply SEO drafts.");
+    }
+
+    const draftId = String(formData.get("draftId") ?? "");
+    const [draft] = await db
+      .select()
+      .from(seoDrafts)
+      .where(
+        and(
+          eq(seoDrafts.id, draftId),
+          eq(seoDrafts.organizationId, session.organizationId),
+        ),
+      )
+      .limit(1);
+    if (!draft) throw new Error("That draft was not found.");
+    if (draft.status !== "approved") {
+      throw new Error("Approve the draft first, then apply it to the GroovGro website.");
+    }
+    if (!isBuilderApplyableFinding(draft.findingId)) {
+      throw new Error("This draft is for the connected website, not the GroovGro-hosted page.");
+    }
+
+    const [site] = await db
+      .select()
+      .from(builderSites)
+      .where(eq(builderSites.organizationId, session.organizationId))
+      .limit(1);
+    if (!site) {
+      throw new Error("Create a GroovGro website first, then apply this draft there.");
+    }
+
+    const sections = await db
+      .select()
+      .from(builderSections)
+      .where(
+        and(
+          eq(builderSections.organizationId, session.organizationId),
+          eq(builderSections.siteId, site.id),
+        ),
+      )
+      .orderBy(asc(builderSections.sortOrder));
+
+    const next = applyApprovedSeoDraftToBuilderState(
+      {
+        title: site.title,
+        metaDescription: site.metaDescription,
+        sections,
+      },
+      { findingId: draft.findingId, proposedChange: draft.proposedChange },
+    );
+
+    await db
+      .update(builderSites)
+      .set({
+        title: next.title,
+        metaDescription: next.metaDescription,
+        updatedAt: new Date(),
+      })
+      .where(eq(builderSites.id, site.id));
+
+    if (next.appliedTo === "heroHeading") {
+      const hero = next.sections.find((section) => section.type === "hero");
+      if (hero) {
+        await db
+          .update(builderSections)
+          .set({ content: hero.content, updatedAt: new Date() })
+          .where(eq(builderSections.id, hero.id));
+      }
+    }
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "website_builder.seo_draft_applied",
+      targetType: "seo_draft",
+      targetId: draft.id,
+      metadata: { findingId: draft.findingId, appliedTo: next.appliedTo },
+    });
+
+    revalidateBuilder(session.organizationSlug);
+    revalidatePath("/app/seo");
+    return "Applied to the GroovGro website. The connected existing website was not changed.";
   });
 }
