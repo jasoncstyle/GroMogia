@@ -31,7 +31,9 @@ import {
   defaultContentForType,
   isBuilderSectionType,
   parseBuilderSectionContent,
+  contentFromFormData,
 } from "@/lib/website-builder/sections";
+import { parseBuilderColor, parseBuilderTheme } from "@/lib/website-builder/style";
 import {
   isBuilderTemplateId,
   layoutForTemplate,
@@ -39,6 +41,7 @@ import {
 
 function revalidateBuilder(organizationSlug?: string | null) {
   revalidatePath("/app/website-builder");
+  revalidatePath("/app/website-builder/preview");
   if (organizationSlug) revalidatePath(`/w/${organizationSlug}`);
 }
 
@@ -122,10 +125,19 @@ export async function saveBuilderSite(formData: FormData): Promise<ActionResult>
       .where(eq(builderSites.organizationId, session.organizationId))
       .limit(1);
     if (!site) throw new Error("Create the GroovGro website first.");
+    const theme = formData.has("pageBackground")
+      ? parseBuilderTheme({
+          pageBackground: formData.get("pageBackground"),
+          textColor: formData.get("textColor"),
+          headingColor: formData.get("headingColor"),
+          buttonBackground: formData.get("buttonBackground"),
+          buttonText: formData.get("buttonText"),
+        })
+      : parseBuilderTheme(site.theme);
 
     await db
       .update(builderSites)
-      .set({ title, metaDescription, updatedAt: new Date() })
+      .set({ title, metaDescription, theme, updatedAt: new Date() })
       .where(
         and(
           eq(builderSites.id, site.id),
@@ -156,16 +168,7 @@ export async function saveBuilderSection(formData: FormData): Promise<ActionResu
       throw new Error("That section type is not supported.");
     }
 
-    const content = parseBuilderSectionContent(section.type, {
-      heading: String(formData.get("heading") ?? ""),
-      subheading: String(formData.get("subheading") ?? ""),
-      body: String(formData.get("body") ?? ""),
-      buttonLabel: String(formData.get("buttonLabel") ?? ""),
-      buttonHref: String(formData.get("buttonHref") ?? ""),
-      imageUrl: String(formData.get("imageUrl") ?? ""),
-      imageAlt: String(formData.get("imageAlt") ?? ""),
-      items: String(formData.get("items") ?? ""),
-    });
+    const content = parseBuilderSectionContent(section.type, contentFromFormData(formData));
     const visible = formData.get("visible") === "on";
 
     await db
@@ -474,6 +477,27 @@ export async function setBuilderRowLayout(formData: FormData): Promise<ActionRes
     }
     revalidateBuilder(session.organizationSlug);
     return "Row layout saved. Columns that no longer exist moved their widgets into the last column.";
+  });
+}
+
+export async function setBuilderRowBackground(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not change that row color.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const rowId = String(formData.get("rowId") ?? "");
+    const backgroundColor = parseBuilderColor(formData.get("backgroundColor"));
+    const updated = await db
+      .update(builderRows)
+      .set({ backgroundColor, updatedAt: new Date() })
+      .where(
+        and(
+          eq(builderRows.id, rowId),
+          eq(builderRows.organizationId, session.organizationId),
+        ),
+      )
+      .returning({ id: builderRows.id });
+    if (updated.length === 0) throw new Error("That row was not found.");
+    revalidateBuilder(session.organizationSlug);
+    return "Row color saved.";
   });
 }
 

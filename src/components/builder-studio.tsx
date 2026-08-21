@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import { BuilderSectionFields } from "@/components/builder-section-fields";
+import { BuilderThemeFields } from "@/components/builder-color-field";
 import { BuilderSectionView } from "@/components/builder-page-view";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Button } from "@/components/ui/button";
@@ -30,6 +31,8 @@ import {
   removeBuilderRow,
   removeBuilderSection,
   saveBuilderSection,
+  saveBuilderSite,
+  setBuilderRowBackground,
   setBuilderRowLayout,
   unpublishBuilderSite,
 } from "@/lib/actions/website-builder";
@@ -44,6 +47,10 @@ import {
   BUILDER_SECTION_TYPES,
   builderSectionLabel,
 } from "@/lib/website-builder/sections";
+import {
+  BUILDER_BACKGROUND_SWATCHES,
+  type BuilderTheme,
+} from "@/lib/website-builder/style";
 import type { BuilderLayoutRow, BuilderLayoutWidget } from "@/lib/website-builder/types";
 import { cn } from "@/lib/utils";
 
@@ -72,12 +79,19 @@ export function BuilderStudio({
   site,
   rows: initialRows,
   orgSlug,
+  onThemeChange,
 }: {
   open: boolean
   onClose: () => void
-  site: { title: string; status: string }
+  site: {
+    title: string
+    metaDescription: string
+    status: string
+    theme: BuilderTheme
+  }
   rows: BuilderLayoutRow[]
   orgSlug: string
+  onThemeChange: (theme: BuilderTheme) => void
 }) {
   const router = useRouter();
   const [contentEdits, setContentEdits] = useState<Record<string, BuilderSectionContent>>({});
@@ -86,6 +100,8 @@ export function BuilderStudio({
   const [dragOverKey, setDragOverKey] = useState<string | null>(null);
   const [addRowOpen, setAddRowOpen] = useState(false);
   const [columnsRowId, setColumnsRowId] = useState<string | null>(null);
+  const [colorRowId, setColorRowId] = useState<string | null>(null);
+  const [pageColorsOpen, setPageColorsOpen] = useState(false);
   const [addWidgetTarget, setAddWidgetTarget] = useState<AddWidgetTarget | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
 
@@ -105,7 +121,12 @@ export function BuilderStudio({
   const widgets = rows.flatMap((row) => row.widgets);
   const editing = widgets.find((widget) => widget.id === editingId) ?? null;
   const popupOpen =
-    addRowOpen || Boolean(columnsRowId) || Boolean(addWidgetTarget) || Boolean(editing);
+    addRowOpen ||
+    Boolean(columnsRowId) ||
+    Boolean(colorRowId) ||
+    pageColorsOpen ||
+    Boolean(addWidgetTarget) ||
+    Boolean(editing);
 
   useEffect(() => {
     if (!open) return;
@@ -161,6 +182,14 @@ export function BuilderStudio({
             Add a row and pick the columns. Click a box to change its words or image.
           </p>
         </div>
+        <Button type="button" variant="outline" asChild>
+          <a href="/app/website-builder/preview" target="_blank" rel="noreferrer">
+            Preview
+          </a>
+        </Button>
+        <Button type="button" variant="outline" onClick={() => setPageColorsOpen(true)}>
+          Page colors
+        </Button>
         <Button type="button" onClick={() => setAddRowOpen(true)}>
           Add a row
         </Button>
@@ -196,14 +225,22 @@ export function BuilderStudio({
               <div key={row.id} className="rounded-xl border">
                 <div className="flex flex-wrap items-center gap-2 border-b bg-muted/40 px-3 py-2">
                   <span className="text-xs font-medium">Row {rowIndex + 1}</span>
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setColumnsRowId(row.id)}
-                  >
-                    Columns
-                  </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setColumnsRowId(row.id)}
+                    >
+                      Columns
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setColorRowId(row.id)}
+                    >
+                      Row color
+                    </Button>
                   <Button
                     type="button"
                     size="sm"
@@ -252,11 +289,12 @@ export function BuilderStudio({
                       "md:[grid-template-columns:var(--builder-cols)]",
                   )}
                   style={
-                    row.columnWidths.length > 1
-                      ? ({ "--builder-cols": rowGridTemplate(row.columnWidths) } as {
-                          [key: string]: string
-                        })
-                      : undefined
+                    {
+                      backgroundColor: row.backgroundColor || undefined,
+                      ...(row.columnWidths.length > 1
+                        ? { "--builder-cols": rowGridTemplate(row.columnWidths) }
+                        : {}),
+                    } as { [key: string]: string }
                   }
                 >
                   {row.columnWidths.map((_, columnIndex) => {
@@ -294,6 +332,7 @@ export function BuilderStudio({
                             siteTitle={site.title}
                             orgSlug={orgSlug}
                             dense={row.columnWidths.length > 1}
+                            theme={site.theme}
                             onEdit={() => setEditingId(widget.id)}
                             onDragStart={(event) => {
                               setDraggedId(widget.id);
@@ -363,6 +402,76 @@ export function BuilderStudio({
         }}
       />
 
+      <Dialog open={pageColorsOpen} onOpenChange={setPageColorsOpen}>
+        <DialogContent className="sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle>Page colors</DialogTitle>
+            <DialogDescription>
+              These colors apply to the whole GroovGro page. You can still
+              change one box in its edit window.
+            </DialogDescription>
+          </DialogHeader>
+          <SaveForm
+            action={saveBuilderSite}
+            successMessage="Page colors saved."
+            onSuccess={() => setPageColorsOpen(false)}
+            className="space-y-4"
+          >
+            <input type="hidden" name="title" value={site.title} />
+            <input type="hidden" name="metaDescription" value={site.metaDescription} />
+            <BuilderThemeFields theme={site.theme} onChange={onThemeChange} />
+            <SaveButton>Save colors</SaveButton>
+          </SaveForm>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(colorRowId)} onOpenChange={(next) => { if (!next) setColorRowId(null); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Row color</DialogTitle>
+            <DialogDescription>
+              Background for this whole row. Default means no extra color.
+            </DialogDescription>
+          </DialogHeader>
+          {colorRowId ? (
+            <div className="flex flex-wrap gap-2">
+              {BUILDER_BACKGROUND_SWATCHES.map((swatch) => (
+                <SaveForm
+                  key={swatch.label}
+                  action={setBuilderRowBackground}
+                  successMessage="Row color saved."
+                  onSuccess={() => setColorRowId(null)}
+                >
+                  <input type="hidden" name="rowId" value={colorRowId} />
+                  <input type="hidden" name="backgroundColor" value={swatch.value} />
+                  <SaveButton
+                    variant={
+                      (rows.find((row) => row.id === colorRowId)?.backgroundColor ?? "") ===
+                      swatch.value
+                        ? "default"
+                        : "outline"
+                    }
+                    size="sm"
+                    className="h-auto flex-col gap-1 px-2 py-2"
+                  >
+                    <span
+                      className="size-6 rounded-full border"
+                      style={{
+                        backgroundColor: swatch.value || "#ffffff",
+                        backgroundImage: swatch.value
+                          ? undefined
+                          : "linear-gradient(135deg, transparent 46%, #ef4444 50%, transparent 54%)",
+                      }}
+                    />
+                    <span className="text-[10px] font-normal">{swatch.label}</span>
+                  </SaveButton>
+                </SaveForm>
+              ))}
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
+
       <AddWidgetDialog
         target={addWidgetTarget}
         onOpenChange={(next) => {
@@ -394,6 +503,7 @@ function StudioWidget({
   siteTitle,
   orgSlug,
   dense,
+  theme,
   onEdit,
   onDragStart,
   onDragEnd,
@@ -403,6 +513,7 @@ function StudioWidget({
   siteTitle: string
   orgSlug: string
   dense: boolean
+  theme: BuilderTheme
   onEdit: () => void
   onDragStart: (event: DragEvent) => void
   onDragEnd: () => void
@@ -437,6 +548,7 @@ function StudioWidget({
             fallbackTitle={siteTitle}
             headingLevel="h2"
             dense={dense}
+            theme={theme}
           />
         </div>
       </button>

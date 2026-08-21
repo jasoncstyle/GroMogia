@@ -70,6 +70,7 @@ export default async function PublicBuilderPage({
         title={seo.title}
         orgSlug={page.organization.slug}
         rows={page.rows}
+        theme={page.site.theme}
       />
     </main>
   );
