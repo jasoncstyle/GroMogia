@@ -51,7 +51,7 @@ export function WebsiteBuilderEditor({
   orgSlug: string
   publicUrl: string
 }) {
-  const [studioOpen, setStudioOpen] = useState(true);
+  const [studioOpen, setStudioOpen] = useState(false);
   const [theme, setTheme] = useState(() => parseBuilderTheme(site.theme ?? EMPTY_BUILDER_THEME));
 
   const templateLabel = builderTemplateLabel(site.templateId);
@@ -75,9 +75,8 @@ export function WebsiteBuilderEditor({
         <div className="min-w-0">
           <p className="text-sm font-medium">Using {templateLabel}</p>
           <p className="text-sm text-muted-foreground">
-            This is the Home page. The editor covers this screen so you can add
-            rows and columns. Close it to change the page title or search
-            description.
+            This is the Home page. Click Open page editor when you want to add
+            rows and columns.
           </p>
         </div>
       </div>
@@ -86,10 +85,9 @@ export function WebsiteBuilderEditor({
         <CardHeader>
           <CardTitle>{site.status === "published" ? "Published" : "Draft"}</CardTitle>
           <CardDescription>
-            Page title and search text live here. Layout happens in the page
-            editor, which covers the rest of GroovGro so you can see the rows
-            and columns. This GroovGro page does not replace the connected
-            website.
+            Page title and search text live here. Click Open page editor to
+            change rows and columns. This GroovGro page does not replace the
+            connected website.
             {brandName ? ` Starter copy comes from Brand (${brandName}).` : ""}
           </CardDescription>
         </CardHeader>
