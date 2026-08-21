@@ -42,7 +42,7 @@ Audit, recommendations, technical monitoring, Search Console when OAuth is ready
 
 Section-based builder. Not before the core platform is useful. Existing-site customers never need this module.
 
-**Now in the app:** visual GroovGro-hosted page at `/w/[org]`. Six starter templates, live preview, click-to-edit boxes, and drag-to-reorder. Approved SEO title, description, and heading drafts can be applied onto that GroovGro page only. Custom domains wait.
+**Now in the app:** visual GroovGro-hosted page at `/w/[org]`. SiteOrigin-style rows and columns (including three columns in one row), six starter templates that use those grids, live preview, and click-to-edit widgets. Approved SEO title, description, and heading drafts can be applied onto that GroovGro page only. Custom domains wait.
 
 ### Phase 8 — Additional integrations
 

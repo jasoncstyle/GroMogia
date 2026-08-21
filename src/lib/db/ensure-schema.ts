@@ -94,4 +94,12 @@ export async function ensureSchema(): Promise<void> {
   if (!builderMeta[0]?.name) {
     await applyMigration(sql, "0007_phase7_builder_seo.sql");
   }
+
+  const builderRows = (await sql.query(
+    "select to_regclass('public.builder_rows') as name",
+  )) as RegistryRow[];
+
+  if (!builderRows[0]?.name) {
+    await applyMigration(sql, "0008_phase7_builder_rows.sql");
+  }
 }
