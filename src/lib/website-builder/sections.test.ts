@@ -95,6 +95,43 @@ describe("website builder sections", () => {
     }
   });
 
+  it("saves a text link and a heading size", () => {
+    const text = parseBuilderSectionContent("text", {
+      heading: "Visit us",
+      body: "We are nearby.",
+      headingLevel: "h3",
+      linkLabel: "Get directions",
+      linkHref: "https://maps.example.com/place",
+    });
+    assert.equal(text.headingLevel, "h3");
+    assert.equal(text.linkLabel, "Get directions");
+    assert.equal(text.linkHref, "https://maps.example.com/place");
+  });
+
+  it("accepts a YouTube widget and rejects a random video host", () => {
+    const video = parseBuilderSectionContent("video", {
+      heading: "Watch",
+      videoUrl: "https://www.youtube.com/watch?v=abcdefghijk",
+    });
+    assert.equal(video.videoUrl?.includes("youtube.com"), true);
+    assert.throws(() =>
+      parseBuilderSectionContent("video", {
+        heading: "Watch",
+        videoUrl: "https://example.com/movie.mp4",
+      }),
+    );
+  });
+
+  it("keeps box colors on a widget", () => {
+    const box = parseBuilderSectionContent("text", {
+      heading: "Hello",
+      backgroundColor: "#0f2744",
+      textColor: "#ffffff",
+    });
+    assert.equal(box.backgroundColor, "#0f2744");
+    assert.equal(box.textColor, "#ffffff");
+  });
+
   it("hides unpublished sections from the live page", () => {
     const visible = publishedSectionsOnly([
       { visible: true, id: "a" },

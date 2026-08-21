@@ -1,5 +1,10 @@
 import type { BuilderSectionContent, BuilderSectionType } from "@/lib/db/schema";
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
+import { parseBuilderVideoEmbed, builderMapEmbedSrc, builderTelHref, builderWhatsAppHref } from "@/lib/website-builder/embeds";
+import {
+  isBuilderHeadingLevel,
+  parseBuilderColor,
+} from "@/lib/website-builder/style";
 
 export const BUILDER_SECTION_TYPES = [
   "hero",
@@ -11,6 +16,16 @@ export const BUILDER_SECTION_TYPES = [
   "testimonials",
   "faq",
   "contact",
+  "button",
+  "image",
+  "video",
+  "gallery",
+  "map",
+  "pricing",
+  "hours",
+  "countdown",
+  "social",
+  "call",
 ] as const;
 
 export const BUILDER_SECTION_LABELS: Record<BuilderSectionType, string> = {
@@ -23,11 +38,21 @@ export const BUILDER_SECTION_LABELS: Record<BuilderSectionType, string> = {
   testimonials: "Testimonials",
   faq: "FAQ",
   contact: "Contact",
+  button: "Button",
+  image: "Image",
+  video: "Video",
+  gallery: "Image grid",
+  map: "Map",
+  pricing: "Pricing",
+  hours: "Hours",
+  countdown: "Countdown",
+  social: "Social links",
+  call: "Call or message",
 };
 
 export const BUILDER_SECTION_HINTS: Record<BuilderSectionType, string> = {
   hero: "Large headline at the top of the page",
-  text: "A heading and a paragraph",
+  text: "A heading, paragraph, and optional link",
   cta: "A short pitch with a button",
   lead: "A form that captures a name and email",
   image_text: "A photo next to words",
@@ -35,6 +60,16 @@ export const BUILDER_SECTION_HINTS: Record<BuilderSectionType, string> = {
   testimonials: "Quotes from customers",
   faq: "Questions and answers",
   contact: "How to get in touch",
+  button: "A single button people can click",
+  image: "One photo",
+  video: "A YouTube or Vimeo video",
+  gallery: "Several photos in a grid",
+  map: "A map for an address",
+  pricing: "Plans or prices side by side",
+  hours: "When you are open",
+  countdown: "A date people can count down to",
+  social: "Links to your profiles",
+  call: "A call or WhatsApp button",
 };
 
 export const MAX_BUILDER_ITEMS = 8;
@@ -179,7 +214,7 @@ export function defaultContentForType(
     };
   }
   if (type === "text") {
-    return { heading: "New section", body: "Add your copy here." };
+    return { heading: "New section", body: "Add your copy here.", headingLevel: "h2" };
   }
   if (type === "cta") {
     return {
@@ -225,11 +260,77 @@ export function defaultContentForType(
         "How do I get started? | Use the form on this page and a person will follow up.",
     };
   }
+  if (type === "button") {
+    return { heading: "", buttonLabel: "Get in touch", buttonHref: "#lead" };
+  }
+  if (type === "image") {
+    return { heading: "", imageUrl: "", imageAlt: "Photo" };
+  }
+  if (type === "video") {
+    return { heading: "Watch", videoUrl: "" };
+  }
+  if (type === "gallery") {
+    return { heading: "Photos", items: "" };
+  }
+  if (type === "map") {
+    return { heading: "Find us", mapQuery: "" };
+  }
+  if (type === "pricing") {
+    return {
+      heading: "Plans",
+      items: "Starter | Tell people what is included.\nStandard | Tell people what is included.",
+    };
+  }
+  if (type === "hours") {
+    return {
+      heading: "Hours",
+      items: "Weekdays | 9am–5pm\nWeekends | By appointment",
+    };
+  }
+  if (type === "countdown") {
+    return { heading: "Coming up", body: "Add a date people should remember.", endAt: "" };
+  }
+  if (type === "social") {
+    return { heading: "Follow along", items: "" };
+  }
+  if (type === "call") {
+    return {
+      heading: "Talk with us",
+      body: "Call or send a message. A person will answer.",
+      buttonLabel: "Call",
+      phone: "",
+      whatsapp: "",
+    };
+  }
   return {
     heading: "Contact",
     body: "Send a message with the form, or use the button below.",
     buttonLabel: "Email us",
     buttonHref: "",
+  };
+}
+
+export function contentFromFormData(formData: FormData): BuilderSectionContent {
+  return {
+    heading: String(formData.get("heading") ?? ""),
+    subheading: String(formData.get("subheading") ?? ""),
+    body: String(formData.get("body") ?? ""),
+    buttonLabel: String(formData.get("buttonLabel") ?? ""),
+    buttonHref: String(formData.get("buttonHref") ?? ""),
+    imageUrl: String(formData.get("imageUrl") ?? ""),
+    imageAlt: String(formData.get("imageAlt") ?? ""),
+    items: String(formData.get("items") ?? ""),
+    headingLevel: String(formData.get("headingLevel") ?? ""),
+    linkLabel: String(formData.get("linkLabel") ?? ""),
+    linkHref: String(formData.get("linkHref") ?? ""),
+    backgroundColor: String(formData.get("backgroundColor") ?? ""),
+    textColor: String(formData.get("textColor") ?? ""),
+    headingColor: String(formData.get("headingColor") ?? ""),
+    videoUrl: String(formData.get("videoUrl") ?? ""),
+    mapQuery: String(formData.get("mapQuery") ?? ""),
+    endAt: String(formData.get("endAt") ?? ""),
+    phone: String(formData.get("phone") ?? ""),
+    whatsapp: String(formData.get("whatsapp") ?? ""),
   };
 }
 
@@ -245,33 +346,115 @@ export function parseBuilderSectionContent(
   const imageUrl = clip(raw.imageUrl, 500);
   const imageAlt = clip(raw.imageAlt, 120);
   const items = itemsToLines(parseItemLines(raw.items ?? ""));
+  const headingLevel = isBuilderHeadingLevel(raw.headingLevel ?? "")
+    ? raw.headingLevel
+    : "";
+  const linkLabel = clip(raw.linkLabel, 80);
+  const linkHref = clip(raw.linkHref, 500);
+  const backgroundColor = parseBuilderColor(raw.backgroundColor);
+  const textColor = parseBuilderColor(raw.textColor);
+  const headingColor = parseBuilderColor(raw.headingColor);
+  const videoUrl = clip(raw.videoUrl, 500);
+  const mapQuery = clip(raw.mapQuery, 200);
+  const endAt = parseCountdownEnd(raw.endAt);
+  const phone = clip(raw.phone, 24);
+  const whatsapp = clip(raw.whatsapp, 24);
+  const look = {
+    headingLevel,
+    backgroundColor,
+    textColor,
+    headingColor,
+  };
 
   if (buttonHref && !isSafeBuilderHref(buttonHref)) {
     throw new Error("Links must start with https://, mailto:, tel:, /, or #.");
   }
+  if (linkHref && !isSafeBuilderHref(linkHref)) {
+    throw new Error("Text links must start with https://, mailto:, tel:, /, or #.");
+  }
   if (imageUrl && !isSafeBuilderImageUrl(imageUrl)) {
     throw new Error("Image links must be public https:// addresses.");
   }
+  if (videoUrl && !parseBuilderVideoEmbed(videoUrl)) {
+    throw new Error("Video links must be a public YouTube or Vimeo https:// address.");
+  }
+  if (mapQuery && !builderMapEmbedSrc(mapQuery)) {
+    throw new Error("Add a short address or place name for the map.");
+  }
+  if (phone && !builderTelHref(phone)) {
+    throw new Error("Add a phone number people can tap to call.");
+  }
+  if (whatsapp && !builderWhatsAppHref(whatsapp)) {
+    throw new Error("WhatsApp needs a number with country code, digits only.");
+  }
+  if (type === "gallery") {
+    for (const item of parseItemLines(items)) {
+      if (item.label !== "https://" && !isSafeBuilderImageUrl(item.label)) {
+        throw new Error("Each gallery line must start with a public https:// image.");
+      }
+    }
+  }
+  if (type === "social") {
+    for (const item of parseItemLines(items)) {
+      if (item.detail && item.detail !== "https://" && !isSafeBuilderHref(item.detail)) {
+        throw new Error("Social links must start with https://.");
+      }
+    }
+  }
 
   if (type === "hero") {
-    return { heading, subheading, buttonLabel, buttonHref, imageUrl, imageAlt };
+    return { ...look, heading, subheading, buttonLabel, buttonHref, imageUrl, imageAlt };
   }
   if (type === "text") {
-    return { heading, body };
+    return { ...look, heading, body, linkLabel, linkHref };
   }
   if (type === "cta") {
-    return { heading, body, buttonLabel, buttonHref };
+    return { ...look, heading, body, buttonLabel, buttonHref };
   }
   if (type === "lead") {
-    return { heading, body };
+    return { ...look, heading, body };
   }
   if (type === "image_text") {
-    return { heading, body, imageUrl, imageAlt };
+    return { ...look, heading, body, imageUrl, imageAlt };
   }
   if (type === "features" || type === "testimonials" || type === "faq") {
-    return { heading, body, items };
+    return { ...look, heading, body, items };
   }
-  return { heading, body, buttonLabel, buttonHref };
+  if (type === "button") {
+    return { ...look, heading, buttonLabel, buttonHref };
+  }
+  if (type === "image") {
+    return { ...look, heading, imageUrl, imageAlt };
+  }
+  if (type === "video") {
+    return { ...look, heading, body, videoUrl };
+  }
+  if (type === "gallery") {
+    return { ...look, heading, items };
+  }
+  if (type === "map") {
+    return { ...look, heading, body, mapQuery };
+  }
+  if (type === "pricing" || type === "hours" || type === "social") {
+    return { ...look, heading, body, items };
+  }
+  if (type === "countdown") {
+    return { ...look, heading, body, endAt };
+  }
+  if (type === "call") {
+    return { ...look, heading, body, buttonLabel, phone, whatsapp };
+  }
+  return { ...look, heading, body, buttonLabel, buttonHref };
+}
+
+function parseCountdownEnd(value: string | undefined): string {
+  const trimmed = (value ?? "").trim();
+  if (!trimmed) return "";
+  const parsed = Date.parse(trimmed);
+  if (!Number.isFinite(parsed)) {
+    throw new Error("Add a real date and time for the countdown.");
+  }
+  return new Date(parsed).toISOString();
 }
 
 export function publishedSectionsOnly<T extends { visible: boolean }>(

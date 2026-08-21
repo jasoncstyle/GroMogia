@@ -102,4 +102,16 @@ export async function ensureSchema(): Promise<void> {
   if (!builderRows[0]?.name) {
     await applyMigration(sql, "0008_phase7_builder_rows.sql");
   }
+
+  const builderTheme = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'builder_sites'
+       and column_name = 'theme'`,
+  )) as RegistryRow[];
+
+  if (!builderTheme[0]?.name) {
+    await applyMigration(sql, "0009_phase7_builder_style.sql");
+  }
 }

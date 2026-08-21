@@ -680,7 +680,25 @@ export type BuilderSectionType =
   | "features"
   | "testimonials"
   | "faq"
-  | "contact";
+  | "contact"
+  | "button"
+  | "image"
+  | "video"
+  | "gallery"
+  | "map"
+  | "pricing"
+  | "hours"
+  | "countdown"
+  | "social"
+  | "call";
+
+export type BuilderTheme = {
+  pageBackground?: string
+  textColor?: string
+  headingColor?: string
+  buttonBackground?: string
+  buttonText?: string
+};
 
 export type BuilderSectionContent = {
   heading?: string
@@ -691,6 +709,17 @@ export type BuilderSectionContent = {
   imageUrl?: string
   imageAlt?: string
   items?: string
+  headingLevel?: string
+  linkLabel?: string
+  linkHref?: string
+  backgroundColor?: string
+  textColor?: string
+  headingColor?: string
+  videoUrl?: string
+  mapQuery?: string
+  endAt?: string
+  phone?: string
+  whatsapp?: string
 };
 
 export const builderSites = pgTable(
@@ -703,6 +732,7 @@ export const builderSites = pgTable(
     title: text("title").notNull().default(""),
     metaDescription: text("meta_description").notNull().default(""),
     status: text("status").notNull().default("draft"),
+    theme: jsonb("theme").$type<BuilderTheme>().notNull().default({}),
     createdBy: uuid("created_by").references(() => users.id),
     ...timestamps,
   },
@@ -721,6 +751,7 @@ export const builderRows = pgTable(
       .references(() => builderSites.id, { onDelete: "cascade" }),
     sortOrder: integer("sort_order").notNull().default(0),
     columnWidths: jsonb("column_widths").$type<number[]>().notNull().default([100]),
+    backgroundColor: text("background_color").notNull().default(""),
     ...timestamps,
   },
   (table) => [

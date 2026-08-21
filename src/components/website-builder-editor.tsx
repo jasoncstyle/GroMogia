@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { BuilderStudio } from "@/components/builder-studio";
+import { BuilderThemeFields } from "@/components/builder-color-field";
 import { BuilderTemplatePicker } from "@/components/builder-template-picker";
 import { CopyLink } from "@/components/copy-link";
 import { FoldableSample } from "@/components/foldable-sample";
@@ -26,6 +27,7 @@ import {
 } from "@/lib/actions/website-builder";
 import { rowGridTemplate } from "@/lib/website-builder/layout";
 import { builderSectionLabel } from "@/lib/website-builder/sections";
+import { EMPTY_BUILDER_THEME, parseBuilderTheme, type BuilderTheme } from "@/lib/website-builder/style";
 import type { BuilderLayoutRow } from "@/lib/website-builder/types";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +42,7 @@ export function WebsiteBuilderEditor({
     title: string
     metaDescription: string
     status: string
+    theme?: BuilderTheme
   }
   rows: BuilderLayoutRow[]
   brandName: string | null
@@ -47,18 +50,24 @@ export function WebsiteBuilderEditor({
   publicUrl: string
 }) {
   const [studioOpen, setStudioOpen] = useState(true);
+  const [theme, setTheme] = useState(() => parseBuilderTheme(site.theme ?? EMPTY_BUILDER_THEME));
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 sm:flex-row sm:items-center">
-        <Button
-          type="button"
-          size="lg"
-          className="h-11 shrink-0 px-5 text-base"
-          onClick={() => setStudioOpen(true)}
-        >
-          Open page editor
-        </Button>
+          <Button
+            type="button"
+            size="lg"
+            className="h-11 shrink-0 px-5 text-base"
+            onClick={() => setStudioOpen(true)}
+          >
+            Open page editor
+          </Button>
+          <Button type="button" size="lg" variant="outline" className="h-11 px-5 text-base" asChild>
+            <a href="/app/website-builder/preview" target="_blank" rel="noreferrer">
+              Preview
+            </a>
+          </Button>
         <p className="text-sm text-muted-foreground">
           The editor covers this screen so you can add rows and columns. Close
           it to change the page title or search description.
@@ -98,6 +107,17 @@ export function WebsiteBuilderEditor({
               />
             </div>
             <SaveButton>Save details</SaveButton>
+          </SaveForm>
+          <SaveForm
+            action={saveBuilderSite}
+            successMessage="Page colors saved."
+            className="space-y-3"
+          >
+            <input type="hidden" name="title" value={site.title} />
+            <input type="hidden" name="metaDescription" value={site.metaDescription} />
+            <p className="text-sm font-medium">Page colors</p>
+            <BuilderThemeFields theme={theme} onChange={setTheme} />
+            <SaveButton variant="outline">Save colors</SaveButton>
           </SaveForm>
           <div className="flex flex-wrap gap-2">
             {site.status === "published" ? (
@@ -205,9 +225,15 @@ export function WebsiteBuilderEditor({
       <BuilderStudio
         open={studioOpen}
         onClose={() => setStudioOpen(false)}
-        site={{ title: site.title, status: site.status }}
+        site={{
+          title: site.title,
+          metaDescription: site.metaDescription,
+          status: site.status,
+          theme,
+        }}
         rows={rows}
         orgSlug={orgSlug}
+        onThemeChange={setTheme}
       />
     </div>
   );

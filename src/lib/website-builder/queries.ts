@@ -9,6 +9,7 @@ import {
   organizations,
 } from "@/lib/db/schema";
 import { parseColumnWidths } from "@/lib/website-builder/layout";
+import { parseBuilderColor, parseBuilderTheme } from "@/lib/website-builder/style";
 import type { BuilderLayoutRow } from "@/lib/website-builder/types";
 
 export type { BuilderLayoutRow } from "@/lib/website-builder/types";
@@ -24,6 +25,7 @@ function toLayoutRows(
       id: row.id,
       sortOrder: row.sortOrder,
       columnWidths: parseColumnWidths(row.columnWidths),
+      backgroundColor: parseBuilderColor(row.backgroundColor),
       widgets: [] as BuilderLayoutRow["widgets"],
     }));
   const byId = new Map(grouped.map((row) => [row.id, row]));
@@ -48,6 +50,7 @@ function toLayoutRows(
       id: "legacy",
       sortOrder: grouped.length,
       columnWidths: [100],
+      backgroundColor: "",
       widgets: leftovers.map((widget) => ({ ...widget, columnIndex: 0 })),
     });
   }
@@ -97,7 +100,9 @@ export async function getBuilderEditorData(organizationId: string) {
     .orderBy(asc(builderSections.sortOrder));
 
   return {
-    site,
+    site: site
+      ? { ...site, theme: parseBuilderTheme(site.theme) }
+      : null,
     rows: toLayoutRows(rows, sections),
     brand: brand ?? null,
   };
@@ -153,7 +158,7 @@ export async function getPublishedBuilderPage(orgSlug: string) {
   return {
     organization,
     brand: brand ?? null,
-    site,
+    site: { ...site, theme: parseBuilderTheme(site.theme) },
     rows: toLayoutRows(rows, sections).filter((row) => row.widgets.length > 0),
     sections,
   };
