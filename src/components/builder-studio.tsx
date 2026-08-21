@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { BuilderSectionFields } from "@/components/builder-section-fields";
 import { BuilderThemeFields } from "@/components/builder-color-field";
+import { BuilderRemoteImage } from "@/components/builder-remote-image";
 import { BuilderSectionView } from "@/components/builder-page-view";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Button } from "@/components/ui/button";
@@ -535,10 +536,17 @@ function StudioWidget({
           <span className="sr-only">Drag to another column</span>
         </span>
       </div>
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={onEdit}
-        className="block w-full text-left outline-none hover:bg-muted/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onEdit();
+          }
+        }}
+        className="block w-full cursor-pointer text-left outline-none hover:bg-muted/30 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
       >
         <span className="sr-only">Edit {builderSectionLabel(widget.type).toLowerCase()}</span>
         <div className="pointer-events-none">
@@ -551,7 +559,7 @@ function StudioWidget({
             theme={theme}
           />
         </div>
-      </button>
+      </div>
       <div className="flex flex-wrap gap-1 px-2 pb-2">
         <Button type="button" size="xs" variant="ghost" onClick={() => onMove("up")}>
           Move up
@@ -682,7 +690,7 @@ function EditWidgetDialog({
   const imageUrl = widget?.content.imageUrl?.trim() ?? "";
   const showImagePreview =
     widget &&
-    (widget.type === "hero" || widget.type === "image_text") &&
+    (widget.type === "hero" || widget.type === "image_text" || widget.type === "image") &&
     imageUrl.startsWith("https://");
 
   return (
@@ -715,11 +723,10 @@ function EditWidgetDialog({
               Show this widget on the public page
             </label>
             {showImagePreview ? (
-              <div
-                role="img"
-                aria-label={widget.content.imageAlt || "Image preview"}
-                className="h-40 w-full rounded-lg bg-muted bg-cover bg-center"
-                style={{ backgroundImage: `url("${imageUrl.replaceAll('"', "")}")` }}
+              <BuilderRemoteImage
+                url={imageUrl}
+                alt={widget.content.imageAlt || "Image preview"}
+                className="h-40"
               />
             ) : null}
             <BuilderSectionFields

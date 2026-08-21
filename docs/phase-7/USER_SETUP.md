@@ -21,7 +21,7 @@ The builder works in two layers:
    - Change the words.
    - Set **Heading size** (Heading 1, Heading 2, Heading 3, or standard text).
    - On a Text widget, add **Link text** and **Link address**.
-   - Set **Box background**, **Text color**, and **Heading color**.
+   - Paste a public https:// image. GroovGro fetches the photo so other sites cannot block it in Chrome. File upload comes later.
 8. Click **Done**.
 9. **Page colors** (in the editor bar) sets colors for the whole page. **Row color** sets one row’s background.
 10. Click **Preview** to see the page as visitors would, with a yellow bar that says it is not live. Close that tab when you are done.

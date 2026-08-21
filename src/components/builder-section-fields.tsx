@@ -180,7 +180,8 @@ export function BuilderSectionFields({
               {...textProps("imageUrl", content.imageUrl ?? "")}
             />
             <p className="text-xs text-muted-foreground">
-              Paste a public https:// image. GroovGro does not upload files yet.
+              Paste a public https:// photo link. GroovGro will show it even if
+              the other website tries to block it. File upload comes later.
             </p>
           </div>
           <div className="space-y-2">
