@@ -122,6 +122,10 @@ export function WebsiteBuilderEditor({
             <input type="hidden" name="title" value={site.title} />
             <input type="hidden" name="metaDescription" value={site.metaDescription} />
             <p className="text-sm font-medium">Page colors</p>
+            <p className="text-xs text-muted-foreground">
+              Templates start white with dark grey text. Use the color wheel,
+              type a hex code, or pick a swatch.
+            </p>
             <BuilderThemeFields theme={theme} onChange={setTheme} />
             <label className="flex items-start gap-2 text-sm">
               <input
@@ -248,8 +252,8 @@ export function WebsiteBuilderEditor({
           <CardTitle>Pages</CardTitle>
           <CardDescription>
             Today this organization has one GroovGro page: Home. Extra pages
-            (About, a service page, and so on) come next. They will work like
-            this:
+            (About, a service page, and so on) are the next Website builder
+            slice. They will work like this:
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground">

@@ -3,7 +3,7 @@ import {
   rowsForTemplate,
   type BuilderBrandInput,
 } from "@/lib/website-builder/row-templates";
-import { parseBuilderTheme, type BuilderTheme } from "@/lib/website-builder/style";
+import { DEFAULT_BUILDER_THEME, type BuilderTheme } from "@/lib/website-builder/style";
 
 export type { BuilderBrandInput };
 
@@ -25,7 +25,7 @@ export const BUILDER_TEMPLATES: BuilderTemplateInfo[] = [
     id: "1",
     name: "Template 1",
     description:
-      "Full-screen welcome, three offers, a dark statement, six service boxes, before and after, quotes, numbers, then a form.",
+      "Full-screen welcome, three offers, a statement, six service boxes, before and after, quotes, numbers, then a form.",
     sectionSummary: "Edge-to-edge welcome · 3 columns · 6 boxes · quotes · form",
   },
   {
@@ -67,42 +67,8 @@ export function layoutForTemplate(templateId: string, input: BuilderBrandInput) 
   return rowsForTemplate(id, input);
 }
 
-export function themeForTemplate(templateId: string): BuilderTheme {
-  const id = isBuilderTemplateId(templateId) ? templateId : DEFAULT_BUILDER_TEMPLATE_ID;
-  if (id === "1") {
-    return parseBuilderTheme({
-      pageBackground: "#18181b",
-      textColor: "#f4f4f5",
-      headingColor: "#ffffff",
-      buttonBackground: "#ffffff",
-      buttonText: "#18181b",
-    });
-  }
-  if (id === "2") {
-    return parseBuilderTheme({
-      pageBackground: "#ffffff",
-      textColor: "#18181b",
-      headingColor: "#0f2744",
-      buttonBackground: "#0f2744",
-      buttonText: "#ffffff",
-    });
-  }
-  if (id === "3") {
-    return parseBuilderTheme({
-      pageBackground: "#f7f3ea",
-      textColor: "#18181b",
-      headingColor: "#18181b",
-      buttonBackground: "#18181b",
-      buttonText: "#f7f3ea",
-    });
-  }
-  return parseBuilderTheme({
-    pageBackground: "#ffffff",
-    textColor: "#18181b",
-    headingColor: "#18181b",
-    buttonBackground: "#18181b",
-    buttonText: "#ffffff",
-  });
+export function themeForTemplate(_templateId: string): BuilderTheme {
+  return { ...DEFAULT_BUILDER_THEME };
 }
 
 export function sectionsForTemplate(

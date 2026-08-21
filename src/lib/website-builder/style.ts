@@ -23,25 +23,51 @@ export const EMPTY_BUILDER_THEME: BuilderTheme = {
   buttonText: "",
 };
 
+/** White page, dark grey type — used by every starter template. */
+export const DEFAULT_BUILDER_THEME: BuilderTheme = {
+  pageBackground: "#ffffff",
+  textColor: "#3f3f46",
+  headingColor: "#3f3f46",
+  buttonBackground: "#3f3f46",
+  buttonText: "#ffffff",
+};
+
 export const BUILDER_BACKGROUND_SWATCHES = [
   { label: "Default", value: "" },
   { label: "White", value: "#ffffff" },
-  { label: "Cream", value: "#f7f3ea" },
+  { label: "Off-white", value: "#fafafa" },
   { label: "Light gray", value: "#f4f4f5" },
+  { label: "Silver", value: "#e4e4e7" },
+  { label: "Cream", value: "#f7f3ea" },
+  { label: "Sand", value: "#efe6d5" },
   { label: "Sky", value: "#e8f1f8" },
+  { label: "Ice", value: "#eef2ff" },
+  { label: "Mint", value: "#ecfdf5" },
+  { label: "Blush", value: "#fce7f3" },
+  { label: "Peach", value: "#ffedd5" },
+  { label: "Lemon", value: "#fef9c3" },
   { label: "Navy", value: "#0f2744" },
+  { label: "Royal", value: "#1e3a8a" },
+  { label: "Teal", value: "#134e4a" },
   { label: "Forest", value: "#14352c" },
   { label: "Charcoal", value: "#18181b" },
+  { label: "Slate", value: "#334155" },
   { label: "Black", value: "#111111" },
   { label: "Brick", value: "#6b2d2d" },
+  { label: "Wine", value: "#7f1d1d" },
+  { label: "Plum", value: "#581c87" },
 ] as const;
 
 export const BUILDER_TEXT_SWATCHES = [
   { label: "Default", value: "" },
-  { label: "Black", value: "#18181b" },
-  { label: "Gray", value: "#52525b" },
+  { label: "Dark grey", value: "#3f3f46" },
+  { label: "Near black", value: "#18181b" },
+  { label: "Medium gray", value: "#52525b" },
+  { label: "Light gray", value: "#a1a1aa" },
   { label: "White", value: "#ffffff" },
   { label: "Navy", value: "#0f2744" },
+  { label: "Forest", value: "#14352c" },
+  { label: "Brick", value: "#6b2d2d" },
   { label: "Cream", value: "#f7f3ea" },
 ] as const;
 
@@ -51,8 +77,12 @@ export function isBuilderHeadingLevel(value: string): value is BuilderHeadingLev
 
 export function parseBuilderColor(value: unknown): string {
   if (typeof value !== "string") return "";
-  const trimmed = value.trim();
+  let trimmed = value.trim();
   if (!trimmed) return "";
+  if (!trimmed.startsWith("#")) trimmed = `#${trimmed}`;
+  if (/^#[0-9a-fA-F]{3}$/.test(trimmed)) {
+    trimmed = `#${trimmed[1]}${trimmed[1]}${trimmed[2]}${trimmed[2]}${trimmed[3]}${trimmed[3]}`;
+  }
   if (!/^#[0-9a-fA-F]{6}$/.test(trimmed)) return "";
   return trimmed.toLowerCase();
 }
