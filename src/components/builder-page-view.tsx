@@ -3,6 +3,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 
 import { PublicLeadForm } from "@/components/public-lead-form";
+import { BuilderRemoteImage } from "@/components/builder-remote-image";
 import type { BuilderSectionContent } from "@/lib/db/schema";
 import {
   builderMapEmbedSrc,
@@ -330,13 +331,11 @@ export function BuilderSectionView({
         {content.heading ? heading(content.heading) : null}
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {photos.map((item) => (
-            // Arbitrary tenant image hosts.
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <BuilderRemoteImage
               key={item.label}
-              src={item.label}
+              url={item.label}
               alt={item.detail || content.heading || ""}
-              className="h-48 w-full rounded-xl object-cover"
+              className="h-48"
             />
           ))}
         </div>
@@ -473,12 +472,10 @@ function SectionImage({
   const url = content.imageUrl?.trim() ?? "";
   if (!url || !isSafeBuilderImageUrl(url)) return null;
   return (
-    // Arbitrary tenant image hosts; next/image is not used on purpose.
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={url}
+    <BuilderRemoteImage
+      url={url}
       alt={content.imageAlt?.trim() || content.heading || ""}
-      className={["w-full rounded-xl object-cover", className].filter(Boolean).join(" ")}
+      className={className}
     />
   );
 }
