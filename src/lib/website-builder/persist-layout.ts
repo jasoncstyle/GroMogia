@@ -2,7 +2,11 @@ import { eq } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import { builderRows, builderSections } from "@/lib/db/schema";
-import { clampColumnIndex, parseColumnWidths } from "@/lib/website-builder/layout";
+import {
+  clampColumnIndex,
+  parseColumnWidths,
+  parseContentWidth,
+} from "@/lib/website-builder/layout";
 import type { BuilderRowDraft } from "@/lib/website-builder/row-templates";
 
 type Db = NonNullable<ReturnType<typeof getDb>>;
@@ -26,6 +30,7 @@ export async function writeBuilderLayout(
         siteId: input.siteId,
         sortOrder,
         columnWidths,
+        contentWidth: parseContentWidth(row.contentWidth),
       })
       .returning({ id: builderRows.id });
     if (!created) throw new Error("Could not create a layout row.");

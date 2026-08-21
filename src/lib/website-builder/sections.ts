@@ -51,7 +51,7 @@ export const BUILDER_SECTION_LABELS: Record<BuilderSectionType, string> = {
 };
 
 export const BUILDER_SECTION_HINTS: Record<BuilderSectionType, string> = {
-  hero: "Large headline at the top of the page",
+  hero: "Large headline. Use Row width for an edge-to-edge photo",
   text: "A heading, paragraph, and optional link",
   cta: "A short pitch with a button",
   lead: "A form that captures a name and email",

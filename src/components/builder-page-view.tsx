@@ -11,7 +11,13 @@ import {
   builderWhatsAppHref,
   parseBuilderVideoEmbed,
 } from "@/lib/website-builder/embeds";
-import { rowGridTemplate, widgetsForColumn } from "@/lib/website-builder/layout";
+import {
+  parseContentWidth,
+  rowContentInnerClass,
+  rowGridTemplate,
+  widgetsForColumn,
+  type RowContentWidth,
+} from "@/lib/website-builder/layout";
 import {
   isSafeBuilderHref,
   isSafeBuilderImageUrl,
@@ -36,10 +42,13 @@ export type RenderSection = {
   sortOrder?: number
 };
 
+const FULL_BLEED_TYPES = new Set(["hero", "image", "video", "gallery", "map"]);
+
 export type RenderRow = {
   id: string
   columnWidths: number[]
   backgroundColor?: string
+  contentWidth?: RowContentWidth | string
   widgets: RenderSection[]
 };
 
@@ -68,55 +77,66 @@ export function BuilderPageView({
         color: look.textColor || undefined,
       }}
     >
-      <div className="mx-auto w-full max-w-6xl px-4 py-6">
-        {rows.map((row) => {
-          const dense = row.columnWidths.length > 1;
-          const darkRow = isDarkBuilderColor(row.backgroundColor ?? "");
-          return (
+      {rows.map((row) => {
+        const dense = row.columnWidths.length > 1;
+        const darkRow = isDarkBuilderColor(row.backgroundColor ?? "");
+        const contentWidth = parseContentWidth(row.contentWidth);
+        const fullBleed = contentWidth === "full";
+        return (
+          <div
+            key={row.id}
+            className={cn("w-full", darkRow && "[&_*]:text-inherit")}
+            style={{
+              backgroundColor: row.backgroundColor || undefined,
+              color: darkRow ? "#f8fafc" : undefined,
+            }}
+          >
             <div
-              key={row.id}
               className={cn(
-                "grid grid-cols-1 gap-4",
-                dense && "md:[grid-template-columns:var(--builder-cols)]",
-                row.backgroundColor && "-mx-4 px-4 py-2 md:-mx-6 md:px-6",
-                darkRow && "[&_*]:text-inherit",
+                rowContentInnerClass(contentWidth),
+                !fullBleed && "py-6",
               )}
-              style={
-                {
-                  backgroundColor: row.backgroundColor || undefined,
-                  color: darkRow ? "#f8fafc" : undefined,
-                  ...(dense
-                    ? { "--builder-cols": rowGridTemplate(row.columnWidths) }
-                    : {}),
-                } as CSSProperties
-              }
             >
-              {row.columnWidths.map((_, columnIndex) => (
-                <div key={`${row.id}-${columnIndex}`}>
-                  {widgetsForColumn(
-                    row.widgets.map((widget, index) => ({
-                      ...widget,
-                      columnIndex: widget.columnIndex ?? 0,
-                      sortOrder: widget.sortOrder ?? index,
-                    })),
-                    columnIndex,
-                  ).map((section) => (
-                    <BuilderSectionView
-                      key={section.id}
-                      section={section}
-                      orgSlug={orgSlug}
-                      fallbackTitle={title}
-                      headingLevel={section.id === primaryHeadingId ? "h1" : "h2"}
-                      dense={dense}
-                      theme={look}
-                    />
-                  ))}
-                </div>
-              ))}
+              <div
+                className={cn(
+                  "grid grid-cols-1",
+                  dense ? "gap-4" : "gap-0",
+                  dense && "md:[grid-template-columns:var(--builder-cols)]",
+                )}
+                style={
+                  dense
+                    ? ({ "--builder-cols": rowGridTemplate(row.columnWidths) } as CSSProperties)
+                    : undefined
+                }
+              >
+                {row.columnWidths.map((_, columnIndex) => (
+                  <div key={`${row.id}-${columnIndex}`}>
+                    {widgetsForColumn(
+                      row.widgets.map((widget, index) => ({
+                        ...widget,
+                        columnIndex: widget.columnIndex ?? 0,
+                        sortOrder: widget.sortOrder ?? index,
+                      })),
+                      columnIndex,
+                    ).map((section) => (
+                      <BuilderSectionView
+                        key={section.id}
+                        section={section}
+                        orgSlug={orgSlug}
+                        fallbackTitle={title}
+                        headingLevel={section.id === primaryHeadingId ? "h1" : "h2"}
+                        dense={dense}
+                        theme={look}
+                        fullBleed={fullBleed}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -128,6 +148,7 @@ export function BuilderSectionView({
   headingLevel,
   dense = false,
   theme = EMPTY_BUILDER_THEME,
+  fullBleed = false,
 }: {
   section: RenderSection
   orgSlug: string
@@ -135,11 +156,17 @@ export function BuilderSectionView({
   headingLevel: BuilderHeadingLevel
   dense?: boolean
   theme?: BuilderTheme
+  fullBleed?: boolean
 }) {
   const content = section.content;
   const level = parseHeadingLevel(content.headingLevel, headingLevel);
   const items = parseItemLines(content.items ?? "");
-  const pad = dense ? "px-3 py-6" : "px-6 py-12";
+  const bleedMedia = fullBleed && FULL_BLEED_TYPES.has(section.type);
+  const pad = bleedMedia
+    ? "px-0 py-0"
+    : dense
+      ? "px-3 py-6"
+      : "px-6 py-12";
   const heroPad = dense ? "px-3 py-8" : "px-6 py-20";
   const boxStyle: CSSProperties = {
     backgroundColor: content.backgroundColor || undefined,
@@ -156,13 +183,37 @@ export function BuilderSectionView({
   );
 
   if (section.type === "hero") {
+    const imageUrl = content.imageUrl?.trim() ?? "";
+    const hasImage = Boolean(imageUrl) && isSafeBuilderImageUrl(imageUrl);
+    if (fullBleed && hasImage) {
+      const overlayHeadingStyle: CSSProperties = {
+        color: content.headingColor || "#ffffff",
+      };
+      return (
+        <section className="relative w-full overflow-hidden" style={boxStyle}>
+          <SectionImage
+            content={content}
+            className="h-[min(70vh,36rem)] min-h-80 rounded-none"
+          />
+          <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/75 via-black/25 to-transparent px-6 py-12 md:px-16 md:py-16">
+            <SectionHeading level={level} dense={dense} style={overlayHeadingStyle}>
+              {content.heading || fallbackTitle}
+            </SectionHeading>
+            {content.subheading ? (
+              <p className="mt-4 max-w-2xl text-lg text-white/90">{content.subheading}</p>
+            ) : null}
+            <SectionButton content={content} theme={theme} />
+          </div>
+        </section>
+      );
+    }
     return (
-      <section className={heroPad} style={boxStyle}>
+      <section className={fullBleed ? "px-6 py-16 md:px-16" : heroPad} style={boxStyle}>
         {heading(content.heading || fallbackTitle)}
         {content.subheading ? (
           <p className="mt-4 max-w-2xl text-lg opacity-80">{content.subheading}</p>
         ) : null}
-        <SectionImage content={content} className="mt-8 max-w-2xl" />
+        <SectionImage content={content} className={fullBleed ? "mt-8" : "mt-8 max-w-2xl"} />
         <SectionButton content={content} theme={theme} />
       </section>
     );
@@ -297,8 +348,18 @@ export function BuilderSectionView({
   if (section.type === "image") {
     return (
       <section className={pad} style={boxStyle}>
-        {content.heading ? heading(content.heading) : null}
-        <SectionImage content={content} className={content.heading ? "mt-4" : undefined} />
+        {content.heading ? (
+          <div className={fullBleed ? "px-6 pt-8 md:px-16" : undefined}>
+            {heading(content.heading)}
+          </div>
+        ) : null}
+        <SectionImage
+          content={content}
+          className={cn(
+            content.heading ? "mt-4" : undefined,
+            fullBleed && "rounded-none",
+          )}
+        />
       </section>
     );
   }
@@ -307,10 +368,20 @@ export function BuilderSectionView({
     const embed = parseBuilderVideoEmbed(content.videoUrl ?? "");
     return (
       <section className={pad} style={boxStyle}>
-        {content.heading ? heading(content.heading) : null}
-        {content.body ? <p className="mt-3 max-w-2xl opacity-80">{content.body}</p> : null}
+        {content.heading || content.body ? (
+          <div className={fullBleed ? "px-6 pt-8 md:px-16" : undefined}>
+            {content.heading ? heading(content.heading) : null}
+            {content.body ? <p className="mt-3 max-w-2xl opacity-80">{content.body}</p> : null}
+          </div>
+        ) : null}
         {embed ? (
-          <div className="mt-4 aspect-video overflow-hidden rounded-xl border">
+          <div
+            className={cn(
+              "aspect-video overflow-hidden border",
+              content.heading || content.body ? "mt-4" : undefined,
+              fullBleed ? "rounded-none border-x-0" : "rounded-xl",
+            )}
+          >
             <iframe
               src={embed.src}
               title={content.heading || "Video"}
@@ -328,14 +399,18 @@ export function BuilderSectionView({
     const photos = items.filter((item) => isSafeBuilderImageUrl(item.label));
     return (
       <section className={pad} style={boxStyle}>
-        {content.heading ? heading(content.heading) : null}
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        {content.heading ? (
+          <div className={fullBleed ? "px-6 pt-8 md:px-16" : undefined}>
+            {heading(content.heading)}
+          </div>
+        ) : null}
+        <div className={cn("grid gap-3 sm:grid-cols-2", content.heading ? "mt-4" : undefined)}>
           {photos.map((item) => (
             <BuilderRemoteImage
               key={item.label}
               url={item.label}
               alt={item.detail || content.heading || ""}
-              className="h-48"
+              className={cn("h-48", fullBleed && "rounded-none")}
             />
           ))}
         </div>
@@ -347,10 +422,20 @@ export function BuilderSectionView({
     const src = builderMapEmbedSrc(content.mapQuery ?? "");
     return (
       <section className={pad} style={boxStyle}>
-        {content.heading ? heading(content.heading) : null}
-        {content.body ? <p className="mt-3 max-w-2xl opacity-80">{content.body}</p> : null}
+        {content.heading || content.body ? (
+          <div className={fullBleed ? "px-6 pt-8 md:px-16" : undefined}>
+            {content.heading ? heading(content.heading) : null}
+            {content.body ? <p className="mt-3 max-w-2xl opacity-80">{content.body}</p> : null}
+          </div>
+        ) : null}
         {src ? (
-          <div className="mt-4 aspect-video overflow-hidden rounded-xl border">
+          <div
+            className={cn(
+              "aspect-video overflow-hidden border",
+              content.heading || content.body ? "mt-4" : undefined,
+              fullBleed ? "rounded-none border-x-0" : "rounded-xl",
+            )}
+          >
             <iframe title={content.heading || "Map"} src={src} className="size-full" />
           </div>
         ) : null}

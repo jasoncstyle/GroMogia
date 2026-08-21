@@ -24,6 +24,7 @@ import {
   clampColumnIndex,
   isRowLayoutId,
   parseColumnWidths,
+  parseContentWidth,
   widthsForLayout,
 } from "@/lib/website-builder/layout";
 import { writeBuilderLayout } from "@/lib/website-builder/persist-layout";
@@ -477,6 +478,27 @@ export async function setBuilderRowLayout(formData: FormData): Promise<ActionRes
     }
     revalidateBuilder(session.organizationSlug);
     return "Row layout saved. Columns that no longer exist moved their widgets into the last column.";
+  });
+}
+
+export async function setBuilderRowWidth(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not change that row width.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const rowId = String(formData.get("rowId") ?? "");
+    const contentWidth = parseContentWidth(formData.get("contentWidth"));
+    const updated = await db
+      .update(builderRows)
+      .set({ contentWidth, updatedAt: new Date() })
+      .where(
+        and(
+          eq(builderRows.id, rowId),
+          eq(builderRows.organizationId, session.organizationId),
+        ),
+      )
+      .returning({ id: builderRows.id });
+    if (updated.length === 0) throw new Error("That row was not found.");
+    revalidateBuilder(session.organizationSlug);
+    return "Row width saved.";
   });
 }
 
