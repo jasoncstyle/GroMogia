@@ -12,7 +12,7 @@ The builder works in two layers:
 1. Open https://www.groovgro.com/app and sign in.
 2. In the left Work list, open **Website builder**.
 3. If you do not have a GroovGro page yet, pick a starting layout (they all include a three-column row) and click **Create draft website**.
-4. Click **Open page editor**. The rest of GroovGro hides so you only see the page.
+4. The **page editor** should open by itself and cover the rest of GroovGro. If you only see page title and search description, look at the **top** of the page for the large **Open page editor** button. If you still see **Choose a starting layout**, pick a layout and click **Create draft website** first.
 5. Click **Add a row**, then pick how many columns you want (one, two, three, four, or a wide-left / wide-right / wide-center split).
 6. In a dashed cell, click **Add widget**, pick a type (Text, Image + text, Lead form, and so on), then click the new box to edit it.
 7. In the edit window, change the words or paste an `https://` image link. Click **Done**.
