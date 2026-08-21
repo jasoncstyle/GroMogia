@@ -13,20 +13,33 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function WebsiteBuilderPreviewPage() {
+export default async function WebsiteBuilderPreviewPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
   const session = await getAppSession();
   if (!session.organizationId || !hasPermission(session.permissions, "manage_website")) {
     redirect("/app/website-builder");
   }
 
-  const data = await getBuilderEditorData(session.organizationId);
+  const { page: pageId } = await searchParams;
+  const data = await getBuilderEditorData(session.organizationId, pageId);
   if (!data.site) {
     redirect("/app/website-builder");
   }
 
+  const orgSlug = session.organizationSlug ?? "";
   const rows = data.rows.map((row) => ({
     ...row,
     widgets: row.widgets.filter((widget) => widget.visible),
+  }));
+  const navPages = data.pages.map((page) => ({
+    href: page.isHome
+      ? "/app/website-builder/preview"
+      : `/app/website-builder/preview?page=${page.id}`,
+    label: page.label,
+    current: page.id === data.site?.id,
   }));
 
   return (
@@ -34,15 +47,23 @@ export default async function WebsiteBuilderPreviewPage() {
       <div className="sticky top-0 z-10 border-b bg-amber-100 px-4 py-2 text-center text-sm text-amber-950">
         Preview — not live. Visitors cannot see this until you click Publish.
         The connected website is unchanged.{" "}
-        <a href="/app/website-builder" className="font-medium underline underline-offset-4">
+        <a
+          href={
+            data.site.slug
+              ? `/app/website-builder?page=${data.site.id}`
+              : "/app/website-builder"
+          }
+          className="font-medium underline underline-offset-4"
+        >
           Back to editor
         </a>
       </div>
       <BuilderPageView
         title={data.site.title}
-        orgSlug={session.organizationSlug ?? ""}
+        orgSlug={orgSlug}
         rows={rows}
         theme={data.site.theme}
+        navPages={navPages}
       />
     </div>
   );

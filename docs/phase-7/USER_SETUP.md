@@ -28,19 +28,27 @@ The builder works in two layers:
    - Paste a public https:// image. GroovGro fetches the photo so other sites cannot block it in Chrome. File upload comes later.
 9. Click **Done**.
 10. **Page colors** (in the editor bar, or on the overview) sets colors for the whole page. Use the **color wheel**, type a **hex code** (with or without #), or pick a swatch. Leave **Use this page background on every row** on so Preview matches. If you pick a light page, keep dark **Page text** and **Headings**. **Row color** is only for one row that should be different — it has the same wheel, hex, and swatches.
-11. The top of Website builder shows **Using Template 1** (or 2, 3, 4). That is the starting layout for this Home page. Every template starts **white with dark grey text**.
-12. Click **Preview** to see the page as visitors would, with a yellow bar that says it is not live. Close that tab when you are done.
-13. Click **Publish** when you are ready. Then **Open page** is the live GroovGro address. Confirm https://www.oceansailingadventures.com/ is unchanged.
+11. The top of Website builder shows which page you are editing (Home, or an extra page) and **Using Template 1** (or 2, 3, 4, or Blank). Every template starts **white with dark grey text**.
+12. Click **Preview** to see that page as visitors would, with a yellow bar that says it is not live. Close that tab when you are done.
+13. Click **Publish** when you are ready. Then **Open page** is the live GroovGro address for that page. Confirm https://www.oceansailingadventures.com/ is unchanged.
 
-To switch the whole page, open **Start from a different template**, pick Template 1–4, and click **Use this template**. That replaces the GroovGro page and its page colors only.
+To switch the layout of the page you are editing, open **Start from a different template**, pick Template 1–4, and click **Use this template**. That replaces that GroovGro page and its page colors only.
 
 If the draft is still dark from an older Template 1: open **Page colors**, pick White background and Dark grey text/headings, leave **Use this page background on every row** on, and click **Save colors**. Or apply Template 1 again.
 
 ## Extra pages
 
-Today there is one GroovGro page: **Home**. Extra pages (About, a service page) are the **next Website builder slice** after this color work. There is no calendar date.
+1. On Website builder, open the **Pages** card.
+2. Under **Add a page**, type a **Page name** (for example About).
+3. Check the **Address**. GroovGro fills this from the name (about). You can change it. This becomes `https://www.groovgro.com/w/your-org/about`.
+4. Pick **Blank page** (one empty row) or Template 1–4.
+5. Click **Add a page**. It starts as a **draft**.
+6. Click **Edit** on that page. Change the title, colors, and layout the same way as Home.
+7. Click **Preview**, then **Publish** when that page should be live.
+8. Visitors see a simple list of published pages at the top (Home plus any other published pages).
+9. To delete an extra page: **Unpublish** if it is live, then click **Remove**. Home cannot be deleted. **Unpublish** hides Home.
 
-When that slice lands you will **Add a page** (name + address + a template or a blank start). It starts as a **draft**. **Publish** makes that page live at `/w/[org]/[slug]`. You can **Remove** a draft or unpublished page. Home cannot be deleted; **Unpublish** hides it. Extra GroovGro pages do not create pages on a connected existing website.
+Extra GroovGro pages do not create pages on a connected existing website. Custom domains and image uploads are later slices.
 
 ## Widgets in this slice
 
@@ -55,7 +63,7 @@ Not in this slice (need extra accounts or are easy to misuse): Instagram/Faceboo
 1. Open **SEO**.
 2. Approve a **Page title**, **Meta description**, or **Main heading** draft.
 3. In **Earlier decisions**, click **Apply to GroovGro website**.
-4. Confirm the GroovGro preview changed and the connected website did not.
+4. Confirm the GroovGro **Home** preview changed and the connected website did not. Extra pages are not updated by this Apply button.
 
 **Unpublish** hides the GroovGro page only. It does not change the connected website or Stripe.
 

@@ -80,6 +80,9 @@ function LayoutBars({ widths, className }: { widths: number[]; className?: strin
 export function BuilderStudio({
   open,
   onClose,
+  pageId,
+  pageLabel,
+  previewHref,
   site,
   rows: initialRows,
   orgSlug,
@@ -87,6 +90,9 @@ export function BuilderStudio({
 }: {
   open: boolean
   onClose: () => void
+  pageId: string
+  pageLabel: string
+  previewHref: string
   site: {
     title: string
     metaDescription: string
@@ -162,6 +168,7 @@ export function BuilderStudio({
   }
 
   async function run(action: (formData: FormData) => Promise<ActionResult>, formData: FormData) {
+    formData.set("pageId", pageId);
     const result = await action(formData);
     if (result.ok) {
       toast.success(result.message);
@@ -183,15 +190,15 @@ export function BuilderStudio({
       <header className="flex flex-wrap items-center gap-2 border-b px-4 py-3">
         <div className="min-w-0 flex-1">
           <h2 id="builder-studio-title" className="text-base font-semibold tracking-tight">
-            Page editor · {builderTemplateLabel(site.templateId)}
+            Page editor · {pageLabel} · {builderTemplateLabel(site.templateId)}
           </h2>
           <p className="text-xs text-muted-foreground">
-            Home page. Add a row and pick the columns. Row width makes a photo
-            go across the whole screen or stay in a box.
+            Add a row and pick the columns. Row width makes a photo go across
+            the whole screen or stay in a box.
           </p>
         </div>
         <Button type="button" variant="outline" asChild>
-          <a href="/app/website-builder/preview" target="_blank" rel="noreferrer">
+          <a href={previewHref} target="_blank" rel="noreferrer">
             Preview
           </a>
         </Button>
@@ -203,10 +210,12 @@ export function BuilderStudio({
         </Button>
         {site.status === "published" ? (
           <SaveForm action={unpublishBuilderSite} successMessage="Unpublished.">
+            <input type="hidden" name="pageId" value={pageId} />
             <SaveButton variant="outline">Unpublish</SaveButton>
           </SaveForm>
         ) : (
           <SaveForm action={publishBuilderSite} successMessage="Published.">
+            <input type="hidden" name="pageId" value={pageId} />
             <SaveButton>Publish</SaveButton>
           </SaveForm>
         )}
@@ -417,6 +426,7 @@ export function BuilderStudio({
         description="Choose how many columns this band should have. You can change it later."
         action={addBuilderRow}
         successMessage="Row added."
+        pageId={pageId}
         onOpenChange={setAddRowOpen}
       />
 
@@ -426,6 +436,7 @@ export function BuilderStudio({
         description="Widgets in columns that disappear move into the last remaining column."
         action={setBuilderRowLayout}
         successMessage="Row layout saved."
+        pageId={pageId}
         rowId={columnsRowId}
         selectedLayoutId={
           columnsRowId
@@ -455,6 +466,7 @@ export function BuilderStudio({
             onSuccess={() => setPageColorsOpen(false)}
             className="space-y-4"
           >
+            <input type="hidden" name="pageId" value={pageId} />
             <input type="hidden" name="title" value={site.title} />
             <input type="hidden" name="metaDescription" value={site.metaDescription} />
             <BuilderThemeFields theme={site.theme} onChange={onThemeChange} />
@@ -493,6 +505,7 @@ export function BuilderStudio({
                   successMessage="Row width saved."
                   onSuccess={() => setWidthRowId(null)}
                 >
+                  <input type="hidden" name="pageId" value={pageId} />
                   <input type="hidden" name="rowId" value={widthRowId} />
                   <input type="hidden" name="contentWidth" value={option.id} />
                   <SaveButton
@@ -530,6 +543,7 @@ export function BuilderStudio({
           {colorRowId ? (
             <RowColorForm
               key={colorRowId}
+              pageId={pageId}
               rowId={colorRowId}
               value={rows.find((row) => row.id === colorRowId)?.backgroundColor ?? ""}
               onSaved={() => setColorRowId(null)}
@@ -539,6 +553,7 @@ export function BuilderStudio({
       </Dialog>
 
       <AddWidgetDialog
+        pageId={pageId}
         target={addWidgetTarget}
         onOpenChange={(next) => {
           if (!next) setAddWidgetTarget(null);
@@ -659,10 +674,12 @@ function StudioWidget({
 }
 
 function RowColorForm({
+  pageId,
   rowId,
   value,
   onSaved,
 }: {
+  pageId: string
   rowId: string
   value: string
   onSaved: () => void
@@ -676,6 +693,7 @@ function RowColorForm({
       onSuccess={onSaved}
       className="space-y-3"
     >
+      <input type="hidden" name="pageId" value={pageId} />
       <input type="hidden" name="rowId" value={rowId} />
       <BuilderColorField
         id={`row-color-${rowId}`}
@@ -696,6 +714,7 @@ function LayoutPickerDialog({
   description,
   action,
   successMessage,
+  pageId,
   rowId,
   selectedLayoutId,
   onOpenChange,
@@ -705,6 +724,7 @@ function LayoutPickerDialog({
   description: string
   action: (formData: FormData) => Promise<ActionResult>
   successMessage: string
+  pageId: string
   rowId?: string | null
   selectedLayoutId?: string
   onOpenChange: (open: boolean) => void
@@ -724,6 +744,7 @@ function LayoutPickerDialog({
               successMessage={successMessage}
               onSuccess={() => onOpenChange(false)}
             >
+              <input type="hidden" name="pageId" value={pageId} />
               {rowId ? <input type="hidden" name="rowId" value={rowId} /> : null}
               <input type="hidden" name="layoutId" value={layout.id} />
               <SaveButton
@@ -745,9 +766,11 @@ function LayoutPickerDialog({
 }
 
 function AddWidgetDialog({
+  pageId,
   target,
   onOpenChange,
 }: {
+  pageId: string
   target: AddWidgetTarget | null
   onOpenChange: (open: boolean) => void
 }) {
@@ -770,6 +793,7 @@ function AddWidgetDialog({
                 successMessage="Widget added. Click it to edit."
                 onSuccess={() => onOpenChange(false)}
               >
+                <input type="hidden" name="pageId" value={pageId} />
                 <input type="hidden" name="rowId" value={target.rowId} />
                 <input type="hidden" name="columnIndex" value={String(target.columnIndex)} />
                 <input type="hidden" name="type" value={type} />

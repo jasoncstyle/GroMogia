@@ -138,4 +138,16 @@ export async function ensureSchema(): Promise<void> {
   if (!builderTemplateId[0]?.name) {
     await applyMigration(sql, "0011_phase7_builder_template_id.sql");
   }
+
+  const builderPageSlug = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'builder_sites'
+       and column_name = 'slug'`,
+  )) as RegistryRow[];
+
+  if (!builderPageSlug[0]?.name) {
+    await applyMigration(sql, "0012_phase7_builder_page_slug.sql");
+  }
 }

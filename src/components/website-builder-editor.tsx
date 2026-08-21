@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { BuilderPagesPanel } from "@/components/builder-pages-panel";
 import { BuilderStudio } from "@/components/builder-studio";
 import { BuilderThemeFields } from "@/components/builder-color-field";
 import { BuilderTemplatePicker } from "@/components/builder-template-picker";
@@ -26,6 +27,8 @@ import {
   unpublishBuilderSite,
 } from "@/lib/actions/website-builder";
 import { rowGridTemplate } from "@/lib/website-builder/layout";
+import { isHomePageSlug } from "@/lib/website-builder/pages";
+import type { BuilderPageSummary } from "@/lib/website-builder/queries";
 import { builderSectionLabel } from "@/lib/website-builder/sections";
 import { EMPTY_BUILDER_THEME, parseBuilderTheme, type BuilderTheme } from "@/lib/website-builder/style";
 import { builderTemplateLabel } from "@/lib/website-builder/templates";
@@ -34,18 +37,22 @@ import { cn } from "@/lib/utils";
 
 export function WebsiteBuilderEditor({
   site,
+  pages,
   rows,
   brandName,
   publicUrl,
   orgSlug,
 }: {
   site: {
+    id: string
     title: string
+    slug: string
     metaDescription: string
     status: string
     theme?: BuilderTheme
     templateId?: string
   }
+  pages: BuilderPageSummary[]
   rows: BuilderLayoutRow[]
   brandName: string | null
   orgSlug: string
@@ -53,11 +60,29 @@ export function WebsiteBuilderEditor({
 }) {
   const [studioOpen, setStudioOpen] = useState(false);
   const [theme, setTheme] = useState(() => parseBuilderTheme(site.theme ?? EMPTY_BUILDER_THEME));
-
+  const isHome = isHomePageSlug(site.slug);
   const templateLabel = builderTemplateLabel(site.templateId);
+  const previewHref = isHome
+    ? "/app/website-builder/preview"
+    : `/app/website-builder/preview?page=${site.id}`;
+  const pageName = isHome ? "Home" : site.title;
 
   return (
     <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Pages</CardTitle>
+          <CardDescription>
+            Home is always here. Extra pages start as drafts. Publish makes
+            that page live. Home cannot be deleted. This does not create pages
+            on the connected existing website.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <BuilderPagesPanel pages={pages} currentPageId={site.id} orgSlug={orgSlug} />
+        </CardContent>
+      </Card>
+
       <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 sm:flex-row sm:items-center">
           <Button
             type="button"
@@ -68,15 +93,14 @@ export function WebsiteBuilderEditor({
             Open page editor
           </Button>
           <Button type="button" size="lg" variant="outline" className="h-11 px-5 text-base" asChild>
-            <a href="/app/website-builder/preview" target="_blank" rel="noreferrer">
+            <a href={previewHref} target="_blank" rel="noreferrer">
               Preview
             </a>
           </Button>
         <div className="min-w-0">
-          <p className="text-sm font-medium">Using {templateLabel}</p>
+          <p className="text-sm font-medium">Editing {pageName} · {templateLabel}</p>
           <p className="text-sm text-muted-foreground">
-            This is the Home page. Click Open page editor when you want to add
-            rows and columns.
+            Click Open page editor when you want to add rows and columns.
           </p>
         </div>
       </div>
@@ -93,11 +117,12 @@ export function WebsiteBuilderEditor({
         </CardHeader>
         <CardContent className="space-y-4">
           {publicUrl ? <CopyLink url={publicUrl} openLabel="Open page" /> : null}
-          <SaveForm
+            <SaveForm
             action={saveBuilderSite}
             successMessage="Website details saved."
             className="space-y-3"
           >
+            <input type="hidden" name="pageId" value={site.id} />
             <div className="space-y-2">
               <Label htmlFor="title">Page title</Label>
               <Input id="title" name="title" defaultValue={site.title} required />
@@ -114,11 +139,12 @@ export function WebsiteBuilderEditor({
             </div>
             <SaveButton>Save details</SaveButton>
           </SaveForm>
-          <SaveForm
+            <SaveForm
             action={saveBuilderSite}
             successMessage="Page colors saved."
             className="space-y-3"
           >
+            <input type="hidden" name="pageId" value={site.id} />
             <input type="hidden" name="title" value={site.title} />
             <input type="hidden" name="metaDescription" value={site.metaDescription} />
             <p className="text-sm font-medium">Page colors</p>
@@ -145,10 +171,12 @@ export function WebsiteBuilderEditor({
           <div className="flex flex-wrap gap-2">
             {site.status === "published" ? (
               <SaveForm action={unpublishBuilderSite} successMessage="Unpublished.">
+                <input type="hidden" name="pageId" value={site.id} />
                 <SaveButton variant="outline">Unpublish</SaveButton>
               </SaveForm>
             ) : (
               <SaveForm action={publishBuilderSite} successMessage="Published.">
+                <input type="hidden" name="pageId" value={site.id} />
                 <SaveButton>Publish</SaveButton>
               </SaveForm>
             )}
@@ -225,7 +253,7 @@ export function WebsiteBuilderEditor({
         <CardHeader>
           <CardTitle>Start from a different template</CardTitle>
           <CardDescription>
-            This replaces the GroovGro page with a new row-and-column layout.
+            This replaces this GroovGro page with a new row-and-column layout.
             It does not change the connected existing website.
           </CardDescription>
         </CardHeader>
@@ -240,6 +268,7 @@ export function WebsiteBuilderEditor({
               successMessage="Template applied to the GroovGro page."
               className="space-y-4"
             >
+              <input type="hidden" name="pageId" value={site.id} />
               <BuilderTemplatePicker defaultValue={site.templateId || "1"} />
               <SaveButton variant="outline">Use this template</SaveButton>
             </SaveForm>
@@ -247,40 +276,12 @@ export function WebsiteBuilderEditor({
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Pages</CardTitle>
-          <CardDescription>
-            Today this organization has one GroovGro page: Home. Extra pages
-            (About, a service page, and so on) are the next Website builder
-            slice. They will work like this:
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2 text-sm text-muted-foreground">
-          <p>
-            <span className="font-medium text-foreground">Create.</span> You
-            will click Add a page, give it a name, and pick a starting layout.
-            It starts as a draft.
-          </p>
-          <p>
-            <span className="font-medium text-foreground">Draft.</span> Edits
-            stay in GroovGro until you click Publish on that page. Home already
-            works that way.
-          </p>
-          <p>
-            <span className="font-medium text-foreground">Remove.</span> A draft
-            or unpublished page can be deleted. Home cannot be deleted. You can
-            Unpublish Home to hide it.
-          </p>
-          <p>
-            This does not create pages on the connected existing website.
-          </p>
-        </CardContent>
-      </Card>
-
       <BuilderStudio
         open={studioOpen}
         onClose={() => setStudioOpen(false)}
+        pageId={site.id}
+        pageLabel={pageName}
+        previewHref={previewHref}
         site={{
           title: site.title,
           metaDescription: site.metaDescription,

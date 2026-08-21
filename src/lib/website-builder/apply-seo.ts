@@ -80,10 +80,15 @@ export function applyApprovedSeoDraftToBuilderState(
   };
 }
 
-export function builderPublicUrl(appOrigin: string, orgSlug: string): string {
+export function builderPublicUrl(
+  appOrigin: string,
+  orgSlug: string,
+  pageSlug = "",
+): string {
   const origin = appOrigin.replace(/\/$/, "");
-  const slug = orgSlug.replace(/^\/+|\/+$/g, "");
-  return `${origin}/w/${slug}`;
+  const org = orgSlug.replace(/^\/+|\/+$/g, "");
+  const slug = pageSlug.replace(/^\/+|\/+$/g, "");
+  return slug ? `${origin}/w/${org}/${slug}` : `${origin}/w/${org}`;
 }
 
 export function publicBuilderPageSeo(input: {
