@@ -38,6 +38,41 @@ export function widthsForLayout(layoutId: string): number[] {
   return ROW_LAYOUTS.find((layout) => layout.id === layoutId)?.widths.slice() ?? [100];
 }
 
+export type RowContentWidth = "narrow" | "normal" | "wide" | "full";
+
+export type RowContentWidthOption = {
+  id: RowContentWidth
+  label: string
+  hint: string
+};
+
+export const ROW_CONTENT_WIDTHS: RowContentWidthOption[] = [
+  { id: "narrow", label: "Narrow", hint: "Shorter text, like a letter" },
+  { id: "normal", label: "Normal", hint: "Usual page width" },
+  { id: "wide", label: "Wide", hint: "More of the screen, still not the edges" },
+  { id: "full", label: "Edge to edge", hint: "This row, and photos in it, go across the whole screen" },
+];
+
+export function isRowContentWidth(value: string): value is RowContentWidth {
+  return ROW_CONTENT_WIDTHS.some((option) => option.id === value);
+}
+
+export function parseContentWidth(raw: unknown): RowContentWidth {
+  const value = String(raw ?? "").trim();
+  return isRowContentWidth(value) ? value : "normal";
+}
+
+export function rowContentInnerClass(width: RowContentWidth): string {
+  if (width === "narrow") return "mx-auto w-full max-w-3xl px-4";
+  if (width === "wide") return "mx-auto w-full max-w-7xl px-4";
+  if (width === "full") return "w-full";
+  return "mx-auto w-full max-w-6xl px-4";
+}
+
+export function rowContentWidthLabel(width: RowContentWidth): string {
+  return ROW_CONTENT_WIDTHS.find((option) => option.id === width)?.label ?? "Normal";
+}
+
 export function parseColumnWidths(raw: unknown): number[] {
   if (!Array.isArray(raw) || raw.length < 1 || raw.length > 4) return [100];
   const widths = raw.map((value) => Number(value));

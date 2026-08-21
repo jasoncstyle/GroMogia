@@ -752,6 +752,7 @@ export const builderRows = pgTable(
     sortOrder: integer("sort_order").notNull().default(0),
     columnWidths: jsonb("column_widths").$type<number[]>().notNull().default([100]),
     backgroundColor: text("background_color").notNull().default(""),
+    contentWidth: text("content_width").notNull().default("normal"),
     ...timestamps,
   },
   (table) => [

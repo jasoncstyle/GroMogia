@@ -8,7 +8,7 @@ import {
   builderSites,
   organizations,
 } from "@/lib/db/schema";
-import { parseColumnWidths } from "@/lib/website-builder/layout";
+import { parseColumnWidths, parseContentWidth } from "@/lib/website-builder/layout";
 import { parseBuilderColor, parseBuilderTheme } from "@/lib/website-builder/style";
 import type { BuilderLayoutRow } from "@/lib/website-builder/types";
 
@@ -26,6 +26,7 @@ function toLayoutRows(
       sortOrder: row.sortOrder,
       columnWidths: parseColumnWidths(row.columnWidths),
       backgroundColor: parseBuilderColor(row.backgroundColor),
+      contentWidth: parseContentWidth(row.contentWidth),
       widgets: [] as BuilderLayoutRow["widgets"],
     }));
   const byId = new Map(grouped.map((row) => [row.id, row]));
@@ -51,6 +52,7 @@ function toLayoutRows(
       sortOrder: grouped.length,
       columnWidths: [100],
       backgroundColor: "",
+      contentWidth: "normal",
       widgets: leftovers.map((widget) => ({ ...widget, columnIndex: 0 })),
     });
   }

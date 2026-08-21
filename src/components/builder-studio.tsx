@@ -35,11 +35,16 @@ import {
   saveBuilderSite,
   setBuilderRowBackground,
   setBuilderRowLayout,
+  setBuilderRowWidth,
   unpublishBuilderSite,
 } from "@/lib/actions/website-builder";
 import {
   layoutIdForWidths,
+  parseContentWidth,
+  ROW_CONTENT_WIDTHS,
   ROW_LAYOUTS,
+  rowContentInnerClass,
+  rowContentWidthLabel,
   rowGridTemplate,
   widgetsForColumn,
 } from "@/lib/website-builder/layout";
@@ -102,6 +107,7 @@ export function BuilderStudio({
   const [addRowOpen, setAddRowOpen] = useState(false);
   const [columnsRowId, setColumnsRowId] = useState<string | null>(null);
   const [colorRowId, setColorRowId] = useState<string | null>(null);
+  const [widthRowId, setWidthRowId] = useState<string | null>(null);
   const [pageColorsOpen, setPageColorsOpen] = useState(false);
   const [addWidgetTarget, setAddWidgetTarget] = useState<AddWidgetTarget | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -125,6 +131,7 @@ export function BuilderStudio({
     addRowOpen ||
     Boolean(columnsRowId) ||
     Boolean(colorRowId) ||
+    Boolean(widthRowId) ||
     pageColorsOpen ||
     Boolean(addWidgetTarget) ||
     Boolean(editing);
@@ -180,7 +187,8 @@ export function BuilderStudio({
             Page editor
           </h2>
           <p className="text-xs text-muted-foreground">
-            Add a row and pick the columns. Click a box to change its words or image.
+            Add a row and pick the columns. Row width makes a photo go across
+            the whole screen or stay in a box.
           </p>
         </div>
         <Button type="button" variant="outline" asChild>
@@ -221,11 +229,26 @@ export function BuilderStudio({
             </Button>
           </div>
         ) : (
-          <div className="mx-auto max-w-6xl space-y-4">
+          <div className="w-full space-y-4">
             {rows.map((row, rowIndex) => (
-              <div key={row.id} className="rounded-xl border">
+              <div
+                key={row.id}
+                className={cn(
+                  "rounded-xl border",
+                  parseContentWidth(row.contentWidth) === "full" &&
+                    "-mx-4 rounded-none border-x-0 md:-mx-6",
+                )}
+              >
                 <div className="flex flex-wrap items-center gap-2 border-b bg-muted/40 px-3 py-2">
                   <span className="text-xs font-medium">Row {rowIndex + 1}</span>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setWidthRowId(row.id)}
+                    >
+                      Row width: {rowContentWidthLabel(parseContentWidth(row.contentWidth))}
+                    </Button>
                     <Button
                       type="button"
                       size="sm"
@@ -285,6 +308,12 @@ export function BuilderStudio({
                 </div>
                 <div
                   className={cn(
+                    rowContentInnerClass(parseContentWidth(row.contentWidth)),
+                    "py-2",
+                  )}
+                >
+                <div
+                  className={cn(
                     "grid grid-cols-1 gap-2 p-2",
                     row.columnWidths.length > 1 &&
                       "md:[grid-template-columns:var(--builder-cols)]",
@@ -333,6 +362,9 @@ export function BuilderStudio({
                             siteTitle={site.title}
                             orgSlug={orgSlug}
                             dense={row.columnWidths.length > 1}
+                            fullBleed={
+                              parseContentWidth(row.contentWidth) === "full"
+                            }
                             theme={site.theme}
                             onEdit={() => setEditingId(widget.id)}
                             onDragStart={(event) => {
@@ -368,6 +400,7 @@ export function BuilderStudio({
                       </div>
                     );
                   })}
+                </div>
                 </div>
               </div>
             ))}
@@ -423,6 +456,49 @@ export function BuilderStudio({
             <BuilderThemeFields theme={site.theme} onChange={onThemeChange} />
             <SaveButton>Save colors</SaveButton>
           </SaveForm>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(widthRowId)} onOpenChange={(next) => { if (!next) setWidthRowId(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Row width</DialogTitle>
+            <DialogDescription>
+              This is how wide this row is on the screen. Edge to edge makes a
+              hero photo go all the way across. Normal keeps it in a box.
+            </DialogDescription>
+          </DialogHeader>
+          {widthRowId ? (
+            <div className="grid grid-cols-2 gap-2">
+              {ROW_CONTENT_WIDTHS.map((option) => (
+                <SaveForm
+                  key={option.id}
+                  action={setBuilderRowWidth}
+                  successMessage="Row width saved."
+                  onSuccess={() => setWidthRowId(null)}
+                >
+                  <input type="hidden" name="rowId" value={widthRowId} />
+                  <input type="hidden" name="contentWidth" value={option.id} />
+                  <SaveButton
+                    variant={
+                      parseContentWidth(
+                        rows.find((row) => row.id === widthRowId)?.contentWidth,
+                      ) === option.id
+                        ? "default"
+                        : "outline"
+                    }
+                    className="h-auto w-full flex-col items-start gap-2 py-3"
+                  >
+                    <WidthBar width={option.id} />
+                    <span className="text-xs font-medium">{option.label}</span>
+                    <span className="text-[11px] font-normal text-muted-foreground">
+                      {option.hint}
+                    </span>
+                  </SaveButton>
+                </SaveForm>
+              ))}
+            </div>
+          ) : null}
         </DialogContent>
       </Dialog>
 
@@ -499,11 +575,24 @@ export function BuilderStudio({
   );
 }
 
+function WidthBar({ width }: { width: (typeof ROW_CONTENT_WIDTHS)[number]["id"] }) {
+  const grow = { narrow: 42, normal: 68, wide: 86, full: 100 }[width];
+  return (
+    <span className="flex h-5 w-full items-center justify-center rounded-sm bg-muted px-1">
+      <span
+        className="h-3 rounded-sm bg-foreground/40"
+        style={{ width: `${grow}%` }}
+      />
+    </span>
+  );
+}
+
 function StudioWidget({
   widget,
   siteTitle,
   orgSlug,
   dense,
+  fullBleed = false,
   theme,
   onEdit,
   onDragStart,
@@ -514,6 +603,7 @@ function StudioWidget({
   siteTitle: string
   orgSlug: string
   dense: boolean
+  fullBleed?: boolean
   theme: BuilderTheme
   onEdit: () => void
   onDragStart: (event: DragEvent) => void
@@ -556,6 +646,7 @@ function StudioWidget({
             fallbackTitle={siteTitle}
             headingLevel="h2"
             dense={dense}
+            fullBleed={fullBleed}
             theme={theme}
           />
         </div>

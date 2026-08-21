@@ -1,4 +1,5 @@
 import type { BuilderSectionContent, BuilderSectionType } from "@/lib/db/schema";
+import type { RowContentWidth } from "@/lib/website-builder/layout";
 
 export type BuilderBrandInput = {
   businessName: string
@@ -15,6 +16,7 @@ export type BuilderWidgetDraft = {
 
 export type BuilderRowDraft = {
   columnWidths: number[]
+  contentWidth?: RowContentWidth
   widgets: BuilderWidgetDraft[]
 };
 

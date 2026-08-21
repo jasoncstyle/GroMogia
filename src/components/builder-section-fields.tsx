@@ -182,6 +182,9 @@ export function BuilderSectionFields({
             <p className="text-xs text-muted-foreground">
               Paste a public https:// photo link. GroovGro will show it even if
               the other website tries to block it. File upload comes later.
+              {type === "hero"
+                ? " To make this photo go all the way across the screen, close this window, click Row width on this row, and choose Edge to edge."
+                : ""}
             </p>
           </div>
           <div className="space-y-2">

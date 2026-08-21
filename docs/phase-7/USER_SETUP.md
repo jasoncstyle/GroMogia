@@ -16,16 +16,20 @@ The builder works in two layers:
 3. If you see **Choose a starting layout**, pick a layout and click **Create draft website**.
 4. The **page editor** should open by itself. If you closed it, click **Open page editor** at the top.
 5. Click **Add a row**, then pick how many columns you want.
-6. In a dashed cell, click **Add widget** and pick a type. Click the new box to edit it.
-7. In the edit window you can:
+6. On that row, click **Row width**:
+   - **Edge to edge** — the row (and a hero photo) go all the way across the screen.
+   - **Normal** — the usual boxed page width.
+   - **Wide** or **Narrow** if you want more or less of the screen without hitting the edges.
+7. In a dashed cell, click **Add widget** and pick a type. Click the new box to edit it.
+8. In the edit window you can:
    - Change the words.
    - Set **Heading size** (Heading 1, Heading 2, Heading 3, or standard text).
    - On a Text widget, add **Link text** and **Link address**.
    - Paste a public https:// image. GroovGro fetches the photo so other sites cannot block it in Chrome. File upload comes later.
-8. Click **Done**.
-9. **Page colors** (in the editor bar) sets colors for the whole page. **Row color** sets one row’s background.
-10. Click **Preview** to see the page as visitors would, with a yellow bar that says it is not live. Close that tab when you are done.
-11. Click **Publish** when you are ready. Then **Open page** is the live GroovGro address. Confirm https://www.oceansailingadventures.com/ is unchanged.
+9. Click **Done**.
+10. **Page colors** (in the editor bar) sets colors for the whole page. **Row color** sets one row’s background. **Row width** is how far that row stretches across the screen.
+11. Click **Preview** to see the page as visitors would, with a yellow bar that says it is not live. Close that tab when you are done.
+12. Click **Publish** when you are ready. Then **Open page** is the live GroovGro address. Confirm https://www.oceansailingadventures.com/ is unchanged.
 
 To switch the whole page, open **Start from a different template**, pick a layout, and click **Use this template**. That replaces the GroovGro page only.
 

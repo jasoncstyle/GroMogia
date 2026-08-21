@@ -1,4 +1,5 @@
 import type { BuilderSectionContent } from "@/lib/db/schema";
+import type { RowContentWidth } from "@/lib/website-builder/layout";
 import type { BuilderTheme } from "@/lib/website-builder/style";
 
 export type BuilderLayoutWidget = {
@@ -15,6 +16,7 @@ export type BuilderLayoutRow = {
   sortOrder: number
   columnWidths: number[]
   backgroundColor: string
+  contentWidth: RowContentWidth
   widgets: BuilderLayoutWidget[]
 };
 

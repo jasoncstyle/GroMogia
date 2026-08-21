@@ -137,8 +137,9 @@ export function WebsiteBuilderEditor({
         <CardHeader>
           <CardTitle>Page layout</CardTitle>
           <CardDescription>
-            Open the editor to add a row, pick how many columns it has, then
-            click a box to change text or images in a window.
+            Open the editor to add a row, set how wide it is on the screen,
+            pick how many columns it has, then click a box to change text or
+            images in a window.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

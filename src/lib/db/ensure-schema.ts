@@ -114,4 +114,16 @@ export async function ensureSchema(): Promise<void> {
   if (!builderTheme[0]?.name) {
     await applyMigration(sql, "0009_phase7_builder_style.sql");
   }
+
+  const builderRowWidth = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'builder_rows'
+       and column_name = 'content_width'`,
+  )) as RegistryRow[];
+
+  if (!builderRowWidth[0]?.name) {
+    await applyMigration(sql, "0010_phase7_builder_row_width.sql");
+  }
 }
