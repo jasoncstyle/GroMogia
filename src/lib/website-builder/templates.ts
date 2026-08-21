@@ -55,6 +55,13 @@ export function isBuilderTemplateId(value: string): value is BuilderTemplateId {
   return (BUILDER_TEMPLATE_IDS as readonly string[]).includes(value);
 }
 
+export function builderTemplateLabel(templateId: string | null | undefined): string {
+  if (templateId && isBuilderTemplateId(templateId)) {
+    return BUILDER_TEMPLATES.find((template) => template.id === templateId)?.name ?? "Template 1";
+  }
+  return "Custom layout";
+}
+
 export function layoutForTemplate(templateId: string, input: BuilderBrandInput) {
   const id = isBuilderTemplateId(templateId) ? templateId : DEFAULT_BUILDER_TEMPLATE_ID;
   return rowsForTemplate(id, input);
@@ -64,11 +71,11 @@ export function themeForTemplate(templateId: string): BuilderTheme {
   const id = isBuilderTemplateId(templateId) ? templateId : DEFAULT_BUILDER_TEMPLATE_ID;
   if (id === "1") {
     return parseBuilderTheme({
-      pageBackground: "#111111",
+      pageBackground: "#18181b",
       textColor: "#f4f4f5",
       headingColor: "#ffffff",
       buttonBackground: "#ffffff",
-      buttonText: "#111111",
+      buttonText: "#18181b",
     });
   }
   if (id === "2") {

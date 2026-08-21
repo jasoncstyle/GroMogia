@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   builderButtonColors,
   headingClassName,
+  inheritRowBackgrounds,
   isDarkBuilderColor,
   parseBuilderColor,
   parseBuilderTheme,
@@ -50,5 +51,16 @@ describe("builder colors and headings", () => {
     assert.equal(onDark.color, "#18181b");
     const onLight = builderButtonColors(theme, false);
     assert.equal(onLight.backgroundColor, "#0f2744");
+  });
+
+  it("lets a new page color show through rows that used the old page color", () => {
+    assert.deepEqual(
+      inheritRowBackgrounds(["#111111", "#18181b", ""], "#111111", false),
+      ["", "#18181b", ""],
+    );
+    assert.deepEqual(
+      inheritRowBackgrounds(["#111111", "#18181b"], "#111111", true),
+      ["", ""],
+    );
   });
 });

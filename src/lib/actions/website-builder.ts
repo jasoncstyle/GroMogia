@@ -34,7 +34,7 @@ import {
   parseBuilderSectionContent,
   contentFromFormData,
 } from "@/lib/website-builder/sections";
-import { parseBuilderColor, parseBuilderTheme } from "@/lib/website-builder/style";
+import { parseBuilderColor, parseBuilderTheme, inheritRowBackgrounds } from "@/lib/website-builder/style";
 import {
   DEFAULT_BUILDER_TEMPLATE_ID,
   isBuilderTemplateId,
@@ -82,6 +82,9 @@ export async function createBuilderSite(formData: FormData): Promise<ActionResul
       title,
       status: "draft",
       theme: themeForTemplate(templateId),
+      templateId: isBuilderTemplateId(templateId)
+        ? templateId
+        : DEFAULT_BUILDER_TEMPLATE_ID,
       createdBy: session.userId,
     });
     const [site] = await db
@@ -133,6 +136,7 @@ export async function saveBuilderSite(formData: FormData): Promise<ActionResult>
       .where(eq(builderSites.organizationId, session.organizationId))
       .limit(1);
     if (!site) throw new Error("Create the GroovGro website first.");
+    const previousTheme = parseBuilderTheme(site.theme);
     const theme = formData.has("pageBackground")
       ? parseBuilderTheme({
           pageBackground: formData.get("pageBackground"),
@@ -141,7 +145,7 @@ export async function saveBuilderSite(formData: FormData): Promise<ActionResult>
           buttonBackground: formData.get("buttonBackground"),
           buttonText: formData.get("buttonText"),
         })
-      : parseBuilderTheme(site.theme);
+      : previousTheme;
 
     await db
       .update(builderSites)
@@ -152,8 +156,38 @@ export async function saveBuilderSite(formData: FormData): Promise<ActionResult>
           eq(builderSites.organizationId, session.organizationId),
         ),
       );
+
+    if (formData.has("pageBackground")) {
+      const applyToAllRows = formData.get("applyPageBackgroundToRows") === "on";
+      const rows = await db
+        .select({
+          id: builderRows.id,
+          backgroundColor: builderRows.backgroundColor,
+        })
+        .from(builderRows)
+        .where(
+          and(
+            eq(builderRows.siteId, site.id),
+            eq(builderRows.organizationId, session.organizationId),
+          ),
+        );
+      const nextColors = inheritRowBackgrounds(
+        rows.map((row) => row.backgroundColor),
+        previousTheme.pageBackground,
+        applyToAllRows,
+      );
+      for (const [index, row] of rows.entries()) {
+        const backgroundColor = nextColors[index] ?? "";
+        if (backgroundColor === parseBuilderColor(row.backgroundColor)) continue;
+        await db
+          .update(builderRows)
+          .set({ backgroundColor, updatedAt: new Date() })
+          .where(eq(builderRows.id, row.id));
+      }
+    }
+
     revalidateBuilder(session.organizationSlug);
-    return "Website details saved.";
+    return formData.has("pageBackground") ? "Page colors saved." : "Website details saved.";
   });
 }
 
@@ -674,7 +708,11 @@ export async function applyBuilderTemplate(formData: FormData): Promise<ActionRe
     });
     await db
       .update(builderSites)
-      .set({ theme: themeForTemplate(templateId), updatedAt: new Date() })
+      .set({
+        theme: themeForTemplate(templateId),
+        templateId,
+        updatedAt: new Date(),
+      })
       .where(eq(builderSites.id, site.id));
 
     await recordAudit({

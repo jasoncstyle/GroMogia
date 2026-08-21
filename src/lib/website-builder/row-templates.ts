@@ -22,7 +22,6 @@ export type BuilderRowDraft = {
 };
 
 const DARK = "#18181b";
-const INK = "#111111";
 const NAVY = "#0f2744";
 const CREAM = "#f7f3ea";
 const WHITE = "#ffffff";
@@ -61,7 +60,7 @@ function templateOne(
           buttonLabel: "Let’s talk",
         }),
       ],
-      { contentWidth: "full", backgroundColor: INK },
+      { contentWidth: "full" },
     ),
     band(
       [
@@ -86,7 +85,7 @@ function templateOne(
           { headingLevel: "h3", linkLabel: "Get in touch", linkHref: "#lead" },
         ),
       ],
-      { columns: [34, 33, 33], contentWidth: "wide", backgroundColor: INK },
+      { columns: [34, 33, 33], contentWidth: "wide" },
     ),
     band(
       [
@@ -94,7 +93,7 @@ function templateOne(
           headingLevel: "h2",
         }),
       ],
-      { contentWidth: "narrow", backgroundColor: DARK },
+      { contentWidth: "narrow" },
     ),
     band(
       [
@@ -102,7 +101,7 @@ function templateOne(
           headingLevel: "h2",
         }),
       ],
-      { contentWidth: "wide", backgroundColor: INK },
+      { contentWidth: "wide" },
     ),
     band(
       [
@@ -122,7 +121,7 @@ function templateOne(
           linkHref: "#lead",
         }),
       ],
-      { columns: [34, 33, 33], contentWidth: "wide", backgroundColor: INK },
+      { columns: [34, 33, 33], contentWidth: "wide" },
     ),
     band(
       [
@@ -142,7 +141,7 @@ function templateOne(
           linkHref: "#lead",
         }),
       ],
-      { columns: [34, 33, 33], contentWidth: "wide", backgroundColor: INK },
+      { columns: [34, 33, 33], contentWidth: "wide" },
     ),
     band(
       [
@@ -153,7 +152,7 @@ function templateOne(
           headingLevel: "h2",
         }),
       ],
-      { columns: [50, 50], contentWidth: "wide", backgroundColor: DARK },
+      { columns: [50, 50], contentWidth: "wide" },
     ),
     band(
       [
@@ -173,7 +172,7 @@ function templateOne(
           },
         },
       ],
-      { contentWidth: "wide", backgroundColor: INK },
+      { contentWidth: "wide" },
     ),
     band(
       [
@@ -192,7 +191,7 @@ function templateOne(
           },
         },
       ],
-      { contentWidth: "normal", backgroundColor: DARK },
+      { contentWidth: "normal" },
     ),
     band(
       [
@@ -201,7 +200,7 @@ function templateOne(
         text(2, "1M+", "Times the message was seen", { headingLevel: "h1" }),
         text(3, "2K+", "Enquiries started here", { headingLevel: "h1" }),
       ],
-      { columns: [25, 25, 25, 25], contentWidth: "wide", backgroundColor: INK },
+      { columns: [25, 25, 25, 25], contentWidth: "wide" },
     ),
     band(
       [
@@ -218,9 +217,9 @@ function templateOne(
           },
         },
       ],
-      { contentWidth: "full", backgroundColor: DARK },
+      { contentWidth: "full" },
     ),
-    band([leadWidget()], { contentWidth: "narrow", backgroundColor: INK }),
+    band([leadWidget()], { contentWidth: "narrow" }),
   ];
 }
 

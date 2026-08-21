@@ -81,6 +81,7 @@ export default async function WebsiteBuilderPage() {
             metaDescription: data.site.metaDescription,
             status: data.site.status,
             theme: data.site.theme,
+            templateId: data.site.templateId,
           }}
           rows={data.rows}
           brandName={data.brand?.businessName ?? null}
