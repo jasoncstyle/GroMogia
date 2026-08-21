@@ -4,6 +4,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 
 import { PublicLeadForm } from "@/components/public-lead-form";
 import { BuilderRemoteImage } from "@/components/builder-remote-image";
+import { BuilderSiteNav } from "@/components/builder-site-nav";
 import type { BuilderSectionContent } from "@/lib/db/schema";
 import {
   builderMapEmbedSrc,
@@ -58,11 +59,13 @@ export function BuilderPageView({
   orgSlug,
   rows,
   theme,
+  navPages,
 }: {
   title: string
   orgSlug: string
   rows: RenderRow[]
   theme?: BuilderTheme
+  navPages?: { href: string; label: string; current?: boolean }[]
 }) {
   const look = parseBuilderTheme(theme ?? EMPTY_BUILDER_THEME);
   const widgets = rows.flatMap((row) => row.widgets);
@@ -78,6 +81,7 @@ export function BuilderPageView({
         color: look.textColor || undefined,
       }}
     >
+      {navPages && navPages.length > 1 ? <BuilderSiteNav pages={navPages} /> : null}
       {rows.map((row) => {
         const dense = row.columnWidths.length > 1;
         const darkRow = isDarkBuilderColor(row.backgroundColor ?? "");

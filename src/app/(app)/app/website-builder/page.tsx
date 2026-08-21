@@ -3,6 +3,7 @@ import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { getBuilderEditorData } from "@/lib/website-builder/queries";
+import { builderPublicUrl } from "@/lib/website-builder/apply-seo";
 import { BuilderTemplatePicker } from "@/components/builder-template-picker";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteBuilderEditor } from "@/components/website-builder-editor";
@@ -14,26 +15,36 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default async function WebsiteBuilderPage() {
+export default async function WebsiteBuilderPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
   const session = await getAppSession();
+  const { page: pageId } = await searchParams;
   const data = session.organizationId
-    ? await getBuilderEditorData(session.organizationId)
-    : { site: null, rows: [], brand: null };
+    ? await getBuilderEditorData(session.organizationId, pageId)
+    : { pages: [], site: null, rows: [], brand: null };
   const slug = await resolveOrganizationSlug(
     session.organizationId,
     session.organizationSlug,
   );
-  const publicUrl = slug ? `${appUrl()}/w/${slug}` : "";
+  const publicUrl =
+    slug && data.site
+      ? builderPublicUrl(appUrl(), slug, data.site.slug)
+      : slug
+        ? builderPublicUrl(appUrl(), slug)
+        : "";
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Website builder</h1>
         <p className="text-muted-foreground">
-          Optional GroovGro-hosted page built from rows and columns. The page
-          editor opens when you have a draft. Click a box to change text or
-          images. This does not replace the connected existing website, and it
-          does not change Stripe checkout.
+          Optional GroovGro-hosted pages built from rows and columns. Home is
+          always there. Click Add a page for About or a service page. This
+          does not replace the connected existing website, and it does not
+          change Stripe checkout.
         </p>
       </div>
 
@@ -41,10 +52,10 @@ export default async function WebsiteBuilderPage() {
         <CardHeader>
           <CardTitle>How this works</CardTitle>
           <CardDescription>
-            Pick a starting layout, then click Create draft website. Click
-            Open page editor when you want to add rows and columns. Publish
-            turns this page on at a GroovGro address. Your current public site
-            stays as it is.
+            Pick a starting layout, then click Create draft website for Home.
+            Add extra pages when you need them. Each page stays a draft until
+            you click Publish on that page. Your current public site stays as
+            it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -76,13 +87,17 @@ export default async function WebsiteBuilderPage() {
         </Card>
       ) : (
         <WebsiteBuilderEditor
+          key={data.site.id}
           site={{
+            id: data.site.id,
             title: data.site.title,
+            slug: data.site.slug,
             metaDescription: data.site.metaDescription,
             status: data.site.status,
             theme: data.site.theme,
             templateId: data.site.templateId,
           }}
+          pages={data.pages}
           rows={data.rows}
           brandName={data.brand?.businessName ?? null}
           orgSlug={slug ?? ""}

@@ -56,6 +56,7 @@ export function isBuilderTemplateId(value: string): value is BuilderTemplateId {
 }
 
 export function builderTemplateLabel(templateId: string | null | undefined): string {
+  if (templateId === "blank") return "Blank page";
   if (templateId && isBuilderTemplateId(templateId)) {
     return BUILDER_TEMPLATES.find((template) => template.id === templateId)?.name ?? "Template 1";
   }

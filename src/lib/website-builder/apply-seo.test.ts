@@ -69,6 +69,10 @@ describe("apply SEO drafts to GroovGro builder", () => {
   it("builds public metadata for the GroovGro page, not the connected site", () => {
     const canonical = builderPublicUrl("https://www.groovgro.com", "jasons-test");
     assert.equal(canonical, "https://www.groovgro.com/w/jasons-test");
+    assert.equal(
+      builderPublicUrl("https://www.groovgro.com", "jasons-test", "about"),
+      "https://www.groovgro.com/w/jasons-test/about",
+    );
     const seo = publicBuilderPageSeo({
       title: "Harbor Workshops",
       metaDescription: "Hands-on classes for beginners.",

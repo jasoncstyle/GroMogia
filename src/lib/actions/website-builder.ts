@@ -29,6 +29,14 @@ import {
 } from "@/lib/website-builder/layout";
 import { writeBuilderLayout } from "@/lib/website-builder/persist-layout";
 import {
+  HOME_PAGE_SLUG,
+  MAX_BUILDER_PAGES,
+  isHomePageSlug,
+  layoutForNewPage,
+  parsePageSlug,
+  suggestPageSlug,
+} from "@/lib/website-builder/pages";
+import {
   defaultContentForType,
   isBuilderSectionType,
   parseBuilderSectionContent,
@@ -42,10 +50,18 @@ import {
   themeForTemplate,
 } from "@/lib/website-builder/templates";
 
-function revalidateBuilder(organizationSlug?: string | null) {
+function revalidateBuilder(
+  organizationSlug?: string | null,
+  page?: { id: string; slug: string } | null,
+) {
   revalidatePath("/app/website-builder");
   revalidatePath("/app/website-builder/preview");
-  if (organizationSlug) revalidatePath(`/w/${organizationSlug}`);
+  if (organizationSlug) {
+    revalidatePath(`/w/${organizationSlug}`, "layout");
+    if (page && !isHomePageSlug(page.slug)) {
+      revalidatePath(`/w/${organizationSlug}/${page.slug}`);
+    }
+  }
 }
 
 async function requireBuilderEditor() {
@@ -58,13 +74,49 @@ async function requireBuilderEditor() {
   return { session, db };
 }
 
+async function requireBuilderPage(
+  db: NonNullable<ReturnType<typeof getDb>>,
+  organizationId: string,
+  formData?: FormData,
+) {
+  const pageId = formData ? String(formData.get("pageId") ?? "").trim() : "";
+  if (pageId) {
+    const [page] = await db
+      .select()
+      .from(builderSites)
+      .where(
+        and(eq(builderSites.id, pageId), eq(builderSites.organizationId, organizationId)),
+      )
+      .limit(1);
+    if (!page) throw new Error("That page was not found.");
+    return page;
+  }
+  const [home] = await db
+    .select()
+    .from(builderSites)
+    .where(
+      and(
+        eq(builderSites.organizationId, organizationId),
+        eq(builderSites.slug, HOME_PAGE_SLUG),
+      ),
+    )
+    .limit(1);
+  if (!home) throw new Error("Create the GroovGro website first.");
+  return home;
+}
+
 export async function createBuilderSite(formData: FormData): Promise<ActionResult> {
   return runAction("Could not create the GroovGro website.", async () => {
     const { session, db } = await requireBuilderEditor();
     const [existing] = await db
       .select()
       .from(builderSites)
-      .where(eq(builderSites.organizationId, session.organizationId))
+      .where(
+        and(
+          eq(builderSites.organizationId, session.organizationId),
+          eq(builderSites.slug, HOME_PAGE_SLUG),
+        ),
+      )
       .limit(1);
     if (existing) {
       throw new Error("This organization already has a GroovGro website.");
@@ -80,6 +132,7 @@ export async function createBuilderSite(formData: FormData): Promise<ActionResul
     await db.insert(builderSites).values({
       organizationId: session.organizationId,
       title,
+      slug: HOME_PAGE_SLUG,
       status: "draft",
       theme: themeForTemplate(templateId),
       templateId: isBuilderTemplateId(templateId)
@@ -90,7 +143,12 @@ export async function createBuilderSite(formData: FormData): Promise<ActionResul
     const [site] = await db
       .select()
       .from(builderSites)
-      .where(eq(builderSites.organizationId, session.organizationId))
+      .where(
+        and(
+          eq(builderSites.organizationId, session.organizationId),
+          eq(builderSites.slug, HOME_PAGE_SLUG),
+        ),
+      )
       .limit(1);
     if (!site) throw new Error("Could not create the GroovGro website.");
 
@@ -116,7 +174,7 @@ export async function createBuilderSite(formData: FormData): Promise<ActionResul
           : DEFAULT_BUILDER_TEMPLATE_ID,
       },
     });
-    revalidateBuilder(session.organizationSlug);
+    revalidateBuilder(session.organizationSlug, site);
     return "Draft website created. It is not public until you publish.";
   });
 }
@@ -130,12 +188,7 @@ export async function saveBuilderSite(formData: FormData): Promise<ActionResult>
       .trim()
       .max(160)
       .parse(formData.get("metaDescription") ?? "");
-    const [site] = await db
-      .select()
-      .from(builderSites)
-      .where(eq(builderSites.organizationId, session.organizationId))
-      .limit(1);
-    if (!site) throw new Error("Create the GroovGro website first.");
+    const site = await requireBuilderPage(db, session.organizationId, formData);
     const previousTheme = parseBuilderTheme(site.theme);
     const theme = formData.has("pageBackground")
       ? parseBuilderTheme({
@@ -229,12 +282,7 @@ export async function addBuilderSection(formData: FormData): Promise<ActionResul
     if (!isBuilderSectionType(type)) {
       throw new Error("Choose a section type.");
     }
-    const [site] = await db
-      .select()
-      .from(builderSites)
-      .where(eq(builderSites.organizationId, session.organizationId))
-      .limit(1);
-    if (!site) throw new Error("Create the GroovGro website first.");
+    const site = await requireBuilderPage(db, session.organizationId, formData);
 
     const rowId = String(formData.get("rowId") ?? "");
     const [row] = rowId
@@ -250,6 +298,7 @@ export async function addBuilderSection(formData: FormData): Promise<ActionResul
           .limit(1)
       : [];
     const columnWidths = parseColumnWidths(row?.columnWidths ?? [100]);
+    if (row && row.siteId !== site.id) throw new Error("That row was not found.");
     let targetRowId = row?.id;
     if (!targetRowId) {
       const existingRows = await db
@@ -359,10 +408,16 @@ export async function reorderBuilderSections(formData: FormData): Promise<Action
       throw new Error("Move a section onto the page first.");
     }
 
+    const site = await requireBuilderPage(db, session.organizationId, formData);
     const sections = await db
       .select()
       .from(builderSections)
-      .where(eq(builderSections.organizationId, session.organizationId))
+      .where(
+        and(
+          eq(builderSections.organizationId, session.organizationId),
+          eq(builderSections.siteId, site.id),
+        ),
+      )
       .orderBy(asc(builderSections.sortOrder));
     if (orderedIds.length !== sections.length) {
       throw new Error("Reload the page, then try moving the section again.");
@@ -412,12 +467,7 @@ export async function addBuilderRow(formData: FormData): Promise<ActionResult> {
     const { session, db } = await requireBuilderEditor();
     const layoutId = String(formData.get("layoutId") ?? "1");
     if (!isRowLayoutId(layoutId)) throw new Error("Choose a row layout.");
-    const [site] = await db
-      .select()
-      .from(builderSites)
-      .where(eq(builderSites.organizationId, session.organizationId))
-      .limit(1);
-    if (!site) throw new Error("Create the GroovGro website first.");
+    const site = await requireBuilderPage(db, session.organizationId, formData);
     const existing = await db
       .select({ sortOrder: builderRows.sortOrder })
       .from(builderRows)
@@ -458,10 +508,16 @@ export async function moveBuilderRow(formData: FormData): Promise<ActionResult> 
     const { session, db } = await requireBuilderEditor();
     const rowId = String(formData.get("rowId") ?? "");
     const direction = String(formData.get("direction") ?? "");
+    const site = await requireBuilderPage(db, session.organizationId, formData);
     const rows = await db
       .select()
       .from(builderRows)
-      .where(eq(builderRows.organizationId, session.organizationId))
+      .where(
+        and(
+          eq(builderRows.organizationId, session.organizationId),
+          eq(builderRows.siteId, site.id),
+        ),
+      )
       .orderBy(asc(builderRows.sortOrder));
     const index = rows.findIndex((row) => row.id === rowId);
     if (index < 0) throw new Error("That row was not found.");
@@ -591,6 +647,7 @@ export async function placeBuilderWidget(formData: FormData): Promise<ActionResu
       )
       .limit(1);
     if (!row) throw new Error("Drop the widget onto a column.");
+    if (row.siteId !== section.siteId) throw new Error("Drop the widget onto a column.");
     const columnIndex = clampColumnIndex(
       Number(formData.get("columnIndex") ?? 0),
       parseColumnWidths(row.columnWidths).length,
@@ -619,18 +676,13 @@ export async function placeBuilderWidget(formData: FormData): Promise<ActionResu
   });
 }
 
-export async function publishBuilderSite(): Promise<ActionResult> {
+export async function publishBuilderSite(formData: FormData): Promise<ActionResult> {
   return runAction("Could not publish the website.", async () => {
     const { session, db } = await requireBuilderEditor();
     if (!hasPermission(session.permissions, "publish_website")) {
       throw new Error("You do not have permission to publish the GroovGro website.");
     }
-    const [site] = await db
-      .select()
-      .from(builderSites)
-      .where(eq(builderSites.organizationId, session.organizationId))
-      .limit(1);
-    if (!site) throw new Error("Create the GroovGro website first.");
+    const site = await requireBuilderPage(db, session.organizationId, formData);
 
     await db
       .update(builderSites)
@@ -648,18 +700,13 @@ export async function publishBuilderSite(): Promise<ActionResult> {
   });
 }
 
-export async function unpublishBuilderSite(): Promise<ActionResult> {
+export async function unpublishBuilderSite(formData: FormData): Promise<ActionResult> {
   return runAction("Could not unpublish the website.", async () => {
     const { session, db } = await requireBuilderEditor();
     if (!hasPermission(session.permissions, "publish_website")) {
       throw new Error("You do not have permission to unpublish the GroovGro website.");
     }
-    const [site] = await db
-      .select()
-      .from(builderSites)
-      .where(eq(builderSites.organizationId, session.organizationId))
-      .limit(1);
-    if (!site) throw new Error("Create the GroovGro website first.");
+    const site = await requireBuilderPage(db, session.organizationId, formData);
 
     await db
       .update(builderSites)
@@ -684,12 +731,7 @@ export async function applyBuilderTemplate(formData: FormData): Promise<ActionRe
     if (!isBuilderTemplateId(templateId)) {
       throw new Error("Choose a starting layout.");
     }
-    const [site] = await db
-      .select()
-      .from(builderSites)
-      .where(eq(builderSites.organizationId, session.organizationId))
-      .limit(1);
-    if (!site) throw new Error("Create the GroovGro website first.");
+    const site = await requireBuilderPage(db, session.organizationId, formData);
 
     const [brand] = await db
       .select()
@@ -754,12 +796,8 @@ export async function applySeoDraftToBuilder(formData: FormData): Promise<Action
       throw new Error("This draft is for the connected website, not the GroovGro-hosted page.");
     }
 
-    const [site] = await db
-      .select()
-      .from(builderSites)
-      .where(eq(builderSites.organizationId, session.organizationId))
-      .limit(1);
-    if (!site) {
+    const site = await requireBuilderPage(db, session.organizationId);
+    if (!isHomePageSlug(site.slug)) {
       throw new Error("Create a GroovGro website first, then apply this draft there.");
     }
 
@@ -811,8 +849,115 @@ export async function applySeoDraftToBuilder(formData: FormData): Promise<Action
       metadata: { findingId: draft.findingId, appliedTo: next.appliedTo },
     });
 
-    revalidateBuilder(session.organizationSlug);
+    revalidateBuilder(session.organizationSlug, site);
     revalidatePath("/app/seo");
     return "Applied to the GroovGro website. The connected existing website was not changed.";
+  });
+}
+
+export async function createBuilderPage(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not add that page.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    await requireBuilderPage(db, session.organizationId);
+
+    const existing = await db
+      .select({ id: builderSites.id })
+      .from(builderSites)
+      .where(eq(builderSites.organizationId, session.organizationId));
+    if (existing.length >= MAX_BUILDER_PAGES) {
+      throw new Error("This website already has the maximum number of pages.");
+    }
+
+    const title = z.string().trim().min(1).max(120).parse(formData.get("title"));
+    const rawSlug = String(formData.get("slug") ?? "").trim() || suggestPageSlug(title);
+    const slug = parsePageSlug(rawSlug);
+    const [taken] = await db
+      .select({ id: builderSites.id })
+      .from(builderSites)
+      .where(
+        and(
+          eq(builderSites.organizationId, session.organizationId),
+          eq(builderSites.slug, slug),
+        ),
+      )
+      .limit(1);
+    if (taken) {
+      throw new Error("That page address is already in use. Choose another.");
+    }
+
+    const [brand] = await db
+      .select()
+      .from(brandSettings)
+      .where(eq(brandSettings.organizationId, session.organizationId))
+      .limit(1);
+    const layout = layoutForNewPage(String(formData.get("templateId") ?? "blank"), {
+      businessName: brand?.businessName || session.organizationName || title,
+      description: brand?.description ?? "",
+      targetCustomers: brand?.targetCustomers ?? "",
+    });
+
+    const [page] = await db
+      .insert(builderSites)
+      .values({
+        organizationId: session.organizationId,
+        title,
+        slug,
+        status: "draft",
+        theme: layout.theme,
+        templateId: layout.templateId,
+        createdBy: session.userId,
+      })
+      .returning();
+    if (!page) throw new Error("Could not add that page.");
+
+    await writeBuilderLayout(db, {
+      organizationId: session.organizationId,
+      siteId: page.id,
+      rows: layout.rows,
+    });
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "website_builder.page_created",
+      targetType: "builder_site",
+      targetId: page.id,
+      metadata: { slug, templateId: layout.templateId },
+    });
+    revalidateBuilder(session.organizationSlug, page);
+    return "Draft page created. It is not public until you publish.";
+  });
+}
+
+export async function removeBuilderPage(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not remove that page.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const page = await requireBuilderPage(db, session.organizationId, formData);
+    if (isHomePageSlug(page.slug)) {
+      throw new Error("Home cannot be deleted. Unpublish it to hide it.");
+    }
+    if (page.status === "published") {
+      throw new Error("Unpublish this page first, then you can remove it.");
+    }
+
+    await db
+      .delete(builderSites)
+      .where(
+        and(
+          eq(builderSites.id, page.id),
+          eq(builderSites.organizationId, session.organizationId),
+        ),
+      );
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "website_builder.page_removed",
+      targetType: "builder_site",
+      targetId: page.id,
+      metadata: { slug: page.slug },
+    });
+    revalidateBuilder(session.organizationSlug, page);
+    return "Page removed. The connected existing website was not changed.";
   });
 }
