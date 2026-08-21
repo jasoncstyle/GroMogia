@@ -7,6 +7,7 @@ import {
   parseColumnWidths,
   parseContentWidth,
 } from "@/lib/website-builder/layout";
+import { parseBuilderColor } from "@/lib/website-builder/style";
 import type { BuilderRowDraft } from "@/lib/website-builder/row-templates";
 
 type Db = NonNullable<ReturnType<typeof getDb>>;
@@ -31,6 +32,7 @@ export async function writeBuilderLayout(
         sortOrder,
         columnWidths,
         contentWidth: parseContentWidth(row.contentWidth),
+        backgroundColor: parseBuilderColor(row.backgroundColor),
       })
       .returning({ id: builderRows.id });
     if (!created) throw new Error("Could not create a layout row.");

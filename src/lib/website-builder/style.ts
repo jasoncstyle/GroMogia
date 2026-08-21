@@ -96,3 +96,15 @@ export function isDarkBuilderColor(value: string): boolean {
   const blue = Number.parseInt(color.slice(5, 7), 16);
   return (red * 299 + green * 587 + blue * 114) / 1000 < 140;
 }
+
+export function builderButtonColors(
+  theme: BuilderTheme,
+  darkRow: boolean,
+): { backgroundColor: string; color: string } {
+  const background = theme.buttonBackground || (darkRow ? "#ffffff" : "#18181b");
+  const color = theme.buttonText || (darkRow ? "#18181b" : "#ffffff");
+  if (darkRow && isDarkBuilderColor(background)) {
+    return { backgroundColor: "#ffffff", color: "#18181b" };
+  }
+  return { backgroundColor: background, color };
+}

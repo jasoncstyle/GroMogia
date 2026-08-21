@@ -11,7 +11,7 @@ Last updated: 21 August 2026.
 
 ## Current phase
 
-**Phase 7 — Website builder**, full-page editor with preview (not live), per-row screen width (edge-to-edge hero or boxed), page/row/widget colors, heading sizes, text links, and extra widgets (video, map, gallery, pricing, hours, countdown, social, call). Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
+**Phase 7 — Website builder**, full-page editor with preview (not live), per-row screen width, four numbered starter layouts (Template 1 is the default), page/row/widget colors, heading sizes, text links, and extra widgets (video, map, gallery, pricing, hours, countdown, social, call). Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
 
 Do not start ads or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
 
@@ -25,7 +25,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Marketing attribution and Intelligence (observe + recommend)
 - Brand voice: profile, examples, drafts that stay in GroovGro
 - SEO: homepage check, drafts, score history, plain-language explanation, Search Console read-only
-- Website builder: visual GroovGro-hosted page at `/w/[org]` with a full-page editor, draft preview, per-row width (edge-to-edge or boxed), colors, heading/link controls, row/column layouts, extra widgets, and photos fetched by GroovGro so other sites cannot block them
+- Website builder: visual GroovGro-hosted page at `/w/[org]` with a full-page editor, draft preview, per-row width (edge-to-edge or boxed), four numbered starter layouts, colors, heading/link controls, row/column layouts, extra widgets, and photos fetched by GroovGro so other sites cannot block them
 - Approved SEO title, description, and heading drafts can be applied to the GroovGro-hosted page
 
 ## Still later
