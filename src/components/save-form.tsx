@@ -13,12 +13,14 @@ export function SaveForm({
   action,
   successMessage,
   resetOnSuccess = false,
+  onSuccess,
   className,
   children,
 }: {
   action: SaveAction
   successMessage: string
   resetOnSuccess?: boolean
+  onSuccess?: () => void
   className?: string
   children: React.ReactNode
 }) {
@@ -29,6 +31,7 @@ export function SaveForm({
       if (result.ok) {
         toast.success(result.message ?? successMessage);
         if (resetOnSuccess) formRef.current?.reset();
+        onSuccess?.();
       } else {
         toast.error(result.error);
       }

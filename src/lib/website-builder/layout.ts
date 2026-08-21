@@ -28,6 +28,12 @@ export function isRowLayoutId(value: string): value is RowLayoutId {
   return ROW_LAYOUTS.some((layout) => layout.id === value);
 }
 
+export function layoutIdForWidths(widths: number[]): RowLayoutId {
+  return (
+    ROW_LAYOUTS.find((layout) => layout.widths.join() === widths.join())?.id ?? "1"
+  );
+}
+
 export function widthsForLayout(layoutId: string): number[] {
   return ROW_LAYOUTS.find((layout) => layout.id === layoutId)?.widths.slice() ?? [100];
 }
