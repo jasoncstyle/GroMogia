@@ -30,8 +30,8 @@ export default async function WebsiteBuilderPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Website builder</h1>
         <p className="text-muted-foreground">
-          Optional GroovGro-hosted page built from rows and columns. Open the
-          page editor to work full-screen, then click a box to change text or
+          Optional GroovGro-hosted page built from rows and columns. The page
+          editor opens when you have a draft. Click a box to change text or
           images. This does not replace the connected existing website, and it
           does not change Stripe checkout.
         </p>
@@ -41,10 +41,10 @@ export default async function WebsiteBuilderPage() {
         <CardHeader>
           <CardTitle>How this works</CardTitle>
           <CardDescription>
-            Pick a starting layout. Open the page editor, add a row, choose how
-            many columns it has, and drop widgets into the cells. Publish turns
-            this page on at a GroovGro address. Your current public site stays
-            as it is.
+            Pick a starting layout, then click Create draft website. The page
+            editor opens by itself. Add a row, choose how many columns it has,
+            and drop widgets into the cells. Publish turns this page on at a
+            GroovGro address. Your current public site stays as it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -59,7 +59,8 @@ export default async function WebsiteBuilderPage() {
             <CardTitle>Choose a starting layout</CardTitle>
             <CardDescription>
               GroovGro fills the boxes from your brand name and description.
-              Nothing is public until you click Publish.
+              After you create the draft, the page editor opens. Nothing is
+              public until you click Publish.
             </CardDescription>
           </CardHeader>
           <CardContent>

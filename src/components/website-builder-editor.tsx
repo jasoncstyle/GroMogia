@@ -46,10 +46,25 @@ export function WebsiteBuilderEditor({
   orgSlug: string
   publicUrl: string
 }) {
-  const [studioOpen, setStudioOpen] = useState(false);
+  const [studioOpen, setStudioOpen] = useState(true);
 
   return (
     <div className="space-y-6">
+      <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 sm:flex-row sm:items-center">
+        <Button
+          type="button"
+          size="lg"
+          className="h-11 shrink-0 px-5 text-base"
+          onClick={() => setStudioOpen(true)}
+        >
+          Open page editor
+        </Button>
+        <p className="text-sm text-muted-foreground">
+          The editor covers this screen so you can add rows and columns. Close
+          it to change the page title or search description.
+        </p>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>{site.status === "published" ? "Published" : "Draft"}</CardTitle>
@@ -107,9 +122,6 @@ export function WebsiteBuilderEditor({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button type="button" onClick={() => setStudioOpen(true)}>
-            Open page editor
-          </Button>
           {rows.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No rows yet. Open the page editor and click Add a row.
