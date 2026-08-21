@@ -45,7 +45,7 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 ## Phase gate
 
 - Phase 0 architecture is approved in `docs/phase-0/`.
-- Current implementation phase is **Phase 7 website builder** (optional section-based GroovGro-hosted pages, extra sections, image URLs, SEO apply onto the builder). See [docs/STATUS.md](docs/STATUS.md).
+- Current implementation phase is **Phase 7 website builder** (visual GroovGro-hosted pages: templates, live preview, drag-to-reorder sections, SEO apply onto the builder). See [docs/STATUS.md](docs/STATUS.md).
 - Do not skip ahead to ads or autonomous AI.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.
 - The website builder must not overwrite a connected existing website or change Stripe checkout.

@@ -11,7 +11,7 @@ Last updated: 21 August 2026.
 
 ## Current phase
 
-**Phase 7 — Website builder**, second slice: more section types, https image URLs, and applying approved SEO title/description/heading drafts onto the GroovGro-hosted page only. Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
+**Phase 7 — Website builder**, visual editor: live page preview, click-to-edit boxes, drag to reorder, and six starter templates. Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
 
 Do not start ads or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
 
@@ -25,8 +25,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Marketing attribution and Intelligence (observe + recommend)
 - Brand voice: profile, examples, drafts that stay in GroovGro
 - SEO: homepage check, drafts, score history, plain-language explanation, Search Console read-only
-- Website builder: draft/publish a GroovGro-hosted section page at `/w/[org]`
-- Builder sections: hero, text, call to action, lead form, image + text, features, testimonials, FAQ, contact
+- Website builder: visual GroovGro-hosted page at `/w/[org]` with templates, live preview, and drag-to-reorder sections
 - Approved SEO title, description, and heading drafts can be applied to the GroovGro-hosted page
 
 ## Still later

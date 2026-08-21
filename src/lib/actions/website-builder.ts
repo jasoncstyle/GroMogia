@@ -20,11 +20,14 @@ import {
   isBuilderApplyableFinding,
 } from "@/lib/website-builder/apply-seo";
 import {
-  defaultBuilderSections,
   defaultContentForType,
   isBuilderSectionType,
   parseBuilderSectionContent,
 } from "@/lib/website-builder/sections";
+import {
+  isBuilderTemplateId,
+  sectionsForTemplate,
+} from "@/lib/website-builder/templates";
 
 function revalidateBuilder(organizationSlug?: string | null) {
   revalidatePath("/app/website-builder");
@@ -41,7 +44,7 @@ async function requireBuilderEditor() {
   return { session, db };
 }
 
-export async function createBuilderSite(): Promise<ActionResult> {
+export async function createBuilderSite(formData: FormData): Promise<ActionResult> {
   return runAction("Could not create the GroovGro website.", async () => {
     const { session, db } = await requireBuilderEditor();
     const [existing] = await db
@@ -53,6 +56,7 @@ export async function createBuilderSite(): Promise<ActionResult> {
       throw new Error("This organization already has a GroovGro website.");
     }
 
+    const templateId = String(formData.get("templateId") ?? "simple");
     const [brand] = await db
       .select()
       .from(brandSettings)
@@ -72,12 +76,12 @@ export async function createBuilderSite(): Promise<ActionResult> {
       .limit(1);
     if (!site) throw new Error("Could not create the GroovGro website.");
 
-    const defaults = defaultBuilderSections({
+    const sections = sectionsForTemplate(templateId, {
       businessName: brand?.businessName || session.organizationName || "",
       description: brand?.description ?? "",
       targetCustomers: brand?.targetCustomers ?? "",
     });
-    for (const section of defaults) {
+    for (const section of sections) {
       await db.insert(builderSections).values({
         organizationId: session.organizationId,
         siteId: site.id,
@@ -94,6 +98,7 @@ export async function createBuilderSite(): Promise<ActionResult> {
       action: "website_builder.created",
       targetType: "builder_site",
       targetId: site.id,
+      metadata: { templateId: isBuilderTemplateId(templateId) ? templateId : "simple" },
     });
     revalidateBuilder(session.organizationSlug);
     return "Draft website created. It is not public until you publish.";
@@ -238,6 +243,46 @@ export async function moveBuilderSection(formData: FormData): Promise<ActionResu
   });
 }
 
+export async function reorderBuilderSections(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not save the section order.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const orderedIds = formData
+      .getAll("sectionIds")
+      .map((value) => String(value))
+      .filter(Boolean);
+    if (orderedIds.length === 0) {
+      throw new Error("Move a section onto the page first.");
+    }
+
+    const sections = await db
+      .select()
+      .from(builderSections)
+      .where(eq(builderSections.organizationId, session.organizationId))
+      .orderBy(asc(builderSections.sortOrder));
+    if (orderedIds.length !== sections.length) {
+      throw new Error("Reload the page, then try moving the section again.");
+    }
+    const allowed = new Set(sections.map((section) => section.id));
+    if (orderedIds.some((id) => !allowed.has(id))) {
+      throw new Error("That section was not found.");
+    }
+
+    for (const [sortOrder, sectionId] of orderedIds.entries()) {
+      await db
+        .update(builderSections)
+        .set({ sortOrder, updatedAt: new Date() })
+        .where(
+          and(
+            eq(builderSections.id, sectionId),
+            eq(builderSections.organizationId, session.organizationId),
+          ),
+        );
+    }
+    revalidateBuilder(session.organizationSlug);
+    return "Section order saved.";
+  });
+}
+
 export async function removeBuilderSection(formData: FormData): Promise<ActionResult> {
   return runAction("Could not remove that section.", async () => {
     const { session, db } = await requireBuilderEditor();
@@ -312,6 +357,64 @@ export async function unpublishBuilderSite(): Promise<ActionResult> {
     });
     revalidateBuilder(session.organizationSlug);
     return "Unpublished. The GroovGro page is hidden. The connected existing website was not changed.";
+  });
+}
+
+export async function applyBuilderTemplate(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not apply that template.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const templateId = String(formData.get("templateId") ?? "");
+    if (!isBuilderTemplateId(templateId)) {
+      throw new Error("Choose a starting layout.");
+    }
+    const [site] = await db
+      .select()
+      .from(builderSites)
+      .where(eq(builderSites.organizationId, session.organizationId))
+      .limit(1);
+    if (!site) throw new Error("Create the GroovGro website first.");
+
+    const [brand] = await db
+      .select()
+      .from(brandSettings)
+      .where(eq(brandSettings.organizationId, session.organizationId))
+      .limit(1);
+
+    await db
+      .delete(builderSections)
+      .where(
+        and(
+          eq(builderSections.siteId, site.id),
+          eq(builderSections.organizationId, session.organizationId),
+        ),
+      );
+
+    const sections = sectionsForTemplate(templateId, {
+      businessName: brand?.businessName || session.organizationName || site.title,
+      description: brand?.description ?? "",
+      targetCustomers: brand?.targetCustomers ?? "",
+    });
+    for (const section of sections) {
+      await db.insert(builderSections).values({
+        organizationId: session.organizationId,
+        siteId: site.id,
+        type: section.type,
+        sortOrder: section.sortOrder,
+        visible: section.visible,
+        content: section.content,
+      });
+    }
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "website_builder.template_applied",
+      targetType: "builder_site",
+      targetId: site.id,
+      metadata: { templateId },
+    });
+    revalidateBuilder(session.organizationSlug);
+    return "Template applied to the GroovGro page. The connected existing website was not changed.";
   });
 }
 
