@@ -41,10 +41,10 @@ export default async function WebsiteBuilderPage() {
         <CardHeader>
           <CardTitle>How this works</CardTitle>
           <CardDescription>
-            Pick a starting layout, then click Create draft website. The page
-            editor opens by itself. Add a row, choose how many columns it has,
-            and drop widgets into the cells. Publish turns this page on at a
-            GroovGro address. Your current public site stays as it is.
+            Pick a starting layout, then click Create draft website. Click
+            Open page editor when you want to add rows and columns. Publish
+            turns this page on at a GroovGro address. Your current public site
+            stays as it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -59,8 +59,8 @@ export default async function WebsiteBuilderPage() {
             <CardTitle>Choose a starting layout</CardTitle>
             <CardDescription>
               GroovGro fills the boxes from your brand name and description.
-              After you create the draft, the page editor opens. Nothing is
-              public until you click Publish.
+              After you create the draft, click Open page editor when you want
+              to change the layout. Nothing is public until you click Publish.
             </CardDescription>
           </CardHeader>
           <CardContent>

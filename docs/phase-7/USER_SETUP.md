@@ -14,7 +14,7 @@ The builder works in two layers:
 1. Open https://www.groovgro.com/app and sign in.
 2. In the left Work list, open **Website builder** (not **Website**).
 3. If you see **Choose a starting layout**, **Template 1** is already selected. Click **Create draft website**, or pick Template 2, 3, or 4 first.
-4. The **page editor** should open by itself. If you closed it, click **Open page editor** at the top.
+4. Click **Open page editor** at the top when you want to change rows and columns.
 5. Click **Add a row**, then pick how many columns you want.
 6. On that row, click **Row width**:
    - **Edge to edge** — the row (and a hero photo) go all the way across the screen.
