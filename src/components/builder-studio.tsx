@@ -55,6 +55,7 @@ import {
 } from "@/lib/website-builder/sections";
 import {
   BUILDER_BACKGROUND_SWATCHES,
+  isDarkBuilderColor,
   type BuilderTheme,
 } from "@/lib/website-builder/style";
 import type { BuilderLayoutRow, BuilderLayoutWidget } from "@/lib/website-builder/types";
@@ -365,6 +366,7 @@ export function BuilderStudio({
                             fullBleed={
                               parseContentWidth(row.contentWidth) === "full"
                             }
+                            darkRow={isDarkBuilderColor(row.backgroundColor)}
                             theme={site.theme}
                             onEdit={() => setEditingId(widget.id)}
                             onDragStart={(event) => {
@@ -593,6 +595,7 @@ function StudioWidget({
   orgSlug,
   dense,
   fullBleed = false,
+  darkRow = false,
   theme,
   onEdit,
   onDragStart,
@@ -604,6 +607,7 @@ function StudioWidget({
   orgSlug: string
   dense: boolean
   fullBleed?: boolean
+  darkRow?: boolean
   theme: BuilderTheme
   onEdit: () => void
   onDragStart: (event: DragEvent) => void
@@ -647,6 +651,7 @@ function StudioWidget({
             headingLevel="h2"
             dense={dense}
             fullBleed={fullBleed}
+            darkRow={darkRow}
             theme={theme}
           />
         </div>

@@ -2,7 +2,12 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import { layoutIdForWidths, moveSectionId, ROW_LAYOUTS, widthsForLayout } from "./layout";
-import { layoutForTemplate, BUILDER_TEMPLATES } from "./templates";
+import {
+  BUILDER_TEMPLATES,
+  DEFAULT_BUILDER_TEMPLATE_ID,
+  layoutForTemplate,
+  themeForTemplate,
+} from "./templates";
 
 const brand = {
   businessName: "Harbor Workshops",
@@ -11,27 +16,48 @@ const brand = {
 };
 
 describe("website builder templates", () => {
-  it("offers six layouts that include a three-column row", () => {
-    assert.equal(BUILDER_TEMPLATES.length, 6);
+  it("offers four numbered layouts and uses Template 1 by default", () => {
+    assert.equal(BUILDER_TEMPLATES.length, 4);
+    assert.deepEqual(
+      BUILDER_TEMPLATES.map((template) => template.id),
+      ["1", "2", "3", "4"],
+    );
+    assert.equal(DEFAULT_BUILDER_TEMPLATE_ID, "1");
+    assert.equal(BUILDER_TEMPLATES[0]?.name, "Template 1");
     assert.deepEqual(widthsForLayout("1-1-1"), [34, 33, 33]);
     assert.equal(ROW_LAYOUTS.some((layout) => layout.id === "1-1-1"), true);
     assert.equal(layoutIdForWidths([34, 33, 33]), "1-1-1");
     assert.equal(layoutIdForWidths([50, 50]), "1-1");
+  });
+
+  it("builds each numbered layout from brand copy without copying other websites", () => {
     for (const template of BUILDER_TEMPLATES) {
       const rows = layoutForTemplate(template.id, brand);
-      assert.ok(rows.some((row) => row.columnWidths.length === 3));
       assert.ok(rows.some((row) => row.widgets.some((widget) => widget.type === "hero")));
       assert.ok(rows.some((row) => row.widgets.some((widget) => widget.type === "lead")));
+      assert.equal(rows[0]?.contentWidth, "full");
       assert.equal(
-        /ocean sailing|myrtle beach|bunk/i.test(JSON.stringify(rows)),
+        /ocean sailing|myrtle beach|bunk|adtriox|crafto|bontempi|neuropelvic|sailing/i.test(
+          JSON.stringify(rows),
+        ),
         false,
       );
     }
   });
 
-  it("falls back to the simple intro when the template is unknown", () => {
+  it("gives Template 1 a dark edge-to-edge welcome and three offer columns", () => {
+    const rows = layoutForTemplate("1", brand);
+    assert.equal(themeForTemplate("1").pageBackground, "#111111");
+    assert.equal(rows[0]?.contentWidth, "full");
+    assert.ok(rows.some((row) => row.columnWidths.length === 3));
+    assert.ok(rows.some((row) => row.backgroundColor === "#111111" || row.backgroundColor === "#18181b"));
+  });
+
+  it("falls back to Template 1 when the template is unknown", () => {
     const rows = layoutForTemplate("not-a-template", brand);
+    const fallback = layoutForTemplate("1", brand);
     assert.equal(rows[0]?.widgets[0]?.type, "hero");
+    assert.equal(rows.length, fallback.length);
     assert.ok(rows.some((row) => row.widgets.some((widget) => widget.type === "lead")));
   });
 

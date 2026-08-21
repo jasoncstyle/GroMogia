@@ -25,6 +25,7 @@ import {
 } from "@/lib/website-builder/sections";
 import {
   EMPTY_BUILDER_THEME,
+  builderButtonColors,
   headingClassName,
   isDarkBuilderColor,
   parseBuilderTheme,
@@ -128,6 +129,7 @@ export function BuilderPageView({
                         dense={dense}
                         theme={look}
                         fullBleed={fullBleed}
+                        darkRow={darkRow}
                       />
                     ))}
                   </div>
@@ -149,6 +151,7 @@ export function BuilderSectionView({
   dense = false,
   theme = EMPTY_BUILDER_THEME,
   fullBleed = false,
+  darkRow = false,
 }: {
   section: RenderSection
   orgSlug: string
@@ -157,6 +160,7 @@ export function BuilderSectionView({
   dense?: boolean
   theme?: BuilderTheme
   fullBleed?: boolean
+  darkRow?: boolean
 }) {
   const content = section.content;
   const level = parseHeadingLevel(content.headingLevel, headingLevel);
@@ -173,7 +177,7 @@ export function BuilderSectionView({
     color: content.textColor || undefined,
   };
   const headingStyle: CSSProperties = {
-    color: content.headingColor || theme.headingColor || undefined,
+    color: content.headingColor || (darkRow ? "#ffffff" : theme.headingColor) || undefined,
   };
 
   const heading = (text: string) => (
@@ -202,7 +206,7 @@ export function BuilderSectionView({
             {content.subheading ? (
               <p className="mt-4 max-w-2xl text-lg text-white/90">{content.subheading}</p>
             ) : null}
-            <SectionButton content={content} theme={theme} />
+            <SectionButton content={content} theme={theme} darkRow={darkRow} />
           </div>
         </section>
       );
@@ -214,7 +218,7 @@ export function BuilderSectionView({
           <p className="mt-4 max-w-2xl text-lg opacity-80">{content.subheading}</p>
         ) : null}
         <SectionImage content={content} className={fullBleed ? "mt-8" : "mt-8 max-w-2xl"} />
-        <SectionButton content={content} theme={theme} />
+        <SectionButton content={content} theme={theme} darkRow={darkRow} />
       </section>
     );
   }
@@ -237,7 +241,7 @@ export function BuilderSectionView({
         <div className="rounded-xl border bg-black/5 px-6 py-10">
           {content.heading ? heading(content.heading) : null}
           {content.body ? <p className="mt-3 max-w-2xl opacity-80">{content.body}</p> : null}
-          <SectionButton content={content} theme={theme} />
+          <SectionButton content={content} theme={theme} darkRow={darkRow} />
         </div>
       </section>
     );
@@ -331,7 +335,7 @@ export function BuilderSectionView({
         {content.body ? (
           <p className="mt-3 max-w-2xl whitespace-pre-wrap opacity-80">{content.body}</p>
         ) : null}
-        <SectionButton content={content} theme={theme} />
+        <SectionButton content={content} theme={theme} darkRow={darkRow} />
       </section>
     );
   }
@@ -340,7 +344,7 @@ export function BuilderSectionView({
     return (
       <section className={pad} style={boxStyle}>
         {content.heading ? heading(content.heading) : null}
-        <SectionButton content={content} theme={theme} />
+        <SectionButton content={content} theme={theme} darkRow={darkRow} />
       </section>
     );
   }
@@ -505,10 +509,7 @@ export function BuilderSectionView({
             <a
               href={tel}
               className="inline-flex rounded-lg px-4 py-2 text-sm font-medium"
-              style={{
-                backgroundColor: theme.buttonBackground || "#18181b",
-                color: theme.buttonText || "#ffffff",
-              }}
+              style={builderButtonColors(theme, darkRow)}
             >
               {content.buttonLabel?.trim() || "Call"}
             </a>
@@ -568,9 +569,11 @@ function SectionImage({
 function SectionButton({
   content,
   theme,
+  darkRow = false,
 }: {
   content: BuilderSectionContent
   theme: BuilderTheme
+  darkRow?: boolean
 }) {
   const href = content.buttonHref?.trim() ?? "";
   const label = content.buttonLabel?.trim() ?? "";
@@ -580,10 +583,7 @@ function SectionButton({
       <a
         href={href}
         className="inline-flex rounded-lg px-4 py-2 text-sm font-medium"
-        style={{
-          backgroundColor: theme.buttonBackground || "#18181b",
-          color: theme.buttonText || "#ffffff",
-        }}
+        style={builderButtonColors(theme, darkRow)}
       >
         {label}
       </a>

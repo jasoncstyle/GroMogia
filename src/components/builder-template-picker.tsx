@@ -1,11 +1,14 @@
 "use client";
 
-import { BUILDER_TEMPLATES } from "@/lib/website-builder/templates";
+import {
+  BUILDER_TEMPLATES,
+  DEFAULT_BUILDER_TEMPLATE_ID,
+} from "@/lib/website-builder/templates";
 import { cn } from "@/lib/utils";
 
 export function BuilderTemplatePicker({
   name = "templateId",
-  defaultValue = "simple",
+  defaultValue = DEFAULT_BUILDER_TEMPLATE_ID,
 }: {
   name?: string
   defaultValue?: string

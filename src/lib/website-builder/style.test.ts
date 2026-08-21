@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  builderButtonColors,
   headingClassName,
   isDarkBuilderColor,
   parseBuilderColor,
@@ -37,5 +38,17 @@ describe("builder colors and headings", () => {
     assert.equal(parseHeadingLevel("", "h2"), "h2");
     assert.equal(parseHeadingLevel("h1", "h2"), "h1");
     assert.equal(headingClassName("p", false).includes("text-base"), true);
+  });
+
+  it("flips a dark button on a dark row so it can still be seen", () => {
+    const theme = parseBuilderTheme({
+      buttonBackground: "#0f2744",
+      buttonText: "#ffffff",
+    });
+    const onDark = builderButtonColors(theme, true);
+    assert.equal(onDark.backgroundColor, "#ffffff");
+    assert.equal(onDark.color, "#18181b");
+    const onLight = builderButtonColors(theme, false);
+    assert.equal(onLight.backgroundColor, "#0f2744");
   });
 });

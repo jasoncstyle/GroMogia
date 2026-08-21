@@ -36,8 +36,10 @@ import {
 } from "@/lib/website-builder/sections";
 import { parseBuilderColor, parseBuilderTheme } from "@/lib/website-builder/style";
 import {
+  DEFAULT_BUILDER_TEMPLATE_ID,
   isBuilderTemplateId,
   layoutForTemplate,
+  themeForTemplate,
 } from "@/lib/website-builder/templates";
 
 function revalidateBuilder(organizationSlug?: string | null) {
@@ -68,7 +70,7 @@ export async function createBuilderSite(formData: FormData): Promise<ActionResul
       throw new Error("This organization already has a GroovGro website.");
     }
 
-    const templateId = String(formData.get("templateId") ?? "simple");
+    const templateId = String(formData.get("templateId") ?? DEFAULT_BUILDER_TEMPLATE_ID);
     const [brand] = await db
       .select()
       .from(brandSettings)
@@ -79,6 +81,7 @@ export async function createBuilderSite(formData: FormData): Promise<ActionResul
       organizationId: session.organizationId,
       title,
       status: "draft",
+      theme: themeForTemplate(templateId),
       createdBy: session.userId,
     });
     const [site] = await db
@@ -104,7 +107,11 @@ export async function createBuilderSite(formData: FormData): Promise<ActionResul
       action: "website_builder.created",
       targetType: "builder_site",
       targetId: site.id,
-      metadata: { templateId: isBuilderTemplateId(templateId) ? templateId : "simple" },
+      metadata: {
+        templateId: isBuilderTemplateId(templateId)
+          ? templateId
+          : DEFAULT_BUILDER_TEMPLATE_ID,
+      },
     });
     revalidateBuilder(session.organizationSlug);
     return "Draft website created. It is not public until you publish.";
@@ -665,6 +672,10 @@ export async function applyBuilderTemplate(formData: FormData): Promise<ActionRe
         targetCustomers: brand?.targetCustomers ?? "",
       }),
     });
+    await db
+      .update(builderSites)
+      .set({ theme: themeForTemplate(templateId), updatedAt: new Date() })
+      .where(eq(builderSites.id, site.id));
 
     await recordAudit({
       organizationId: session.organizationId,

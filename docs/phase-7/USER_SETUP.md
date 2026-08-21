@@ -13,7 +13,7 @@ The builder works in two layers:
 
 1. Open https://www.groovgro.com/app and sign in.
 2. In the left Work list, open **Website builder** (not **Website**).
-3. If you see **Choose a starting layout**, pick a layout and click **Create draft website**.
+3. If you see **Choose a starting layout**, **Template 1** is already selected. Click **Create draft website**, or pick Template 2, 3, or 4 first.
 4. The **page editor** should open by itself. If you closed it, click **Open page editor** at the top.
 5. Click **Add a row**, then pick how many columns you want.
 6. On that row, click **Row width**:
@@ -31,7 +31,7 @@ The builder works in two layers:
 11. Click **Preview** to see the page as visitors would, with a yellow bar that says it is not live. Close that tab when you are done.
 12. Click **Publish** when you are ready. Then **Open page** is the live GroovGro address. Confirm https://www.oceansailingadventures.com/ is unchanged.
 
-To switch the whole page, open **Start from a different template**, pick a layout, and click **Use this template**. That replaces the GroovGro page only.
+To switch the whole page, open **Start from a different template**, pick Template 1–4, and click **Use this template**. That replaces the GroovGro page and its page colors only. Template 1 is the dark full-screen starting layout.
 
 ## Widgets in this slice
 
