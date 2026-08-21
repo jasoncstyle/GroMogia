@@ -25,6 +25,18 @@ export const BUILDER_SECTION_LABELS: Record<BuilderSectionType, string> = {
   contact: "Contact",
 };
 
+export const BUILDER_SECTION_HINTS: Record<BuilderSectionType, string> = {
+  hero: "Large headline at the top of the page",
+  text: "A heading and a paragraph",
+  cta: "A short pitch with a button",
+  lead: "A form that captures a name and email",
+  image_text: "A photo next to words",
+  features: "A list of what you offer",
+  testimonials: "Quotes from customers",
+  faq: "Questions and answers",
+  contact: "How to get in touch",
+};
+
 export const MAX_BUILDER_ITEMS = 8;
 
 export type BuilderSectionDraft = {

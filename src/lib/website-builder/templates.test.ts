@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { moveSectionId, ROW_LAYOUTS, widthsForLayout } from "./layout";
+import { layoutIdForWidths, moveSectionId, ROW_LAYOUTS, widthsForLayout } from "./layout";
 import { layoutForTemplate, BUILDER_TEMPLATES } from "./templates";
 
 const brand = {
@@ -15,6 +15,8 @@ describe("website builder templates", () => {
     assert.equal(BUILDER_TEMPLATES.length, 6);
     assert.deepEqual(widthsForLayout("1-1-1"), [34, 33, 33]);
     assert.equal(ROW_LAYOUTS.some((layout) => layout.id === "1-1-1"), true);
+    assert.equal(layoutIdForWidths([34, 33, 33]), "1-1-1");
+    assert.equal(layoutIdForWidths([50, 50]), "1-1");
     for (const template of BUILDER_TEMPLATES) {
       const rows = layoutForTemplate(template.id, brand);
       assert.ok(rows.some((row) => row.columnWidths.length === 3));

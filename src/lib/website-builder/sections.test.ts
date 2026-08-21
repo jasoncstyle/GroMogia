@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  BUILDER_SECTION_HINTS,
+  BUILDER_SECTION_TYPES,
   defaultBuilderSections,
   defaultContentForType,
   isSafeBuilderHref,
@@ -85,6 +87,12 @@ describe("website builder sections", () => {
       body: "Weekdays\nBy appointment",
     });
     assert.equal(contact.body, "Weekdays\nBy appointment");
+  });
+
+  it("explains every widget type in the add-widget popup", () => {
+    for (const type of BUILDER_SECTION_TYPES) {
+      assert.equal(BUILDER_SECTION_HINTS[type].length > 8, true);
+    }
   });
 
   it("hides unpublished sections from the live page", () => {

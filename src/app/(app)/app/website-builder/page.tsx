@@ -30,9 +30,10 @@ export default async function WebsiteBuilderPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Website builder</h1>
         <p className="text-muted-foreground">
-          Optional GroovGro-hosted page built from rows and columns, like
-          SiteOrigin. This does not replace the connected existing website, and
-          it does not change Stripe checkout.
+          Optional GroovGro-hosted page built from rows and columns. Open the
+          page editor to work full-screen, then click a box to change text or
+          images. This does not replace the connected existing website, and it
+          does not change Stripe checkout.
         </p>
       </div>
 
@@ -40,9 +41,10 @@ export default async function WebsiteBuilderPage() {
         <CardHeader>
           <CardTitle>How this works</CardTitle>
           <CardDescription>
-            Pick a starting layout. Then add a row, choose one / two / three
-            columns, and drop widgets into the cells. Publish turns this page on
-            at a GroovGro address. Your current public site stays as it is.
+            Pick a starting layout. Open the page editor, add a row, choose how
+            many columns it has, and drop widgets into the cells. Publish turns
+            this page on at a GroovGro address. Your current public site stays
+            as it is.
           </CardDescription>
         </CardHeader>
       </Card>

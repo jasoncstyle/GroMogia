@@ -11,7 +11,7 @@ Last updated: 21 August 2026.
 
 ## Current phase
 
-**Phase 7 — Website builder**, SiteOrigin-style rows and columns: add a row, choose 1–4 columns (including three equal columns), drop widgets into cells, and use templates that already include multi-column rows. Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
+**Phase 7 — Website builder**, rows and columns in a full-page editor: add a row, choose 1–4 columns, drop widgets into cells, and edit text or images in a popup. Templates already include multi-column rows. Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
 
 Do not start ads or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
 
@@ -25,7 +25,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Marketing attribution and Intelligence (observe + recommend)
 - Brand voice: profile, examples, drafts that stay in GroovGro
 - SEO: homepage check, drafts, score history, plain-language explanation, Search Console read-only
-- Website builder: visual GroovGro-hosted page at `/w/[org]` with row/column layouts, live preview, and starter templates
+- Website builder: visual GroovGro-hosted page at `/w/[org]` with a full-page editor, row/column layouts, widget edit popups, and starter templates
 - Approved SEO title, description, and heading drafts can be applied to the GroovGro-hosted page
 
 ## Still later
