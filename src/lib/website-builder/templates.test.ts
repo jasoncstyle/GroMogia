@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { moveSectionId, moveSectionIdToIndex } from "./layout";
-import { BUILDER_TEMPLATES, sectionsForTemplate } from "./templates";
+import { moveSectionId, ROW_LAYOUTS, widthsForLayout } from "./layout";
+import { layoutForTemplate, BUILDER_TEMPLATES } from "./templates";
 
 const brand = {
   businessName: "Harbor Workshops",
@@ -11,33 +11,29 @@ const brand = {
 };
 
 describe("website builder templates", () => {
-  it("offers six generic starting layouts", () => {
+  it("offers six layouts that include a three-column row", () => {
     assert.equal(BUILDER_TEMPLATES.length, 6);
+    assert.deepEqual(widthsForLayout("1-1-1"), [34, 33, 33]);
+    assert.equal(ROW_LAYOUTS.some((layout) => layout.id === "1-1-1"), true);
     for (const template of BUILDER_TEMPLATES) {
-      const sections = sectionsForTemplate(template.id, brand);
-      assert.ok(sections.length >= 3);
-      assert.equal(sections.some((section) => section.type === "hero"), true);
+      const rows = layoutForTemplate(template.id, brand);
+      assert.ok(rows.some((row) => row.columnWidths.length === 3));
+      assert.ok(rows.some((row) => row.widgets.some((widget) => widget.type === "hero")));
+      assert.ok(rows.some((row) => row.widgets.some((widget) => widget.type === "lead")));
       assert.equal(
-        sections.some((section) => section.type === "lead"),
-        true,
-      );
-      assert.equal(
-        /ocean sailing|myrtle beach|bunk/i.test(JSON.stringify(sections)),
+        /ocean sailing|myrtle beach|bunk/i.test(JSON.stringify(rows)),
         false,
       );
     }
   });
 
   it("falls back to the simple intro when the template is unknown", () => {
-    const sections = sectionsForTemplate("not-a-template", brand);
-    assert.equal(sections.some((section) => section.type === "hero"), true);
-    assert.equal(sections.at(-1)?.type, "lead");
+    const rows = layoutForTemplate("not-a-template", brand);
+    assert.equal(rows[0]?.widgets[0]?.type, "hero");
+    assert.ok(rows.some((row) => row.widgets.some((widget) => widget.type === "lead")));
   });
 
-  it("reorders section boxes without dropping any", () => {
-    const ids = ["a", "b", "c"];
-    assert.deepEqual(moveSectionId(ids, "b", "up"), ["b", "a", "c"]);
-    assert.deepEqual(moveSectionId(ids, "a", "down"), ["b", "a", "c"]);
-    assert.deepEqual(moveSectionIdToIndex(ids, "c", "a"), ["c", "a", "b"]);
+  it("reorders widgets inside a column without dropping any", () => {
+    assert.deepEqual(moveSectionId(["a", "b", "c"], "b", "up"), ["b", "a", "c"]);
   });
 });

@@ -709,6 +709,26 @@ export const builderSites = pgTable(
   (table) => [uniqueIndex("builder_sites_org_idx").on(table.organizationId)],
 );
 
+export const builderRows = pgTable(
+  "builder_rows",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    siteId: uuid("site_id")
+      .notNull()
+      .references(() => builderSites.id, { onDelete: "cascade" }),
+    sortOrder: integer("sort_order").notNull().default(0),
+    columnWidths: jsonb("column_widths").$type<number[]>().notNull().default([100]),
+    ...timestamps,
+  },
+  (table) => [
+    index("builder_rows_org_idx").on(table.organizationId),
+    index("builder_rows_site_idx").on(table.siteId),
+  ],
+);
+
 export const builderSections = pgTable(
   "builder_sections",
   {
@@ -723,11 +743,14 @@ export const builderSections = pgTable(
     sortOrder: integer("sort_order").notNull().default(0),
     visible: boolean("visible").notNull().default(true),
     content: jsonb("content").$type<BuilderSectionContent>().notNull().default({}),
+    rowId: uuid("row_id").references(() => builderRows.id, { onDelete: "cascade" }),
+    columnIndex: integer("column_index").notNull().default(0),
     ...timestamps,
   },
   (table) => [
     index("builder_sections_org_idx").on(table.organizationId),
     index("builder_sections_site_idx").on(table.siteId),
+    index("builder_sections_row_idx").on(table.rowId),
   ],
 );
 

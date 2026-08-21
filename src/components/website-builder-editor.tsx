@@ -25,32 +25,35 @@ import { Textarea } from "@/components/ui/textarea";
 import type { ActionResult } from "@/lib/action-result";
 import type { BuilderSectionContent } from "@/lib/db/schema";
 import {
+  addBuilderRow,
   addBuilderSection,
   applyBuilderTemplate,
+  moveBuilderRow,
+  moveBuilderSection,
+  placeBuilderWidget,
   publishBuilderSite,
+  removeBuilderRow,
   removeBuilderSection,
-  reorderBuilderSections,
   saveBuilderSection,
   saveBuilderSite,
+  setBuilderRowLayout,
   unpublishBuilderSite,
 } from "@/lib/actions/website-builder";
-import { moveSectionId, moveSectionIdToIndex } from "@/lib/website-builder/layout";
+import {
+  ROW_LAYOUTS,
+  rowGridTemplate,
+  widgetsForColumn,
+} from "@/lib/website-builder/layout";
 import {
   BUILDER_SECTION_TYPES,
   builderSectionLabel,
 } from "@/lib/website-builder/sections";
+import type { BuilderLayoutRow } from "@/lib/website-builder/types";
 import { cn } from "@/lib/utils";
-
-export type EditorSection = {
-  id: string
-  type: string
-  visible: boolean
-  content: BuilderSectionContent
-};
 
 export function WebsiteBuilderEditor({
   site,
-  sections: initialSections,
+  rows: initialRows,
   brandName,
   orgSlug,
   publicUrl,
@@ -60,7 +63,7 @@ export function WebsiteBuilderEditor({
     metaDescription: string
     status: string
   }
-  sections: EditorSection[]
+  rows: BuilderLayoutRow[]
   brandName: string | null
   orgSlug: string
   publicUrl: string
@@ -68,55 +71,33 @@ export function WebsiteBuilderEditor({
   const router = useRouter();
   const [contentEdits, setContentEdits] = useState<Record<string, BuilderSectionContent>>({});
   const [visibilityEdits, setVisibilityEdits] = useState<Record<string, boolean>>({});
-  const [orderIds, setOrderIds] = useState<string[] | null>(null);
-  const [selectedId, setSelectedId] = useState(initialSections[0]?.id ?? "");
+  const [selectedId, setSelectedId] = useState(initialRows[0]?.widgets[0]?.id ?? "");
   const [draggedId, setDraggedId] = useState<string | null>(null);
-  const [dragOverId, setDragOverId] = useState<string | null>(null);
+  const [dragOverKey, setDragOverKey] = useState<string | null>(null);
 
-  const sections = useMemo(() => {
-    const byId = new Map(initialSections.map((section) => [section.id, section]));
-    const knownOrder = (orderIds ?? initialSections.map((section) => section.id)).filter(
-      (id) => byId.has(id),
-    );
-    const missing = initialSections
-      .map((section) => section.id)
-      .filter((id) => !knownOrder.includes(id));
-    return [...knownOrder, ...missing]
-      .map((id) => byId.get(id))
-      .filter((section): section is EditorSection => Boolean(section))
-      .map((section) => ({
-        ...section,
-        content: contentEdits[section.id] ?? section.content,
-        visible: visibilityEdits[section.id] ?? section.visible,
-      }));
-  }, [contentEdits, initialSections, orderIds, visibilityEdits]);
+  const rows = useMemo(
+    () =>
+      initialRows.map((row) => ({
+        ...row,
+        widgets: row.widgets.map((widget) => ({
+          ...widget,
+          content: contentEdits[widget.id] ?? widget.content,
+          visible: visibilityEdits[widget.id] ?? widget.visible,
+        })),
+      })),
+    [contentEdits, initialRows, visibilityEdits],
+  );
 
-  const selected =
-    sections.find((section) => section.id === selectedId) ?? sections[0] ?? null;
+  const widgets = rows.flatMap((row) => row.widgets);
+  const selected = widgets.find((widget) => widget.id === selectedId) ?? widgets[0] ?? null;
 
-  function updateSelected(patch: Partial<EditorSection> & { content?: BuilderSectionContent }) {
+  function updateSelected(patch: { content?: BuilderSectionContent; visible?: boolean }) {
     if (!selected) return;
     if (patch.content) {
       setContentEdits((current) => ({ ...current, [selected.id]: patch.content! }));
     }
     if (typeof patch.visible === "boolean") {
       setVisibilityEdits((current) => ({ ...current, [selected.id]: patch.visible! }));
-    }
-  }
-
-  async function persistOrder(nextIds: string[]) {
-    const currentIds = sections.map((section) => section.id);
-    if (nextIds.join() === currentIds.join()) return;
-    setOrderIds(nextIds);
-    const formData = new FormData();
-    for (const id of nextIds) formData.append("sectionIds", id);
-    const result = await reorderBuilderSections(formData);
-    if (result.ok) {
-      toast.success(result.message ?? "Section order saved.");
-      router.refresh();
-    } else {
-      toast.error(result.error);
-      setOrderIds(null);
     }
   }
 
@@ -136,9 +117,9 @@ export function WebsiteBuilderEditor({
         <CardHeader>
           <CardTitle>{site.status === "published" ? "Published" : "Draft"}</CardTitle>
           <CardDescription>
-            Click a box to edit it. Drag the handle to move it, or use Move up /
-            Move down. The live page matches this layout after you save and
-            publish.
+            Add a row, pick how many columns it has, then drop widgets into the
+            cells — the same idea as SiteOrigin. This GroovGro page does not
+            replace the connected website.
             {brandName ? ` Starter copy comes from Brand (${brandName}).` : ""}
           </CardDescription>
         </CardHeader>
@@ -162,10 +143,6 @@ export function WebsiteBuilderEditor({
                 rows={3}
                 maxLength={160}
               />
-              <p className="text-xs text-muted-foreground">
-                Used in search results and share previews for this GroovGro page.
-                Up to 160 characters.
-              </p>
             </div>
             <SaveButton>Save details</SaveButton>
           </SaveForm>
@@ -183,100 +160,257 @@ export function WebsiteBuilderEditor({
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(20rem,0.8fr)]">
+      <Card>
+        <CardHeader>
+          <CardTitle>Add a row</CardTitle>
+          <CardDescription>
+            A row is one horizontal band. Three columns means three boxes side
+            by side on a computer, stacked on a phone.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-wrap gap-2">
+          {ROW_LAYOUTS.map((layout) => (
+            <SaveForm
+              key={layout.id}
+              action={addBuilderRow}
+              successMessage="Row added."
+            >
+              <input type="hidden" name="layoutId" value={layout.id} />
+              <SaveButton variant="outline" className="h-auto flex-col items-start gap-1 py-2">
+                <span className="flex h-5 w-20 gap-0.5">
+                  {layout.widths.map((width, index) => (
+                    <span
+                      key={`${layout.id}-${index}`}
+                      className="rounded-sm bg-foreground/30"
+                      style={{ flexGrow: width }}
+                    />
+                  ))}
+                </span>
+                <span className="text-xs font-medium">{layout.label}</span>
+              </SaveButton>
+            </SaveForm>
+          ))}
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(20rem,0.7fr)]">
         <div className="space-y-3">
           <div>
             <h2 className="text-lg font-semibold tracking-tight">Page preview</h2>
             <p className="text-sm text-muted-foreground">
-              This is how visitors will see the GroovGro page. Hidden boxes stay
-              here so you can edit them, but they are not on the public page.
+              Click a widget to edit it. Drag it into another column. Use Add
+              widget inside an empty cell.
             </p>
           </div>
-          <div className="overflow-hidden rounded-xl border bg-background">
-            {sections.length === 0 ? (
-              <p className="p-8 text-sm text-muted-foreground">
-                No sections yet. Add a box on the right, or start from a template
-                below.
-              </p>
-            ) : (
-              sections.map((section) => {
-                const selectedBox = section.id === selectedId;
-                return (
-                  <div
-                    key={section.id}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={`${builderSectionLabel(section.type)} section`}
-                    aria-pressed={selectedBox}
-                    onClick={() => setSelectedId(section.id)}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        setSelectedId(section.id);
-                      }
-                    }}
-                    onDragOver={(event) => {
-                      event.preventDefault();
-                      setDragOverId(section.id);
-                    }}
-                    onDrop={(event) => {
-                      event.preventDefault();
-                      const dragged =
-                        event.dataTransfer.getData("text/plain") || draggedId;
-                      setDraggedId(null);
-                      setDragOverId(null);
-                      if (!dragged) return;
-                      const ids = moveSectionIdToIndex(
-                        sections.map((item) => item.id),
-                        dragged,
-                        section.id,
-                      );
-                      void persistOrder(ids);
-                    }}
-                    className={cn(
-                      "relative border-b last:border-b-0 outline-none",
-                      selectedBox && "ring-2 ring-inset ring-foreground",
-                      dragOverId === section.id && draggedId !== section.id
-                        ? "bg-muted/60"
-                        : null,
-                      !section.visible && "opacity-60",
-                    )}
-                  >
-                    <div className="absolute top-2 right-2 z-10 flex flex-wrap items-center justify-end gap-1">
-                      <span className="rounded-md bg-background/95 px-2 py-1 text-xs font-medium shadow-sm">
-                        {builderSectionLabel(section.type)}
-                        {section.visible ? "" : " · Hidden"}
-                      </span>
-                      <span
-                        draggable
-                        onDragStart={(event) => {
-                          setDraggedId(section.id);
-                          event.dataTransfer.effectAllowed = "move";
-                          event.dataTransfer.setData("text/plain", section.id);
-                        }}
-                        onDragEnd={() => {
-                          setDraggedId(null);
-                          setDragOverId(null);
-                        }}
-                        className="inline-flex cursor-grab rounded-md bg-background/95 p-1 shadow-sm active:cursor-grabbing"
+          {rows.length === 0 ? (
+            <p className="rounded-xl border p-8 text-sm text-muted-foreground">
+              Add a row above, then add widgets into the columns.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {rows.map((row, rowIndex) => (
+                <div key={row.id} className="rounded-xl border">
+                  <div className="flex flex-wrap items-center gap-2 border-b bg-muted/40 px-3 py-2">
+                    <span className="text-xs font-medium">Row {rowIndex + 1}</span>
+                    <SaveForm
+                      action={setBuilderRowLayout}
+                      successMessage="Row layout saved."
+                      className="flex items-center gap-2"
+                    >
+                      <input type="hidden" name="rowId" value={row.id} />
+                      <select
+                        name="layoutId"
+                        defaultValue={
+                          ROW_LAYOUTS.find(
+                            (layout) =>
+                              layout.widths.join() === row.columnWidths.join(),
+                          )?.id ?? "1"
+                        }
+                        className="h-7 rounded-md border border-input bg-transparent px-2 text-xs"
                       >
-                        <GripVertical className="size-4" aria-hidden />
-                        <span className="sr-only">Drag to move</span>
-                      </span>
-                    </div>
-                    <div className="pointer-events-none">
-                      <BuilderSectionView
-                        section={section}
-                        orgSlug={orgSlug}
-                        fallbackTitle={site.title}
-                        headingLevel="h2"
-                      />
-                    </div>
+                        {ROW_LAYOUTS.map((layout) => (
+                          <option key={layout.id} value={layout.id}>
+                            {layout.label}
+                          </option>
+                        ))}
+                      </select>
+                      <SaveButton size="sm" variant="outline">
+                        Set columns
+                      </SaveButton>
+                    </SaveForm>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={rowIndex === 0}
+                      onClick={() => {
+                        const formData = new FormData();
+                        formData.set("rowId", row.id);
+                        formData.set("direction", "up");
+                        void run(moveBuilderRow, formData);
+                      }}
+                    >
+                      Move row up
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      disabled={rowIndex === rows.length - 1}
+                      onClick={() => {
+                        const formData = new FormData();
+                        formData.set("rowId", row.id);
+                        formData.set("direction", "down");
+                        void run(moveBuilderRow, formData);
+                      }}
+                    >
+                      Move row down
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const formData = new FormData();
+                        formData.set("rowId", row.id);
+                        void run(removeBuilderRow, formData);
+                      }}
+                    >
+                      Remove row
+                    </Button>
                   </div>
-                );
-              })
-            )}
-          </div>
+                  <div
+                    className={cn(
+                      "grid grid-cols-1 gap-2 p-2",
+                      row.columnWidths.length > 1 &&
+                        "md:[grid-template-columns:var(--builder-cols)]",
+                    )}
+                    style={
+                      row.columnWidths.length > 1
+                        ? ({ "--builder-cols": rowGridTemplate(row.columnWidths) } as {
+                            [key: string]: string
+                          })
+                        : undefined
+                    }
+                  >
+                    {row.columnWidths.map((_, columnIndex) => {
+                      const cellKey = `${row.id}:${columnIndex}`;
+                      const cellWidgets = widgetsForColumn(row.widgets, columnIndex);
+                      return (
+                        <div
+                          key={cellKey}
+                          onDragOver={(event) => {
+                            event.preventDefault();
+                            setDragOverKey(cellKey);
+                          }}
+                          onDrop={(event) => {
+                            event.preventDefault();
+                            const sectionId =
+                              event.dataTransfer.getData("text/plain") || draggedId;
+                            setDraggedId(null);
+                            setDragOverKey(null);
+                            if (!sectionId) return;
+                            const formData = new FormData();
+                            formData.set("sectionId", sectionId);
+                            formData.set("rowId", row.id);
+                            formData.set("columnIndex", String(columnIndex));
+                            void run(placeBuilderWidget, formData);
+                          }}
+                          className={cn(
+                            "min-h-32 rounded-lg border border-dashed bg-background",
+                            dragOverKey === cellKey && "border-foreground bg-muted/50",
+                          )}
+                        >
+                          {cellWidgets.map((widget) => {
+                            const selectedBox = widget.id === selected?.id;
+                            return (
+                              <div
+                                key={widget.id}
+                                role="button"
+                                tabIndex={0}
+                                aria-pressed={selectedBox}
+                                onClick={() => setSelectedId(widget.id)}
+                                onKeyDown={(event) => {
+                                  if (event.key === "Enter" || event.key === " ") {
+                                    event.preventDefault();
+                                    setSelectedId(widget.id);
+                                  }
+                                }}
+                                className={cn(
+                                  "relative border-b last:border-b-0 outline-none",
+                                  selectedBox && "ring-2 ring-inset ring-foreground",
+                                  !widget.visible && "opacity-60",
+                                )}
+                              >
+                                <div className="absolute top-2 right-2 z-10 flex items-center gap-1">
+                                  <span className="rounded-md bg-background/95 px-2 py-1 text-xs font-medium shadow-sm">
+                                    {builderSectionLabel(widget.type)}
+                                  </span>
+                                  <span
+                                    draggable
+                                    onDragStart={(event) => {
+                                      setDraggedId(widget.id);
+                                      event.dataTransfer.effectAllowed = "move";
+                                      event.dataTransfer.setData("text/plain", widget.id);
+                                    }}
+                                    onDragEnd={() => {
+                                      setDraggedId(null);
+                                      setDragOverKey(null);
+                                    }}
+                                    className="inline-flex cursor-grab rounded-md bg-background/95 p-1 shadow-sm active:cursor-grabbing"
+                                  >
+                                    <GripVertical className="size-4" aria-hidden />
+                                    <span className="sr-only">Drag to another column</span>
+                                  </span>
+                                </div>
+                                <div className="pointer-events-none">
+                                  <BuilderSectionView
+                                    section={widget}
+                                    orgSlug={orgSlug}
+                                    fallbackTitle={site.title}
+                                    headingLevel="h2"
+                                    dense={row.columnWidths.length > 1}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                          <div className="p-2">
+                            <SaveForm
+                              action={addBuilderSection}
+                              successMessage="Widget added."
+                              className="flex flex-wrap items-end gap-2"
+                            >
+                              <input type="hidden" name="rowId" value={row.id} />
+                              <input
+                                type="hidden"
+                                name="columnIndex"
+                                value={columnIndex}
+                              />
+                              <select
+                                name="type"
+                                defaultValue="text"
+                                className="h-7 flex-1 rounded-md border border-input bg-transparent px-2 text-xs"
+                              >
+                                {BUILDER_SECTION_TYPES.map((type) => (
+                                  <option key={type} value={type}>
+                                    {builderSectionLabel(type)}
+                                  </option>
+                                ))}
+                              </select>
+                              <SaveButton size="sm" variant="outline">
+                                Add widget
+                              </SaveButton>
+                            </SaveForm>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-4 xl:sticky xl:top-4 xl:self-start">
@@ -285,11 +419,10 @@ export function WebsiteBuilderEditor({
               <CardTitle>
                 {selected
                   ? `Edit ${builderSectionLabel(selected.type).toLowerCase()}`
-                  : "Edit a box"}
+                  : "Edit a widget"}
               </CardTitle>
               <CardDescription>
-                Changes show in the preview as you type. Click Save section to
-                keep them.
+                Changes show in the preview as you type. Save to keep them.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -309,7 +442,7 @@ export function WebsiteBuilderEditor({
                         updateSelected({ visible: event.target.checked })
                       }
                     />
-                    Show this section on the public page
+                    Show this widget on the public page
                   </label>
                   <BuilderSectionFields
                     sectionId={selected.id}
@@ -321,47 +454,38 @@ export function WebsiteBuilderEditor({
                 </SaveForm>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  Click a box on the left to edit its words.
+                  Click a widget in a column to edit it.
                 </p>
               )}
             </CardContent>
           </Card>
-
           {selected ? (
             <div className="flex flex-wrap gap-2">
               <Button
                 type="button"
                 size="sm"
                 variant="outline"
-                disabled={sections[0]?.id === selected.id}
-                onClick={() =>
-                  void persistOrder(
-                    moveSectionId(
-                      sections.map((section) => section.id),
-                      selected.id,
-                      "up",
-                    ),
-                  )
-                }
+                onClick={() => {
+                  const formData = new FormData();
+                  formData.set("sectionId", selected.id);
+                  formData.set("direction", "up");
+                  void run(moveBuilderSection, formData);
+                }}
               >
-                Move up
+                Move up in column
               </Button>
               <Button
                 type="button"
                 size="sm"
                 variant="outline"
-                disabled={sections.at(-1)?.id === selected.id}
-                onClick={() =>
-                  void persistOrder(
-                    moveSectionId(
-                      sections.map((section) => section.id),
-                      selected.id,
-                      "down",
-                    ),
-                  )
-                }
+                onClick={() => {
+                  const formData = new FormData();
+                  formData.set("sectionId", selected.id);
+                  formData.set("direction", "down");
+                  void run(moveBuilderSection, formData);
+                }}
               >
-                Move down
+                Move down in column
               </Button>
               <Button
                 type="button"
@@ -373,43 +497,10 @@ export function WebsiteBuilderEditor({
                   void run(removeBuilderSection, formData);
                 }}
               >
-                Remove
+                Remove widget
               </Button>
             </div>
           ) : null}
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Add a box</CardTitle>
-              <CardDescription>
-                New boxes appear at the bottom. Drag them where you want.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <SaveForm
-                action={addBuilderSection}
-                successMessage="Section added."
-                className="flex flex-wrap items-end gap-3"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="type">Section type</Label>
-                  <select
-                    id="type"
-                    name="type"
-                    className="h-8 rounded-lg border border-input bg-transparent px-2.5 text-sm"
-                    defaultValue="text"
-                  >
-                    {BUILDER_SECTION_TYPES.map((type) => (
-                      <option key={type} value={type}>
-                        {builderSectionLabel(type)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <SaveButton>Add section</SaveButton>
-              </SaveForm>
-            </CardContent>
-          </Card>
         </div>
       </div>
 
@@ -417,14 +508,13 @@ export function WebsiteBuilderEditor({
         <CardHeader>
           <CardTitle>Start from a different template</CardTitle>
           <CardDescription>
-            This replaces the boxes on the GroovGro page with a new starting
-            layout filled from Brand. It does not change the connected existing
-            website.
+            This replaces the GroovGro page with a new row-and-column layout.
+            It does not change the connected existing website.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <FoldableSample
-            title="Replace current boxes"
+            title="Replace current layout"
             subtitle="Closed until you choose a layout"
           >
             <SaveForm

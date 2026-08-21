@@ -9,6 +9,7 @@ import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import {
   brandSettings,
+  builderRows,
   builderSections,
   builderSites,
   seoDrafts,
@@ -20,13 +21,20 @@ import {
   isBuilderApplyableFinding,
 } from "@/lib/website-builder/apply-seo";
 import {
+  clampColumnIndex,
+  isRowLayoutId,
+  parseColumnWidths,
+  widthsForLayout,
+} from "@/lib/website-builder/layout";
+import { writeBuilderLayout } from "@/lib/website-builder/persist-layout";
+import {
   defaultContentForType,
   isBuilderSectionType,
   parseBuilderSectionContent,
 } from "@/lib/website-builder/sections";
 import {
   isBuilderTemplateId,
-  sectionsForTemplate,
+  layoutForTemplate,
 } from "@/lib/website-builder/templates";
 
 function revalidateBuilder(organizationSlug?: string | null) {
@@ -76,21 +84,15 @@ export async function createBuilderSite(formData: FormData): Promise<ActionResul
       .limit(1);
     if (!site) throw new Error("Could not create the GroovGro website.");
 
-    const sections = sectionsForTemplate(templateId, {
-      businessName: brand?.businessName || session.organizationName || "",
-      description: brand?.description ?? "",
-      targetCustomers: brand?.targetCustomers ?? "",
+    await writeBuilderLayout(db, {
+      organizationId: session.organizationId,
+      siteId: site.id,
+      rows: layoutForTemplate(templateId, {
+        businessName: brand?.businessName || session.organizationName || "",
+        description: brand?.description ?? "",
+        targetCustomers: brand?.targetCustomers ?? "",
+      }),
     });
-    for (const section of sections) {
-      await db.insert(builderSections).values({
-        organizationId: session.organizationId,
-        siteId: site.id,
-        type: section.type,
-        sortOrder: section.sortOrder,
-        visible: section.visible,
-        content: section.content,
-      });
-    }
 
     await recordAudit({
       organizationId: session.organizationId,
@@ -189,12 +191,53 @@ export async function addBuilderSection(formData: FormData): Promise<ActionResul
       .limit(1);
     if (!site) throw new Error("Create the GroovGro website first.");
 
-    const existing = await db
+    const rowId = String(formData.get("rowId") ?? "");
+    const [row] = rowId
+      ? await db
+          .select()
+          .from(builderRows)
+          .where(
+            and(
+              eq(builderRows.id, rowId),
+              eq(builderRows.organizationId, session.organizationId),
+            ),
+          )
+          .limit(1)
+      : [];
+    const columnWidths = parseColumnWidths(row?.columnWidths ?? [100]);
+    let targetRowId = row?.id;
+    if (!targetRowId) {
+      const existingRows = await db
+        .select({ sortOrder: builderRows.sortOrder })
+        .from(builderRows)
+        .where(eq(builderRows.siteId, site.id))
+        .orderBy(asc(builderRows.sortOrder));
+      const [created] = await db
+        .insert(builderRows)
+        .values({
+          organizationId: session.organizationId,
+          siteId: site.id,
+          sortOrder: (existingRows.at(-1)?.sortOrder ?? -1) + 1,
+          columnWidths: [100],
+        })
+        .returning({ id: builderRows.id });
+      targetRowId = created?.id;
+      if (!targetRowId) throw new Error("Could not add a row for that widget.");
+    }
+    const columnIndex = clampColumnIndex(
+      Number(formData.get("columnIndex") ?? 0),
+      (row ? columnWidths : [100]).length,
+    );
+    const siblings = await db
       .select({ sortOrder: builderSections.sortOrder })
       .from(builderSections)
-      .where(eq(builderSections.siteId, site.id))
+      .where(
+        and(
+          eq(builderSections.rowId, targetRowId),
+          eq(builderSections.columnIndex, columnIndex),
+        ),
+      )
       .orderBy(asc(builderSections.sortOrder));
-    const nextOrder = (existing.at(-1)?.sortOrder ?? -1) + 1;
     const content = parseBuilderSectionContent(
       type,
       defaultContentForType(type, site.title),
@@ -203,13 +246,15 @@ export async function addBuilderSection(formData: FormData): Promise<ActionResul
     await db.insert(builderSections).values({
       organizationId: session.organizationId,
       siteId: site.id,
+      rowId: targetRowId,
+      columnIndex,
       type,
-      sortOrder: nextOrder,
+      sortOrder: (siblings.at(-1)?.sortOrder ?? -1) + 1,
       visible: true,
       content,
     });
     revalidateBuilder(session.organizationSlug);
-    return "Section added.";
+    return "Widget added.";
   });
 }
 
@@ -218,17 +263,32 @@ export async function moveBuilderSection(formData: FormData): Promise<ActionResu
     const { session, db } = await requireBuilderEditor();
     const sectionId = String(formData.get("sectionId") ?? "");
     const direction = String(formData.get("direction") ?? "");
+    const [current] = await db
+      .select()
+      .from(builderSections)
+      .where(
+        and(
+          eq(builderSections.id, sectionId),
+          eq(builderSections.organizationId, session.organizationId),
+        ),
+      )
+      .limit(1);
+    if (!current) throw new Error("That section was not found.");
     const sections = await db
       .select()
       .from(builderSections)
-      .where(eq(builderSections.organizationId, session.organizationId))
+      .where(
+        and(
+          eq(builderSections.organizationId, session.organizationId),
+          eq(builderSections.rowId, current.rowId ?? ""),
+          eq(builderSections.columnIndex, current.columnIndex),
+        ),
+      )
       .orderBy(asc(builderSections.sortOrder));
     const index = sections.findIndex((section) => section.id === sectionId);
-    if (index < 0) throw new Error("That section was not found.");
     const swapWith = direction === "up" ? index - 1 : index + 1;
-    const current = sections[index];
     const other = sections[swapWith];
-    if (!current || !other) return "Section is already at the end.";
+    if (index < 0 || !other) return "Section is already at the end.";
 
     await db
       .update(builderSections)
@@ -299,6 +359,176 @@ export async function removeBuilderSection(formData: FormData): Promise<ActionRe
     if (deleted.length === 0) throw new Error("That section was not found.");
     revalidateBuilder(session.organizationSlug);
     return "Section removed.";
+  });
+}
+
+export async function addBuilderRow(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not add a row.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const layoutId = String(formData.get("layoutId") ?? "1");
+    if (!isRowLayoutId(layoutId)) throw new Error("Choose a row layout.");
+    const [site] = await db
+      .select()
+      .from(builderSites)
+      .where(eq(builderSites.organizationId, session.organizationId))
+      .limit(1);
+    if (!site) throw new Error("Create the GroovGro website first.");
+    const existing = await db
+      .select({ sortOrder: builderRows.sortOrder })
+      .from(builderRows)
+      .where(eq(builderRows.siteId, site.id))
+      .orderBy(asc(builderRows.sortOrder));
+    await db.insert(builderRows).values({
+      organizationId: session.organizationId,
+      siteId: site.id,
+      sortOrder: (existing.at(-1)?.sortOrder ?? -1) + 1,
+      columnWidths: widthsForLayout(layoutId),
+    });
+    revalidateBuilder(session.organizationSlug);
+    return "Row added. Click Add widget in a column.";
+  });
+}
+
+export async function removeBuilderRow(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not remove that row.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const rowId = String(formData.get("rowId") ?? "");
+    const deleted = await db
+      .delete(builderRows)
+      .where(
+        and(
+          eq(builderRows.id, rowId),
+          eq(builderRows.organizationId, session.organizationId),
+        ),
+      )
+      .returning({ id: builderRows.id });
+    if (deleted.length === 0) throw new Error("That row was not found.");
+    revalidateBuilder(session.organizationSlug);
+    return "Row removed.";
+  });
+}
+
+export async function moveBuilderRow(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not move that row.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const rowId = String(formData.get("rowId") ?? "");
+    const direction = String(formData.get("direction") ?? "");
+    const rows = await db
+      .select()
+      .from(builderRows)
+      .where(eq(builderRows.organizationId, session.organizationId))
+      .orderBy(asc(builderRows.sortOrder));
+    const index = rows.findIndex((row) => row.id === rowId);
+    if (index < 0) throw new Error("That row was not found.");
+    const swapWith = direction === "up" ? index - 1 : index + 1;
+    const current = rows[index];
+    const other = rows[swapWith];
+    if (!current || !other) return "Row is already at the end.";
+    await db
+      .update(builderRows)
+      .set({ sortOrder: other.sortOrder, updatedAt: new Date() })
+      .where(eq(builderRows.id, current.id));
+    await db
+      .update(builderRows)
+      .set({ sortOrder: current.sortOrder, updatedAt: new Date() })
+      .where(eq(builderRows.id, other.id));
+    revalidateBuilder(session.organizationSlug);
+    return "Row order saved.";
+  });
+}
+
+export async function setBuilderRowLayout(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not change that row layout.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const rowId = String(formData.get("rowId") ?? "");
+    const layoutId = String(formData.get("layoutId") ?? "");
+    if (!isRowLayoutId(layoutId)) throw new Error("Choose a row layout.");
+    const [row] = await db
+      .select()
+      .from(builderRows)
+      .where(
+        and(
+          eq(builderRows.id, rowId),
+          eq(builderRows.organizationId, session.organizationId),
+        ),
+      )
+      .limit(1);
+    if (!row) throw new Error("That row was not found.");
+    const columnWidths = widthsForLayout(layoutId);
+    await db
+      .update(builderRows)
+      .set({ columnWidths, updatedAt: new Date() })
+      .where(eq(builderRows.id, row.id));
+    const widgets = await db
+      .select()
+      .from(builderSections)
+      .where(eq(builderSections.rowId, row.id));
+    for (const widget of widgets) {
+      const nextIndex = clampColumnIndex(widget.columnIndex, columnWidths.length);
+      if (nextIndex !== widget.columnIndex) {
+        await db
+          .update(builderSections)
+          .set({ columnIndex: nextIndex, updatedAt: new Date() })
+          .where(eq(builderSections.id, widget.id));
+      }
+    }
+    revalidateBuilder(session.organizationSlug);
+    return "Row layout saved. Columns that no longer exist moved their widgets into the last column.";
+  });
+}
+
+export async function placeBuilderWidget(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not move that widget.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const sectionId = String(formData.get("sectionId") ?? "");
+    const rowId = String(formData.get("rowId") ?? "");
+    const [section] = await db
+      .select()
+      .from(builderSections)
+      .where(
+        and(
+          eq(builderSections.id, sectionId),
+          eq(builderSections.organizationId, session.organizationId),
+        ),
+      )
+      .limit(1);
+    if (!section) throw new Error("That widget was not found.");
+    const [row] = await db
+      .select()
+      .from(builderRows)
+      .where(
+        and(
+          eq(builderRows.id, rowId),
+          eq(builderRows.organizationId, session.organizationId),
+        ),
+      )
+      .limit(1);
+    if (!row) throw new Error("Drop the widget onto a column.");
+    const columnIndex = clampColumnIndex(
+      Number(formData.get("columnIndex") ?? 0),
+      parseColumnWidths(row.columnWidths).length,
+    );
+    const siblings = await db
+      .select({ sortOrder: builderSections.sortOrder })
+      .from(builderSections)
+      .where(
+        and(
+          eq(builderSections.rowId, row.id),
+          eq(builderSections.columnIndex, columnIndex),
+        ),
+      )
+      .orderBy(asc(builderSections.sortOrder));
+    await db
+      .update(builderSections)
+      .set({
+        rowId: row.id,
+        columnIndex,
+        sortOrder: (siblings.at(-1)?.sortOrder ?? -1) + 1,
+        updatedAt: new Date(),
+      })
+      .where(eq(builderSections.id, section.id));
+    revalidateBuilder(session.organizationSlug);
+    return "Widget moved.";
   });
 }
 
@@ -380,30 +610,15 @@ export async function applyBuilderTemplate(formData: FormData): Promise<ActionRe
       .where(eq(brandSettings.organizationId, session.organizationId))
       .limit(1);
 
-    await db
-      .delete(builderSections)
-      .where(
-        and(
-          eq(builderSections.siteId, site.id),
-          eq(builderSections.organizationId, session.organizationId),
-        ),
-      );
-
-    const sections = sectionsForTemplate(templateId, {
-      businessName: brand?.businessName || session.organizationName || site.title,
-      description: brand?.description ?? "",
-      targetCustomers: brand?.targetCustomers ?? "",
+    await writeBuilderLayout(db, {
+      organizationId: session.organizationId,
+      siteId: site.id,
+      rows: layoutForTemplate(templateId, {
+        businessName: brand?.businessName || session.organizationName || site.title,
+        description: brand?.description ?? "",
+        targetCustomers: brand?.targetCustomers ?? "",
+      }),
     });
-    for (const section of sections) {
-      await db.insert(builderSections).values({
-        organizationId: session.organizationId,
-        siteId: site.id,
-        type: section.type,
-        sortOrder: section.sortOrder,
-        visible: section.visible,
-        content: section.content,
-      });
-    }
 
     await recordAudit({
       organizationId: session.organizationId,

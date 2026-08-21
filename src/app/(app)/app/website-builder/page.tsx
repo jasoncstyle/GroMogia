@@ -18,7 +18,7 @@ export default async function WebsiteBuilderPage() {
   const session = await getAppSession();
   const data = session.organizationId
     ? await getBuilderEditorData(session.organizationId)
-    : { site: null, sections: [], brand: null };
+    : { site: null, rows: [], brand: null };
   const slug = await resolveOrganizationSlug(
     session.organizationId,
     session.organizationSlug,
@@ -30,9 +30,9 @@ export default async function WebsiteBuilderPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Website builder</h1>
         <p className="text-muted-foreground">
-          Optional GroovGro-hosted page made of movable boxes. This does not
-          replace the connected existing website, and it does not change Stripe
-          checkout.
+          Optional GroovGro-hosted page built from rows and columns, like
+          SiteOrigin. This does not replace the connected existing website, and
+          it does not change Stripe checkout.
         </p>
       </div>
 
@@ -40,10 +40,9 @@ export default async function WebsiteBuilderPage() {
         <CardHeader>
           <CardTitle>How this works</CardTitle>
           <CardDescription>
-            Pick a starting layout, then click a box to edit it and drag a box
-            to move it. Publish turns this page on at a GroovGro address. Your
-            current public site stays as it is unless you later point a domain
-            here.
+            Pick a starting layout. Then add a row, choose one / two / three
+            columns, and drop widgets into the cells. Publish turns this page on
+            at a GroovGro address. Your current public site stays as it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -79,12 +78,7 @@ export default async function WebsiteBuilderPage() {
             metaDescription: data.site.metaDescription,
             status: data.site.status,
           }}
-          sections={data.sections.map((section) => ({
-            id: section.id,
-            type: section.type,
-            visible: section.visible,
-            content: section.content,
-          }))}
+          rows={data.rows}
           brandName={data.brand?.businessName ?? null}
           orgSlug={slug ?? ""}
           publicUrl={publicUrl}

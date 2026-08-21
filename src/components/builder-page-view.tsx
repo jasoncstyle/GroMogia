@@ -1,43 +1,86 @@
 "use client";
 
+import type { CSSProperties } from "react";
+
 import { PublicLeadForm } from "@/components/public-lead-form";
 import type { BuilderSectionContent } from "@/lib/db/schema";
+import { rowGridTemplate, widgetsForColumn } from "@/lib/website-builder/layout";
 import {
   isSafeBuilderHref,
   isSafeBuilderImageUrl,
   parseItemLines,
 } from "@/lib/website-builder/sections";
+import { cn } from "@/lib/utils";
 
 export type RenderSection = {
   id: string
   type: string
   content: BuilderSectionContent
+  columnIndex?: number
+  sortOrder?: number
+};
+
+export type RenderRow = {
+  id: string
+  columnWidths: number[]
+  widgets: RenderSection[]
 };
 
 export function BuilderPageView({
   title,
   orgSlug,
-  sections,
+  rows,
 }: {
   title: string
   orgSlug: string
-  sections: RenderSection[]
+  rows: RenderRow[]
 }) {
+  const widgets = rows.flatMap((row) => row.widgets);
   const primaryHeadingId =
-    sections.find((section) => section.type === "hero" && section.content.heading)?.id ??
-    sections.find((section) => section.content.heading)?.id;
+    widgets.find((section) => section.type === "hero" && section.content.heading)?.id ??
+    widgets.find((section) => section.content.heading)?.id;
 
   return (
-    <div className="mx-auto flex min-h-full max-w-3xl flex-col">
-      {sections.map((section) => (
-        <BuilderSectionView
-          key={section.id}
-          section={section}
-          orgSlug={orgSlug}
-          fallbackTitle={title}
-          headingLevel={section.id === primaryHeadingId ? "h1" : "h2"}
-        />
-      ))}
+    <div className="mx-auto min-h-full w-full max-w-6xl px-4 py-6">
+      {rows.map((row) => {
+        const dense = row.columnWidths.length > 1;
+        return (
+          <div
+            key={row.id}
+            className={cn(
+              "grid grid-cols-1 gap-4",
+              dense && "md:[grid-template-columns:var(--builder-cols)]",
+            )}
+            style={
+              dense
+                ? ({ "--builder-cols": rowGridTemplate(row.columnWidths) } as CSSProperties)
+                : undefined
+            }
+          >
+            {row.columnWidths.map((_, columnIndex) => (
+              <div key={`${row.id}-${columnIndex}`}>
+                {widgetsForColumn(
+                  row.widgets.map((widget, index) => ({
+                    ...widget,
+                    columnIndex: widget.columnIndex ?? 0,
+                    sortOrder: widget.sortOrder ?? index,
+                  })),
+                  columnIndex,
+                ).map((section) => (
+                  <BuilderSectionView
+                    key={section.id}
+                    section={section}
+                    orgSlug={orgSlug}
+                    fallbackTitle={title}
+                    headingLevel={section.id === primaryHeadingId ? "h1" : "h2"}
+                    dense={dense}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -47,20 +90,29 @@ export function BuilderSectionView({
   orgSlug,
   fallbackTitle,
   headingLevel,
+  dense = false,
 }: {
   section: RenderSection
   orgSlug: string
   fallbackTitle: string
   headingLevel: "h1" | "h2"
+  dense?: boolean
 }) {
   const content = section.content;
   const Heading = headingLevel;
   const items = parseItemLines(content.items ?? "");
+  const pad = dense ? "px-3 py-6" : "px-6 py-12";
+  const heroPad = dense ? "px-3 py-8" : "px-6 py-20";
+  const titleClass = dense
+    ? "text-xl font-semibold tracking-tight"
+    : "text-2xl font-semibold tracking-tight";
 
   if (section.type === "hero") {
     return (
-      <section className="px-6 py-20">
-        <Heading className="text-4xl font-semibold tracking-tight">
+      <section className={heroPad}>
+        <Heading
+          className={dense ? "text-2xl font-semibold tracking-tight" : "text-4xl font-semibold tracking-tight"}
+        >
           {content.heading || fallbackTitle}
         </Heading>
         {content.subheading ? (
@@ -76,9 +128,9 @@ export function BuilderSectionView({
 
   if (section.type === "text") {
     return (
-      <section className="px-6 py-12">
+      <section className={pad}>
         {content.heading ? (
-          <Heading className="text-2xl font-semibold tracking-tight">
+          <Heading className={titleClass}>
             {content.heading}
           </Heading>
         ) : null}
@@ -93,10 +145,10 @@ export function BuilderSectionView({
 
   if (section.type === "cta") {
     return (
-      <section className="px-6 py-12">
+      <section className={pad}>
         <div className="rounded-xl border bg-muted/40 px-6 py-10">
           {content.heading ? (
-            <Heading className="text-2xl font-semibold tracking-tight">
+            <Heading className={titleClass}>
               {content.heading}
             </Heading>
           ) : null}
@@ -111,9 +163,9 @@ export function BuilderSectionView({
 
   if (section.type === "lead") {
     return (
-      <section id="lead" className="px-6 py-16">
+      <section id="lead" className={dense ? "px-3 py-8" : "px-6 py-16"}>
         {content.heading ? (
-          <Heading className="text-2xl font-semibold tracking-tight">
+          <Heading className={titleClass}>
             {content.heading}
           </Heading>
         ) : null}
@@ -131,12 +183,12 @@ export function BuilderSectionView({
 
   if (section.type === "image_text") {
     return (
-      <section className="px-6 py-12">
-        <div className="grid gap-8 md:grid-cols-2 md:items-center">
+      <section className={pad}>
+        <div className={dense ? "space-y-4" : "grid gap-8 md:grid-cols-2 md:items-center"}>
           <SectionImage content={content} />
           <div>
             {content.heading ? (
-              <Heading className="text-2xl font-semibold tracking-tight">
+              <Heading className={titleClass}>
                 {content.heading}
               </Heading>
             ) : null}
@@ -153,9 +205,9 @@ export function BuilderSectionView({
 
   if (section.type === "features") {
     return (
-      <section className="px-6 py-12">
+      <section className={pad}>
         {content.heading ? (
-          <Heading className="text-2xl font-semibold tracking-tight">
+          <Heading className={titleClass}>
             {content.heading}
           </Heading>
         ) : null}
@@ -178,9 +230,9 @@ export function BuilderSectionView({
 
   if (section.type === "testimonials") {
     return (
-      <section className="px-6 py-12">
+      <section className={pad}>
         {content.heading ? (
-          <Heading className="text-2xl font-semibold tracking-tight">
+          <Heading className={titleClass}>
             {content.heading}
           </Heading>
         ) : null}
@@ -200,9 +252,9 @@ export function BuilderSectionView({
 
   if (section.type === "faq") {
     return (
-      <section className="px-6 py-12">
+      <section className={pad}>
         {content.heading ? (
-          <Heading className="text-2xl font-semibold tracking-tight">
+          <Heading className={titleClass}>
             {content.heading}
           </Heading>
         ) : null}
@@ -222,9 +274,9 @@ export function BuilderSectionView({
 
   if (section.type === "contact") {
     return (
-      <section className="px-6 py-12">
+      <section className={pad}>
         {content.heading ? (
-          <Heading className="text-2xl font-semibold tracking-tight">
+          <Heading className={titleClass}>
             {content.heading}
           </Heading>
         ) : null}

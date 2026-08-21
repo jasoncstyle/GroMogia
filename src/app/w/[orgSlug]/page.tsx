@@ -69,7 +69,7 @@ export default async function PublicBuilderPage({
       <BuilderPageView
         title={seo.title}
         orgSlug={page.organization.slug}
-        sections={page.sections}
+        rows={page.rows}
       />
     </main>
   );
