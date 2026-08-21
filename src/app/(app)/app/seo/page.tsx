@@ -1,10 +1,12 @@
 import Link from "next/link";
 
 import { createSeoDrafts, decideSeoDraft, runSeoAudit } from "@/lib/actions/seo";
+import { applySeoDraftToBuilder } from "@/lib/actions/website-builder";
 import { getAppSession } from "@/lib/auth/session";
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { explainSeoCheck } from "@/lib/seo/explain";
 import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
+import { isBuilderApplyableFinding } from "@/lib/website-builder/apply-seo";
 import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
@@ -111,6 +113,19 @@ export default async function SeoPage({
             notice={searchConsoleNotice(params.gsc, params.error)}
           />
 
+          {data.hasBuilderSite ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>GroovGro website</CardTitle>
+                <CardDescription>
+                  After you approve a title, description, or heading draft, click
+                  Apply to GroovGro website. That updates the GroovGro-hosted
+                  page only. It does not change the connected existing website.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          ) : null}
+
           {latest && explanation ? (
             <>
               <Card>
@@ -193,8 +208,9 @@ export default async function SeoPage({
                 <CardTitle>Approve or do not approve</CardTitle>
                 <CardDescription>
                   Open each item for the exact text and where to put it.
-                  Approval keeps the draft in GroovGro. It does not publish
-                  unless a later official connection can apply it for you.
+                  Approval keeps the draft in GroovGro. Title, description, and
+                  heading drafts can later be applied to a GroovGro website.
+                  Connected custom sites still need a manual paste.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -248,7 +264,18 @@ export default async function SeoPage({
                       {draft.proposedChange}
                     </pre>
                     {draft.status === "approved" ? (
-                      <CopyText text={draft.proposedChange} label="Copy draft" />
+                      <div className="flex flex-wrap gap-2">
+                        <CopyText text={draft.proposedChange} label="Copy draft" />
+                        {data.hasBuilderSite && isBuilderApplyableFinding(draft.findingId) ? (
+                          <SaveForm
+                            action={applySeoDraftToBuilder}
+                            successMessage="Applied to the GroovGro website."
+                          >
+                            <input type="hidden" name="draftId" value={draft.id} />
+                            <SaveButton size="sm">Apply to GroovGro website</SaveButton>
+                          </SaveForm>
+                        ) : null}
+                      </div>
                     ) : null}
                   </FoldableSample>
                 ))}

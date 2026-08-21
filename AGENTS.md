@@ -45,12 +45,13 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 ## Phase gate
 
 - Phase 0 architecture is approved in `docs/phase-0/`.
-- Current implementation phase is **Phase 7 website builder** (optional section-based GroovGro-hosted pages). See [docs/STATUS.md](docs/STATUS.md).
+- Current implementation phase is **Phase 7 website builder** (optional section-based GroovGro-hosted pages, extra sections, image URLs, SEO apply onto the builder). See [docs/STATUS.md](docs/STATUS.md).
 - Do not skip ahead to ads or autonomous AI.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.
 - The website builder must not overwrite a connected existing website or change Stripe checkout.
 - Custom domains for GroovGro-built sites wait for a later Phase 7 slice.
 - Do not change Ocean Sailing Adventures live Stripe checkout or **stripe-osa endpoint**.
 - Brand voice drafts must not send email, post to social, edit a website, or take a payment.
-- SEO checks and approved drafts must not edit the connected website.
+- SEO checks and approved drafts must not edit the connected website. Title, description, and heading drafts may be applied to a **GroovGro-hosted** page after the user clicks Apply.
 - Website apply model: suggest → user approves or rejects → apply only if an official connector exists (GroovGro builder, WordPress, or similar). Custom/code-hosted sites stay manual; show how and where to make the change. Do not silently rewrite a live site.
+- Do not publish groovgro.com `robots.txt` or `sitemap.xml` for tenant builder pages.

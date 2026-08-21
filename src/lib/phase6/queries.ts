@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db";
 import {
   brandSettings,
   brandVoiceProfiles,
+  builderSites,
   integrationConnections,
   searchConsoleSnapshots,
   seoAudits,
@@ -32,6 +33,7 @@ export async function getSeoPageData(organizationId: string) {
       voice: null,
       audits: [] as (typeof seoAudits.$inferSelect)[],
       drafts: [] as (typeof seoDrafts.$inferSelect)[],
+      hasBuilderSite: false,
       searchConsole: emptySearchConsole,
     };
   }
@@ -52,6 +54,12 @@ export async function getSeoPageData(organizationId: string) {
     .select()
     .from(brandVoiceProfiles)
     .where(eq(brandVoiceProfiles.organizationId, organizationId))
+    .limit(1);
+
+  const [builderSite] = await db
+    .select({ id: builderSites.id })
+    .from(builderSites)
+    .where(eq(builderSites.organizationId, organizationId))
     .limit(1);
 
   const audits = await db
@@ -97,6 +105,7 @@ export async function getSeoPageData(organizationId: string) {
     voice: voice ?? null,
     audits,
     drafts,
+    hasBuilderSite: Boolean(builderSite),
     searchConsole: {
       configured: isGoogleOAuthConfigured(),
       connected: google?.status === "connected",

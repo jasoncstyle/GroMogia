@@ -50,6 +50,13 @@
       "when": 1787252000000,
       "tag": "0006_phase7_website_builder",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1787259000000,
+      "tag": "0007_phase7_builder_seo",
+      "breakpoints": true
     }
   ]
 }

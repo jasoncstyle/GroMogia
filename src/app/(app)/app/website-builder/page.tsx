@@ -11,7 +11,10 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
 import { resolveOrganizationSlug } from "@/lib/org";
-import { BUILDER_SECTION_TYPES } from "@/lib/website-builder/sections";
+import {
+  BUILDER_SECTION_TYPES,
+  builderSectionLabel,
+} from "@/lib/website-builder/sections";
 import { getBuilderEditorData } from "@/lib/website-builder/queries";
 import { CopyLink } from "@/components/copy-link";
 import { FoldableSample } from "@/components/foldable-sample";
@@ -26,6 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import type { BuilderSectionContent } from "@/lib/db/schema";
 
 export default async function WebsiteBuilderPage() {
   const session = await getAppSession();
@@ -52,8 +56,9 @@ export default async function WebsiteBuilderPage() {
         <CardHeader>
           <CardTitle>How this works</CardTitle>
           <CardDescription>
-            Publish turns this page on at a GroovGro address. Your current public
-            site stays as it is unless you later point a domain here.
+            Publish turns this page on at a GroovGro address. Approved SEO title,
+            description, and heading drafts can be applied here. Your current
+            public site stays as it is unless you later point a domain here.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -99,7 +104,11 @@ export default async function WebsiteBuilderPage() {
               {publicUrl ? (
                 <CopyLink url={publicUrl} openLabel="Open page" />
               ) : null}
-              <SaveForm action={saveBuilderSite} successMessage="Website title saved." className="space-y-3">
+              <SaveForm
+                action={saveBuilderSite}
+                successMessage="Website details saved."
+                className="space-y-3"
+              >
                 <div className="space-y-2">
                   <Label htmlFor="title">Page title</Label>
                   <Input
@@ -109,7 +118,21 @@ export default async function WebsiteBuilderPage() {
                     required
                   />
                 </div>
-                <SaveButton>Save title</SaveButton>
+                <div className="space-y-2">
+                  <Label htmlFor="metaDescription">Search description</Label>
+                  <Textarea
+                    id="metaDescription"
+                    name="metaDescription"
+                    defaultValue={data.site.metaDescription}
+                    rows={3}
+                    maxLength={160}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Used in search results and share previews for this GroovGro
+                    page. Up to 160 characters.
+                  </p>
+                </div>
+                <SaveButton>Save details</SaveButton>
               </SaveForm>
               <div className="flex flex-wrap gap-2">
                 {data.site.status === "published" ? (
@@ -131,7 +154,7 @@ export default async function WebsiteBuilderPage() {
           {data.sections.map((section, index) => (
             <Card key={section.id}>
               <CardHeader>
-                <CardTitle className="capitalize">{section.type} section</CardTitle>
+                <CardTitle>{builderSectionLabel(section.type)} section</CardTitle>
                 <CardDescription>
                   {section.visible ? "Visible on the public page" : "Hidden on the public page"}
                 </CardDescription>
@@ -155,57 +178,11 @@ export default async function WebsiteBuilderPage() {
                       />
                       Show this section
                     </label>
-                    <div className="space-y-2">
-                      <Label htmlFor={`heading-${section.id}`}>Heading</Label>
-                      <Input
-                        id={`heading-${section.id}`}
-                        name="heading"
-                        defaultValue={section.content.heading ?? ""}
-                      />
-                    </div>
-                    {section.type === "hero" ? (
-                      <div className="space-y-2">
-                        <Label htmlFor={`subheading-${section.id}`}>Subheading</Label>
-                        <Textarea
-                          id={`subheading-${section.id}`}
-                          name="subheading"
-                          defaultValue={section.content.subheading ?? ""}
-                          rows={3}
-                        />
-                      </div>
-                    ) : null}
-                    {section.type !== "hero" ? (
-                      <div className="space-y-2">
-                        <Label htmlFor={`body-${section.id}`}>Body</Label>
-                        <Textarea
-                          id={`body-${section.id}`}
-                          name="body"
-                          defaultValue={section.content.body ?? ""}
-                          rows={4}
-                        />
-                      </div>
-                    ) : null}
-                    {section.type === "hero" || section.type === "cta" ? (
-                      <>
-                        <div className="space-y-2">
-                          <Label htmlFor={`buttonLabel-${section.id}`}>Button label</Label>
-                          <Input
-                            id={`buttonLabel-${section.id}`}
-                            name="buttonLabel"
-                            defaultValue={section.content.buttonLabel ?? ""}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor={`buttonHref-${section.id}`}>Button link</Label>
-                          <Input
-                            id={`buttonHref-${section.id}`}
-                            name="buttonHref"
-                            defaultValue={section.content.buttonHref ?? ""}
-                            placeholder="#lead or https://"
-                          />
-                        </div>
-                      </>
-                    ) : null}
+                    <SectionFields
+                      sectionId={section.id}
+                      type={section.type}
+                      content={section.content}
+                    />
                     <SaveButton>Save section</SaveButton>
                   </SaveForm>
                 </FoldableSample>
@@ -255,7 +232,7 @@ export default async function WebsiteBuilderPage() {
                   >
                     {BUILDER_SECTION_TYPES.map((type) => (
                       <option key={type} value={type}>
-                        {type}
+                        {builderSectionLabel(type)}
                       </option>
                     ))}
                   </select>
@@ -267,5 +244,118 @@ export default async function WebsiteBuilderPage() {
         </>
       )}
     </div>
+  );
+}
+
+function SectionFields({
+  sectionId,
+  type,
+  content,
+}: {
+  sectionId: string
+  type: string
+  content: BuilderSectionContent
+}) {
+  const usesSubheading = type === "hero";
+  const usesBody = type !== "hero";
+  const usesButton =
+    type === "hero" || type === "cta" || type === "contact";
+  const usesImage = type === "hero" || type === "image_text";
+  const usesItems =
+    type === "features" || type === "testimonials" || type === "faq";
+
+  return (
+    <>
+      <div className="space-y-2">
+        <Label htmlFor={`heading-${sectionId}`}>Heading</Label>
+        <Input
+          id={`heading-${sectionId}`}
+          name="heading"
+          defaultValue={content.heading ?? ""}
+        />
+      </div>
+      {usesSubheading ? (
+        <div className="space-y-2">
+          <Label htmlFor={`subheading-${sectionId}`}>Subheading</Label>
+          <Textarea
+            id={`subheading-${sectionId}`}
+            name="subheading"
+            defaultValue={content.subheading ?? ""}
+            rows={3}
+          />
+        </div>
+      ) : null}
+      {usesBody ? (
+        <div className="space-y-2">
+          <Label htmlFor={`body-${sectionId}`}>Body</Label>
+          <Textarea
+            id={`body-${sectionId}`}
+            name="body"
+            defaultValue={content.body ?? ""}
+            rows={4}
+          />
+        </div>
+      ) : null}
+      {usesItems ? (
+        <div className="space-y-2">
+          <Label htmlFor={`items-${sectionId}`}>Items</Label>
+          <Textarea
+            id={`items-${sectionId}`}
+            name="items"
+            defaultValue={content.items ?? ""}
+            rows={6}
+          />
+          <p className="text-xs text-muted-foreground">
+            One item per line. Use a bar | between the title and the detail. Up
+            to 8 lines.
+          </p>
+        </div>
+      ) : null}
+      {usesImage ? (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor={`imageUrl-${sectionId}`}>Image link</Label>
+            <Input
+              id={`imageUrl-${sectionId}`}
+              name="imageUrl"
+              defaultValue={content.imageUrl ?? ""}
+              placeholder="https://"
+            />
+            <p className="text-xs text-muted-foreground">
+              Paste a public https:// image. GroovGro does not upload files yet.
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor={`imageAlt-${sectionId}`}>Image description</Label>
+            <Input
+              id={`imageAlt-${sectionId}`}
+              name="imageAlt"
+              defaultValue={content.imageAlt ?? ""}
+            />
+          </div>
+        </>
+      ) : null}
+      {usesButton ? (
+        <>
+          <div className="space-y-2">
+            <Label htmlFor={`buttonLabel-${sectionId}`}>Button label</Label>
+            <Input
+              id={`buttonLabel-${sectionId}`}
+              name="buttonLabel"
+              defaultValue={content.buttonLabel ?? ""}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor={`buttonHref-${sectionId}`}>Button link</Label>
+            <Input
+              id={`buttonHref-${sectionId}`}
+              name="buttonHref"
+              defaultValue={content.buttonHref ?? ""}
+              placeholder="#lead, mailto:, or https://"
+            />
+          </div>
+        </>
+      ) : null}
+    </>
   );
 }

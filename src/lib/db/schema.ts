@@ -671,7 +671,16 @@ export const searchConsoleSnapshots = pgTable(
   (table) => [index("search_console_snapshots_org_idx").on(table.organizationId)],
 );
 
-export type BuilderSectionType = "hero" | "text" | "cta" | "lead";
+export type BuilderSectionType =
+  | "hero"
+  | "text"
+  | "cta"
+  | "lead"
+  | "image_text"
+  | "features"
+  | "testimonials"
+  | "faq"
+  | "contact";
 
 export type BuilderSectionContent = {
   heading?: string
@@ -679,6 +688,9 @@ export type BuilderSectionContent = {
   body?: string
   buttonLabel?: string
   buttonHref?: string
+  imageUrl?: string
+  imageAlt?: string
+  items?: string
 };
 
 export const builderSites = pgTable(
@@ -689,6 +701,7 @@ export const builderSites = pgTable(
       .notNull()
       .references(() => organizations.id, { onDelete: "cascade" }),
     title: text("title").notNull().default(""),
+    metaDescription: text("meta_description").notNull().default(""),
     status: text("status").notNull().default("draft"),
     createdBy: uuid("created_by").references(() => users.id),
     ...timestamps,
