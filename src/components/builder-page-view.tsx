@@ -1,3 +1,5 @@
+"use client";
+
 import { PublicLeadForm } from "@/components/public-lead-form";
 import type { BuilderSectionContent } from "@/lib/db/schema";
 import {
@@ -6,7 +8,7 @@ import {
   parseItemLines,
 } from "@/lib/website-builder/sections";
 
-type RenderSection = {
+export type RenderSection = {
   id: string
   type: string
   content: BuilderSectionContent
@@ -40,7 +42,7 @@ export function BuilderPageView({
   );
 }
 
-function BuilderSectionView({
+export function BuilderSectionView({
   section,
   orgSlug,
   fallbackTitle,

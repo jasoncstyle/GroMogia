@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "test": "tsx --test src/lib/permissions.test.ts src/lib/modules/catalog.test.ts src/lib/db/tenant.test.ts src/modules/contacts/identity.test.ts src/modules/integrations/stripe-normalize.test.ts src/modules/integrations/stripe.test.ts src/modules/integrations/google-search-console.test.ts src/lib/attribution.test.ts src/lib/intelligence/observe.test.ts src/lib/brand-voice/draft.test.ts src/lib/seo/audit.test.ts src/lib/seo/drafts.test.ts src/lib/seo/explain.test.ts src/lib/seo/search-console.test.ts src/lib/website-builder/sections.test.ts src/lib/website-builder/apply-seo.test.ts"
+    "test": "tsx --test src/lib/permissions.test.ts src/lib/modules/catalog.test.ts src/lib/db/tenant.test.ts src/modules/contacts/identity.test.ts src/modules/integrations/stripe-normalize.test.ts src/modules/integrations/stripe.test.ts src/modules/integrations/google-search-console.test.ts src/lib/attribution.test.ts src/lib/intelligence/observe.test.ts src/lib/brand-voice/draft.test.ts src/lib/seo/audit.test.ts src/lib/seo/drafts.test.ts src/lib/seo/explain.test.ts src/lib/seo/search-console.test.ts src/lib/website-builder/sections.test.ts src/lib/website-builder/apply-seo.test.ts src/lib/website-builder/templates.test.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.7.6",

@@ -6,14 +6,18 @@ This is optional. It does **not** replace a connected existing website. Ocean Sa
 
 1. Open https://www.groovgro.com/app and sign in.
 2. In the left Work list, open **Website builder**.
-3. Click **Create draft website** if you do not already have one. GroovGro fills starter sections from Brand.
-4. Open each section → **Edit copy** → change the words → **Save section**.
-5. To add a picture, choose **Image + text** (or a **Hero**), paste a public `https://` image link, add a short image description, then **Save section**. GroovGro does not upload files yet.
-6. Use **Move up** / **Move down** / **Remove** / **Add section** as needed. Extra types: **Features**, **Testimonials**, **FAQ**, **Contact**. For lists, put one item per line as `Title | Detail`.
-7. Fill **Search description** under the page title if you want a specific snippet for search and share previews. **Save details**.
-8. Click **Publish**.
-9. Click **Open page** (or copy the `/w/...` link) in a private window. You should see the GroovGro-hosted page.
-10. Confirm https://www.oceansailingadventures.com/ is unchanged.
+3. If you do not have a GroovGro page yet, click one of the six starting layouts (for example **Simple intro** or **Local business**), then **Create draft website**.
+4. You should see a **Page preview** that looks like the public page, with a labeled box around each section.
+5. Click a box. The right side (or below on a phone) shows the words for that box. Change a heading and watch the preview update, then click **Save section**.
+6. Drag a box by the dotted handle (or use **Move up** / **Move down**) to change the order. Confirm the preview matches what you want before you publish.
+7. To add a picture, click an **Image + text** or **Hero** box, paste a public `https://` image link, add a short image description, then **Save section**. GroovGro does not upload files yet.
+8. Use **Add a box** for Features, Testimonials, FAQ, Contact, and the other types. For lists, put one item per line as `Title | Detail`.
+9. Fill **Search description** if you want a specific snippet for search and share previews. **Save details**.
+10. Click **Publish**.
+11. Click **Open page** in a private window. You should see the same layout as the preview.
+12. Confirm https://www.oceansailingadventures.com/ is unchanged.
+
+To switch layouts later, open **Start from a different template**, pick a layout, and click **Use this template**. That replaces the GroovGro boxes only.
 
 ## Apply an approved SEO draft onto this GroovGro page
 
@@ -22,7 +26,7 @@ This is optional. It does **not** replace a connected existing website. Ocean Sa
 3. Open a **Page title**, **Meta description**, or **Main heading** draft.
 4. Click **Approve**.
 5. In **Earlier decisions**, click **Apply to GroovGro website**.
-6. Open **Website builder** → **Open page** and confirm the GroovGro page changed.
+6. Open **Website builder** and confirm the preview changed.
 7. Confirm the connected existing website did not change.
 
 robots.txt, sitemap, and similar files stay on the connected website. GroovGro will not write those onto groovgro.com for tenant pages.
