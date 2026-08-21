@@ -47,9 +47,22 @@ describe("website builder templates", () => {
     }
   });
 
-  it("gives Template 1 a dark edge-to-edge welcome and three offer columns", () => {
+  it("starts every numbered layout on a white page with dark grey text", () => {
+    for (const template of BUILDER_TEMPLATES) {
+      const theme = themeForTemplate(template.id);
+      assert.equal(theme.pageBackground, "#ffffff");
+      assert.equal(theme.textColor, "#3f3f46");
+      assert.equal(theme.headingColor, "#3f3f46");
+      assert.equal(theme.buttonBackground, "#3f3f46");
+      assert.equal(theme.buttonText, "#ffffff");
+      const rows = layoutForTemplate(template.id, brand);
+      assert.ok(rows.every((row) => !row.backgroundColor));
+    }
+  });
+
+  it("gives Template 1 an edge-to-edge welcome and three offer columns", () => {
     const rows = layoutForTemplate("1", brand);
-    assert.equal(themeForTemplate("1").pageBackground, "#18181b");
+    assert.equal(themeForTemplate("1").pageBackground, "#ffffff");
     assert.equal(rows[0]?.contentWidth, "full");
     assert.ok(rows.some((row) => row.columnWidths.length === 3));
     assert.ok(rows.every((row) => !row.backgroundColor));

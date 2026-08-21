@@ -21,13 +21,6 @@ export type BuilderRowDraft = {
   widgets: BuilderWidgetDraft[]
 };
 
-const DARK = "#18181b";
-const NAVY = "#0f2744";
-const CREAM = "#f7f3ea";
-const WHITE = "#ffffff";
-const GRAY = "#f4f4f5";
-const SKY = "#e8f1f8";
-
 export function rowsForTemplate(
   templateId: string,
   input: BuilderBrandInput,
@@ -233,7 +226,7 @@ function templateTwo(name: string, offer: string, about: string): BuilderRowDraf
           buttonLabel: "Request information",
         }),
       ],
-      { contentWidth: "full", backgroundColor: NAVY },
+      { contentWidth: "full" },
     ),
     band(
       [
@@ -248,7 +241,7 @@ function templateTwo(name: string, offer: string, about: string): BuilderRowDraf
           linkHref: "#lead",
         }),
       ],
-      { columns: [50, 50], contentWidth: "wide", backgroundColor: WHITE },
+      { columns: [50, 50], contentWidth: "wide" },
     ),
     band(
       [
@@ -269,7 +262,7 @@ function templateTwo(name: string, offer: string, about: string): BuilderRowDraf
           },
         },
       ],
-      { columns: [50, 50], contentWidth: "wide", backgroundColor: SKY },
+      { columns: [50, 50], contentWidth: "wide" },
     ),
     band(
       [
@@ -278,7 +271,7 @@ function templateTwo(name: string, offer: string, about: string): BuilderRowDraf
         text(2, "Recovery", "What the next days usually look like.", { headingLevel: "h3" }),
         text(3, "Follow-up", "When you check in, and how to reach you.", { headingLevel: "h3" }),
       ],
-      { columns: [25, 25, 25, 25], contentWidth: "wide", backgroundColor: WHITE },
+      { columns: [25, 25, 25, 25], contentWidth: "wide" },
     ),
     band(
       [
@@ -289,13 +282,13 @@ function templateTwo(name: string, offer: string, about: string): BuilderRowDraf
           headingLevel: "h2",
         }),
       ],
-      { columns: [50, 50], contentWidth: "wide", backgroundColor: GRAY },
+      { columns: [50, 50], contentWidth: "wide" },
     ),
     band(
       [
         text(0, "Why this work matters", about, { headingLevel: "h2" }),
       ],
-      { contentWidth: "narrow", backgroundColor: WHITE },
+      { contentWidth: "narrow" },
     ),
     band(
       [
@@ -315,7 +308,7 @@ function templateTwo(name: string, offer: string, about: string): BuilderRowDraf
           },
         },
       ],
-      { contentWidth: "normal", backgroundColor: WHITE },
+      { contentWidth: "normal" },
     ),
     band(
       [
@@ -347,7 +340,7 @@ function templateTwo(name: string, offer: string, about: string): BuilderRowDraf
           },
         },
       ],
-      { columns: [50, 50], contentWidth: "wide", backgroundColor: SKY },
+      { columns: [50, 50], contentWidth: "wide" },
     ),
     band(
       [
@@ -364,7 +357,7 @@ function templateTwo(name: string, offer: string, about: string): BuilderRowDraf
         },
         leadWidget(1),
       ],
-      { columns: [50, 50], contentWidth: "wide", backgroundColor: WHITE },
+      { columns: [50, 50], contentWidth: "wide" },
     ),
   ];
 }
@@ -379,7 +372,7 @@ function templateThree(name: string, offer: string, about: string): BuilderRowDr
           buttonLabel: "Explore",
         }),
       ],
-      { contentWidth: "full", backgroundColor: CREAM },
+      { contentWidth: "full" },
     ),
     band(
       [
@@ -399,21 +392,21 @@ function templateThree(name: string, offer: string, about: string): BuilderRowDr
           linkHref: "#lead",
         }),
       ],
-      { columns: [34, 33, 33], contentWidth: "wide", backgroundColor: WHITE },
+      { columns: [34, 33, 33], contentWidth: "wide" },
     ),
     band(
       [
         imageLook(0),
         text(1, "The collection", about, { headingLevel: "h2" }),
       ],
-      { columns: [50, 50], contentWidth: "wide", backgroundColor: CREAM },
+      { columns: [50, 50], contentWidth: "wide" },
     ),
     band(
       [
         text(0, "The story", about, { headingLevel: "h2" }),
         imageLook(1),
       ],
-      { columns: [50, 50], contentWidth: "wide", backgroundColor: WHITE },
+      { columns: [50, 50], contentWidth: "wide" },
     ),
     band(
       [
@@ -422,7 +415,7 @@ function templateThree(name: string, offer: string, about: string): BuilderRowDr
         text(2, "Place", "Where it is made, or where people can see it.", { headingLevel: "h3" }),
         text(3, "Care", "How it is meant to be used.", { headingLevel: "h3" }),
       ],
-      { columns: [25, 25, 25, 25], contentWidth: "wide", backgroundColor: CREAM },
+      { columns: [25, 25, 25, 25], contentWidth: "wide" },
     ),
     band(
       [
@@ -440,7 +433,7 @@ function templateThree(name: string, offer: string, about: string): BuilderRowDr
           },
         },
       ],
-      { columns: [50, 50], contentWidth: "wide", backgroundColor: WHITE },
+      { columns: [50, 50], contentWidth: "wide" },
     ),
     band(
       [
@@ -448,9 +441,9 @@ function templateThree(name: string, offer: string, about: string): BuilderRowDr
         text(1, "Note two", "A second story, or a new piece.", { headingLevel: "h3" }),
         text(2, "Note three", "A third story, or a place to visit.", { headingLevel: "h3" }),
       ],
-      { columns: [34, 33, 33], contentWidth: "wide", backgroundColor: CREAM },
+      { columns: [34, 33, 33], contentWidth: "wide" },
     ),
-    band([leadWidget()], { contentWidth: "narrow", backgroundColor: WHITE }),
+    band([leadWidget()], { contentWidth: "narrow" }),
   ];
 }
 
@@ -469,13 +462,13 @@ function templateFour(
           buttonLabel: "Start a project",
         }),
       ],
-      { contentWidth: "full", backgroundColor: DARK },
+      { contentWidth: "full" },
     ),
     band(
       [
         text(0, "Who we are", about, { headingLevel: "h2" }),
       ],
-      { contentWidth: "normal", backgroundColor: WHITE },
+      { contentWidth: "normal" },
     ),
     band(
       [
@@ -484,7 +477,7 @@ function templateFour(
         text(2, "40+", "Awards and mentions", { headingLevel: "h1" }),
         text(3, "750+", "Projects finished", { headingLevel: "h1" }),
       ],
-      { columns: [25, 25, 25, 25], contentWidth: "wide", backgroundColor: GRAY },
+      { columns: [25, 25, 25, 25], contentWidth: "wide" },
     ),
     band(
       [
@@ -495,7 +488,7 @@ function templateFour(
         }),
         text(3, "04  Words", "The sentences people actually read.", { headingLevel: "h3" }),
       ],
-      { columns: [25, 25, 25, 25], contentWidth: "wide", backgroundColor: WHITE },
+      { columns: [25, 25, 25, 25], contentWidth: "wide" },
     ),
     band(
       [
@@ -512,7 +505,7 @@ function templateFour(
           },
         },
       ],
-      { contentWidth: "full", backgroundColor: DARK },
+      { contentWidth: "full" },
     ),
     band(
       [
@@ -527,7 +520,7 @@ function templateFour(
           },
         },
       ],
-      { contentWidth: "wide", backgroundColor: WHITE },
+      { contentWidth: "wide" },
     ),
     band(
       [
@@ -546,7 +539,7 @@ function templateFour(
           },
         },
       ],
-      { columns: [66, 34], contentWidth: "wide", backgroundColor: GRAY },
+      { columns: [66, 34], contentWidth: "wide" },
     ),
     band(
       [
@@ -565,7 +558,7 @@ function templateFour(
           },
         },
       ],
-      { contentWidth: "normal", backgroundColor: WHITE },
+      { contentWidth: "normal" },
     ),
     band(
       [
@@ -573,9 +566,9 @@ function templateFour(
         text(1, "Note two", "A second story, or a method you use.", { headingLevel: "h3" }),
         text(2, "Note three", "A third story, or a result you can stand behind.", { headingLevel: "h3" }),
       ],
-      { columns: [34, 33, 33], contentWidth: "wide", backgroundColor: GRAY },
+      { columns: [34, 33, 33], contentWidth: "wide" },
     ),
-    band([leadWidget()], { contentWidth: "narrow", backgroundColor: WHITE }),
+    band([leadWidget()], { contentWidth: "narrow" }),
   ];
 }
 

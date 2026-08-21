@@ -1,12 +1,20 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
   BUILDER_BACKGROUND_SWATCHES,
   BUILDER_TEXT_SWATCHES,
+  parseBuilderColor,
   type BuilderTheme,
 } from "@/lib/website-builder/style";
+
+function hexDigits(value: string): string {
+  return value.replace(/^#/, "");
+}
 
 export function BuilderColorField({
   id,
@@ -23,10 +31,77 @@ export function BuilderColorField({
   swatches: readonly { label: string; value: string }[]
   onChange?: (value: string) => void
 }) {
+  const [typed, setTyped] = useState(hexDigits(value));
+
+  useEffect(() => {
+    setTyped(hexDigits(value));
+  }, [value]);
+
+  const parsedValue = parseBuilderColor(value);
+  const wheelValue = parsedValue || parseBuilderColor(typed) || "#ffffff";
+
+  function apply(next: string) {
+    const empty = !next.trim() || next.trim() === "#";
+    if (empty) {
+      setTyped("");
+      onChange?.("");
+      return;
+    }
+    const parsed = parseBuilderColor(next);
+    setTyped(hexDigits(parsed || next));
+    if (parsed) onChange?.(parsed);
+  }
+
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
-      <input type="hidden" id={id} name={name} value={value} />
+      <input type="hidden" name={name} value={value} />
+      <div className="flex flex-wrap items-center gap-2">
+        <input
+          type="color"
+          aria-label={`${label} color wheel`}
+          value={wheelValue}
+          onChange={(event) => apply(event.target.value)}
+          className="h-9 w-12 cursor-pointer rounded-md border border-input bg-transparent p-0.5"
+        />
+        <div className="flex items-center gap-1">
+          <span className="text-sm text-muted-foreground" aria-hidden="true">
+            #
+          </span>
+          <Input
+            id={id}
+            value={typed}
+            onChange={(event) => {
+              const raw = event.target.value.replace(/^#/, "").replace(/[^0-9a-fA-F]/g, "").slice(0, 6);
+              setTyped(raw);
+              if (!raw) {
+                onChange?.("");
+                return;
+              }
+              const parsed = parseBuilderColor(raw);
+              if (parsed) onChange?.(parsed);
+            }}
+            onBlur={() => {
+              const parsed = parseBuilderColor(typed);
+              if (parsed) {
+                setTyped(hexDigits(parsed));
+                onChange?.(parsed);
+              } else if (!typed) {
+                onChange?.("");
+              }
+            }}
+            placeholder="ffffff"
+            autoComplete="off"
+            spellCheck={false}
+            maxLength={6}
+            aria-label={`${label} hex code`}
+            className="w-24 font-mono uppercase"
+          />
+        </div>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Use the color wheel, type a hex code, or pick a color below.
+      </p>
       <div className="flex flex-wrap gap-1.5">
         {swatches.map((swatch) => {
           const selected = value === swatch.value;
@@ -35,7 +110,7 @@ export function BuilderColorField({
               key={`${name}-${swatch.label}`}
               type="button"
               title={swatch.label}
-              onClick={() => onChange?.(swatch.value)}
+              onClick={() => apply(swatch.value)}
               className={cn(
                 "size-7 rounded-full border",
                 selected && "ring-2 ring-foreground ring-offset-2",

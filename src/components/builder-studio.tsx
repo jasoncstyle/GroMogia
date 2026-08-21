@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import { BuilderSectionFields } from "@/components/builder-section-fields";
-import { BuilderThemeFields } from "@/components/builder-color-field";
+import { BuilderColorField, BuilderThemeFields } from "@/components/builder-color-field";
 import { BuilderRemoteImage } from "@/components/builder-remote-image";
 import { BuilderSectionView } from "@/components/builder-page-view";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -53,11 +53,7 @@ import {
   BUILDER_SECTION_TYPES,
   builderSectionLabel,
 } from "@/lib/website-builder/sections";
-import {
-  BUILDER_BACKGROUND_SWATCHES,
-  isDarkBuilderColor,
-  type BuilderTheme,
-} from "@/lib/website-builder/style";
+import { BUILDER_BACKGROUND_SWATCHES, isDarkBuilderColor, type BuilderTheme } from "@/lib/website-builder/style";
 import { builderTemplateLabel } from "@/lib/website-builder/templates";
 import type { BuilderLayoutRow, BuilderLayoutWidget } from "@/lib/website-builder/types";
 import { cn } from "@/lib/utils";
@@ -444,12 +440,13 @@ export function BuilderStudio({
       />
 
       <Dialog open={pageColorsOpen} onOpenChange={setPageColorsOpen}>
-        <DialogContent className="sm:max-w-xl">
+        <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>Page colors</DialogTitle>
             <DialogDescription>
-              Page background sits behind every row. Leave “use on every row”
-              on so Preview matches. A row can still have its own Row color.
+              Page background sits behind every row. Use the color wheel, type a
+              hex code, or pick a swatch. Leave “use on every row” on so Preview
+              matches. A row can still have its own Row color.
             </DialogDescription>
           </DialogHeader>
           <SaveForm
@@ -522,48 +519,21 @@ export function BuilderStudio({
       </Dialog>
 
       <Dialog open={Boolean(colorRowId)} onOpenChange={(next) => { if (!next) setColorRowId(null); }}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Row color</DialogTitle>
             <DialogDescription>
-              Background for this whole row. Default means no extra color.
+              Background for this whole row. Default (the slashed swatch) means
+              no extra color — the page background shows through.
             </DialogDescription>
           </DialogHeader>
           {colorRowId ? (
-            <div className="flex flex-wrap gap-2">
-              {BUILDER_BACKGROUND_SWATCHES.map((swatch) => (
-                <SaveForm
-                  key={swatch.label}
-                  action={setBuilderRowBackground}
-                  successMessage="Row color saved."
-                  onSuccess={() => setColorRowId(null)}
-                >
-                  <input type="hidden" name="rowId" value={colorRowId} />
-                  <input type="hidden" name="backgroundColor" value={swatch.value} />
-                  <SaveButton
-                    variant={
-                      (rows.find((row) => row.id === colorRowId)?.backgroundColor ?? "") ===
-                      swatch.value
-                        ? "default"
-                        : "outline"
-                    }
-                    size="sm"
-                    className="h-auto flex-col gap-1 px-2 py-2"
-                  >
-                    <span
-                      className="size-6 rounded-full border"
-                      style={{
-                        backgroundColor: swatch.value || "#ffffff",
-                        backgroundImage: swatch.value
-                          ? undefined
-                          : "linear-gradient(135deg, transparent 46%, #ef4444 50%, transparent 54%)",
-                      }}
-                    />
-                    <span className="text-[10px] font-normal">{swatch.label}</span>
-                  </SaveButton>
-                </SaveForm>
-              ))}
-            </div>
+            <RowColorForm
+              key={colorRowId}
+              rowId={colorRowId}
+              value={rows.find((row) => row.id === colorRowId)?.backgroundColor ?? ""}
+              onSaved={() => setColorRowId(null)}
+            />
           ) : null}
         </DialogContent>
       </Dialog>
@@ -685,6 +655,38 @@ function StudioWidget({
         </Button>
       </div>
     </div>
+  );
+}
+
+function RowColorForm({
+  rowId,
+  value,
+  onSaved,
+}: {
+  rowId: string
+  value: string
+  onSaved: () => void
+}) {
+  const [color, setColor] = useState(value);
+
+  return (
+    <SaveForm
+      action={setBuilderRowBackground}
+      successMessage="Row color saved."
+      onSuccess={onSaved}
+      className="space-y-3"
+    >
+      <input type="hidden" name="rowId" value={rowId} />
+      <BuilderColorField
+        id={`row-color-${rowId}`}
+        name="backgroundColor"
+        label="Background"
+        value={color}
+        swatches={BUILDER_BACKGROUND_SWATCHES}
+        onChange={setColor}
+      />
+      <SaveButton>Save row color</SaveButton>
+    </SaveForm>
   );
 }
 
