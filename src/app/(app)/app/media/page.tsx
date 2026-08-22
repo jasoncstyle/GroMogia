@@ -33,8 +33,8 @@ export default async function MediaLibraryPage() {
         <CardHeader>
           <CardTitle>Add a photo</CardTitle>
           <CardDescription>
-            jpg, png, gif, or webp. Up to 6 MB. GroovGro stores the file in
-            Vercel Blob under this organization only.
+            jpg, png, gif, or webp. Up to 4 MB. GroovGro stores the file in
+            a Public Vercel Blob store under this organization only.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

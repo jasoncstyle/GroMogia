@@ -36,6 +36,12 @@ describe("media blob helpers", () => {
       ),
       true,
     );
+    assert.equal(
+      isVercelBlobImageUrl(
+        "https://abc.private.blob.vercel-storage.com/org/one/builder/two.jpg",
+      ),
+      false,
+    );
     assert.equal(isVercelBlobImageUrl("https://images.example.com/a.jpg"), false);
     assert.equal(isVercelBlobImageUrl("https://www.groovgro.com/w/x"), false);
     assert.equal(clipOriginalName("folder/hero photo.png"), "folder hero photo.png");

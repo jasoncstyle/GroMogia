@@ -92,7 +92,7 @@ Then:
 
 1. Open https://www.groovgro.com/app and sign in.
 2. Open **Website builder** → **Open page editor** → click a Hero, Image, or Image + text widget.
-3. Click **Upload a photo** and choose a file. Click **Done**.
+3. Click **Upload a photo** and choose a jpg, png, gif, or webp file up to 4 MB. Click **Done**.
 4. Or open **Media library** in Settings, upload there, then pick that photo in the widget.
 5. Click **Preview**. Confirm the photo shows. Confirm https://www.oceansailingadventures.com/ is unchanged.
 
