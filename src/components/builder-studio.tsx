@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type DragEvent } from "react";
+import { useEffect, useMemo, useState, type DragEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { GripVertical, X } from "lucide-react";
 import { toast } from "sonner";
@@ -62,8 +62,9 @@ import {
 } from "@/lib/website-builder/sections";
 import { BUILDER_BACKGROUND_SWATCHES, isDarkBuilderColor, type BuilderTheme } from "@/lib/website-builder/style";
 import { builderTemplateLabel } from "@/lib/website-builder/templates";
+import { BuilderChromeFields } from "@/components/builder-chrome-fields";
 import { BuilderSiteFooter, BuilderSiteHeader } from "@/components/builder-site-chrome";
-import type { ResolvedBuilderChrome } from "@/lib/website-builder/chrome";
+import type { BuilderChrome, ResolvedBuilderChrome } from "@/lib/website-builder/chrome";
 import type { BuilderLayoutRow, BuilderLayoutWidget } from "@/lib/website-builder/types";
 import type { MediaLibraryItem } from "@/lib/media/blob";
 import { cn } from "@/lib/utils";
@@ -100,7 +101,10 @@ export function BuilderStudio({
   uploadsEnabled = false,
   recentMedia = [],
   chrome,
+  chromeSettings,
   homeHref,
+  isHome = false,
+  brandName = "",
 }: {
   open: boolean
   onClose: () => void
@@ -120,7 +124,10 @@ export function BuilderStudio({
   uploadsEnabled?: boolean
   recentMedia?: MediaLibraryItem[]
   chrome?: ResolvedBuilderChrome
+  chromeSettings?: BuilderChrome
   homeHref?: string
+  isHome?: boolean
+  brandName?: string
 }) {
   const router = useRouter();
   const [contentEdits, setContentEdits] = useState<Record<string, BuilderSectionContent>>({});
@@ -135,6 +142,7 @@ export function BuilderStudio({
   const [addWidgetTarget, setAddWidgetTarget] = useState<AddWidgetTarget | null>(null);
   const [addInnerTarget, setAddInnerTarget] = useState<AddWidgetTarget | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [chromeOpen, setChromeOpen] = useState(false);
 
   const rows = useMemo(() => {
     function applyEdits(row: BuilderLayoutRow): BuilderLayoutRow {
@@ -161,7 +169,8 @@ export function BuilderStudio({
     pageColorsOpen ||
     Boolean(addWidgetTarget) ||
     Boolean(addInnerTarget) ||
-    Boolean(editing);
+    Boolean(editing) ||
+    chromeOpen;
 
   useEffect(() => {
     if (!open) return;
@@ -216,8 +225,9 @@ export function BuilderStudio({
           </h2>
           <p className="text-xs text-muted-foreground">
             Add a row and pick the columns. Add inner row puts a smaller row
-            inside one column. Row width makes a photo go across the whole
-            screen or stay in a box.
+            inside one column. On Home, click the header or footer to edit
+            them. Row width makes a photo go across the whole screen or stay
+            in a box.
           </p>
         </div>
         <Button type="button" variant="outline" asChild>
@@ -253,13 +263,19 @@ export function BuilderStudio({
         style={{ backgroundColor: site.theme.pageBackground || undefined }}
       >
         {chrome ? (
-          <div className="-mx-4 mb-4 md:-mx-6">
+          <StudioChromeSlot
+            kind="header"
+            isHome={isHome}
+            hidden={!chrome.showHeader}
+            onEdit={() => setChromeOpen(true)}
+          >
             <BuilderSiteHeader
               chrome={chrome}
               pages={[]}
               homeHref={homeHref || previewHref}
+              inert
             />
-          </div>
+          </StudioChromeSlot>
         ) : null}
         {rows.length === 0 ? (
           <div className="mx-auto max-w-xl rounded-xl border border-dashed p-10 text-center">
@@ -512,9 +528,14 @@ export function BuilderStudio({
           </div>
         )}
         {chrome ? (
-          <div className="-mx-4 mt-4 md:-mx-6">
+          <StudioChromeSlot
+            kind="footer"
+            isHome={isHome}
+            hidden={!chrome.showFooter}
+            onEdit={() => setChromeOpen(true)}
+          >
             <BuilderSiteFooter chrome={chrome} />
-          </div>
+          </StudioChromeSlot>
         ) : null}
       </div>
 
@@ -541,6 +562,37 @@ export function BuilderStudio({
           if (!next) setAddInnerTarget(null);
         }}
       />
+
+      <Dialog
+        open={chromeOpen && isHome}
+        onOpenChange={(next) => {
+          if (!next) setChromeOpen(false);
+        }}
+      >
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Header and footer</DialogTitle>
+            <DialogDescription>
+              These sit on every GroovGro page. Edit them here on Home. They
+              do not change the connected existing website.
+            </DialogDescription>
+          </DialogHeader>
+          {chromeSettings ? (
+            <BuilderChromeFields
+              key={`${chromeSettings.headerName}-${chromeSettings.logoUrl}-${chromeSettings.footerText}-${chromeSettings.showHeader}-${chromeSettings.showFooter}-${chromeSettings.showPageLinks}`}
+              chrome={chromeSettings}
+              fallbackName={brandName || site.title}
+              uploadsEnabled={uploadsEnabled}
+              recentMedia={recentMedia}
+              idPrefix="studio"
+              onSaved={() => {
+                setChromeOpen(false);
+                router.refresh();
+              }}
+            />
+          ) : null}
+        </DialogContent>
+      </Dialog>
 
       <LayoutPickerDialog
         open={Boolean(columnsRowId)}
@@ -702,6 +754,66 @@ function WidthBar({ width }: { width: (typeof ROW_CONTENT_WIDTHS)[number]["id"] 
         style={{ width: `${grow}%` }}
       />
     </span>
+  );
+}
+
+function StudioChromeSlot({
+  kind,
+  isHome,
+  hidden,
+  onEdit,
+  children,
+}: {
+  kind: "header" | "footer"
+  isHome: boolean
+  hidden: boolean
+  onEdit: () => void
+  children: ReactNode
+}) {
+  const label = kind === "header" ? "Header" : "Footer";
+  if (hidden && !isHome) return null;
+
+  return (
+    <div
+      className={cn(
+        "relative -mx-4 md:-mx-6",
+        kind === "header" ? "mb-4" : "mt-4",
+      )}
+    >
+      {isHome ? (
+        <button
+          type="button"
+          onClick={onEdit}
+          className="block w-full rounded-none text-left outline-none hover:bg-muted/20 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-foreground"
+        >
+          <span className="sr-only">Edit {label.toLowerCase()}</span>
+          {hidden ? (
+            <div className="border-y border-dashed px-4 py-4 text-sm text-muted-foreground">
+              {label} is hidden. Click to edit.
+            </div>
+          ) : (
+            <div className="pointer-events-none">{children}</div>
+          )}
+        </button>
+      ) : hidden ? null : (
+        children
+      )}
+      {isHome ? (
+        <Button
+          type="button"
+          size="xs"
+          variant="outline"
+          className="absolute top-2 right-2 z-10 bg-background"
+          onClick={onEdit}
+        >
+          Edit {label.toLowerCase()}
+        </Button>
+      ) : hidden ? null : (
+        <p className="pointer-events-none absolute top-2 right-2 z-10 rounded-md bg-background/95 px-2 py-1 text-[11px] text-muted-foreground shadow-sm">
+          Edit on Home only
+        </p>
+      )}
+    </div>
   );
 }
 

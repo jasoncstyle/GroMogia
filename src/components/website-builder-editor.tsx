@@ -325,7 +325,10 @@ export function WebsiteBuilderEditor({
         uploadsEnabled={uploadsEnabled}
         recentMedia={recentMedia}
         chrome={chromeView}
+        chromeSettings={chrome}
         homeHref="/app/website-builder/preview"
+        isHome={isHome}
+        brandName={brandName ?? ""}
       />
     </div>
   );
