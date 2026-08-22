@@ -109,6 +109,8 @@ export default async function WebsiteBuilderPage({
           publicUrl={publicUrl}
           uploadsEnabled={isBlobConfigured()}
           recentMedia={recentMedia}
+          chrome={data.chrome}
+          chromeView={data.chromeView}
         />
       )}
     </div>

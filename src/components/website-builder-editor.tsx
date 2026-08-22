@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { BuilderChromeCard } from "@/components/builder-chrome-card";
 import { BuilderPagesPanel } from "@/components/builder-pages-panel";
 import { BuilderStudio } from "@/components/builder-studio";
 import { BuilderThemeFields } from "@/components/builder-color-field";
@@ -33,6 +34,7 @@ import type { BuilderPageSummary } from "@/lib/website-builder/queries";
 import { builderSectionLabel } from "@/lib/website-builder/sections";
 import { EMPTY_BUILDER_THEME, parseBuilderTheme, type BuilderTheme } from "@/lib/website-builder/style";
 import { builderTemplateLabel } from "@/lib/website-builder/templates";
+import type { BuilderChrome, ResolvedBuilderChrome } from "@/lib/website-builder/chrome";
 import type { BuilderLayoutRow } from "@/lib/website-builder/types";
 import type { MediaLibraryItem } from "@/lib/media/blob";
 import { cn } from "@/lib/utils";
@@ -46,6 +48,8 @@ export function WebsiteBuilderEditor({
   orgSlug,
   uploadsEnabled = false,
   recentMedia = [],
+  chrome,
+  chromeView,
 }: {
   site: {
     id: string
@@ -63,6 +67,8 @@ export function WebsiteBuilderEditor({
   publicUrl: string
   uploadsEnabled?: boolean
   recentMedia?: MediaLibraryItem[]
+  chrome: BuilderChrome
+  chromeView: ResolvedBuilderChrome
 }) {
   const [studioOpen, setStudioOpen] = useState(false);
   const [theme, setTheme] = useState(() => parseBuilderTheme(site.theme ?? EMPTY_BUILDER_THEME));
@@ -88,6 +94,13 @@ export function WebsiteBuilderEditor({
           <BuilderPagesPanel pages={pages} currentPageId={site.id} orgSlug={orgSlug} />
         </CardContent>
       </Card>
+
+      <BuilderChromeCard
+        chrome={chrome}
+        fallbackName={brandName ?? site.title}
+        uploadsEnabled={uploadsEnabled}
+        recentMedia={recentMedia}
+      />
 
       <div className="flex flex-col gap-3 rounded-xl border bg-card p-4 sm:flex-row sm:items-center">
           <Button
@@ -311,6 +324,8 @@ export function WebsiteBuilderEditor({
         onThemeChange={setTheme}
         uploadsEnabled={uploadsEnabled}
         recentMedia={recentMedia}
+        chrome={chromeView}
+        homeHref="/app/website-builder/preview"
       />
     </div>
   );

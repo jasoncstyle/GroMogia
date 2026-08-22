@@ -77,7 +77,7 @@ export function MediaUploadControl({
         onClick={() => {
           if (!enabled) {
             toast.error(
-              "Connect a Public Blob store to gro-mogia, then Redeploy Production.",
+              "Connect a Public Blob store to gro-mogia, then Redeploy Production and Preview.",
             );
             return;
           }
@@ -89,9 +89,9 @@ export function MediaUploadControl({
       {enabled ? null : (
         <p className="text-xs text-muted-foreground">
           This live site does not see a Public Blob store yet. On Vercel,
-          Storage must show a Public Blob store on Production. Then Redeploy
-          Production with the build cache off. You can still paste a https://
-          photo link.
+          Storage must show a Public Blob store on Production and Preview.
+          Then Redeploy both, with the build cache off. You can still paste
+          a https:// photo link.
         </p>
       )}
       {recent.length > 0 ? (

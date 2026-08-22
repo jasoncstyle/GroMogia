@@ -62,6 +62,8 @@ import {
 } from "@/lib/website-builder/sections";
 import { BUILDER_BACKGROUND_SWATCHES, isDarkBuilderColor, type BuilderTheme } from "@/lib/website-builder/style";
 import { builderTemplateLabel } from "@/lib/website-builder/templates";
+import { BuilderSiteFooter, BuilderSiteHeader } from "@/components/builder-site-chrome";
+import type { ResolvedBuilderChrome } from "@/lib/website-builder/chrome";
 import type { BuilderLayoutRow, BuilderLayoutWidget } from "@/lib/website-builder/types";
 import type { MediaLibraryItem } from "@/lib/media/blob";
 import { cn } from "@/lib/utils";
@@ -97,6 +99,8 @@ export function BuilderStudio({
   onThemeChange,
   uploadsEnabled = false,
   recentMedia = [],
+  chrome,
+  homeHref,
 }: {
   open: boolean
   onClose: () => void
@@ -115,6 +119,8 @@ export function BuilderStudio({
   onThemeChange: (theme: BuilderTheme) => void
   uploadsEnabled?: boolean
   recentMedia?: MediaLibraryItem[]
+  chrome?: ResolvedBuilderChrome
+  homeHref?: string
 }) {
   const router = useRouter();
   const [contentEdits, setContentEdits] = useState<Record<string, BuilderSectionContent>>({});
@@ -246,6 +252,15 @@ export function BuilderStudio({
         className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6"
         style={{ backgroundColor: site.theme.pageBackground || undefined }}
       >
+        {chrome ? (
+          <div className="-mx-4 mb-4 md:-mx-6">
+            <BuilderSiteHeader
+              chrome={chrome}
+              pages={[]}
+              homeHref={homeHref || previewHref}
+            />
+          </div>
+        ) : null}
         {rows.length === 0 ? (
           <div className="mx-auto max-w-xl rounded-xl border border-dashed p-10 text-center">
             <p className="text-sm font-medium">This page has no rows yet.</p>
@@ -496,6 +511,11 @@ export function BuilderStudio({
             ))}
           </div>
         )}
+        {chrome ? (
+          <div className="-mx-4 mt-4 md:-mx-6">
+            <BuilderSiteFooter chrome={chrome} />
+          </div>
+        ) : null}
       </div>
 
       <LayoutPickerDialog

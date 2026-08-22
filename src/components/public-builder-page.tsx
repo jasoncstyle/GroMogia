@@ -73,6 +73,8 @@ export async function PublicBuilderPageScreen({
         rows={page.rows}
         theme={page.site.theme}
         navPages={navPages}
+        chrome={page.chromeView}
+        homeHref={`/w/${page.organization.slug}`}
       />
     </main>
   );

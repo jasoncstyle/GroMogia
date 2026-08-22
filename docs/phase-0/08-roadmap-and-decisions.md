@@ -42,7 +42,7 @@ Audit, recommendations, technical monitoring, Search Console when OAuth is ready
 
 Section-based builder. Not before the core platform is useful. Existing-site customers never need this module.
 
-**Now in the app:** visual GroovGro-hosted pages at `/w/[org]` and `/w/[org]/[slug]`. Full-page editor with rows and columns, a signed-in **Preview** that is not live, page/row/widget colors, heading sizes and text links, extra widgets, four numbered starter templates, extra pages, SEO on every GroovGro page, photo uploads to Vercel Blob, and one-level inner rows inside a column. Custom domains wait.
+**Now in the app:** visual GroovGro-hosted pages at `/w/[org]` and `/w/[org]/[slug]`. Full-page editor with rows and columns, a signed-in **Preview** that is not live, page/row/widget colors, heading sizes and text links, extra widgets, four numbered starter templates, extra pages, SEO on every GroovGro page, photo uploads to Vercel Blob, one-level inner rows inside a column, and a site-wide header and footer. Custom domains wait.
 
 ### Phase 8 — Additional integrations
 

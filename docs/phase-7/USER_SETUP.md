@@ -62,6 +62,19 @@ Use this when one column should hold a smaller row of columns (for example a pho
 6. You cannot put an inner row inside another inner row. A column can have up to three inner rows.
 7. Click **Preview**. The inner row stays inside the parent column. Confirm https://www.oceansailingadventures.com/ is unchanged.
 
+## Header and footer
+
+These sit on every GroovGro page. They do not create a header on the connected existing website.
+
+1. Open https://www.groovgro.com/app → **Website builder**.
+2. Open the **Header and footer** card.
+3. Leave **Show the header** on. Type a **Name in the header**, or leave it blank to use the brand name.
+4. Click **Upload a logo** (or paste a public https:// link), or leave the logo blank to show only the name.
+5. Leave **Show links to published GroovGro pages** on if Home and About should appear in the header. Those links appear after a page is **Published**.
+6. Type a **Footer line**, or leave it blank to repeat the name. Uncheck **Show the footer** if you do not want a line at the bottom.
+7. Click **Save header and footer**.
+8. Click **Preview**. The header is at the top and the footer is at the bottom. Confirm https://www.oceansailingadventures.com/ is unchanged.
+
 ## Widgets in this slice
 
 Already there: Hero, Text, Call to action, Lead form, Image + text, Features, Testimonials, FAQ, Contact.
