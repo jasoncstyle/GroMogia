@@ -150,4 +150,16 @@ export async function ensureSchema(): Promise<void> {
   if (!builderPageSlug[0]?.name) {
     await applyMigration(sql, "0012_phase7_builder_page_slug.sql");
   }
+
+  const seoPageId = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'seo_audits'
+       and column_name = 'builder_site_id'`,
+  )) as RegistryRow[];
+
+  if (!seoPageId[0]?.name) {
+    await applyMigration(sql, "0013_phase6_seo_page_id.sql");
+  }
 }

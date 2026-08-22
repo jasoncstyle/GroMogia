@@ -1,6 +1,12 @@
 import Link from "next/link";
 
-import { createSeoDrafts, decideSeoDraft, runSeoAudit } from "@/lib/actions/seo";
+import {
+  createSeoDrafts,
+  decideSeoDraft,
+  runAllBuilderSeoAudits,
+  runBuilderSeoAudit,
+  runSeoAudit,
+} from "@/lib/actions/seo";
 import { applySeoDraftToBuilder } from "@/lib/actions/website-builder";
 import { getAppSession } from "@/lib/auth/session";
 import { getSeoPageData } from "@/lib/phase6/queries";
@@ -20,19 +26,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export default async function SeoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ gsc?: string; error?: string }>
+  searchParams: Promise<{ gsc?: string; error?: string; view?: string }>
 }) {
   const params = await searchParams;
   const session = await getAppSession();
   const data = session.organizationId
     ? await getSeoPageData(session.organizationId)
     : null;
-  const latest = data?.audits[0] ?? null;
-  const previous = data?.audits[1] ?? null;
+  const view = params.view ?? "";
+  const selectedPage =
+    data?.builderPages.find((page) => page.id === view) ?? null;
+  const viewingConnected = view === "connected";
+  const hasScopedView = viewingConnected || Boolean(selectedPage);
+  const visibleAudits = data
+    ? viewingConnected
+      ? data.audits.filter((audit) => !audit.builderSiteId)
+      : selectedPage
+        ? data.audits.filter((audit) => audit.builderSiteId === selectedPage.id)
+        : []
+    : [];
+  const historyAudits = hasScopedView ? visibleAudits : (data?.audits ?? []);
+  const latest = visibleAudits[0] ?? null;
+  const previous = visibleAudits[1] ?? null;
   const comparison = latest
     ? compareSeoChecks(
         { score: latest.score, findings: latest.findings },
@@ -49,20 +69,34 @@ export default async function SeoPage({
           comparison,
         })
       : null;
-  const openDrafts = data?.drafts.filter((draft) => draft.status === "draft") ?? [];
-  const decidedDrafts =
-    data?.drafts.filter((draft) => draft.status !== "draft").slice(0, 8) ?? [];
-  const needsDrafts =
-    Boolean(latest?.findings.some((finding) => finding.severity !== "ok"));
+  const openDrafts = draftsForView(
+    data?.drafts.filter((draft) => draft.status === "draft") ?? [],
+    viewingConnected,
+    selectedPage?.id ?? null,
+  );
+  const decidedDrafts = draftsForView(
+    data?.drafts.filter((draft) => draft.status !== "draft") ?? [],
+    viewingConnected,
+    selectedPage?.id ?? null,
+  ).slice(0, 12);
+  const needsDrafts = Boolean(latest?.findings.some((finding) => finding.severity !== "ok"));
+  const checkLabel = selectedPage
+    ? selectedPage.label
+    : viewingConnected
+      ? "the connected homepage"
+      : latest
+        ? "the latest check"
+        : "a page";
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">SEO</h1>
         <p className="text-muted-foreground">
-          Check the connected homepage, see how the score changes over time,
-          then draft improvements for you to approve. Search Console is
-          read-only. GroovGro will not buy ads or change Stripe checkout.
+          Check the connected website and every GroovGro page. Approve drafts,
+          then apply title, description, or heading changes onto that GroovGro
+          page. Search Console is read-only. GroovGro will not buy ads or
+          change Stripe checkout.
         </p>
       </div>
 
@@ -70,7 +104,7 @@ export default async function SeoPage({
 
       {!data || !session.organizationId ? (
         <p className="text-sm text-muted-foreground">
-          Sign in to check the connected website.
+          Sign in to check the connected website and GroovGro pages.
         </p>
       ) : (
         <>
@@ -80,16 +114,20 @@ export default async function SeoPage({
               <CardDescription>
                 {data.website?.publicUrl
                   ? data.website.publicUrl
-                  : "No website is connected yet."}
+                  : "No website is connected yet."}{" "}
+                This is the existing public site, not the GroovGro builder.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
               {data.website?.publicUrl ? (
                 <>
+                  <Button variant={viewingConnected ? "default" : "outline"} asChild>
+                    <Link href="/app/seo?view=connected">Show this check</Link>
+                  </Button>
                   <SaveForm action={runSeoAudit} successMessage="Check saved.">
                     <SaveButton pendingLabel="Checking…">Run homepage check</SaveButton>
                   </SaveForm>
-                  {needsDrafts ? (
+                  {viewingConnected && needsDrafts ? (
                     <SaveForm
                       action={createSeoDrafts}
                       successMessage="Drafts ready to approve."
@@ -108,23 +146,106 @@ export default async function SeoPage({
             </CardContent>
           </Card>
 
+          <Card>
+            <CardHeader>
+              <CardTitle>GroovGro website</CardTitle>
+              <CardDescription>
+                Home and every extra page. Check one page, or check all. This
+                does not change the connected existing website. GroovGro does
+                not write robots.txt or sitemap.xml on groovgro.com.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {data.builderPages.length === 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  <p className="text-sm text-muted-foreground">
+                    No GroovGro pages yet.
+                  </p>
+                  <Button asChild>
+                    <Link href="/app/website-builder">Open Website builder</Link>
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <SaveForm
+                    action={runAllBuilderSeoAudits}
+                    successMessage="GroovGro pages checked."
+                  >
+                    <SaveButton pendingLabel="Checking…">
+                      Check all GroovGro pages
+                    </SaveButton>
+                  </SaveForm>
+                  <ul className="space-y-2">
+                    {data.builderPages.map((page) => {
+                      const selected = selectedPage?.id === page.id;
+                      return (
+                        <li
+                          key={page.id}
+                          className={cn(
+                            "flex flex-wrap items-center justify-between gap-2 rounded-lg border px-3 py-2",
+                            selected && "border-foreground",
+                          )}
+                        >
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium">
+                              {page.label}
+                              <span className="ml-2 text-xs font-normal text-muted-foreground">
+                                {page.status === "published" ? "Published" : "Draft"}
+                              </span>
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {page.lastScore === null
+                                ? "No check yet"
+                                : `Score ${page.lastScore}`}
+                              {page.lastCheckedAt
+                                ? ` · ${page.lastCheckedAt.toLocaleString()}`
+                                : ""}
+                            </p>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            <Button
+                              size="sm"
+                              variant={selected ? "default" : "outline"}
+                              asChild
+                            >
+                              <Link href={`/app/seo?view=${page.id}`}>
+                                {selected ? "Showing" : "Show check"}
+                              </Link>
+                            </Button>
+                            <SaveForm
+                              action={runBuilderSeoAudit}
+                              successMessage="Page checked."
+                            >
+                              <input type="hidden" name="pageId" value={page.id} />
+                              <SaveButton size="sm" variant="outline" pendingLabel="Checking…">
+                                Check this page
+                              </SaveButton>
+                            </SaveForm>
+                            {selected && needsDrafts ? (
+                              <SaveForm
+                                action={createSeoDrafts}
+                                successMessage="Drafts ready to approve."
+                              >
+                                <input type="hidden" name="pageId" value={page.id} />
+                                <SaveButton size="sm" variant="outline" pendingLabel="Drafting…">
+                                  Draft improvements
+                                </SaveButton>
+                              </SaveForm>
+                            ) : null}
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
           <SearchConsolePanel
             searchConsole={data.searchConsole}
             notice={searchConsoleNotice(params.gsc, params.error)}
           />
-
-          {data.hasBuilderSite ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>GroovGro website</CardTitle>
-                <CardDescription>
-                  After you approve a title, description, or heading draft, click
-                  Apply to GroovGro website. That updates the GroovGro-hosted
-                  page only. It does not change the connected existing website.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-          ) : null}
 
           {latest && explanation ? (
             <>
@@ -132,8 +253,8 @@ export default async function SeoPage({
                 <CardHeader>
                   <CardTitle>What this means</CardTitle>
                   <CardDescription>
-                    {explanation.headline} · {latest.createdAt.toLocaleString()}{" "}
-                    · {latest.url}
+                    {explanation.headline} · {checkLabel} ·{" "}
+                    {latest.createdAt.toLocaleString()} · {latest.url}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -168,27 +289,36 @@ export default async function SeoPage({
             </>
           ) : (
             <p className="text-sm text-muted-foreground">
-              Run a check to see titles, descriptions, headings, robots.txt, and
-              sitemap on the connected homepage.
+              Run a connected homepage check, or check a GroovGro page, to see
+              titles, descriptions, and headings.
             </p>
           )}
 
-          {data.audits.length > 0 ? (
+          {historyAudits.length > 0 ? (
             <Card>
               <CardHeader>
                 <CardTitle>Checks over time</CardTitle>
                 <CardDescription>
-                  Technical monitoring from saved homepage checks. GroovGro does
-                  not use Search Console yet.
+                  {selectedPage
+                    ? `Saved checks for ${selectedPage.label}.`
+                    : viewingConnected
+                      ? "Saved checks for the connected homepage."
+                      : "Saved checks. Click Show check on a page to see only that page."}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
-                {data.audits.map((audit, index) => {
-                  const older = data.audits[index + 1];
+                {historyAudits.slice(0, 12).map((audit, index) => {
+                  const older = historyAudits[index + 1];
                   const change = older ? audit.score - older.score : null;
+                  const pageName = audit.builderSiteId
+                    ? data.builderPages.find((page) => page.id === audit.builderSiteId)
+                        ?.label ?? "GroovGro page"
+                    : "Connected website";
                   return (
                     <p key={audit.id} className="text-sm">
                       <span className="font-medium">{audit.score}</span>
+                      {" · "}
+                      {pageName}
                       {" · "}
                       {audit.createdAt.toLocaleString()}
                       {" · "}
@@ -207,10 +337,10 @@ export default async function SeoPage({
               <CardHeader>
                 <CardTitle>Approve or do not approve</CardTitle>
                 <CardDescription>
-                  Open each item for the exact text and where to put it.
-                  Approval keeps the draft in GroovGro. Title, description, and
-                  heading drafts can later be applied to a GroovGro website.
-                  Connected custom sites still need a manual paste.
+                  Open each item for the exact text and where to put it. Title,
+                  description, and heading drafts can be applied to the GroovGro
+                  page they belong to. Connected custom sites still need a
+                  manual paste.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -218,7 +348,7 @@ export default async function SeoPage({
                   <FoldableSample
                     key={draft.id}
                     title={draft.title}
-                    subtitle="Waiting for your decision"
+                    subtitle={`Waiting · ${draftTargetLabel(draft.builderSiteId, data.builderPages)}`}
                   >
                     <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
                       {draft.proposedChange}
@@ -254,31 +384,47 @@ export default async function SeoPage({
                 <CardTitle>Earlier decisions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {decidedDrafts.map((draft) => (
-                  <FoldableSample
-                    key={draft.id}
-                    title={draft.title}
-                    subtitle={draft.status === "approved" ? "Approved" : "Not approved"}
-                  >
-                    <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
-                      {draft.proposedChange}
-                    </pre>
-                    {draft.status === "approved" ? (
-                      <div className="flex flex-wrap gap-2">
-                        <CopyText text={draft.proposedChange} label="Copy draft" />
-                        {data.hasBuilderSite && isBuilderApplyableFinding(draft.findingId) ? (
-                          <SaveForm
-                            action={applySeoDraftToBuilder}
-                            successMessage="Applied to the GroovGro website."
-                          >
-                            <input type="hidden" name="draftId" value={draft.id} />
-                            <SaveButton size="sm">Apply to GroovGro website</SaveButton>
-                          </SaveForm>
-                        ) : null}
-                      </div>
-                    ) : null}
-                  </FoldableSample>
-                ))}
+                {decidedDrafts.map((draft) => {
+                  const pageLabel = draftTargetLabel(
+                    draft.builderSiteId,
+                    data.builderPages,
+                  );
+                  return (
+                    <FoldableSample
+                      key={draft.id}
+                      title={draft.title}
+                      subtitle={`${draft.status === "approved" ? "Approved" : "Not approved"} · ${pageLabel}`}
+                    >
+                      <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+                        {draft.proposedChange}
+                      </pre>
+                      {draft.status === "approved" ? (
+                        <div className="flex flex-wrap gap-2">
+                          <CopyText text={draft.proposedChange} label="Copy draft" />
+                          {data.hasBuilderSite &&
+                          isBuilderApplyableFinding(draft.findingId) ? (
+                            <SaveForm
+                              action={applySeoDraftToBuilder}
+                              successMessage="Applied to the GroovGro page."
+                            >
+                              <input type="hidden" name="draftId" value={draft.id} />
+                              {draft.builderSiteId ? (
+                                <input
+                                  type="hidden"
+                                  name="pageId"
+                                  value={draft.builderSiteId}
+                                />
+                              ) : null}
+                              <SaveButton size="sm">
+                                Apply to {draft.builderSiteId ? pageLabel : "Home"}
+                              </SaveButton>
+                            </SaveForm>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </FoldableSample>
+                  );
+                })}
               </CardContent>
             </Card>
           ) : null}
@@ -286,6 +432,26 @@ export default async function SeoPage({
       )}
     </div>
   );
+}
+
+function draftsForView<T extends { builderSiteId: string | null }>(
+  drafts: T[],
+  viewingConnected: boolean,
+  selectedPageId: string | null,
+) {
+  if (viewingConnected) return drafts.filter((draft) => !draft.builderSiteId);
+  if (selectedPageId) {
+    return drafts.filter((draft) => draft.builderSiteId === selectedPageId);
+  }
+  return drafts;
+}
+
+function draftTargetLabel(
+  builderSiteId: string | null,
+  pages: { id: string; label: string }[],
+) {
+  if (!builderSiteId) return "Connected website";
+  return pages.find((page) => page.id === builderSiteId)?.label ?? "GroovGro page";
 }
 
 function severityLabel(severity: "ok" | "warn" | "fail") {

@@ -29,7 +29,7 @@ export function explainSeoCheck(input: {
     );
   } else {
     paragraphs.push(
-      "This homepage looks complete for a first technical check. Keep the title and description specific when you change the page.",
+      "This page looks complete for a first technical check. Keep the title and description specific when you change the page.",
     );
   }
 

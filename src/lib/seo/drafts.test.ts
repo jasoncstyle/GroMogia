@@ -61,4 +61,25 @@ describe("seo change drafts", () => {
     assert.equal(/Disallow: \/$/m.test(draft.proposedChange), false);
     assert.equal(/ocean sailing|bunk/i.test(draft.proposedChange), false);
   });
+
+  it("drafts GroovGro page fixes without robots or sitemap files", () => {
+    const drafts = buildSeoChangeDrafts(
+      [finding("title"), finding("sitemap"), finding("live"), finding("canonical")],
+      {
+        pageUrl: "https://www.groovgro.com/w/harbor/about",
+        businessName: "Harbor Workshops",
+        description: "Hands-on classes for beginners.",
+        tone: "warm",
+        doSay: "",
+        dontSay: "",
+        target: "builder",
+        pageLabel: "About",
+      },
+    );
+    assert.equal(drafts.some((draft) => draft.findingId === "title"), true);
+    assert.equal(drafts.some((draft) => draft.findingId === "live"), true);
+    assert.equal(drafts.some((draft) => draft.findingId === "sitemap"), false);
+    assert.equal(drafts.some((draft) => draft.findingId === "canonical"), false);
+    assert.match(drafts[0]?.howToApply ?? "", /Website builder, edit About/);
+  });
 });

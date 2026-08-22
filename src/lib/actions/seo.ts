@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 
 import { recordAudit } from "@/lib/audit";
 import { runAction, type ActionResult } from "@/lib/action-result";
@@ -9,20 +9,72 @@ import { getDb } from "@/lib/db";
 import {
   brandSettings,
   brandVoiceProfiles,
-  builderSites,
   seoAudits,
   seoDrafts,
   websites,
 } from "@/lib/db/schema";
+import { appUrl } from "@/lib/env";
+import { resolveOrganizationSlug } from "@/lib/org";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 import { auditConnectedPage, isSafePublicHttpUrl } from "@/lib/seo/audit";
+import { auditBuilderPage, snapshotBuilderPage } from "@/lib/seo/builder-audit";
 import { buildSeoChangeDrafts } from "@/lib/seo/drafts";
 import { fetchPublicText, originFromWebsiteUrl } from "@/lib/seo/fetch";
-import { builderApplyHint } from "@/lib/website-builder/apply-seo";
+import { builderApplyHint, builderPublicUrl } from "@/lib/website-builder/apply-seo";
+import { builderPageLabel } from "@/lib/website-builder/pages";
+import { getBuilderEditorData, listBuilderPages } from "@/lib/website-builder/queries";
 
 function revalidateSeo() {
   revalidatePath("/app/seo");
+}
+
+async function requireSeoEditor() {
+  const session = await requireOrgSession();
+  if (!hasPermission(session.permissions, "manage_seo")) {
+    throw new Error("You do not have permission to run SEO checks.");
+  }
+  const db = getDb();
+  if (!db) throw new Error("Database is not configured");
+  return { session, db };
+}
+
+async function checkBuilderPage(
+  db: NonNullable<ReturnType<typeof getDb>>,
+  session: { organizationId: string; organizationSlug?: string; userId: string },
+  pageId: string,
+) {
+  const data = await getBuilderEditorData(session.organizationId, pageId);
+  if (!data.site || data.site.id !== pageId) {
+    throw new Error("That GroovGro page was not found.");
+  }
+  const orgSlug = await resolveOrganizationSlug(
+    session.organizationId,
+    session.organizationSlug ?? undefined,
+  );
+  const label = builderPageLabel(data.site);
+  const snapshot = snapshotBuilderPage({
+    pageLabel: label,
+    title: data.site.title,
+    metaDescription: data.site.metaDescription,
+    published: data.site.status === "published",
+    publicUrl: orgSlug
+      ? builderPublicUrl(appUrl(), orgSlug, data.site.slug)
+      : label,
+    widgets: data.rows.flatMap((row) => row.widgets),
+  });
+  const result = auditBuilderPage(snapshot);
+  await db.insert(seoAudits).values({
+    organizationId: session.organizationId,
+    url: snapshot.publicUrl,
+    status: "ok",
+    score: result.score,
+    summary: result.summary,
+    findings: result.findings,
+    builderSiteId: data.site.id,
+    createdBy: session.userId,
+  });
+  return { label, score: result.score };
 }
 
 export async function runSeoAudit(): Promise<ActionResult> {
@@ -91,24 +143,83 @@ export async function runSeoAudit(): Promise<ActionResult> {
   });
 }
 
-export async function createSeoDrafts(): Promise<ActionResult> {
-  return runAction("Could not draft SEO changes.", async () => {
-    const session = await requireOrgSession();
-    if (!hasPermission(session.permissions, "manage_seo")) {
-      throw new Error("You do not have permission to draft SEO changes.");
+export async function runBuilderSeoAudit(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not check that GroovGro page.", async () => {
+    const { session, db } = await requireSeoEditor();
+    const pageId = String(formData.get("pageId") ?? "");
+    if (!pageId) throw new Error("Choose a GroovGro page to check.");
+    const result = await checkBuilderPage(db, session, pageId);
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "seo.builder_audit_run",
+      targetType: "builder_site",
+      targetId: pageId,
+      metadata: { score: result.score, page: result.label },
+    });
+    revalidateSeo();
+    return `Checked ${result.label}. Score ${result.score}. GroovGro did not change the connected website.`;
+  });
+}
+
+export async function runAllBuilderSeoAudits(): Promise<ActionResult> {
+  return runAction("Could not check the GroovGro pages.", async () => {
+    const { session, db } = await requireSeoEditor();
+    const pages = await listBuilderPages(session.organizationId);
+    if (pages.length === 0) {
+      throw new Error("Create a GroovGro website first, then check those pages.");
     }
+    const scores: string[] = [];
+    for (const page of pages) {
+      const result = await checkBuilderPage(db, session, page.id);
+      scores.push(`${result.label} ${result.score}`);
+    }
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "seo.builder_audit_all",
+      targetType: "builder_site",
+      metadata: { count: pages.length },
+    });
+    revalidateSeo();
+    return `Checked ${pages.length} GroovGro page${pages.length === 1 ? "" : "s"}: ${scores.join(", ")}. GroovGro did not change the connected website.`;
+  });
+}
 
-    const db = getDb();
-    if (!db) throw new Error("Database is not configured");
+export async function createSeoDrafts(formData?: FormData): Promise<ActionResult> {
+  return runAction("Could not draft SEO changes.", async () => {
+    const { session, db } = await requireSeoEditor();
+    const pageId = formData ? String(formData.get("pageId") ?? "").trim() : "";
 
-    const [audit] = await db
-      .select()
-      .from(seoAudits)
-      .where(eq(seoAudits.organizationId, session.organizationId))
-      .orderBy(desc(seoAudits.createdAt))
-      .limit(1);
+    const [audit] = pageId
+      ? await db
+          .select()
+          .from(seoAudits)
+          .where(
+            and(
+              eq(seoAudits.organizationId, session.organizationId),
+              eq(seoAudits.builderSiteId, pageId),
+            ),
+          )
+          .orderBy(desc(seoAudits.createdAt))
+          .limit(1)
+      : await db
+          .select()
+          .from(seoAudits)
+          .where(
+            and(
+              eq(seoAudits.organizationId, session.organizationId),
+              isNull(seoAudits.builderSiteId),
+            ),
+          )
+          .orderBy(desc(seoAudits.createdAt))
+          .limit(1);
     if (!audit) {
-      throw new Error("Run a homepage check first, then draft improvements.");
+      throw new Error(
+        pageId
+          ? "Check that GroovGro page first, then draft improvements."
+          : "Run a homepage check first, then draft improvements.",
+      );
     }
 
     const [brand] = await db
@@ -121,19 +232,19 @@ export async function createSeoDrafts(): Promise<ActionResult> {
       .from(brandVoiceProfiles)
       .where(eq(brandVoiceProfiles.organizationId, session.organizationId))
       .limit(1);
-    const [builderSite] = await db
-      .select({ id: builderSites.id })
-      .from(builderSites)
-      .where(eq(builderSites.organizationId, session.organizationId))
-      .limit(1);
+    const pages = await listBuilderPages(session.organizationId);
+    const page = pageId ? pages.find((item) => item.id === pageId) : null;
+    const pageLabel = page?.label ?? "this GroovGro page";
 
     const drafts = buildSeoChangeDrafts(audit.findings, {
       pageUrl: audit.url,
-      businessName: brand?.businessName || session.organizationName || "",
+      businessName: brand?.businessName || session.organizationName || page?.title || "",
       description: brand?.description ?? "",
       tone: voice?.tone ?? "",
       doSay: voice?.doSay ?? "",
       dontSay: voice?.dontSay ?? "",
+      target: pageId ? "builder" : "connected",
+      pageLabel,
     });
     if (drafts.length === 0) {
       throw new Error("The latest check has nothing that needs a draft.");
@@ -142,10 +253,17 @@ export async function createSeoDrafts(): Promise<ActionResult> {
     await db
       .delete(seoDrafts)
       .where(
-        and(
-          eq(seoDrafts.organizationId, session.organizationId),
-          eq(seoDrafts.status, "draft"),
-        ),
+        pageId
+          ? and(
+              eq(seoDrafts.organizationId, session.organizationId),
+              eq(seoDrafts.status, "draft"),
+              eq(seoDrafts.builderSiteId, pageId),
+            )
+          : and(
+              eq(seoDrafts.organizationId, session.organizationId),
+              eq(seoDrafts.status, "draft"),
+              isNull(seoDrafts.builderSiteId),
+            ),
       );
 
     for (const draft of drafts) {
@@ -155,10 +273,13 @@ export async function createSeoDrafts(): Promise<ActionResult> {
         findingId: draft.findingId,
         title: draft.title,
         proposedChange: draft.proposedChange,
-        howToApply: builderSite
-          ? `${draft.howToApply}\n${builderApplyHint(draft.findingId)}`
-          : draft.howToApply,
+        howToApply: pageId
+          ? `${draft.howToApply}\n${builderApplyHint(draft.findingId, pageLabel)}`
+          : pages.length > 0
+            ? `${draft.howToApply}\n${builderApplyHint(draft.findingId, "Home")}`
+            : draft.howToApply,
         status: "draft",
+        builderSiteId: pageId || null,
         createdBy: session.userId,
       });
     }
@@ -168,7 +289,11 @@ export async function createSeoDrafts(): Promise<ActionResult> {
       actorUserId: session.userId,
       action: "seo.drafts_created",
       targetType: "seo_draft",
-      metadata: { count: drafts.length, auditId: audit.id },
+      metadata: {
+        count: drafts.length,
+        auditId: audit.id,
+        pageId: pageId || null,
+      },
     });
 
     revalidateSeo();

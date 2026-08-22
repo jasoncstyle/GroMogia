@@ -25,9 +25,9 @@ export function isBuilderApplyableFinding(
   return (BUILDER_APPLYABLE_FINDING_IDS as readonly string[]).includes(findingId);
 }
 
-export function builderApplyHint(findingId: string): string {
+export function builderApplyHint(findingId: string, pageLabel = "that GroovGro page"): string {
   if (isBuilderApplyableFinding(findingId)) {
-    return "After you Approve, you can click Apply to GroovGro website. That updates the GroovGro-hosted page only. It does not change the connected existing website.";
+    return `After you Approve, you can click Apply to ${pageLabel}. That updates that GroovGro page only. It does not change the connected existing website.`;
   }
   return "On a GroovGro-hosted page, language, viewport, canonical, share tags, and structured data are generated automatically. robots.txt and sitemap stay on the connected website origin. GroovGro will not change that live site.";
 }

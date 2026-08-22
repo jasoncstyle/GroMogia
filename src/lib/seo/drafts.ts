@@ -8,6 +8,8 @@ export type SeoDraftInput = {
   tone: string
   doSay: string
   dontSay: string
+  target?: "connected" | "builder"
+  pageLabel?: string
 };
 
 export type SeoChangeDraft = {
@@ -19,6 +21,18 @@ export type SeoChangeDraft = {
 
 const APPLY_NOTE =
   "Copy this onto the connected website yourself. GroovGro will not update the live site, even if you approve the draft.";
+
+const SKIP_ON_BUILDER = new Set([
+  "lang",
+  "viewport",
+  "canonical",
+  "share",
+  "structured-data",
+  "robots-file",
+  "sitemap",
+  "robots-meta",
+  "auto-head",
+]);
 
 export function buildSeoChangeDrafts(
   findings: SeoFinding[],
@@ -41,6 +55,8 @@ export function buildSeoChangeDrafts(
       tone: input.tone,
       doSay: input.doSay,
       dontSay: input.dontSay,
+      target: input.target === "builder" ? "builder" : "connected",
+      pageLabel: input.pageLabel?.trim() || "this page",
     });
     if (draft) drafts.push(draft);
   }
@@ -57,15 +73,24 @@ function draftForFinding(
     tone: string
     doSay: string
     dontSay: string
+    target: "connected" | "builder"
+    pageLabel: string
   },
 ): SeoChangeDraft | null {
+  const page = ctx.pageLabel;
+  if (ctx.target === "builder" && SKIP_ON_BUILDER.has(finding.id)) {
+    return null;
+  }
   switch (finding.id) {
     case "title":
       return {
         findingId: finding.id,
         title: "Page title",
         proposedChange: clip(`${ctx.name} | ${ctx.offer}`, 60),
-        howToApply: `Replace the homepage <title> on the connected site.\n${APPLY_NOTE}`,
+        howToApply:
+          ctx.target === "builder"
+            ? `Open Website builder, edit ${page}, change Page title, and click Save details.`
+            : `Replace the homepage <title> on the connected site.\n${APPLY_NOTE}`,
       };
     case "description":
       return {
@@ -75,14 +100,40 @@ function draftForFinding(
           voiceSafe([ctx.offer, ctx.doSay].filter(Boolean).join(" "), ctx.dontSay),
           160,
         ),
-        howToApply: `Set the homepage meta description on the connected site.\n${APPLY_NOTE}`,
+        howToApply:
+          ctx.target === "builder"
+            ? `Open Website builder, edit ${page}, change Search description, and click Save details.`
+            : `Set the homepage meta description on the connected site.\n${APPLY_NOTE}`,
       };
     case "h1":
       return {
         findingId: finding.id,
         title: "Main heading",
         proposedChange: clip(ctx.offer, 80),
-        howToApply: `Use one H1 on the homepage.\n${APPLY_NOTE}`,
+        howToApply:
+          ctx.target === "builder"
+            ? `On ${page}, keep one Heading 1. Change extra headings to Heading 2 or 3.`
+            : `Use one H1 on the homepage.\n${APPLY_NOTE}`,
+      };
+    case "live":
+      return ctx.target === "builder"
+        ? {
+            findingId: finding.id,
+            title: "Live page",
+            proposedChange: `Publish ${page} in Website builder when this page should appear in search.`,
+            howToApply: `Open Website builder, edit ${page}, and click Publish. GroovGro will not change the connected existing website.`,
+          }
+        : null;
+    case "alt":
+      return {
+        findingId: finding.id,
+        title: "Image text",
+        proposedChange:
+          "Add a short alt attribute on each meaningful image, describing what the picture shows.",
+        howToApply:
+          ctx.target === "builder"
+            ? `Open the photo widget on ${page} and fill in Image text.`
+            : `Edit image alt text on the connected website.\n${APPLY_NOTE}`,
       };
     case "lang":
       return {
@@ -154,14 +205,6 @@ function draftForFinding(
           `</urlset>`,
         ].join("\n"),
         howToApply: `Publish this as sitemap.xml at the website origin, then add more public page URLs over time.\n${APPLY_NOTE}`,
-      };
-    case "alt":
-      return {
-        findingId: finding.id,
-        title: "Image text",
-        proposedChange:
-          "Add a short alt attribute on each meaningful image, describing what the picture shows.",
-        howToApply: `Edit image alt text on the connected website.\n${APPLY_NOTE}`,
       };
     case "robots-meta":
       return {
