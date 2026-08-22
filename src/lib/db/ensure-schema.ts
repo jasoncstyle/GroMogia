@@ -162,4 +162,16 @@ export async function ensureSchema(): Promise<void> {
   if (!seoPageId[0]?.name) {
     await applyMigration(sql, "0013_phase6_seo_page_id.sql");
   }
+
+  const mediaPublicUrl = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'media_assets'
+       and column_name = 'public_url'`,
+  )) as RegistryRow[];
+
+  if (!mediaPublicUrl[0]?.name) {
+    await applyMigration(sql, "0014_phase7_media_urls.sql");
+  }
 }

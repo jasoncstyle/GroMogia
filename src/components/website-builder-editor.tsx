@@ -33,6 +33,7 @@ import { builderSectionLabel } from "@/lib/website-builder/sections";
 import { EMPTY_BUILDER_THEME, parseBuilderTheme, type BuilderTheme } from "@/lib/website-builder/style";
 import { builderTemplateLabel } from "@/lib/website-builder/templates";
 import type { BuilderLayoutRow } from "@/lib/website-builder/types";
+import type { MediaLibraryItem } from "@/lib/media/blob";
 import { cn } from "@/lib/utils";
 
 export function WebsiteBuilderEditor({
@@ -42,6 +43,8 @@ export function WebsiteBuilderEditor({
   brandName,
   publicUrl,
   orgSlug,
+  uploadsEnabled = false,
+  recentMedia = [],
 }: {
   site: {
     id: string
@@ -57,6 +60,8 @@ export function WebsiteBuilderEditor({
   brandName: string | null
   orgSlug: string
   publicUrl: string
+  uploadsEnabled?: boolean
+  recentMedia?: MediaLibraryItem[]
 }) {
   const [studioOpen, setStudioOpen] = useState(false);
   const [theme, setTheme] = useState(() => parseBuilderTheme(site.theme ?? EMPTY_BUILDER_THEME));
@@ -292,6 +297,8 @@ export function WebsiteBuilderEditor({
         rows={rows}
         orgSlug={orgSlug}
         onThemeChange={setTheme}
+        uploadsEnabled={uploadsEnabled}
+        recentMedia={recentMedia}
       />
     </div>
   );

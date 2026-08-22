@@ -130,8 +130,9 @@ export function parseItemLines(raw: string, max = MAX_BUILDER_ITEMS): BuilderIte
     .slice(0, max)
     .map((line) => {
       const [label, ...rest] = line.split("|");
+      const rawLabel = (label ?? "").trim();
       return {
-        label: clip(label, 80),
+        label: clip(rawLabel, rawLabel.startsWith("https://") ? 500 : 80),
         detail: clip(rest.join("|"), 240),
       };
     })

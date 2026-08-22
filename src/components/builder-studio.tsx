@@ -52,10 +52,12 @@ import {
   BUILDER_SECTION_HINTS,
   BUILDER_SECTION_TYPES,
   builderSectionLabel,
+  isSafeBuilderImageUrl,
 } from "@/lib/website-builder/sections";
 import { BUILDER_BACKGROUND_SWATCHES, isDarkBuilderColor, type BuilderTheme } from "@/lib/website-builder/style";
 import { builderTemplateLabel } from "@/lib/website-builder/templates";
 import type { BuilderLayoutRow, BuilderLayoutWidget } from "@/lib/website-builder/types";
+import type { MediaLibraryItem } from "@/lib/media/blob";
 import { cn } from "@/lib/utils";
 
 type AddWidgetTarget = {
@@ -87,6 +89,8 @@ export function BuilderStudio({
   rows: initialRows,
   orgSlug,
   onThemeChange,
+  uploadsEnabled = false,
+  recentMedia = [],
 }: {
   open: boolean
   onClose: () => void
@@ -103,6 +107,8 @@ export function BuilderStudio({
   rows: BuilderLayoutRow[]
   orgSlug: string
   onThemeChange: (theme: BuilderTheme) => void
+  uploadsEnabled?: boolean
+  recentMedia?: MediaLibraryItem[]
 }) {
   const router = useRouter();
   const [contentEdits, setContentEdits] = useState<Record<string, BuilderSectionContent>>({});
@@ -562,6 +568,8 @@ export function BuilderStudio({
 
       <EditWidgetDialog
         widget={editing}
+        uploadsEnabled={uploadsEnabled}
+        recentMedia={recentMedia}
         onOpenChange={(next) => {
           if (!next) setEditingId(null);
         }}
@@ -817,11 +825,15 @@ function AddWidgetDialog({
 
 function EditWidgetDialog({
   widget,
+  uploadsEnabled,
+  recentMedia,
   onOpenChange,
   onChange,
   onRemove,
 }: {
   widget: BuilderLayoutWidget | null
+  uploadsEnabled: boolean
+  recentMedia: MediaLibraryItem[]
   onOpenChange: (open: boolean) => void
   onChange: (patch: { content?: BuilderSectionContent; visible?: boolean }) => void
   onRemove: () => void
@@ -830,6 +842,7 @@ function EditWidgetDialog({
   const showImagePreview =
     widget &&
     (widget.type === "hero" || widget.type === "image_text" || widget.type === "image") &&
+    isSafeBuilderImageUrl(imageUrl) &&
     imageUrl.startsWith("https://");
 
   return (
@@ -873,6 +886,8 @@ function EditWidgetDialog({
               type={widget.type}
               content={widget.content}
               onChange={(content) => onChange({ content })}
+              uploadsEnabled={uploadsEnabled}
+              recentMedia={recentMedia}
             />
             <DialogFooter className="sm:justify-between">
               <Button type="button" variant="outline" onClick={onRemove}>

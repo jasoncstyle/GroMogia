@@ -25,7 +25,7 @@ The builder works in two layers:
    - Change the words.
    - Set **Heading size** (Heading 1, Heading 2, Heading 3, or standard text).
    - On a Text widget, add **Link text** and **Link address**.
-   - Paste a public https:// image. GroovGro fetches the photo so other sites cannot block it in Chrome. File upload comes later.
+   - Click **Upload a photo** to choose a file from your computer (jpg, png, gif, or webp). Or pick a photo already in GroovGro. Or paste a public https:// link. Pasted links are fetched by GroovGro so other sites cannot block them.
 9. Click **Done**.
 10. **Page colors** (in the editor bar, or on the overview) sets colors for the whole page. Use the **color wheel**, type a **hex code** (with or without #), or pick a swatch. Leave **Use this page background on every row** on so Preview matches. If you pick a light page, keep dark **Page text** and **Headings**. **Row color** is only for one row that should be different — it has the same wheel, hex, and swatches.
 11. The top of Website builder shows which page you are editing (Home, or an extra page) and **Using Template 1** (or 2, 3, 4, or Blank). Every template starts **white with dark grey text**.
@@ -48,7 +48,7 @@ If the draft is still dark from an older Template 1: open **Page colors**, pick 
 8. Visitors see a simple list of published pages at the top (Home plus any other published pages).
 9. To delete an extra page: **Unpublish** if it is live, then click **Remove**. Home cannot be deleted. **Unpublish** hides Home.
 
-Extra GroovGro pages do not create pages on a connected existing website. Custom domains and image uploads are later slices.
+Extra GroovGro pages do not create pages on a connected existing website. Custom domains are a later slice.
 
 ## Widgets in this slice
 
@@ -56,7 +56,7 @@ Already there: Hero, Text, Call to action, Lead form, Image + text, Features, Te
 
 Added: Button, Image, Video (YouTube or Vimeo link), Image grid, Map (address), Pricing, Hours, Countdown, Social links, Call or message (phone / WhatsApp).
 
-Not in this slice (need extra accounts or are easy to misuse): Instagram/Facebook feeds, Google Reviews, AI chatbot, popups, calculators, file uploads.
+Not in this slice (need extra accounts or are easy to misuse): Instagram/Facebook feeds, Google Reviews, AI chatbot, popups, calculators.
 
 ## Check SEO for the GroovGro website
 
@@ -72,4 +72,25 @@ The connected homepage check is still there if you have an existing public site.
 
 **Unpublish** hides the GroovGro page only. It does not change the connected website or Stripe.
 
-Custom domains and image uploads are later slices.
+## Upload photos (Vercel Blob)
+
+Do this once if **Upload a photo** says Blob is not on yet. Do not paste the token into chat. Do not change Stripe keys.
+
+1. Open https://vercel.com and the **gro-mogia** project.
+2. Open **Storage**.
+3. Click **Create Database** and choose **Blob**.
+4. Name it `groovgro-media`.
+5. Connect it to **Production** and **Preview**. Vercel adds `BLOB_READ_WRITE_TOKEN` for you.
+6. Open **Deployments**, open the latest Production deployment, click **Redeploy**.
+7. Turn **Use existing Build Cache** off.
+8. Redeploy. Wait until it is **Ready**.
+
+Then:
+
+1. Open https://www.groovgro.com/app and sign in.
+2. Open **Website builder** → **Open page editor** → click a Hero, Image, or Image + text widget.
+3. Click **Upload a photo** and choose a file. Click **Done**.
+4. Or open **Media library** in Settings, upload there, then pick that photo in the widget.
+5. Click **Preview**. Confirm the photo shows. Confirm https://www.oceansailingadventures.com/ is unchanged.
+
+Custom domains are a later slice.

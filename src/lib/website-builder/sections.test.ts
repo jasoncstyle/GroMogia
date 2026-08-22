@@ -75,6 +75,14 @@ describe("website builder sections", () => {
     assert.equal(features.items?.split("\n").length, 8);
   });
 
+  it("keeps a long https photo address on a gallery line", () => {
+    const url =
+      "https://abc.public.blob.vercel-storage.com/org/11111111-1111-1111-1111-111111111111/builder/photo.jpg";
+    const items = parseItemLines(`${url} | Harbor workshop`);
+    assert.equal(items[0]?.label, url);
+    assert.equal(items[0]?.detail, "Harbor workshop");
+  });
+
   it("keeps extra section types generic", () => {
     const faq = defaultContentForType("faq", "Harbor Workshops");
     assert.match(faq.heading ?? "", /Questions/);
