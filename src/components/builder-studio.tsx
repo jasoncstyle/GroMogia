@@ -49,6 +49,12 @@ import {
   widgetsForColumn,
 } from "@/lib/website-builder/layout";
 import {
+  findLayoutRow,
+  flattenLayoutWidgets,
+  innerRowsForColumn,
+  MAX_INNER_ROWS_PER_COLUMN,
+} from "@/lib/website-builder/nest";
+import {
   BUILDER_SECTION_HINTS,
   BUILDER_SECTION_TYPES,
   builderSectionLabel,
@@ -121,22 +127,25 @@ export function BuilderStudio({
   const [widthRowId, setWidthRowId] = useState<string | null>(null);
   const [pageColorsOpen, setPageColorsOpen] = useState(false);
   const [addWidgetTarget, setAddWidgetTarget] = useState<AddWidgetTarget | null>(null);
+  const [addInnerTarget, setAddInnerTarget] = useState<AddWidgetTarget | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  const rows = useMemo(
-    () =>
-      initialRows.map((row) => ({
+  const rows = useMemo(() => {
+    function applyEdits(row: BuilderLayoutRow): BuilderLayoutRow {
+      return {
         ...row,
         widgets: row.widgets.map((widget) => ({
           ...widget,
           content: contentEdits[widget.id] ?? widget.content,
           visible: visibilityEdits[widget.id] ?? widget.visible,
         })),
-      })),
-    [contentEdits, initialRows, visibilityEdits],
-  );
+        innerRows: row.innerRows.map(applyEdits),
+      };
+    }
+    return initialRows.map(applyEdits);
+  }, [contentEdits, initialRows, visibilityEdits]);
 
-  const widgets = rows.flatMap((row) => row.widgets);
+  const widgets = flattenLayoutWidgets(rows);
   const editing = widgets.find((widget) => widget.id === editingId) ?? null;
   const popupOpen =
     addRowOpen ||
@@ -145,6 +154,7 @@ export function BuilderStudio({
     Boolean(widthRowId) ||
     pageColorsOpen ||
     Boolean(addWidgetTarget) ||
+    Boolean(addInnerTarget) ||
     Boolean(editing);
 
   useEffect(() => {
@@ -199,8 +209,9 @@ export function BuilderStudio({
             Page editor · {pageLabel} · {builderTemplateLabel(site.templateId)}
           </h2>
           <p className="text-xs text-muted-foreground">
-            Add a row and pick the columns. Row width makes a photo go across
-            the whole screen or stay in a box.
+            Add a row and pick the columns. Add inner row puts a smaller row
+            inside one column. Row width makes a photo go across the whole
+            screen or stay in a box.
           </p>
         </div>
         <Button type="button" variant="outline" asChild>
@@ -402,7 +413,53 @@ export function BuilderStudio({
                             }}
                           />
                         ))}
-                        <div className="mt-auto p-2">
+                        {innerRowsForColumn(row, columnIndex).map((inner, innerIndex, inners) => (
+                          <StudioInnerRow
+                            key={inner.id}
+                            row={inner}
+                            index={innerIndex}
+                            siblingCount={inners.length}
+                            site={site}
+                            orgSlug={orgSlug}
+                            dragOverKey={dragOverKey}
+                            onDragOverKey={setDragOverKey}
+                            onDraggedId={setDraggedId}
+                            onEditWidget={setEditingId}
+                            onColumns={() => setColumnsRowId(inner.id)}
+                            onColor={() => setColorRowId(inner.id)}
+                            onAddWidget={(innerColumnIndex) =>
+                              setAddWidgetTarget({
+                                rowId: inner.id,
+                                columnIndex: innerColumnIndex,
+                              })
+                            }
+                            onMove={(direction) => {
+                              const formData = new FormData();
+                              formData.set("rowId", inner.id);
+                              formData.set("direction", direction);
+                              void run(moveBuilderRow, formData);
+                            }}
+                            onRemove={() => {
+                              const formData = new FormData();
+                              formData.set("rowId", inner.id);
+                              void run(removeBuilderRow, formData);
+                            }}
+                            onPlaceWidget={(sectionId, innerColumnIndex) => {
+                              const formData = new FormData();
+                              formData.set("sectionId", sectionId);
+                              formData.set("rowId", inner.id);
+                              formData.set("columnIndex", String(innerColumnIndex));
+                              void run(placeBuilderWidget, formData);
+                            }}
+                            onMoveWidget={(sectionId, direction) => {
+                              const formData = new FormData();
+                              formData.set("sectionId", sectionId);
+                              formData.set("direction", direction);
+                              void run(moveBuilderSection, formData);
+                            }}
+                          />
+                        ))}
+                        <div className="mt-auto space-y-2 p-2">
                           <Button
                             type="button"
                             size="sm"
@@ -413,6 +470,21 @@ export function BuilderStudio({
                             }
                           >
                             Add widget
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            className="w-full"
+                            disabled={
+                              innerRowsForColumn(row, columnIndex).length >=
+                              MAX_INNER_ROWS_PER_COLUMN
+                            }
+                            onClick={() =>
+                              setAddInnerTarget({ rowId: row.id, columnIndex })
+                            }
+                          >
+                            Add inner row
                           </Button>
                         </div>
                       </div>
@@ -437,6 +509,20 @@ export function BuilderStudio({
       />
 
       <LayoutPickerDialog
+        open={Boolean(addInnerTarget)}
+        title="Add an inner row"
+        description="This smaller row stays inside the column. Pick how many columns it should have."
+        action={addBuilderRow}
+        successMessage="Inner row added."
+        pageId={pageId}
+        parentRowId={addInnerTarget?.rowId}
+        parentColumnIndex={addInnerTarget?.columnIndex}
+        onOpenChange={(next) => {
+          if (!next) setAddInnerTarget(null);
+        }}
+      />
+
+      <LayoutPickerDialog
         open={Boolean(columnsRowId)}
         title="Set columns"
         description="Widgets in columns that disappear move into the last remaining column."
@@ -447,7 +533,7 @@ export function BuilderStudio({
         selectedLayoutId={
           columnsRowId
             ? layoutIdForWidths(
-                rows.find((row) => row.id === columnsRowId)?.columnWidths ?? [100],
+                findLayoutRow(rows, columnsRowId)?.columnWidths ?? [100],
               )
             : undefined
         }
@@ -517,7 +603,7 @@ export function BuilderStudio({
                   <SaveButton
                     variant={
                       parseContentWidth(
-                        rows.find((row) => row.id === widthRowId)?.contentWidth,
+                        findLayoutRow(rows, widthRowId)?.contentWidth,
                       ) === option.id
                         ? "default"
                         : "outline"
@@ -551,7 +637,7 @@ export function BuilderStudio({
               key={colorRowId}
               pageId={pageId}
               rowId={colorRowId}
-              value={rows.find((row) => row.id === colorRowId)?.backgroundColor ?? ""}
+              value={findLayoutRow(rows, colorRowId)?.backgroundColor ?? ""}
               onSaved={() => setColorRowId(null)}
             />
           ) : null}
@@ -596,6 +682,149 @@ function WidthBar({ width }: { width: (typeof ROW_CONTENT_WIDTHS)[number]["id"] 
         style={{ width: `${grow}%` }}
       />
     </span>
+  );
+}
+
+function StudioInnerRow({
+  row,
+  index,
+  siblingCount,
+  site,
+  orgSlug,
+  dragOverKey,
+  onDragOverKey,
+  onDraggedId,
+  onEditWidget,
+  onColumns,
+  onColor,
+  onAddWidget,
+  onMove,
+  onRemove,
+  onPlaceWidget,
+  onMoveWidget,
+}: {
+  row: BuilderLayoutRow
+  index: number
+  siblingCount: number
+  site: { title: string; theme: BuilderTheme }
+  orgSlug: string
+  dragOverKey: string | null
+  onDragOverKey: (key: string | null) => void
+  onDraggedId: (id: string | null) => void
+  onEditWidget: (id: string) => void
+  onColumns: () => void
+  onColor: () => void
+  onAddWidget: (columnIndex: number) => void
+  onMove: (direction: "up" | "down") => void
+  onRemove: () => void
+  onPlaceWidget: (sectionId: string, columnIndex: number) => void
+  onMoveWidget: (sectionId: string, direction: "up" | "down") => void
+}) {
+  return (
+    <div className="m-2 rounded-lg border bg-muted/20">
+      <div className="flex flex-wrap items-center gap-2 border-b px-2 py-1.5">
+        <span className="text-[11px] font-medium">Inner row {index + 1}</span>
+        <Button type="button" size="xs" variant="outline" onClick={onColumns}>
+          Columns
+        </Button>
+        <Button type="button" size="xs" variant="outline" onClick={onColor}>
+          Row color
+        </Button>
+        <Button
+          type="button"
+          size="xs"
+          variant="outline"
+          disabled={index === 0}
+          onClick={() => onMove("up")}
+        >
+          Move up
+        </Button>
+        <Button
+          type="button"
+          size="xs"
+          variant="outline"
+          disabled={index === siblingCount - 1}
+          onClick={() => onMove("down")}
+        >
+          Move down
+        </Button>
+        <Button type="button" size="xs" variant="outline" onClick={onRemove}>
+          Remove
+        </Button>
+      </div>
+      <div
+        className={cn(
+          "grid grid-cols-1 gap-2 p-2",
+          row.columnWidths.length > 1 && "md:[grid-template-columns:var(--builder-cols)]",
+        )}
+        style={
+          row.columnWidths.length > 1
+            ? ({ "--builder-cols": rowGridTemplate(row.columnWidths) } as { [key: string]: string })
+            : undefined
+        }
+      >
+        {row.columnWidths.map((_, columnIndex) => {
+          const cellKey = `${row.id}:${columnIndex}`;
+          const cellWidgets = widgetsForColumn(row.widgets, columnIndex);
+          return (
+            <div
+              key={cellKey}
+              onDragOver={(event) => {
+                event.preventDefault();
+                onDragOverKey(cellKey);
+              }}
+              onDrop={(event) => {
+                event.preventDefault();
+                const sectionId = event.dataTransfer.getData("text/plain");
+                onDraggedId(null);
+                onDragOverKey(null);
+                if (!sectionId) return;
+                onPlaceWidget(sectionId, columnIndex);
+              }}
+              className={cn(
+                "flex min-h-24 flex-col rounded-md border border-dashed bg-background",
+                dragOverKey === cellKey && "border-foreground bg-muted/50",
+              )}
+            >
+              {cellWidgets.map((widget) => (
+                <StudioWidget
+                  key={widget.id}
+                  widget={widget}
+                  siteTitle={site.title}
+                  orgSlug={orgSlug}
+                  dense={row.columnWidths.length > 1}
+                  fullBleed={false}
+                  darkRow={isDarkBuilderColor(row.backgroundColor)}
+                  theme={site.theme}
+                  onEdit={() => onEditWidget(widget.id)}
+                  onDragStart={(event) => {
+                    onDraggedId(widget.id);
+                    event.dataTransfer.effectAllowed = "move";
+                    event.dataTransfer.setData("text/plain", widget.id);
+                  }}
+                  onDragEnd={() => {
+                    onDraggedId(null);
+                    onDragOverKey(null);
+                  }}
+                  onMove={(direction) => onMoveWidget(widget.id, direction)}
+                />
+              ))}
+              <div className="mt-auto p-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => onAddWidget(columnIndex)}
+                >
+                  Add widget
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
 
@@ -724,6 +953,8 @@ function LayoutPickerDialog({
   successMessage,
   pageId,
   rowId,
+  parentRowId,
+  parentColumnIndex,
   selectedLayoutId,
   onOpenChange,
 }: {
@@ -734,6 +965,8 @@ function LayoutPickerDialog({
   successMessage: string
   pageId: string
   rowId?: string | null
+  parentRowId?: string | null
+  parentColumnIndex?: number | null
   selectedLayoutId?: string
   onOpenChange: (open: boolean) => void
 }) {
@@ -754,6 +987,16 @@ function LayoutPickerDialog({
             >
               <input type="hidden" name="pageId" value={pageId} />
               {rowId ? <input type="hidden" name="rowId" value={rowId} /> : null}
+              {parentRowId ? (
+                <input type="hidden" name="parentRowId" value={parentRowId} />
+              ) : null}
+              {parentColumnIndex != null ? (
+                <input
+                  type="hidden"
+                  name="parentColumnIndex"
+                  value={String(parentColumnIndex)}
+                />
+              ) : null}
               <input type="hidden" name="layoutId" value={layout.id} />
               <SaveButton
                 variant={selectedLayoutId === layout.id ? "default" : "outline"}

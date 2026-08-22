@@ -22,6 +22,7 @@ import { auditBuilderPage, snapshotBuilderPage } from "@/lib/seo/builder-audit";
 import { buildSeoChangeDrafts } from "@/lib/seo/drafts";
 import { fetchPublicText, originFromWebsiteUrl } from "@/lib/seo/fetch";
 import { builderApplyHint, builderPublicUrl } from "@/lib/website-builder/apply-seo";
+import { flattenLayoutWidgets } from "@/lib/website-builder/nest";
 import { builderPageLabel } from "@/lib/website-builder/pages";
 import { getBuilderEditorData, listBuilderPages } from "@/lib/website-builder/queries";
 
@@ -61,7 +62,7 @@ async function checkBuilderPage(
     publicUrl: orgSlug
       ? builderPublicUrl(appUrl(), orgSlug, data.site.slug)
       : label,
-    widgets: data.rows.flatMap((row) => row.widgets),
+    widgets: flattenLayoutWidgets(data.rows),
   });
   const result = auditBuilderPage(snapshot);
   await db.insert(seoAudits).values({

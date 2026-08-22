@@ -51,7 +51,9 @@ export type RenderRow = {
   columnWidths: number[]
   backgroundColor?: string
   contentWidth?: RowContentWidth | string
+  parentColumnIndex?: number | null
   widgets: RenderSection[]
+  innerRows?: RenderRow[]
 };
 
 export function BuilderPageView({
@@ -68,7 +70,10 @@ export function BuilderPageView({
   navPages?: { href: string; label: string; current?: boolean }[]
 }) {
   const look = parseBuilderTheme(theme ?? EMPTY_BUILDER_THEME);
-  const widgets = rows.flatMap((row) => row.widgets);
+  const widgets = [
+    ...rows.flatMap((row) => row.widgets),
+    ...rows.flatMap((row) => (row.innerRows ?? []).flatMap((inner) => inner.widgets)),
+  ];
   const primaryHeadingId =
     widgets.find((section) => section.type === "hero" && section.content.heading)?.id ??
     widgets.find((section) => section.content.heading)?.id;
@@ -136,6 +141,18 @@ export function BuilderPageView({
                         darkRow={darkRow}
                       />
                     ))}
+                    {(row.innerRows ?? [])
+                      .filter((inner) => (inner.parentColumnIndex ?? 0) === columnIndex)
+                      .map((inner) => (
+                        <InnerRowView
+                          key={inner.id}
+                          inner={inner}
+                          title={title}
+                          orgSlug={orgSlug}
+                          theme={look}
+                          primaryHeadingId={primaryHeadingId}
+                        />
+                      ))}
                   </div>
                 ))}
               </div>
@@ -143,6 +160,70 @@ export function BuilderPageView({
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function InnerRowView({
+  inner,
+  title,
+  orgSlug,
+  theme,
+  primaryHeadingId,
+}: {
+  inner: RenderRow
+  title: string
+  orgSlug: string
+  theme: BuilderTheme
+  primaryHeadingId?: string
+}) {
+  const innerDense = inner.columnWidths.length > 1;
+  const innerDark = isDarkBuilderColor(inner.backgroundColor ?? "");
+  return (
+    <div
+      className="w-full"
+      style={{
+        backgroundColor: inner.backgroundColor || undefined,
+        color: innerDark ? "#f8fafc" : undefined,
+      }}
+    >
+      <div
+        className={cn(
+          "grid grid-cols-1",
+          innerDense ? "gap-4" : "gap-0",
+          innerDense && "md:[grid-template-columns:var(--builder-cols)]",
+        )}
+        style={
+          innerDense
+            ? ({ "--builder-cols": rowGridTemplate(inner.columnWidths) } as CSSProperties)
+            : undefined
+        }
+      >
+        {inner.columnWidths.map((_, innerColumnIndex) => (
+          <div key={`${inner.id}-${innerColumnIndex}`}>
+            {widgetsForColumn(
+              inner.widgets.map((widget, index) => ({
+                ...widget,
+                columnIndex: widget.columnIndex ?? 0,
+                sortOrder: widget.sortOrder ?? index,
+              })),
+              innerColumnIndex,
+            ).map((section) => (
+              <BuilderSectionView
+                key={section.id}
+                section={section}
+                orgSlug={orgSlug}
+                fallbackTitle={title}
+                headingLevel={section.id === primaryHeadingId ? "h1" : "h2"}
+                dense={innerDense}
+                theme={theme}
+                fullBleed={false}
+                darkRow={innerDark}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

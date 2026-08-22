@@ -17,7 +17,10 @@ export type BuilderLayoutRow = {
   columnWidths: number[]
   backgroundColor: string
   contentWidth: RowContentWidth
+  parentRowId: string | null
+  parentColumnIndex: number | null
   widgets: BuilderLayoutWidget[]
+  innerRows: BuilderLayoutRow[]
 };
 
 export type { BuilderTheme };
