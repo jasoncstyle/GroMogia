@@ -11,7 +11,7 @@ Last updated: 22 August 2026.
 
 ## Current phase
 
-**Phase 7 — Website builder**, full-page editor with preview (not live), numbered starter layouts (white with dark grey text), a color wheel plus hex and swatches, extra GroovGro pages, SEO checks for every GroovGro page, and photo uploads to Vercel Blob. Publish per page. Home cannot be deleted. Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
+**Phase 7 — Website builder**, full-page editor with preview (not live), numbered starter layouts (white with dark grey text), a color wheel plus hex and swatches, extra GroovGro pages, SEO checks for every GroovGro page, photo uploads to Vercel Blob, and one-level inner rows inside a column. Publish per page. Home cannot be deleted. Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
 
 Do not start ads or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
 
@@ -25,9 +25,9 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Marketing attribution and Intelligence (observe + recommend)
 - Brand voice: profile, examples, drafts that stay in GroovGro
 - SEO: connected homepage check, GroovGro checks for Home and every extra page, drafts, score history, plain-language explanation, Search Console read-only
-- Website builder: visual GroovGro-hosted pages at `/w/[org]` (Home) and `/w/[org]/[slug]` (extra pages), with a labeled starting template, full-page editor, draft preview, per-row width, white/dark-grey defaults, a color wheel plus hex and swatches, extra widgets, pasted photos fetched by GroovGro, and photos uploaded to Vercel Blob
+- Website builder: visual GroovGro-hosted pages at `/w/[org]` (Home) and `/w/[org]/[slug]` (extra pages), with a labeled starting template, full-page editor, draft preview, per-row width, white/dark-grey defaults, a color wheel plus hex and swatches, extra widgets, pasted photos fetched by GroovGro, photos uploaded to Vercel Blob, and one-level inner rows inside a column
 - Approved SEO title, description, and heading drafts can be applied to the matching GroovGro page
 
 ## Still later
 
-Builder custom domains, nested inner rows, WordPress write adapter, Phase 8 integrations (including Google Ads), 9 AI execute, 10 commercialization.
+Builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), 9 AI execute, 10 commercialization.

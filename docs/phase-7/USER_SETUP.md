@@ -20,7 +20,7 @@ The builder works in two layers:
    - **Edge to edge** — the row (and a hero photo) go all the way across the screen.
    - **Normal** — the usual boxed page width.
    - **Wide** or **Narrow** if you want more or less of the screen without hitting the edges.
-7. In a dashed cell, click **Add widget** and pick a type. Click the new box to edit it.
+7. In a dashed cell, click **Add widget** and pick a type. Click the new box to edit it. To put a smaller row of columns inside that cell, click **Add inner row** instead.
 8. In the edit window you can:
    - Change the words.
    - Set **Heading size** (Heading 1, Heading 2, Heading 3, or standard text).
@@ -49,6 +49,18 @@ If the draft is still dark from an older Template 1: open **Page colors**, pick 
 9. To delete an extra page: **Unpublish** if it is live, then click **Remove**. Home cannot be deleted. **Unpublish** hides Home.
 
 Extra GroovGro pages do not create pages on a connected existing website. Custom domains are a later slice.
+
+## Inner rows
+
+Use this when one column should hold a smaller row of columns (for example a photo on the left, and two stacked text boxes on the right).
+
+1. Open https://www.groovgro.com/app → **Website builder** → **Open page editor**.
+2. In a column, click **Add inner row**.
+3. Pick one, two, three, or four columns.
+4. In those inner columns, click **Add widget** the same way as a normal row.
+5. Use **Move up** / **Move down** to reorder inner rows in that column. **Remove** deletes that inner row only.
+6. You cannot put an inner row inside another inner row. A column can have up to three inner rows.
+7. Click **Preview**. The inner row stays inside the parent column. Confirm https://www.oceansailingadventures.com/ is unchanged.
 
 ## Widgets in this slice
 
@@ -82,9 +94,10 @@ Do this once if **Upload a photo** says Blob is not on yet. Do not paste the tok
 4. Click **Continue**, then set access to **Public** (not Private). Website photos must be Public. You cannot change this later.
 5. Name it `groovgro-photos`.
 6. Connect it to **Production** and **Preview**. Leave the Neon database named **GroMogia** alone.
-7. Open **Deployments**, open the latest Production deployment, click **Redeploy**.
-8. Turn **Use existing Build Cache** off.
-9. Redeploy. Wait until it is **Ready**.
+7. Open **Deployments**. Redeploy **both Production and Preview**. Connecting a Blob store can update one environment and not the other. Redeploying Preview only is what made **Upload a photo** work in testing. Production must be redeployed the same way before public launch.
+8. On each redeploy, turn **Use existing Build Cache** off.
+9. Wait until each is **Ready**.
+10. In **Settings → Environment Variables**, confirm `BLOB_STORE_ID` and/or `BLOB_READ_WRITE_TOKEN` exist for Production and Preview. Do not open or paste the values.
 
 If Storage already shows a Blob store marked **Private**, do not use it for website photos. If it is empty, delete that store, then create a new **Public** one. You cannot change Private to Public.
 
@@ -95,5 +108,11 @@ Then:
 3. Click **Upload a photo** and choose a jpg, png, gif, or webp file up to 4 MB. Click **Done**.
 4. Or open **Media library** in Settings, upload there, then pick that photo in the widget.
 5. Click **Preview**. Confirm the photo shows. Confirm https://www.oceansailingadventures.com/ is unchanged.
+
+Before you launch groovgro.com (the public homepage can stay Coming soon until then):
+
+1. Redeploy the latest **Production** deployment with **Use existing Build Cache** off.
+2. Open https://www.groovgro.com/app (not only a Preview URL).
+3. Upload a photo on Website builder and confirm it appears.
 
 Custom domains are a later slice.

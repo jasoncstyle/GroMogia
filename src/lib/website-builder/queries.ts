@@ -9,6 +9,7 @@ import {
   organizations,
 } from "@/lib/db/schema";
 import { parseColumnWidths, parseContentWidth } from "@/lib/website-builder/layout";
+import { nestBuilderRows, rowHasPublishedContent } from "@/lib/website-builder/nest";
 import { builderPageLabel, HOME_PAGE_SLUG, isHomePageSlug } from "@/lib/website-builder/pages";
 import { parseBuilderColor, parseBuilderTheme } from "@/lib/website-builder/style";
 import type { BuilderLayoutRow } from "@/lib/website-builder/types";
@@ -38,7 +39,10 @@ function toLayoutRows(
       columnWidths: parseColumnWidths(row.columnWidths),
       backgroundColor: parseBuilderColor(row.backgroundColor),
       contentWidth: parseContentWidth(row.contentWidth),
+      parentRowId: row.parentRowId ?? null,
+      parentColumnIndex: row.parentColumnIndex ?? null,
       widgets: [] as BuilderLayoutRow["widgets"],
+      innerRows: [] as BuilderLayoutRow[],
     }));
   const byId = new Map(grouped.map((row) => [row.id, row]));
   const leftovers: BuilderLayoutRow["widgets"] = [];
@@ -64,11 +68,14 @@ function toLayoutRows(
       columnWidths: [100],
       backgroundColor: "",
       contentWidth: "normal",
+      parentRowId: null,
+      parentColumnIndex: null,
       widgets: leftovers.map((widget) => ({ ...widget, columnIndex: 0 })),
+      innerRows: [],
     });
   }
 
-  return grouped;
+  return nestBuilderRows(grouped);
 }
 
 function toPageSummary(site: typeof builderSites.$inferSelect): BuilderPageSummary {
@@ -234,7 +241,7 @@ export async function getPublishedBuilderPage(orgSlug: string, pageSlug = HOME_P
     brand: brand ?? null,
     site: { ...site, theme: parseBuilderTheme(site.theme) },
     pages: publishedPages,
-    rows: toLayoutRows(rows, sections).filter((row) => row.widgets.length > 0),
+    rows: toLayoutRows(rows, sections).filter(rowHasPublishedContent),
     sections,
   };
 }

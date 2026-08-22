@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  foreignKey,
   index,
   integer,
   jsonb,
@@ -769,11 +770,19 @@ export const builderRows = pgTable(
     columnWidths: jsonb("column_widths").$type<number[]>().notNull().default([100]),
     backgroundColor: text("background_color").notNull().default(""),
     contentWidth: text("content_width").notNull().default("normal"),
+    parentRowId: uuid("parent_row_id"),
+    parentColumnIndex: integer("parent_column_index"),
     ...timestamps,
   },
   (table) => [
     index("builder_rows_org_idx").on(table.organizationId),
     index("builder_rows_site_idx").on(table.siteId),
+    index("builder_rows_parent_idx").on(table.parentRowId),
+    foreignKey({
+      columns: [table.parentRowId],
+      foreignColumns: [table.id],
+      name: "builder_rows_parent_row_id_builder_rows_id_fk",
+    }).onDelete("cascade"),
   ],
 );
 

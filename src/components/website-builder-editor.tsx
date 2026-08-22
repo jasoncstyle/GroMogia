@@ -27,6 +27,7 @@ import {
   unpublishBuilderSite,
 } from "@/lib/actions/website-builder";
 import { rowGridTemplate } from "@/lib/website-builder/layout";
+import { innerRowsForColumn } from "@/lib/website-builder/nest";
 import { isHomePageSlug } from "@/lib/website-builder/pages";
 import type { BuilderPageSummary } from "@/lib/website-builder/queries";
 import { builderSectionLabel } from "@/lib/website-builder/sections";
@@ -194,8 +195,8 @@ export function WebsiteBuilderEditor({
           <CardTitle>Page layout</CardTitle>
           <CardDescription>
             Open the editor to add a row, set how wide it is on the screen,
-            pick how many columns it has, then click a box to change text or
-            images in a window.
+            pick how many columns it has, or add an inner row inside a column.
+            Then click a box to change text or images in a window.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -230,10 +231,21 @@ export function WebsiteBuilderEditor({
                     }
                   >
                     {row.columnWidths.map((_, columnIndex) => {
-                      const labels = row.widgets
-                        .filter((widget) => widget.columnIndex === columnIndex)
-                        .sort((a, b) => a.sortOrder - b.sortOrder)
-                        .map((widget) => builderSectionLabel(widget.type));
+                      const labels = [
+                        ...row.widgets
+                          .filter((widget) => widget.columnIndex === columnIndex)
+                          .sort((a, b) => a.sortOrder - b.sortOrder)
+                          .map((widget) => builderSectionLabel(widget.type)),
+                        ...innerRowsForColumn(row, columnIndex).map((inner) => {
+                          const innerLabels = inner.widgets
+                            .slice()
+                            .sort((a, b) => a.sortOrder - b.sortOrder)
+                            .map((widget) => builderSectionLabel(widget.type));
+                          return innerLabels.length > 0
+                            ? `Inner row (${innerLabels.join(", ")})`
+                            : "Inner row";
+                        }),
+                      ];
                       return (
                         <div
                           key={`${row.id}-${columnIndex}`}

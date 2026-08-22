@@ -174,4 +174,16 @@ export async function ensureSchema(): Promise<void> {
   if (!mediaPublicUrl[0]?.name) {
     await applyMigration(sql, "0014_phase7_media_urls.sql");
   }
+
+  const builderInnerRows = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'builder_rows'
+       and column_name = 'parent_row_id'`,
+  )) as RegistryRow[];
+
+  if (!builderInnerRows[0]?.name) {
+    await applyMigration(sql, "0015_phase7_builder_inner_rows.sql");
+  }
 }

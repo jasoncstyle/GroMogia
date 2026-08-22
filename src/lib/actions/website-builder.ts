@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 import { recordAudit } from "@/lib/audit";
@@ -27,6 +27,7 @@ import {
   parseContentWidth,
   widthsForLayout,
 } from "@/lib/website-builder/layout";
+import { MAX_INNER_ROWS_PER_COLUMN } from "@/lib/website-builder/nest";
 import { writeBuilderLayout } from "@/lib/website-builder/persist-layout";
 import {
   HOME_PAGE_SLUG,
@@ -469,19 +470,76 @@ export async function addBuilderRow(formData: FormData): Promise<ActionResult> {
     const layoutId = String(formData.get("layoutId") ?? "1");
     if (!isRowLayoutId(layoutId)) throw new Error("Choose a row layout.");
     const site = await requireBuilderPage(db, session.organizationId, formData);
-    const existing = await db
-      .select({ sortOrder: builderRows.sortOrder })
-      .from(builderRows)
-      .where(eq(builderRows.siteId, site.id))
-      .orderBy(asc(builderRows.sortOrder));
+    const parentRowId = String(formData.get("parentRowId") ?? "").trim() || null;
+    const parentColumnRaw = String(formData.get("parentColumnIndex") ?? "").trim();
+    const parentColumnIndex =
+      parentColumnRaw === "" ? null : Number(parentColumnRaw);
+    if ((parentRowId && parentColumnIndex == null) || (!parentRowId && parentColumnIndex != null)) {
+      throw new Error("An inner row needs both a parent row and a column.");
+    }
+    if (parentColumnIndex != null && !Number.isInteger(parentColumnIndex)) {
+      throw new Error("That column was not found.");
+    }
+
+    let sortOrder = 0;
+    let contentWidth: "normal" | "full" = "normal";
+    if (parentRowId && parentColumnIndex != null) {
+      const [parent] = await db
+        .select()
+        .from(builderRows)
+        .where(
+          and(
+            eq(builderRows.id, parentRowId),
+            eq(builderRows.organizationId, session.organizationId),
+            eq(builderRows.siteId, site.id),
+          ),
+        )
+        .limit(1);
+      if (!parent) throw new Error("That column was not found.");
+      if (parent.parentRowId) {
+        throw new Error("An inner row cannot have another inner row inside it.");
+      }
+      if (parentColumnIndex < 0 || parentColumnIndex >= parent.columnWidths.length) {
+        throw new Error("That column was not found.");
+      }
+      const siblings = await db
+        .select({ sortOrder: builderRows.sortOrder })
+        .from(builderRows)
+        .where(
+          and(
+            eq(builderRows.siteId, site.id),
+            eq(builderRows.parentRowId, parentRowId),
+            eq(builderRows.parentColumnIndex, parentColumnIndex),
+          ),
+        )
+        .orderBy(asc(builderRows.sortOrder));
+      if (siblings.length >= MAX_INNER_ROWS_PER_COLUMN) {
+        throw new Error("This column already has three inner rows. Remove one first.");
+      }
+      sortOrder = (siblings.at(-1)?.sortOrder ?? -1) + 1;
+      contentWidth = "full";
+    } else {
+      const existing = await db
+        .select({ sortOrder: builderRows.sortOrder })
+        .from(builderRows)
+        .where(and(eq(builderRows.siteId, site.id), isNull(builderRows.parentRowId)))
+        .orderBy(asc(builderRows.sortOrder));
+      sortOrder = (existing.at(-1)?.sortOrder ?? -1) + 1;
+    }
+
     await db.insert(builderRows).values({
       organizationId: session.organizationId,
       siteId: site.id,
-      sortOrder: (existing.at(-1)?.sortOrder ?? -1) + 1,
+      sortOrder,
       columnWidths: widthsForLayout(layoutId),
+      contentWidth,
+      parentRowId,
+      parentColumnIndex,
     });
     revalidateBuilder(session.organizationSlug);
-    return "Row added. Click Add widget in a column.";
+    return parentRowId
+      ? "Inner row added. Click Add widget in a column."
+      : "Row added. Click Add widget in a column.";
   });
 }
 
@@ -520,12 +578,20 @@ export async function moveBuilderRow(formData: FormData): Promise<ActionResult> 
         ),
       )
       .orderBy(asc(builderRows.sortOrder));
-    const index = rows.findIndex((row) => row.id === rowId);
-    if (index < 0) throw new Error("That row was not found.");
+    const current = rows.find((row) => row.id === rowId);
+    if (!current) throw new Error("That row was not found.");
+    const siblings = rows
+      .filter((row) =>
+        current.parentRowId
+          ? row.parentRowId === current.parentRowId &&
+            row.parentColumnIndex === current.parentColumnIndex
+          : !row.parentRowId,
+      )
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+    const index = siblings.findIndex((row) => row.id === rowId);
     const swapWith = direction === "up" ? index - 1 : index + 1;
-    const current = rows[index];
-    const other = rows[swapWith];
-    if (!current || !other) return "Row is already at the end.";
+    const other = siblings[swapWith];
+    if (!other) return "Row is already at the end.";
     await db
       .update(builderRows)
       .set({ sortOrder: other.sortOrder, updatedAt: new Date() })
@@ -574,8 +640,26 @@ export async function setBuilderRowLayout(formData: FormData): Promise<ActionRes
           .where(eq(builderSections.id, widget.id));
       }
     }
+    const innerRows = await db
+      .select()
+      .from(builderRows)
+      .where(
+        and(
+          eq(builderRows.parentRowId, row.id),
+          eq(builderRows.organizationId, session.organizationId),
+        ),
+      );
+    for (const inner of innerRows) {
+      const nextIndex = clampColumnIndex(inner.parentColumnIndex ?? 0, columnWidths.length);
+      if (nextIndex !== inner.parentColumnIndex) {
+        await db
+          .update(builderRows)
+          .set({ parentColumnIndex: nextIndex, updatedAt: new Date() })
+          .where(eq(builderRows.id, inner.id));
+      }
+    }
     revalidateBuilder(session.organizationSlug);
-    return "Row layout saved. Columns that no longer exist moved their widgets into the last column.";
+    return "Row layout saved. Columns that no longer exist moved their widgets and inner rows into the last column.";
   });
 }
 

@@ -33,6 +33,11 @@ export default async function WebsiteBuilderPreviewPage({
   const rows = data.rows.map((row) => ({
     ...row,
     widgets: row.widgets.filter((widget) => widget.visible),
+    innerRows: row.innerRows.map((inner) => ({
+      ...inner,
+      widgets: inner.widgets.filter((widget) => widget.visible),
+      innerRows: [],
+    })),
   }));
   const navPages = data.pages.map((page) => ({
     href: page.isHome
