@@ -1,11 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { upload } from "@vercel/blob/client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { prepareMediaUpload, recordMediaAsset } from "@/lib/actions/media";
+import { uploadMediaFile } from "@/lib/actions/media";
 import {
   isAllowedMediaImageType,
   MAX_MEDIA_BYTES,
@@ -35,36 +34,19 @@ export function MediaUploadControl({
       return;
     }
     if (file.size > MAX_MEDIA_BYTES) {
-      toast.error("That photo is larger than 6 MB.");
+      toast.error("That photo is larger than 4 MB.");
       return;
     }
     setBusy(true);
     try {
-      const prepared = new FormData();
-      prepared.set("contentType", file.type);
-      prepared.set("fileName", file.name);
-      const start = await prepareMediaUpload(prepared);
-      if (!start.ok || !start.message) {
-        toast.error(start.ok ? "Could not start the photo upload." : start.error);
+      const payload = new FormData();
+      payload.set("file", file);
+      const saved = await uploadMediaFile(payload);
+      if (!saved.ok || !saved.message) {
+        toast.error(saved.ok ? "Could not upload that photo." : saved.error);
         return;
       }
-      const blob = await upload(start.message, file, {
-        access: "public",
-        handleUploadUrl: "/api/media/upload",
-        clientPayload: JSON.stringify({ originalName: file.name }),
-      });
-      const recorded = new FormData();
-      recorded.set("pathname", blob.pathname);
-      recorded.set("url", blob.url);
-      recorded.set("contentType", file.type);
-      recorded.set("byteSize", String(file.size));
-      recorded.set("originalName", file.name);
-      const saved = await recordMediaAsset(recorded);
-      if (!saved.ok) {
-        toast.error(saved.error);
-        return;
-      }
-      onPicked(blob.url, file.name);
+      onPicked(saved.message, file.name);
       router.refresh();
       toast.success("Photo uploaded.");
     } catch (error) {
@@ -82,25 +64,34 @@ export function MediaUploadControl({
         type="file"
         accept="image/jpeg,image/png,image/gif,image/webp,image/avif"
         className="sr-only"
-        disabled={!enabled || busy}
+        disabled={busy}
         onChange={(event) => {
           const file = event.target.files?.[0];
           if (file) void onFile(file);
         }}
       />
-      {enabled ? (
-        <Button
-          type="button"
-          variant="outline"
-          disabled={busy}
-          onClick={() => inputRef.current?.click()}
-        >
-          {busy ? "Uploading…" : label}
-        </Button>
-      ) : (
+      <Button
+        type="button"
+        variant="outline"
+        disabled={busy}
+        onClick={() => {
+          if (!enabled) {
+            toast.error(
+              "Connect a Public Blob store to gro-mogia, then Redeploy Production.",
+            );
+            return;
+          }
+          inputRef.current?.click();
+        }}
+      >
+        {busy ? "Uploading…" : label}
+      </Button>
+      {enabled ? null : (
         <p className="text-xs text-muted-foreground">
-          Photo upload needs Vercel Blob on the gro-mogia project. Until that
-          is added, paste a public https:// photo link.
+          This live site does not see a Public Blob store yet. On Vercel,
+          Storage must show a Public Blob store on Production. Then Redeploy
+          Production with the build cache off. You can still paste a https://
+          photo link.
         </p>
       )}
       {recent.length > 0 ? (

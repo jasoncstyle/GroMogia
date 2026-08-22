@@ -1,7 +1,7 @@
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
 
 export const MAX_MEDIA_ASSETS = 60;
-export const MAX_MEDIA_BYTES = 6 * 1024 * 1024;
+export const MAX_MEDIA_BYTES = 4 * 1024 * 1024;
 
 export const MEDIA_IMAGE_TYPES = [
   "image/jpeg",
@@ -29,7 +29,7 @@ export type MediaLibraryItem = {
 };
 
 export function isBlobConfigured(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID);
 }
 
 export function isAllowedMediaImageType(value: string | null | undefined): boolean {
@@ -63,7 +63,7 @@ export function isVercelBlobImageUrl(value: string): boolean {
   if (!url || url.protocol !== "https:") return false;
   if (url.username || url.password) return false;
   const host = url.hostname.toLowerCase();
-  return host === "blob.vercel-storage.com" || host.endsWith(".blob.vercel-storage.com");
+  return host.endsWith(".public.blob.vercel-storage.com");
 }
 
 export function clipOriginalName(value: string): string {
