@@ -99,11 +99,12 @@ You can also start the same connect from **Integrations** → Google.
 
 Disconnect is on the same SEO card. Disconnect revokes Google access for GroovGro. It does not change Search Console itself or the website.
 
-## Apply a draft to the GroovGro website
+## Apply a draft to a GroovGro page
 
 Search Console stays read-only. If you also have a GroovGro website:
 
-1. Approve a **Page title**, **Meta description**, or **Main heading** draft.
-2. In **Earlier decisions**, click **Apply to GroovGro website**.
-3. That updates the GroovGro-hosted page only. The connected existing website does not change.
+1. Under **GroovGro website**, check Home or an extra page, then draft improvements.
+2. Approve a **Page title**, **Meta description**, or **Main heading** draft.
+3. In **Earlier decisions**, click **Apply to Home** (or the name of that page).
+4. That updates that GroovGro page only. The connected existing website does not change.
 

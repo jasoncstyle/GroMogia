@@ -62,7 +62,8 @@ describe("apply SEO drafts to GroovGro builder", () => {
         proposedChange: '<link rel="canonical" href="https://www.example.com/" />',
       }),
     );
-    assert.match(builderApplyHint("title"), /GroovGro-hosted page only/);
+    assert.match(builderApplyHint("title", "About"), /Apply to About/);
+    assert.match(builderApplyHint("title"), /that GroovGro page only/);
     assert.match(builderApplyHint("sitemap"), /connected website origin/);
   });
 

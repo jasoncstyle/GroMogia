@@ -5,7 +5,6 @@ import { getDb } from "@/lib/db";
 import {
   brandSettings,
   brandVoiceProfiles,
-  builderSites,
   integrationConnections,
   searchConsoleSnapshots,
   seoAudits,
@@ -13,6 +12,7 @@ import {
   websites,
 } from "@/lib/db/schema";
 import { isGoogleOAuthConfigured } from "@/lib/env";
+import { listBuilderPages, type BuilderPageSummary } from "@/lib/website-builder/queries";
 
 export async function getSeoPageData(organizationId: string) {
   const emptySearchConsole = {
@@ -34,6 +34,10 @@ export async function getSeoPageData(organizationId: string) {
       audits: [] as (typeof seoAudits.$inferSelect)[],
       drafts: [] as (typeof seoDrafts.$inferSelect)[],
       hasBuilderSite: false,
+      builderPages: [] as (BuilderPageSummary & {
+        lastScore: number | null
+        lastCheckedAt: Date | null
+      })[],
       searchConsole: emptySearchConsole,
     };
   }
@@ -56,25 +60,36 @@ export async function getSeoPageData(organizationId: string) {
     .where(eq(brandVoiceProfiles.organizationId, organizationId))
     .limit(1);
 
-  const [builderSite] = await db
-    .select({ id: builderSites.id })
-    .from(builderSites)
-    .where(eq(builderSites.organizationId, organizationId))
-    .limit(1);
+  const pages = await listBuilderPages(organizationId);
 
   const audits = await db
     .select()
     .from(seoAudits)
     .where(eq(seoAudits.organizationId, organizationId))
     .orderBy(desc(seoAudits.createdAt))
-    .limit(12);
+    .limit(80);
 
   const drafts = await db
     .select()
     .from(seoDrafts)
     .where(and(eq(seoDrafts.organizationId, organizationId)))
     .orderBy(desc(seoDrafts.createdAt))
-    .limit(30);
+    .limit(40);
+
+  const latestByPage = new Map<string, (typeof audits)[number]>();
+  for (const audit of audits) {
+    if (!audit.builderSiteId || latestByPage.has(audit.builderSiteId)) continue;
+    latestByPage.set(audit.builderSiteId, audit);
+  }
+
+  const builderPages = pages.map((page) => {
+    const latest = latestByPage.get(page.id);
+    return {
+      ...page,
+      lastScore: latest?.score ?? null,
+      lastCheckedAt: latest?.createdAt ?? null,
+    };
+  });
 
   const [google] = await db
     .select()
@@ -105,7 +120,8 @@ export async function getSeoPageData(organizationId: string) {
     voice: voice ?? null,
     audits,
     drafts,
-    hasBuilderSite: Boolean(builderSite),
+    hasBuilderSite: pages.length > 0,
+    builderPages,
     searchConsole: {
       configured: isGoogleOAuthConfigured(),
       connected: google?.status === "connected",

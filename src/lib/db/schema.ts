@@ -591,12 +591,18 @@ export const seoAudits = pgTable(
     score: integer("score").notNull().default(0),
     summary: text("summary").notNull().default(""),
     findings: jsonb("findings").$type<SeoAuditFinding[]>().notNull().default([]),
+    builderSiteId: uuid("builder_site_id").references(() => builderSites.id, {
+      onDelete: "set null",
+    }),
     createdBy: uuid("created_by").references(() => users.id),
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
   },
-  (table) => [index("seo_audits_org_idx").on(table.organizationId)],
+  (table) => [
+    index("seo_audits_org_idx").on(table.organizationId),
+    index("seo_audits_page_idx").on(table.builderSiteId),
+  ],
 );
 
 export const seoDrafts = pgTable(
@@ -614,6 +620,9 @@ export const seoDrafts = pgTable(
     proposedChange: text("proposed_change").notNull(),
     howToApply: text("how_to_apply").notNull().default(""),
     status: text("status").notNull().default("draft"),
+    builderSiteId: uuid("builder_site_id").references(() => builderSites.id, {
+      onDelete: "set null",
+    }),
     createdBy: uuid("created_by").references(() => users.id),
     decidedBy: uuid("decided_by").references(() => users.id),
     decidedAt: timestamp("decided_at", { withTimezone: true }),
@@ -621,7 +630,10 @@ export const seoDrafts = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [index("seo_drafts_org_idx").on(table.organizationId)],
+  (table) => [
+    index("seo_drafts_org_idx").on(table.organizationId),
+    index("seo_drafts_page_idx").on(table.builderSiteId),
+  ],
 );
 
 export type SearchConsoleTotals = {

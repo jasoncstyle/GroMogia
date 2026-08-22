@@ -58,12 +58,17 @@ Added: Button, Image, Video (YouTube or Vimeo link), Image grid, Map (address), 
 
 Not in this slice (need extra accounts or are easy to misuse): Instagram/Facebook feeds, Google Reviews, AI chatbot, popups, calculators, file uploads.
 
-## Apply an approved SEO draft onto this GroovGro page
+## Check SEO for the GroovGro website
 
-1. Open **SEO**.
-2. Approve a **Page title**, **Meta description**, or **Main heading** draft.
-3. In **Earlier decisions**, click **Apply to GroovGro website**.
-4. Confirm the GroovGro **Home** preview changed and the connected website did not. Extra pages are not updated by this Apply button.
+1. Open **GROW → SEO**.
+2. Under **GroovGro website**, click **Check all GroovGro pages**, or **Check this page** on Home or About.
+3. Click **Show check** on a page to see that page’s score and details.
+4. Click **Draft improvements** on that page.
+5. Approve a **Page title**, **Meta description**, or **Main heading** draft.
+6. In **Earlier decisions**, click **Apply to Home** (or Apply to About).
+7. Open **Website builder**, click **Edit** on that page, then **Preview**. Confirm only that GroovGro page changed. Confirm https://www.oceansailingadventures.com/ is unchanged.
+
+The connected homepage check is still there if you have an existing public site. GroovGro does not write robots.txt or sitemap.xml on groovgro.com.
 
 **Unpublish** hides the GroovGro page only. It does not change the connected website or Stripe.
 

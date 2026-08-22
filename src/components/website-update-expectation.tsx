@@ -36,8 +36,9 @@ export function WebsiteUpdateExpectation({
         {compact ? null : (
           <p>
             Today: approved title, description, and heading drafts can be applied
-            to a GroovGro-hosted page. Connected custom sites still need a
-            manual paste. GroovGro does not overwrite Stripe checkout.
+            to the GroovGro page they belong to (Home or an extra page).
+            Connected custom sites still need a manual paste. GroovGro does not
+            overwrite Stripe checkout.
           </p>
         )}
       </CardContent>

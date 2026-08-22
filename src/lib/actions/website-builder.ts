@@ -31,6 +31,7 @@ import { writeBuilderLayout } from "@/lib/website-builder/persist-layout";
 import {
   HOME_PAGE_SLUG,
   MAX_BUILDER_PAGES,
+  builderPageLabel,
   isHomePageSlug,
   layoutForNewPage,
   parsePageSlug,
@@ -796,10 +797,10 @@ export async function applySeoDraftToBuilder(formData: FormData): Promise<Action
       throw new Error("This draft is for the connected website, not the GroovGro-hosted page.");
     }
 
-    const site = await requireBuilderPage(db, session.organizationId);
-    if (!isHomePageSlug(site.slug)) {
-      throw new Error("Create a GroovGro website first, then apply this draft there.");
-    }
+    const pageId = String(formData.get("pageId") ?? draft.builderSiteId ?? "").trim();
+    const scoped = new FormData();
+    if (pageId) scoped.set("pageId", pageId);
+    const site = await requireBuilderPage(db, session.organizationId, scoped);
 
     const sections = await db
       .select()
@@ -846,12 +847,17 @@ export async function applySeoDraftToBuilder(formData: FormData): Promise<Action
       action: "website_builder.seo_draft_applied",
       targetType: "seo_draft",
       targetId: draft.id,
-      metadata: { findingId: draft.findingId, appliedTo: next.appliedTo },
+      metadata: {
+        findingId: draft.findingId,
+        appliedTo: next.appliedTo,
+        pageId: site.id,
+        page: builderPageLabel(site),
+      },
     });
 
     revalidateBuilder(session.organizationSlug, site);
     revalidatePath("/app/seo");
-    return "Applied to the GroovGro website. The connected existing website was not changed.";
+    return `Applied to ${builderPageLabel(site)}. The connected existing website was not changed.`;
   });
 }
 
