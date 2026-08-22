@@ -1,6 +1,7 @@
 import { BuilderRemoteImage } from "@/components/builder-remote-image";
 import type { ResolvedBuilderChrome } from "@/lib/website-builder/chrome";
 import { isSafeBuilderImageUrl } from "@/lib/website-builder/sections";
+import { isDarkBuilderColor } from "@/lib/website-builder/style";
 import { cn } from "@/lib/utils";
 
 export type ChromePageLink = {
@@ -21,6 +22,7 @@ export function BuilderSiteHeader({
   inert?: boolean
 }) {
   if (!chrome.showHeader) return null;
+  const dark = isDarkBuilderColor(chrome.headerBackgroundColor);
   const links = chrome.showPageLinks ? pages : [];
   const logoUrl = chrome.logoUrl.trim();
   const showLogo = Boolean(logoUrl) && isSafeBuilderImageUrl(logoUrl) && logoUrl.startsWith("https://");
@@ -38,7 +40,13 @@ export function BuilderSiteHeader({
   );
 
   return (
-    <header className="border-b px-4 py-3">
+    <header
+      className={cn("border-b px-4 py-3", dark && "[&_*]:text-inherit")}
+      style={{
+        backgroundColor: chrome.headerBackgroundColor || undefined,
+        color: dark ? "#f8fafc" : undefined,
+      }}
+    >
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
         {inert ? (
           <div className="flex min-w-0 items-center gap-3">{name}</div>
@@ -84,8 +92,15 @@ export function BuilderSiteHeader({
 
 export function BuilderSiteFooter({ chrome }: { chrome: ResolvedBuilderChrome }) {
   if (!chrome.showFooter) return null;
+  const dark = isDarkBuilderColor(chrome.footerBackgroundColor);
   return (
-    <footer className="border-t px-4 py-6">
+    <footer
+      className={cn("border-t px-4 py-6", dark && "[&_*]:text-inherit")}
+      style={{
+        backgroundColor: chrome.footerBackgroundColor || undefined,
+        color: dark ? "#f8fafc" : undefined,
+      }}
+    >
       <p className="mx-auto max-w-6xl text-sm opacity-80">{chrome.footerText}</p>
     </footer>
   );

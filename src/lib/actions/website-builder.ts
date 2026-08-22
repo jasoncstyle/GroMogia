@@ -1069,6 +1069,8 @@ export async function saveBuilderChrome(formData: FormData): Promise<ActionResul
       headerName: String(formData.get("headerName") ?? "").slice(0, MAX_HEADER_NAME),
       logoUrl: parseChromeLogoUrl(formData.get("logoUrl")),
       footerText: String(formData.get("footerText") ?? "").slice(0, MAX_FOOTER_TEXT),
+      headerBackgroundColor: String(formData.get("headerBackgroundColor") ?? ""),
+      footerBackgroundColor: String(formData.get("footerBackgroundColor") ?? ""),
     });
     await db
       .insert(builderChrome)

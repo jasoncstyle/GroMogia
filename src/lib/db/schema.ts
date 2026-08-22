@@ -747,6 +747,8 @@ export const builderChrome = pgTable("builder_chrome", {
   headerName: text("header_name").notNull().default(""),
   logoUrl: text("logo_url").notNull().default(""),
   footerText: text("footer_text").notNull().default(""),
+  headerBackgroundColor: text("header_background_color").notNull().default(""),
+  footerBackgroundColor: text("footer_background_color").notNull().default(""),
   ...timestamps,
 });
 
