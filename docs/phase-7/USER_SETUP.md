@@ -64,16 +64,19 @@ Use this when one column should hold a smaller row of columns (for example a pho
 
 ## Header and footer
 
-These sit on every GroovGro page. They do not create a header on the connected existing website.
+These sit on every GroovGro page. They do not create a header on the connected existing website. Edit them on **Home** only.
 
 1. Open https://www.groovgro.com/app → **Website builder**.
-2. Open the **Header and footer** card.
-3. Leave **Show the header** on. Type a **Name in the header**, or leave it blank to use the brand name.
-4. Click **Upload a logo** (or paste a public https:// link), or leave the logo blank to show only the name.
-5. Leave **Show links to published GroovGro pages** on if Home and About should appear in the header. Those links appear after a page is **Published**.
-6. Type a **Footer line**, or leave it blank to repeat the name. Uncheck **Show the footer** if you do not want a line at the bottom.
-7. Click **Save header and footer**.
-8. Click **Preview**. The header is at the top and the footer is at the bottom. Confirm https://www.oceansailingadventures.com/ is unchanged.
+2. Open **Home** (not About), then click **Open page editor**.
+3. Click the **header** at the top or the **footer** at the bottom, or click **Edit header** / **Edit footer**.
+4. Leave **Show the header** on. Type a **Name in the header**, or leave it blank to use the brand name.
+5. Click **Upload a logo** (or paste a public https:// link), or leave the logo blank to show only the name.
+6. Leave **Show links to published GroovGro pages** on if Home and About should appear in the header. Those links appear after a page is **Published**.
+7. Type a **Footer line**, or leave it blank to repeat the name. Uncheck **Show the footer** if you do not want a line at the bottom.
+8. Click **Save header and footer**.
+9. Click **Preview**. The header is at the top and the footer is at the bottom. Confirm https://www.oceansailingadventures.com/ is unchanged.
+
+On About or another extra page, the page editor still shows the same header and footer, with a note that says **Edit on Home only**. You can also use the **Header and footer** card on the Website builder overview.
 
 ## Widgets in this slice
 

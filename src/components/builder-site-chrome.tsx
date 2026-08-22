@@ -13,44 +13,65 @@ export function BuilderSiteHeader({
   chrome,
   pages,
   homeHref,
+  inert = false,
 }: {
   chrome: ResolvedBuilderChrome
   pages: ChromePageLink[]
   homeHref: string
+  inert?: boolean
 }) {
   if (!chrome.showHeader) return null;
   const links = chrome.showPageLinks ? pages : [];
   const logoUrl = chrome.logoUrl.trim();
   const showLogo = Boolean(logoUrl) && isSafeBuilderImageUrl(logoUrl) && logoUrl.startsWith("https://");
+  const name = (
+    <>
+      {showLogo ? (
+        <BuilderRemoteImage
+          url={logoUrl}
+          alt={chrome.title}
+          variant="logo"
+        />
+      ) : null}
+      <span className="truncate text-sm font-semibold">{chrome.title}</span>
+    </>
+  );
 
   return (
     <header className="border-b px-4 py-3">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3">
-        <a href={homeHref} className="flex min-w-0 items-center gap-3">
-          {showLogo ? (
-            <BuilderRemoteImage
-              url={logoUrl}
-              alt={chrome.title}
-              variant="logo"
-            />
-          ) : null}
-          <span className="truncate text-sm font-semibold">{chrome.title}</span>
-        </a>
+        {inert ? (
+          <div className="flex min-w-0 items-center gap-3">{name}</div>
+        ) : (
+          <a href={homeHref} className="flex min-w-0 items-center gap-3">
+            {name}
+          </a>
+        )}
         {links.length > 1 ? (
           <nav aria-label="Pages">
             <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
               {links.map((page) => (
                 <li key={page.href}>
-                  <a
-                    href={page.href}
-                    className={cn(
-                      "underline-offset-4 hover:underline",
-                      page.current && "font-medium",
-                    )}
-                    aria-current={page.current ? "page" : undefined}
-                  >
-                    {page.label}
-                  </a>
+                  {inert ? (
+                    <span
+                      className={cn(
+                        page.current && "font-medium",
+                      )}
+                    >
+                      {page.label}
+                    </span>
+                  ) : (
+                    <a
+                      href={page.href}
+                      className={cn(
+                        "underline-offset-4 hover:underline",
+                        page.current && "font-medium",
+                      )}
+                      aria-current={page.current ? "page" : undefined}
+                    >
+                      {page.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
