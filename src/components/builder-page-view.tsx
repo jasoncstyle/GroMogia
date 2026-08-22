@@ -4,7 +4,8 @@ import { useEffect, useState, type CSSProperties } from "react";
 
 import { PublicLeadForm } from "@/components/public-lead-form";
 import { BuilderRemoteImage } from "@/components/builder-remote-image";
-import { BuilderSiteNav } from "@/components/builder-site-nav";
+import { BuilderSiteFooter, BuilderSiteHeader } from "@/components/builder-site-chrome";
+import type { ResolvedBuilderChrome } from "@/lib/website-builder/chrome";
 import type { BuilderSectionContent } from "@/lib/db/schema";
 import {
   builderMapEmbedSrc,
@@ -62,12 +63,16 @@ export function BuilderPageView({
   rows,
   theme,
   navPages,
+  chrome,
+  homeHref,
 }: {
   title: string
   orgSlug: string
   rows: RenderRow[]
   theme?: BuilderTheme
   navPages?: { href: string; label: string; current?: boolean }[]
+  chrome?: ResolvedBuilderChrome
+  homeHref?: string
 }) {
   const look = parseBuilderTheme(theme ?? EMPTY_BUILDER_THEME);
   const widgets = [
@@ -86,7 +91,26 @@ export function BuilderPageView({
         color: look.textColor || undefined,
       }}
     >
-      {navPages && navPages.length > 1 ? <BuilderSiteNav pages={navPages} /> : null}
+      {chrome ? (
+        <BuilderSiteHeader
+          chrome={chrome}
+          pages={navPages ?? []}
+          homeHref={homeHref || navPages?.find((page) => page.label === "Home")?.href || navPages?.[0]?.href || `/w/${orgSlug}`}
+        />
+      ) : navPages && navPages.length > 1 ? (
+        <BuilderSiteHeader
+          chrome={{
+            showHeader: true,
+            showFooter: false,
+            showPageLinks: true,
+            title: title,
+            logoUrl: "",
+            footerText: "",
+          }}
+          pages={navPages}
+          homeHref={navPages[0]?.href || `/w/${orgSlug}`}
+        />
+      ) : null}
       {rows.map((row) => {
         const dense = row.columnWidths.length > 1;
         const darkRow = isDarkBuilderColor(row.backgroundColor ?? "");
@@ -160,6 +184,7 @@ export function BuilderPageView({
           </div>
         );
       })}
+      {chrome ? <BuilderSiteFooter chrome={chrome} /> : null}
     </div>
   );
 }

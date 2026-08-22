@@ -186,4 +186,12 @@ export async function ensureSchema(): Promise<void> {
   if (!builderInnerRows[0]?.name) {
     await applyMigration(sql, "0015_phase7_builder_inner_rows.sql");
   }
+
+  const builderChrome = (await sql.query(
+    "select to_regclass('public.builder_chrome') as name",
+  )) as RegistryRow[];
+
+  if (!builderChrome[0]?.name) {
+    await applyMigration(sql, "0016_phase7_builder_chrome.sql");
+  }
 }

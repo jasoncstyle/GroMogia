@@ -9,6 +9,7 @@ import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import {
   brandSettings,
+  builderChrome,
   builderRows,
   builderSections,
   builderSites,
@@ -27,6 +28,12 @@ import {
   parseContentWidth,
   widthsForLayout,
 } from "@/lib/website-builder/layout";
+import {
+  MAX_FOOTER_TEXT,
+  MAX_HEADER_NAME,
+  parseBuilderChrome,
+  parseChromeLogoUrl,
+} from "@/lib/website-builder/chrome";
 import { MAX_INNER_ROWS_PER_COLUMN } from "@/lib/website-builder/nest";
 import { writeBuilderLayout } from "@/lib/website-builder/persist-layout";
 import {
@@ -1049,5 +1056,34 @@ export async function removeBuilderPage(formData: FormData): Promise<ActionResul
     });
     revalidateBuilder(session.organizationSlug, page);
     return "Page removed. The connected existing website was not changed.";
+  });
+}
+
+export async function saveBuilderChrome(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not save the header and footer.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const chrome = parseBuilderChrome({
+      showHeader: formData.get("showHeader") === "on",
+      showFooter: formData.get("showFooter") === "on",
+      showPageLinks: formData.get("showPageLinks") === "on",
+      headerName: String(formData.get("headerName") ?? "").slice(0, MAX_HEADER_NAME),
+      logoUrl: parseChromeLogoUrl(formData.get("logoUrl")),
+      footerText: String(formData.get("footerText") ?? "").slice(0, MAX_FOOTER_TEXT),
+    });
+    await db
+      .insert(builderChrome)
+      .values({
+        organizationId: session.organizationId,
+        ...chrome,
+      })
+      .onConflictDoUpdate({
+        target: builderChrome.organizationId,
+        set: {
+          ...chrome,
+          updatedAt: new Date(),
+        },
+      });
+    revalidateBuilder(session.organizationSlug);
+    return "Header and footer saved. They show on every GroovGro page.";
   });
 }

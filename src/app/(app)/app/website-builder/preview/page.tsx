@@ -46,6 +46,7 @@ export default async function WebsiteBuilderPreviewPage({
     label: page.label,
     current: page.id === data.site?.id,
   }));
+  const homeHref = "/app/website-builder/preview";
 
   return (
     <div className="fixed inset-0 z-50 overflow-auto bg-background">
@@ -69,6 +70,8 @@ export default async function WebsiteBuilderPreviewPage({
         rows={rows}
         theme={data.site.theme}
         navPages={navPages}
+        chrome={data.chromeView}
+        homeHref={homeHref}
       />
     </div>
   );

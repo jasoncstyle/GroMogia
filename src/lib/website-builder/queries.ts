@@ -3,11 +3,17 @@ import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import {
   brandSettings,
+  builderChrome,
   builderRows,
   builderSections,
   builderSites,
   organizations,
 } from "@/lib/db/schema";
+import {
+  DEFAULT_BUILDER_CHROME,
+  parseBuilderChrome,
+  resolveBuilderChrome,
+} from "@/lib/website-builder/chrome";
 import { parseColumnWidths, parseContentWidth } from "@/lib/website-builder/layout";
 import { nestBuilderRows, rowHasPublishedContent } from "@/lib/website-builder/nest";
 import { builderPageLabel, HOME_PAGE_SLUG, isHomePageSlug } from "@/lib/website-builder/pages";
@@ -15,6 +21,7 @@ import { parseBuilderColor, parseBuilderTheme } from "@/lib/website-builder/styl
 import type { BuilderLayoutRow } from "@/lib/website-builder/types";
 
 export type { BuilderLayoutRow } from "@/lib/website-builder/types";
+export type { BuilderChrome, ResolvedBuilderChrome } from "@/lib/website-builder/chrome";
 
 export type BuilderPageSummary = {
   id: string
@@ -90,6 +97,23 @@ function toPageSummary(site: typeof builderSites.$inferSelect): BuilderPageSumma
   };
 }
 
+async function loadBuilderChrome(
+  db: NonNullable<ReturnType<typeof getDb>>,
+  organizationId: string,
+  fallbackName: string,
+) {
+  const [row] = await db
+    .select()
+    .from(builderChrome)
+    .where(eq(builderChrome.organizationId, organizationId))
+    .limit(1);
+  const stored = parseBuilderChrome(row ?? DEFAULT_BUILDER_CHROME);
+  return {
+    stored,
+    resolved: resolveBuilderChrome(stored, fallbackName),
+  };
+}
+
 function sortPages<T extends { slug: string; title: string }>(pages: T[]): T[] {
   return pages.slice().sort((a, b) => {
     if (isHomePageSlug(a.slug) && !isHomePageSlug(b.slug)) return -1;
@@ -115,7 +139,14 @@ export async function getBuilderEditorData(
 ) {
   const db = getDb();
   if (!db) {
-    return { pages: [] as BuilderPageSummary[], site: null, rows: [] as BuilderLayoutRow[], brand: null };
+    return {
+      pages: [] as BuilderPageSummary[],
+      site: null,
+      rows: [] as BuilderLayoutRow[],
+      brand: null,
+      chrome: DEFAULT_BUILDER_CHROME,
+      chromeView: resolveBuilderChrome(DEFAULT_BUILDER_CHROME, ""),
+    };
   }
 
   const [brand] = await db
@@ -123,13 +154,22 @@ export async function getBuilderEditorData(
     .from(brandSettings)
     .where(eq(brandSettings.organizationId, organizationId))
     .limit(1);
+  const fallbackName = brand?.businessName ?? "";
+  const chromeData = await loadBuilderChrome(db, organizationId, fallbackName);
   const allSites = await db
     .select()
     .from(builderSites)
     .where(eq(builderSites.organizationId, organizationId));
   const pages = sortPages(allSites.map(toPageSummary));
   if (allSites.length === 0) {
-    return { pages, site: null, rows: [] as BuilderLayoutRow[], brand: brand ?? null };
+    return {
+      pages,
+      site: null,
+      rows: [] as BuilderLayoutRow[],
+      brand: brand ?? null,
+      chrome: chromeData.stored,
+      chromeView: chromeData.resolved,
+    };
   }
 
   const site =
@@ -137,7 +177,14 @@ export async function getBuilderEditorData(
     allSites.find((candidate) => isHomePageSlug(candidate.slug)) ??
     allSites[0];
   if (!site) {
-    return { pages, site: null, rows: [] as BuilderLayoutRow[], brand: brand ?? null };
+    return {
+      pages,
+      site: null,
+      rows: [] as BuilderLayoutRow[],
+      brand: brand ?? null,
+      chrome: chromeData.stored,
+      chromeView: chromeData.resolved,
+    };
   }
 
   const rows = await db
@@ -166,6 +213,8 @@ export async function getBuilderEditorData(
     site: { ...site, theme: parseBuilderTheme(site.theme) },
     rows: toLayoutRows(rows, sections),
     brand: brand ?? null,
+    chrome: chromeData.stored,
+    chromeView: chromeData.resolved,
   };
 }
 
@@ -236,6 +285,9 @@ export async function getPublishedBuilderPage(orgSlug: string, pageSlug = HOME_P
     )
     .orderBy(asc(builderSections.sortOrder));
 
+  const fallbackName = brand?.businessName || organization.name;
+  const chromeData = await loadBuilderChrome(db, organization.id, fallbackName);
+
   return {
     organization,
     brand: brand ?? null,
@@ -243,5 +295,7 @@ export async function getPublishedBuilderPage(orgSlug: string, pageSlug = HOME_P
     pages: publishedPages,
     rows: toLayoutRows(rows, sections).filter(rowHasPublishedContent),
     sections,
+    chrome: chromeData.stored,
+    chromeView: chromeData.resolved,
   };
 }

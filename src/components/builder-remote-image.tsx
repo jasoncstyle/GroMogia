@@ -9,10 +9,12 @@ export function BuilderRemoteImage({
   url,
   alt,
   className,
+  variant = "photo",
 }: {
   url: string
   alt: string
   className?: string
+  variant?: "photo" | "logo"
 }) {
   const [failed, setFailed] = useState(false);
   const src = builderDisplayImageSrc(url);
@@ -33,7 +35,12 @@ export function BuilderRemoteImage({
       alt={alt}
       referrerPolicy="no-referrer"
       onError={() => setFailed(true)}
-      className={cn("min-h-40 w-full rounded-xl object-cover", className)}
+      className={cn(
+        variant === "logo"
+          ? "h-10 w-auto max-w-40 object-contain"
+          : "min-h-40 w-full rounded-xl object-cover",
+        className,
+      )}
     />
   );
 }

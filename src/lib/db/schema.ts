@@ -737,6 +737,19 @@ export type BuilderSectionContent = {
   whatsapp?: string
 };
 
+export const builderChrome = pgTable("builder_chrome", {
+  organizationId: uuid("organization_id")
+    .primaryKey()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  showHeader: boolean("show_header").notNull().default(true),
+  showFooter: boolean("show_footer").notNull().default(true),
+  showPageLinks: boolean("show_page_links").notNull().default(true),
+  headerName: text("header_name").notNull().default(""),
+  logoUrl: text("logo_url").notNull().default(""),
+  footerText: text("footer_text").notNull().default(""),
+  ...timestamps,
+});
+
 export const builderSites = pgTable(
   "builder_sites",
   {
