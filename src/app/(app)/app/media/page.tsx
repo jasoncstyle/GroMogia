@@ -55,7 +55,8 @@ export default async function MediaLibraryPage() {
                 <li>Open https://vercel.com and the <strong>gro-mogia</strong> project.</li>
                 <li>Open <strong>Storage</strong>.</li>
                 <li>Click <strong>Create Database</strong> and choose <strong>Blob</strong>.</li>
-                <li>Name it <strong>groovgro-media</strong>.</li>
+                <li>Click <strong>Continue</strong>, then set access to <strong>Public</strong> (not Private). Website photos must be Public.</li>
+                <li>Name it <strong>groovgro-photos</strong>.</li>
                 <li>Connect it to <strong>Production</strong> and <strong>Preview</strong>.</li>
                 <li>
                   Open <strong>Deployments</strong>, open the latest Production

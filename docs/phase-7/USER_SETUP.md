@@ -79,11 +79,14 @@ Do this once if **Upload a photo** says Blob is not on yet. Do not paste the tok
 1. Open https://vercel.com and the **gro-mogia** project.
 2. Open **Storage**.
 3. Click **Create Database** and choose **Blob**.
-4. Name it `groovgro-media`.
-5. Connect it to **Production** and **Preview**. Vercel adds `BLOB_READ_WRITE_TOKEN` for you.
-6. Open **Deployments**, open the latest Production deployment, click **Redeploy**.
-7. Turn **Use existing Build Cache** off.
-8. Redeploy. Wait until it is **Ready**.
+4. Click **Continue**, then set access to **Public** (not Private). Website photos must be Public. You cannot change this later.
+5. Name it `groovgro-photos`.
+6. Connect it to **Production** and **Preview**. Leave the Neon database named **GroMogia** alone.
+7. Open **Deployments**, open the latest Production deployment, click **Redeploy**.
+8. Turn **Use existing Build Cache** off.
+9. Redeploy. Wait until it is **Ready**.
+
+If Storage already shows a Blob store marked **Private**, do not use it for website photos. If it is empty, delete that store, then create a new **Public** one. You cannot change Private to Public.
 
 Then:
 

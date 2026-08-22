@@ -5,6 +5,7 @@ import {
   clipOriginalName,
   extensionForMediaType,
   isAllowedMediaImageType,
+  isBlobConfigured,
   isOrgMediaPathname,
   isVercelBlobImageUrl,
   mediaBlobPathname,
@@ -38,5 +39,17 @@ describe("media blob helpers", () => {
     assert.equal(isVercelBlobImageUrl("https://images.example.com/a.jpg"), false);
     assert.equal(isVercelBlobImageUrl("https://www.groovgro.com/w/x"), false);
     assert.equal(clipOriginalName("folder/hero photo.png"), "folder hero photo.png");
+  });
+
+  it("treats a store id as enough to say Blob is connected", () => {
+    const previousToken = process.env.BLOB_READ_WRITE_TOKEN;
+    const previousStore = process.env.BLOB_STORE_ID;
+    delete process.env.BLOB_READ_WRITE_TOKEN;
+    process.env.BLOB_STORE_ID = "store_test";
+    assert.equal(isBlobConfigured(), true);
+    delete process.env.BLOB_STORE_ID;
+    assert.equal(isBlobConfigured(), false);
+    if (previousToken) process.env.BLOB_READ_WRITE_TOKEN = previousToken;
+    if (previousStore) process.env.BLOB_STORE_ID = previousStore;
   });
 });
