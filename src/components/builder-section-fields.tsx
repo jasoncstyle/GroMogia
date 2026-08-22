@@ -1,10 +1,13 @@
 import type { ChangeEvent } from "react";
 
 import { BuilderColorField } from "@/components/builder-color-field";
+import { MediaUploadControl } from "@/components/media-upload-control";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { BuilderSectionContent } from "@/lib/db/schema";
+import type { MediaLibraryItem } from "@/lib/media/blob";
+import { MAX_BUILDER_ITEMS } from "@/lib/website-builder/sections";
 import {
   BUILDER_BACKGROUND_SWATCHES,
   BUILDER_HEADING_LEVELS,
@@ -16,11 +19,15 @@ export function BuilderSectionFields({
   type,
   content,
   onChange,
+  uploadsEnabled = false,
+  recentMedia = [],
 }: {
   sectionId: string
   type: string
   content: BuilderSectionContent
   onChange?: (content: BuilderSectionContent) => void
+  uploadsEnabled?: boolean
+  recentMedia?: MediaLibraryItem[]
 }) {
   const usesHeading = type !== "button";
   const usesSubheading = type === "hero";
@@ -45,7 +52,7 @@ export function BuilderSectionFields({
     type === "social";
   const itemsHint =
     type === "gallery"
-      ? "One photo per line: https://image... | short description. Up to 8 lines."
+      ? "Upload a photo, or one photo per line: https://image... | short description. Up to 8 lines."
       : type === "social"
         ? "One profile per line: Name | https://... Up to 8 lines."
         : type === "pricing" || type === "hours"
@@ -167,12 +174,41 @@ export function BuilderSectionFields({
             {...textProps("items", content.items ?? "")}
           />
           <p className="text-xs text-muted-foreground">{itemsHint}</p>
+          {type === "gallery" ? (
+            <MediaUploadControl
+              enabled={uploadsEnabled}
+              recent={recentMedia}
+              label="Add a photo to this grid"
+              onPicked={(url, originalName) => {
+                const lines = (content.items ?? "")
+                  .split("\n")
+                  .map((line) => line.trim())
+                  .filter(Boolean);
+                if (lines.length >= MAX_BUILDER_ITEMS) return;
+                onChange?.({
+                  ...content,
+                  items: [...lines, `${url} | ${originalName || "Photo"}`].join("\n"),
+                });
+              }}
+            />
+          ) : null}
         </div>
       ) : null}
       {usesImage ? (
         <>
           <div className="space-y-2">
-            <Label htmlFor={`imageUrl-${sectionId}`}>Image link</Label>
+            <Label htmlFor={`imageUrl-${sectionId}`}>Photo</Label>
+            <MediaUploadControl
+              enabled={uploadsEnabled}
+              recent={recentMedia}
+              onPicked={(url, originalName) =>
+                onChange?.({
+                  ...content,
+                  imageUrl: url,
+                  imageAlt: content.imageAlt?.trim() || originalName,
+                })
+              }
+            />
             <Input
               id={`imageUrl-${sectionId}`}
               name="imageUrl"
@@ -180,8 +216,9 @@ export function BuilderSectionFields({
               {...textProps("imageUrl", content.imageUrl ?? "")}
             />
             <p className="text-xs text-muted-foreground">
-              Paste a public https:// photo link. GroovGro will show it even if
-              the other website tries to block it. File upload comes later.
+              Upload a photo from your computer, pick one already in GroovGro,
+              or paste a public https:// link. Pasted links are fetched by
+              GroovGro so other sites cannot block them.
               {type === "hero"
                 ? " To make this photo go all the way across the screen, close this window, click Row width on this row, and choose Edge to edge."
                 : ""}

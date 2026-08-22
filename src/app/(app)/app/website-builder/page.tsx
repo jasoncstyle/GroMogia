@@ -1,6 +1,8 @@
 import { createBuilderSite } from "@/lib/actions/website-builder";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
+import { isBlobConfigured } from "@/lib/media/blob";
+import { listMediaLibrary } from "@/lib/media/queries";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { getBuilderEditorData } from "@/lib/website-builder/queries";
 import { builderPublicUrl } from "@/lib/website-builder/apply-seo";
@@ -35,6 +37,9 @@ export default async function WebsiteBuilderPage({
       : slug
         ? builderPublicUrl(appUrl(), slug)
         : "";
+  const recentMedia = session.organizationId
+    ? await listMediaLibrary(session.organizationId, 12)
+    : [];
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
@@ -102,6 +107,8 @@ export default async function WebsiteBuilderPage({
           brandName={data.brand?.businessName ?? null}
           orgSlug={slug ?? ""}
           publicUrl={publicUrl}
+          uploadsEnabled={isBlobConfigured()}
+          recentMedia={recentMedia}
         />
       )}
     </div>

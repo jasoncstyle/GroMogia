@@ -77,7 +77,7 @@ export const MODULE_CATALOG: ModuleDefinition[] = [
     name: "Media library",
     description: "Tenant-isolated files and brand assets.",
     phase: 1,
-    href: "/app/settings/brand",
+    href: "/app/media",
     navGroup: "settings",
   },
   {

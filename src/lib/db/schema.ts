@@ -270,6 +270,8 @@ export const mediaAssets = pgTable(
       .notNull()
       .references(() => organizations.id, { onDelete: "cascade" }),
     blobPathname: text("blob_pathname").notNull(),
+    publicUrl: text("public_url").notNull().default(""),
+    originalName: text("original_name").notNull().default(""),
     contentType: text("content_type").notNull(),
     byteSize: integer("byte_size").notNull().default(0),
     kind: text("kind").notNull().default("image"),

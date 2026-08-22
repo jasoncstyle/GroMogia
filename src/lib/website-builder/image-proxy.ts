@@ -1,3 +1,4 @@
+import { isVercelBlobImageUrl } from "@/lib/media/blob";
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
 
 const ALLOWED_TYPES = new Set([
@@ -24,6 +25,7 @@ export function canProxyBuilderImageUrl(value: string): boolean {
 
 export function builderDisplayImageSrc(url: string): string {
   const trimmed = url.trim();
+  if (isVercelBlobImageUrl(trimmed)) return trimmed;
   if (!canProxyBuilderImageUrl(trimmed)) return "";
   return `/api/builder-image?url=${encodeURIComponent(trimmed)}`;
 }

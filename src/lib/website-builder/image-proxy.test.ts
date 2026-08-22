@@ -24,6 +24,12 @@ describe("builder image proxy", () => {
       ),
       true,
     );
+    assert.equal(
+      builderDisplayImageSrc(
+        "https://abc.public.blob.vercel-storage.com/org/one/builder/two.jpg",
+      ),
+      "https://abc.public.blob.vercel-storage.com/org/one/builder/two.jpg",
+    );
   });
 
   it("only serves common photo types", () => {
