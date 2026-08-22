@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { BuilderColorField } from "@/components/builder-color-field";
 import { BuilderRemoteImage } from "@/components/builder-remote-image";
 import { MediaUploadControl } from "@/components/media-upload-control";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -17,6 +18,7 @@ import {
   type BuilderChrome,
 } from "@/lib/website-builder/chrome";
 import { isSafeBuilderImageUrl } from "@/lib/website-builder/sections";
+import { BUILDER_BACKGROUND_SWATCHES } from "@/lib/website-builder/style";
 
 export function BuilderChromeFields({
   chrome,
@@ -34,6 +36,12 @@ export function BuilderChromeFields({
   onSaved?: () => void
 }) {
   const [logoUrl, setLogoUrl] = useState(chrome.logoUrl);
+  const [headerBackgroundColor, setHeaderBackgroundColor] = useState(
+    chrome.headerBackgroundColor,
+  );
+  const [footerBackgroundColor, setFooterBackgroundColor] = useState(
+    chrome.footerBackgroundColor,
+  );
   const showLogo =
     Boolean(logoUrl) && isSafeBuilderImageUrl(logoUrl) && logoUrl.startsWith("https://");
 
@@ -110,9 +118,21 @@ export function BuilderChromeFields({
         ) : null}
         <p className="text-xs text-muted-foreground">
           Upload a photo, pick one already in GroovGro, or paste a public
-          https:// link. Leave this blank to show only the name.
+          https:// link.             Leave this blank to show only the name.
         </p>
       </div>
+      <BuilderColorField
+        id={`${idPrefix}-headerBackgroundColor`}
+        name="headerBackgroundColor"
+        label="Header background"
+        value={headerBackgroundColor}
+        swatches={BUILDER_BACKGROUND_SWATCHES}
+        onChange={setHeaderBackgroundColor}
+      />
+      <p className="-mt-2 text-xs text-muted-foreground">
+        Default (the slashed swatch) means no extra color — the page background
+        shows through.
+      </p>
       <div className="space-y-2">
         <Label htmlFor={`${idPrefix}-footerText`}>Footer line</Label>
         <Textarea
@@ -128,6 +148,18 @@ export function BuilderChromeFields({
           footer if you do not want a line at the bottom.
         </p>
       </div>
+      <BuilderColorField
+        id={`${idPrefix}-footerBackgroundColor`}
+        name="footerBackgroundColor"
+        label="Footer background"
+        value={footerBackgroundColor}
+        swatches={BUILDER_BACKGROUND_SWATCHES}
+        onChange={setFooterBackgroundColor}
+      />
+      <p className="-mt-2 text-xs text-muted-foreground">
+        Default (the slashed swatch) means no extra color — the page background
+        shows through.
+      </p>
       <SaveButton>Save header and footer</SaveButton>
     </SaveForm>
   );

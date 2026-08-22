@@ -106,6 +106,8 @@ export function BuilderPageView({
             title: title,
             logoUrl: "",
             footerText: "",
+            headerBackgroundColor: "",
+            footerBackgroundColor: "",
           }}
           pages={navPages}
           homeHref={navPages[0]?.href || `/w/${orgSlug}`}

@@ -194,4 +194,16 @@ export async function ensureSchema(): Promise<void> {
   if (!builderChrome[0]?.name) {
     await applyMigration(sql, "0016_phase7_builder_chrome.sql");
   }
+
+  const builderChromeColors = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'builder_chrome'
+       and column_name = 'header_background_color'`,
+  )) as RegistryRow[];
+
+  if (!builderChromeColors[0]?.name) {
+    await applyMigration(sql, "0017_phase7_builder_chrome_colors.sql");
+  }
 }

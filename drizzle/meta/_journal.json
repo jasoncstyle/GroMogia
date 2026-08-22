@@ -120,6 +120,13 @@
       "when": 1787328000000,
       "tag": "0016_phase7_builder_chrome",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1787336000000,
+      "tag": "0017_phase7_builder_chrome_colors",
+      "breakpoints": true
     }
   ]
 }

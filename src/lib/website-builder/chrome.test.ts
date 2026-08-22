@@ -34,12 +34,16 @@ describe("builder header and footer", () => {
         headerName: "Harbor",
         logoUrl: "",
         footerText: "Workshops on the waterfront",
+        headerBackgroundColor: "#0f2744",
+        footerBackgroundColor: "navy",
       },
       "Harbor Workshops",
     );
     assert.equal(resolved.title, "Harbor");
     assert.equal(resolved.footerText, "Workshops on the waterfront");
     assert.equal(resolved.showPageLinks, false);
+    assert.equal(resolved.headerBackgroundColor, "#0f2744");
+    assert.equal(resolved.footerBackgroundColor, "");
   });
 
   it("accepts a public https logo and rejects a private address", () => {

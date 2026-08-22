@@ -1,4 +1,5 @@
 import { isSafeBuilderImageUrl } from "@/lib/website-builder/sections";
+import { parseBuilderColor } from "@/lib/website-builder/style";
 
 export const MAX_HEADER_NAME = 80;
 export const MAX_FOOTER_TEXT = 200;
@@ -10,6 +11,8 @@ export type BuilderChrome = {
   headerName: string
   logoUrl: string
   footerText: string
+  headerBackgroundColor: string
+  footerBackgroundColor: string
 };
 
 export type ResolvedBuilderChrome = {
@@ -19,6 +22,8 @@ export type ResolvedBuilderChrome = {
   title: string
   logoUrl: string
   footerText: string
+  headerBackgroundColor: string
+  footerBackgroundColor: string
 };
 
 export const DEFAULT_BUILDER_CHROME: BuilderChrome = {
@@ -28,6 +33,8 @@ export const DEFAULT_BUILDER_CHROME: BuilderChrome = {
   headerName: "",
   logoUrl: "",
   footerText: "",
+  headerBackgroundColor: "",
+  footerBackgroundColor: "",
 };
 
 function clip(value: string, max: number) {
@@ -60,6 +67,8 @@ export function parseBuilderChrome(input: Partial<BuilderChrome> | null | undefi
       }
     })(),
     footerText: clip(typeof input?.footerText === "string" ? input.footerText : "", MAX_FOOTER_TEXT),
+    headerBackgroundColor: parseBuilderColor(input?.headerBackgroundColor ?? ""),
+    footerBackgroundColor: parseBuilderColor(input?.footerBackgroundColor ?? ""),
   };
 }
 
@@ -76,5 +85,7 @@ export function resolveBuilderChrome(
     title,
     logoUrl: parsed.logoUrl,
     footerText: parsed.footerText || title,
+    headerBackgroundColor: parsed.headerBackgroundColor,
+    footerBackgroundColor: parsed.footerBackgroundColor,
   };
 }

@@ -579,7 +579,7 @@ export function BuilderStudio({
           </DialogHeader>
           {chromeSettings ? (
             <BuilderChromeFields
-              key={`${chromeSettings.headerName}-${chromeSettings.logoUrl}-${chromeSettings.footerText}-${chromeSettings.showHeader}-${chromeSettings.showFooter}-${chromeSettings.showPageLinks}`}
+              key={`${chromeSettings.headerName}-${chromeSettings.logoUrl}-${chromeSettings.footerText}-${chromeSettings.showHeader}-${chromeSettings.showFooter}-${chromeSettings.showPageLinks}-${chromeSettings.headerBackgroundColor}-${chromeSettings.footerBackgroundColor}`}
               chrome={chromeSettings}
               fallbackName={brandName || site.title}
               uploadsEnabled={uploadsEnabled}
