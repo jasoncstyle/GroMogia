@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 
 import { createBuilderSite } from "@/lib/actions/website-builder";
+import { WebsiteBuilderCreateSite } from "@/components/website-builder-create-site";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { businessBrains } from "@/lib/db/schema";
@@ -29,10 +30,10 @@ export const maxDuration = 60;
 export default async function WebsiteBuilderPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; restarted?: string }>
+  searchParams: Promise<{ page?: string; restarted?: string; created?: string }>
 }) {
   const session = await getAppSession();
-  const { page: pageId, restarted } = await searchParams;
+  const { page: pageId, restarted, created } = await searchParams;
   const data = session.organizationId
     ? await getBuilderEditorData(session.organizationId, pageId)
     : { pages: [], site: null, rows: [], brand: null };
@@ -68,20 +69,21 @@ export default async function WebsiteBuilderPage({
         <h1 className="text-2xl font-semibold tracking-tight">Website builder</h1>
         <p className="text-muted-foreground">
           Optional GroovGro-hosted pages built from rows and columns. Home is
-          always there. Click Add a page for About or a service page. This
-          does not replace the connected existing website, and it does not
-          change Stripe checkout.
+          always there. GroovGro can draft Home, About, and Work from your
+          business facts. This does not replace the connected existing
+          website, and it does not change Stripe checkout.
         </p>
       </div>
 
-      {restarted ? (
+      {created || restarted ? (
         <p
           role="status"
           className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-950"
         >
-          Home was started over. Open Pages to find Previous Home. This Home
-          is a new unpublished draft. Edit every line before you publish.
-          Your connected live site was not changed.
+          GroovGro drafted an unpublished website. Open Pages for Home, About,
+          and Work. If you started over, the last Home is Previous Home. Edit
+          every line before you publish. Your connected live site was not
+          changed.
         </p>
       ) : null}
 
@@ -89,12 +91,10 @@ export default async function WebsiteBuilderPage({
         <CardHeader>
           <CardTitle>How this works</CardTitle>
           <CardDescription>
-            Pick a starting layout, or let GroovGro draft Home from websites
-            you like. GroovGro writes first-draft sentences from your Brand,
-            Business Brain, and confirmed offers. Pasted sites are for layout
-            and topic labels only, and GroovGro keeps the addresses you paste.
-            If Home already exists, Start Home over is under a toggle near the
-            bottom. Your connected public site stays as it is.
+            Click Create my GroovGro website and GroovGro drafts Home, About,
+            and Work from Brand, Business Brain, and confirmed offers. Pages
+            stay unpublished. Pasted inspiration sites are optional and sit
+            under a toggle. Your connected public site stays as it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -107,45 +107,58 @@ export default async function WebsiteBuilderPage({
         <>
           <Card>
             <CardHeader>
-              <CardTitle>Help me build one</CardTitle>
+              <CardTitle>Create my GroovGro website</CardTitle>
               <CardDescription>
-                Paste public websites you like. GroovGro drafts an unpublished
-                GroovGro Home you could publish after a quick read-through. It
-                uses your Brand and Business Brain for the words. It does not
-                clone other sites or change your connected site.
+                GroovGro writes the first draft from your own business facts.
+                You can edit and publish when you are ready.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <WebsiteBuilderInspiration
-                businessType={brain?.industry ?? ""}
-                disabled={!session.organizationId}
-                savedFields={savedInspiration}
-              />
+              <WebsiteBuilderCreateSite disabled={!session.organizationId} />
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Or choose a starting layout</CardTitle>
-              <CardDescription>
-                GroovGro fills the boxes from your brand name and description.
-                After you create the draft, click Open page editor when you want
-                to change the layout. Nothing is public until you click Publish.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <SaveForm
-                action={createBuilderSite}
-                successMessage="Draft website created."
-                className="space-y-4"
-              >
-                <BuilderTemplatePicker />
-                <SaveButton>Create draft website</SaveButton>
-              </SaveForm>
-            </CardContent>
-          </Card>
+          <FoldableSample
+            title="Or start from websites you like"
+            subtitle="Optional. Paste public pages for layout and topic labels."
+          >
+            <WebsiteBuilderInspiration
+              businessType={brain?.industry ?? ""}
+              disabled={!session.organizationId}
+              savedFields={savedInspiration}
+            />
+          </FoldableSample>
+          <FoldableSample
+            title="Or choose a starting layout"
+            subtitle="Optional numbered templates if you want to build from scratch."
+          >
+            <SaveForm
+              action={createBuilderSite}
+              successMessage="Draft website created."
+              className="space-y-4"
+            >
+              <BuilderTemplatePicker />
+              <SaveButton>Create draft website</SaveButton>
+            </SaveForm>
+          </FoldableSample>
         </>
       ) : (
         <>
+          <Card>
+            <CardHeader>
+              <CardTitle>Create a new GroovGro draft</CardTitle>
+              <CardDescription>
+                Replace Home with a new unpublished draft from your Brand,
+                Business Brain, and confirmed offers. About and Work are added
+                if they are not there yet.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <WebsiteBuilderCreateSite
+                disabled={!session.organizationId}
+                hasExistingHome
+              />
+            </CardContent>
+          </Card>
           <WebsiteBuilderEditor
             key={`${data.site.id}-${String(data.site.updatedAt)}-${data.site.templateId}-${data.rows.length}`}
             site={{
