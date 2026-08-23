@@ -16,6 +16,7 @@ import {
   type InspiredCopyFacts,
   type InspiredOfferInput,
 } from "@/lib/website-builder/inspired-copy";
+import { completeOwnedCopyFacts } from "@/lib/website-builder/owned-site";
 
 export const INSPIRED_TEMPLATE_ID = "inspired";
 
@@ -227,7 +228,7 @@ export function inspirationQuestions(pages: WebsitePageExtract[], limit = 4): st
 
 export function inspiredCopyFacts(input: InspiredDraftInput): InspiredCopyFacts {
   const researchPages = [...input.copyPages, ...input.layoutPages];
-  return {
+  return completeOwnedCopyFacts({
     businessName: input.businessName,
     description: input.description,
     targetCustomers: input.targetCustomers,
@@ -239,7 +240,7 @@ export function inspiredCopyFacts(input: InspiredDraftInput): InspiredCopyFacts 
     offers: input.offers ?? [],
     topics: inspirationTopics(researchPages),
     questions: inspirationQuestions(researchPages),
-  };
+  });
 }
 
 export function draftInspiredRows(input: InspiredDraftInput): BuilderRowDraft[] {
