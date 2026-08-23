@@ -24,6 +24,15 @@ import {
 } from "@/lib/db/schema";
 import { assertSameOrganization } from "@/lib/db/tenant";
 import { discoverFromConnectedData, normalizeOfferKey } from "@/lib/growth/discover";
+import {
+  extractWebsitePage,
+  isGenericWebsiteLabel,
+  sameOriginPageUrls,
+  type WebsitePageExtract,
+} from "@/lib/growth/website-discover";
+import { isSafePublicHttpUrl } from "@/lib/seo/audit";
+import { fetchPublicText } from "@/lib/seo/fetch";
+import { listBuilderPages } from "@/lib/website-builder/queries";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { REVIEW_KINDS } from "@/lib/growth/review";
 import {
@@ -662,6 +671,56 @@ export async function proposeGrowthAction(formData: FormData): Promise<ActionRes
   });
 }
 
+async function loadWebsiteDiscoveryPages(
+  organizationId: string,
+  publicUrl: string,
+): Promise<WebsitePageExtract[]> {
+  const pages: WebsitePageExtract[] = [];
+  const home = isSafePublicHttpUrl(publicUrl);
+  if (home) {
+    const fetched = await fetchPublicText(home.toString());
+    if (fetched.ok && fetched.body) {
+      pages.push({
+        ...extractWebsitePage(home.toString(), fetched.body, "connected_website"),
+        isHome: true,
+      });
+      const extras = sameOriginPageUrls(fetched.body, home.toString(), 4);
+      const extraPages = await Promise.all(
+        extras.map(async (url) => {
+          const page = await fetchPublicText(url);
+          if (!page.ok || !page.body) return null;
+          return {
+            ...extractWebsitePage(url, page.body, "connected_website"),
+            isHome: false,
+          };
+        }),
+      );
+      for (const extra of extraPages) {
+        if (extra) pages.push(extra);
+      }
+    }
+  }
+
+  const builderPages = await listBuilderPages(organizationId);
+  for (const page of builderPages) {
+    if (page.isHome) continue;
+    const name = page.title || page.label;
+    if (!name || isGenericWebsiteLabel(name)) continue;
+    pages.push({
+      url: publicUrl || page.slug,
+      title: name,
+      description:
+        "Named on a GroovGro-hosted page. The connected website was not overwritten.",
+      headings: [name],
+      navLabels: [],
+      source: "groovgro_builder",
+      isHome: false,
+    });
+  }
+
+  return pages;
+}
+
 export async function reviewConnectedBusiness(
   _formData?: FormData,
 ): Promise<ActionResult> {
@@ -694,6 +753,11 @@ export async function reviewConnectedBusiness(
       db.select().from(businessBrains).where(eq(businessBrains.organizationId, organizationId)).limit(1),
     ]);
 
+    const websitePages = await loadWebsiteDiscoveryPages(
+      organizationId,
+      websiteRows[0]?.publicUrl ?? "",
+    );
+
     const discovery = discoverFromConnectedData({
       events: eventRows,
       bookings: bookingRows,
@@ -703,6 +767,7 @@ export async function reviewConnectedBusiness(
       existingConstraints: constraintRows,
       websiteUrl: websiteRows[0]?.publicUrl ?? "",
       brandDescription: brandRows[0]?.description ?? "",
+      websitePages,
     });
 
     const createdOfferIds = new Map<string, string>();

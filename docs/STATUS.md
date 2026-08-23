@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-discovery-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-website-discovery-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation + discovery + reviews + specialists.** Business Brain, Offers, constraints, Goals, Decision History, review-from-connected-data, weekly/monthly Growth Reviews, and specialist READ / ANALYZE / RECOMMEND on Intelligence. GroovGro can draft Offers and suggested Goals from events, bookings, and payments. Drafts stay inactive until you confirm. Reviews and specialists can recommend leaving a channel alone. Website builder and all earlier V1 modules stay as they were.
+**V2 growth foundation through website-page discovery.** Business Brain, Offers, constraints, Goals, Decision History, reviews, specialists, and review-from-connected-data including pages on the connected website. Drafts stay inactive until you confirm. GroovGro does not change the connected website. Website builder and all earlier V1 modules stay as they were.
 
 V1 on `main` remains Phase 7 website builder until this branch is merged. Public groovgro.com homepage stays Coming soon.
 
@@ -36,11 +36,11 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Website builder: visual GroovGro-hosted pages at `/w/[org]` (Home) and `/w/[org]/[slug]` (extra pages)
 - Approved SEO title, description, and heading drafts can be applied to the matching GroovGro page
 - V2 foundation screens: Business, Offers, Goals, Decisions (Preview of this branch; production after merge)
-- Review connected data: draft Offers and suggested Goals from events, bookings, and payments; confirm or reject before anything becomes active
+- Review connected data: draft Offers and suggested Goals from events, bookings, payments, and connected website pages; confirm or reject before anything becomes active
 - Goal progress from connected leads, bookings, and payments; optional Offer/Goal links on events and leads
 - Weekly Growth Review and monthly strategy review from connected evidence, including “no change yet”
 - Specialists on Intelligence: SEO, website, leads, schedule, advertising, email, and social. Each reads, analyzes against a Goal, and recommends — including no change. None execute.
 
 ## Still later
 
-Richer website-page discovery, persisted goal progress writes, Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.
+Persisted goal progress writes, Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.

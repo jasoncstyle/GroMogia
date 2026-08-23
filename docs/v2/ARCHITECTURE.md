@@ -66,7 +66,6 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 ## BUILD NEXT (after this slice is tested)
 
-- Richer website-page discovery (this slice uses events, bookings, payments, brand, and the connected URL — not a full site scrape)
 - Persist computed Goal progress onto stored `currentValue` when you want a historical series
 
 ## DESIGN FOR LATER
@@ -112,7 +111,6 @@ A policy is: minimum elapsed days, observations, and conversions. Helper `eviden
 
 ## What V2 still lacks (important, not in this slice)
 
-- Automatic discovery from the connected website
 - Attribution from campaign all the way to a Goal
 - Specialist execute path
 - Risk guardrail engine beyond stored fields and permissions

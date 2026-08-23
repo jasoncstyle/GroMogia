@@ -1,4 +1,9 @@
 import { OFFER_TYPES } from "@/lib/growth/types";
+import {
+  websiteBrainNotes,
+  websiteOfferCandidates,
+  type WebsitePageExtract,
+} from "@/lib/growth/website-discover";
 
 type OfferType = (typeof OFFER_TYPES)[number];
 
@@ -55,11 +60,11 @@ export type ProposedOffer = {
   priceCents: number | null
   location: string
   conversionUrl: string
-  externalProvider: "groovgro_events"
+  externalProvider: "groovgro_events" | "connected_website" | "groovgro_builder"
   externalId: string
   eventIds: string[]
   confidence: number
-  inferredFrom: "events"
+  inferredFrom: "events" | "website" | "builder"
 };
 
 export type ProposedConstraint = {
@@ -77,13 +82,13 @@ export type ProposedConstraint = {
 export type ProposedGoal = {
   title: string
   description: string
-  goalType: "utilization" | "revenue" | "conversions"
+  goalType: "utilization" | "revenue" | "conversions" | "visibility" | "lead_generation"
   targetValue: number | null
   baselineValue: number | null
   currentValue: number
   unit: string
   successDefinition: string
-  inferredFrom: "events" | "payments" | "bookings"
+  inferredFrom: "events" | "payments" | "bookings" | "website"
   confidence: number
 };
 
@@ -148,7 +153,12 @@ function alreadyHasOffer(
   const key = normalizeOfferKey(name);
   return existing.some((offer) => {
     if (offer.discoveryStatus === "rejected") return false;
-    if (offer.externalProvider === "groovgro_events" && offer.externalId === externalId) {
+    if (
+      (offer.externalProvider === "groovgro_events" ||
+        offer.externalProvider === "connected_website" ||
+        offer.externalProvider === "groovgro_builder") &&
+      offer.externalId === externalId
+    ) {
       return true;
     }
     return normalizeOfferKey(offer.name) === key;
@@ -157,7 +167,7 @@ function alreadyHasOffer(
 
 function alreadyHasGoal(
   existing: DiscoverExistingGoal[],
-  goalType: ProposedGoal["goalType"],
+  goalType: string,
 ): boolean {
   return existing.some(
     (goal) =>
@@ -176,6 +186,7 @@ export function discoverFromConnectedData(input: {
   existingConstraints: DiscoverExistingConstraint[]
   websiteUrl?: string | null
   brandDescription?: string | null
+  websitePages?: WebsitePageExtract[]
   now?: Date
 }): DiscoveryResult {
   const now = input.now ?? new Date();
@@ -229,6 +240,28 @@ export function discoverFromConnectedData(input: {
       eventIds: group.map((event) => event.id),
       confidence,
       inferredFrom: "events",
+    });
+  }
+
+  const websitePages = input.websitePages ?? [];
+  for (const candidate of websiteOfferCandidates(websitePages)) {
+    if (alreadyHasOffer(input.existingOffers, candidate.name, candidate.externalId)) {
+      continue;
+    }
+    offers.push({
+      name: candidate.name,
+      description: candidate.description,
+      offerType: "other",
+      availabilityModel: "unconstrained",
+      priceCents: null,
+      location: "",
+      conversionUrl: candidate.conversionUrl,
+      externalProvider:
+        candidate.source === "groovgro_builder" ? "groovgro_builder" : "connected_website",
+      externalId: candidate.externalId,
+      eventIds: [],
+      confidence: candidate.confidence,
+      inferredFrom: candidate.source === "groovgro_builder" ? "builder" : "website",
     });
   }
 
@@ -328,11 +361,32 @@ export function discoverFromConnectedData(input: {
     });
   }
 
+  if (
+    websitePages.length > 0 &&
+    !alreadyHasGoal(input.existingGoals, "visibility") &&
+    !alreadyHasGoal(input.existingGoals, "traffic")
+  ) {
+    goals.push({
+      title: "Get found from the connected website",
+      description:
+        "Suggested because GroovGro can see a connected website. Confirm only if being found is the outcome you want. GroovGro will not change the site.",
+      goalType: "visibility",
+      targetValue: null,
+      baselineValue: null,
+      currentValue: 0,
+      unit: "",
+      successDefinition:
+        "People can find the connected website and understand what to do next. Edit or reject if this is not the Goal.",
+      inferredFrom: "website",
+      confidence: 50,
+    });
+  }
+
   const sources = [
     usableEvents.length ? "events" : null,
     input.bookings.length ? "bookings" : null,
     input.payments.length ? "payments" : null,
-    input.websiteUrl ? "website" : null,
+    input.websiteUrl || websitePages.length ? "website" : null,
   ].filter(Boolean);
 
   const parts = [
@@ -347,6 +401,7 @@ export function discoverFromConnectedData(input: {
       ? `About ${recentRevenueDollars} dollars in recorded payments in the last 30 days.`
       : null,
     input.websiteUrl ? `A website is connected at ${input.websiteUrl}.` : null,
+    ...websiteBrainNotes(websitePages),
     input.brandDescription
       ? "Brand already describes what the business does."
       : null,

@@ -49,8 +49,9 @@ export default async function BusinessBrainPage() {
           <CardTitle>Review connected data</CardTitle>
           <CardDescription>
             GroovGro can draft Offers and suggested Goals from events, bookings,
-            and payments. Drafts stay inactive until you confirm. It will not
-            guess an industry or start marketing.
+            payments, and pages on the connected website. Drafts stay inactive
+            until you confirm. It will not guess an industry, change the
+            website, or start marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
