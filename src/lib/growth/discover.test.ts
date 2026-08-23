@@ -143,6 +143,38 @@ describe("growth discovery", () => {
     assert.doesNotMatch(result.brainSummary.toLowerCase(), /sailing|boat|seat/);
   });
 
+  it("drafts website offers and a visibility Goal without changing the site", () => {
+    const result = discoverFromConnectedData({
+      now,
+      events: [],
+      bookings: [],
+      payments: [],
+      existingOffers: [],
+      existingGoals: [],
+      existingConstraints: [],
+      websiteUrl: "https://www.example.com",
+      websitePages: [
+        {
+          url: "https://www.example.com/workshops",
+          title: "Weekend Workshop",
+          description: "A half-day session.",
+          headings: ["Weekend Workshop"],
+          navLabels: [],
+          source: "connected_website",
+          isHome: false,
+        },
+      ],
+    });
+
+    assert.equal(result.offers.length, 1);
+    assert.equal(result.offers[0]?.name, "Weekend Workshop");
+    assert.equal(result.offers[0]?.inferredFrom, "website");
+    assert.equal(result.offers[0]?.eventIds.length, 0);
+    assert.equal(result.goals.some((goal) => goal.goalType === "visibility"), true);
+    assert.match(result.brainSummary, /did not change/);
+    assert.doesNotMatch(result.brainSummary.toLowerCase(), /sailing|boat|seat/);
+  });
+
   it("maps generic event types without industry words", () => {
     assert.equal(inferOfferType("workshop"), "registration");
     assert.equal(inferOfferType("appointment"), "appointment");
