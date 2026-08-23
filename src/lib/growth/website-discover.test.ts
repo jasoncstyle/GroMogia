@@ -4,8 +4,10 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
+  crawlConnectedWebsite,
   extractWebsitePage,
   isGenericWebsiteLabel,
+  linkedDiscoveryUrls,
   sameOriginPageUrls,
   websiteBrainNotes,
   websiteOfferCandidates,
@@ -53,6 +55,46 @@ describe("website page discovery", () => {
     assert.deepEqual(urls, ["https://www.example.com/workshops"]);
   });
 
+  it("follows calendar and event detail pages, and tries a public booking embed", () => {
+    const calendarHtml = `
+      <a href="/about">About</a>
+      <a href="/calendar-book-now">Calendar</a>
+      <a href="/events/abc123xyz">Saturday Session</a>
+      <iframe src="https://books.example.com/widget"></iframe>
+      <a href="https://facebook.com/example">Social</a>
+    `;
+    const urls = linkedDiscoveryUrls(calendarHtml, "https://www.example.com/");
+    const hrefs = urls.map((row) => row.url);
+    assert.equal(hrefs.includes("https://www.example.com/calendar-book-now"), true);
+    assert.equal(hrefs.includes("https://www.example.com/events/abc123xyz"), true);
+    assert.equal(hrefs.includes("https://books.example.com/widget"), true);
+    assert.equal(hrefs.includes("https://www.example.com/about"), false);
+    assert.equal(hrefs.some((url) => url.includes("facebook.com")), false);
+  });
+
+  it("crawls from the homepage to calendar and event pages", async () => {
+    const pages: Record<string, string> = {
+      "https://www.example.com/": `<a href="/workshops">Workshops</a><a href="/calendar-book-now">Calendar</a>`,
+      "https://www.example.com/workshops": `<h1>Weekend Workshop</h1>`,
+      "https://www.example.com/calendar-book-now": `<h1>Upcoming dates</h1><a href="/events/abc123xyz">Open</a>`,
+      "https://www.example.com/events/abc123xyz": `<h1>Saturday Session</h1><p>A half-day session.</p>`,
+    };
+    const crawled = await crawlConnectedWebsite(
+      "https://www.example.com/",
+      async (url) => {
+        const body = pages[url] ?? "";
+        return { ok: Boolean(body), body };
+      },
+    );
+    const hrefs = crawled.pages.map((page) => page.url);
+    assert.equal(hrefs.includes("https://www.example.com/calendar-book-now"), true);
+    assert.equal(hrefs.includes("https://www.example.com/events/abc123xyz"), true);
+    const names = websiteOfferCandidates(crawled.pages).map((row) => row.name);
+    assert.equal(names.includes("Saturday Session"), true);
+    assert.equal(names.includes("Weekend Workshop"), true);
+    assert.match(crawled.note, /calendar or event/);
+  });
+
   it("drafts offers from headings and extra pages, not chrome or slogans", () => {
     const home = extractWebsitePage("https://www.example.com/", html);
     const extra = extractWebsitePage(
@@ -76,6 +118,8 @@ describe("website page discovery", () => {
       <body>
         <nav><a href="/training-programs">Training</a><a href="/about">About</a><a href="/customer">Customer Portal</a></nav>
         <h1>Where training becomes real practice.</h1>
+        <h2>Choose Your Next Step in Sailing</h2>
+        <h2>Training Designed for Real Sailing</h2>
         <h3>Coastal Training</h3>
         <p><a href="/training-programs/coastal-training">Explore Coastal Training</a></p>
         <h3>Certification Pathways</h3>
@@ -90,6 +134,8 @@ describe("website page discovery", () => {
     assert.equal(names.includes("Coastal Training"), true);
     assert.equal(names.includes("Certification Pathways"), true);
     assert.equal(names.includes("Offshore Passage Training"), true);
+    assert.equal(names.includes("Choose Your Next Step in Sailing"), false);
+    assert.equal(names.includes("Training Designed for Real Sailing"), false);
     assert.equal(names.includes("Where training becomes real practice."), false);
     assert.equal(names.includes("Training"), false);
     assert.equal(names.includes("Customer Portal"), false);
