@@ -4,6 +4,11 @@ import { updateBusinessBrain } from "@/lib/actions/growth";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { commaTextFromList } from "@/lib/growth/types";
+import {
+  ConfirmRejectButtons,
+  InferredBadge,
+  ReviewConnectedDataButton,
+} from "@/components/growth-review";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +43,55 @@ export default async function BusinessBrainPage() {
           tied to one industry.
         </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Review connected data</CardTitle>
+          <CardDescription>
+            GroovGro can draft Offers and suggested Goals from events, bookings,
+            and payments. Drafts stay inactive until you confirm. It will not
+            guess an industry or start marketing.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {brain?.inferredSummary ? (
+            <p className="text-sm text-muted-foreground">{brain.inferredSummary}</p>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No review yet. Use this after events or payments are connected.
+            </p>
+          )}
+          <ReviewConnectedDataButton disabled={!session.organizationId} />
+          {(snapshot?.inferredOffers.length ?? 0) > 0 ? (
+            <div className="space-y-3">
+              <p className="text-sm font-medium">Possible offers</p>
+              {snapshot?.inferredOffers.map((offer) => (
+                <div key={offer.id} className="rounded-lg border p-3">
+                  <p className="font-medium">{offer.name}</p>
+                  <InferredBadge source={offer.inferredFrom} confidence={offer.confidence} />
+                  <div className="mt-2">
+                    <ConfirmRejectButtons id={offer.id} kind="offer" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+          {(snapshot?.inferredGoals.length ?? 0) > 0 ? (
+            <div className="space-y-3">
+              <p className="text-sm font-medium">Suggested goals</p>
+              {snapshot?.inferredGoals.map((goal) => (
+                <div key={goal.id} className="rounded-lg border p-3">
+                  <p className="font-medium">{goal.title}</p>
+                  <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
+                  <div className="mt-2">
+                    <ConfirmRejectButtons id={goal.id} kind="goal" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

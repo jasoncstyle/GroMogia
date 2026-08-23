@@ -2,6 +2,11 @@ import {
   createConstraint,
   createOffer,
 } from "@/lib/actions/growth";
+import {
+  ConfirmRejectButtons,
+  InferredBadge,
+  ReviewConnectedDataButton,
+} from "@/components/growth-review";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import {
@@ -50,6 +55,9 @@ export default async function OffersPage() {
           An Offer is anything this business promotes, sells, or wants a
           customer to do. It is not assumed to be a physical product.
         </p>
+        <div className="mt-3">
+          <ReviewConnectedDataButton disabled={!session.organizationId} />
+        </div>
       </div>
 
       <Card>
@@ -179,6 +187,17 @@ export default async function OffersPage() {
                         {labelFor(offer.offerType)}
                         {offer.category ? ` · ${offer.category}` : ""}
                       </div>
+                      {offer.discoveryStatus === "inferred" ? (
+                        <InferredBadge
+                          source={offer.inferredFrom}
+                          confidence={offer.confidence}
+                        />
+                      ) : null}
+                      {offer.discoveryStatus === "inferred" ? (
+                        <div className="mt-2">
+                          <ConfirmRejectButtons id={offer.id} kind="offer" />
+                        </div>
+                      ) : null}
                     </TableCell>
                     <TableCell>{labelFor(offer.availabilityModel)}</TableCell>
                     <TableCell>

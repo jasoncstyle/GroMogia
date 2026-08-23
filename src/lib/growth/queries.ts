@@ -99,6 +99,8 @@ export async function getGrowthSnapshot(organizationId: string) {
     settings: settingRows[0] ?? null,
     policies: policyRows,
     activeGoals: goals.filter((goal) => goal.status === "active"),
+    inferredOffers: offerRows.filter((offer) => offer.discoveryStatus === "inferred"),
+    inferredGoals: goals.filter((goal) => goal.discoveryStatus === "inferred"),
     latestNoChange: decisionRows.find((row) => row.decisionType === "no_change") ?? null,
     awaitingApproval: actionRows.filter((row) => row.status === "awaiting_approval"),
   };
