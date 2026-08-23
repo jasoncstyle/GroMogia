@@ -12,8 +12,10 @@ import { getBuilderEditorData } from "@/lib/website-builder/queries";
 import { builderPublicUrl } from "@/lib/website-builder/apply-seo";
 import { BuilderTemplatePicker } from "@/components/builder-template-picker";
 import { SaveButton, SaveForm } from "@/components/save-form";
+import { FoldableSample } from "@/components/foldable-sample";
 import { WebsiteBuilderEditor } from "@/components/website-builder-editor";
 import { WebsiteBuilderInspiration } from "@/components/website-builder-inspiration";
+import { loadBuilderInspiration } from "@/lib/website-builder/persist-inspiration";
 import {
   Card,
   CardContent,
@@ -56,6 +58,9 @@ export default async function WebsiteBuilderPage({
           .where(eq(businessBrains.organizationId, session.organizationId))
           .limit(1)
       : [];
+  const savedInspiration = session.organizationId
+    ? await loadBuilderInspiration(session.organizationId)
+    : null;
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
@@ -87,8 +92,9 @@ export default async function WebsiteBuilderPage({
             Pick a starting layout, or let GroovGro draft Home from websites
             you like. GroovGro writes first-draft sentences from your Brand,
             Business Brain, and confirmed offers. Pasted sites are for layout
-            and topic labels only. If Home already exists, use Start Home over
-            at the top. Your connected public site stays as it is.
+            and topic labels only, and GroovGro keeps the addresses you paste.
+            If Home already exists, Start Home over is under a toggle near the
+            bottom. Your connected public site stays as it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -113,6 +119,7 @@ export default async function WebsiteBuilderPage({
               <WebsiteBuilderInspiration
                 businessType={brain?.industry ?? ""}
                 disabled={!session.organizationId}
+                savedFields={savedInspiration}
               />
             </CardContent>
           </Card>
@@ -139,23 +146,6 @@ export default async function WebsiteBuilderPage({
         </>
       ) : (
         <>
-          <Card>
-            <CardHeader>
-              <CardTitle>Start Home over</CardTitle>
-              <CardDescription>
-                Keep your current Home as a draft page named Previous Home,
-                then draft a new unpublished Home with first-pass sentences
-                from your Brand and Business Brain.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <WebsiteBuilderInspiration
-                businessType={brain?.industry ?? ""}
-                disabled={!session.organizationId}
-                hasExistingHome
-              />
-            </CardContent>
-          </Card>
           <WebsiteBuilderEditor
             key={`${data.site.id}-${String(data.site.updatedAt)}-${data.site.templateId}-${data.rows.length}`}
             site={{
@@ -177,6 +167,17 @@ export default async function WebsiteBuilderPage({
             chrome={data.chrome}
             chromeView={data.chromeView}
           />
+          <FoldableSample
+            title="Start Home over"
+            subtitle="Closed until you need a new draft. GroovGro keeps the websites you pasted."
+          >
+            <WebsiteBuilderInspiration
+              businessType={brain?.industry ?? ""}
+              disabled={!session.organizationId}
+              hasExistingHome
+              savedFields={savedInspiration}
+            />
+          </FoldableSample>
         </>
       )}
     </div>

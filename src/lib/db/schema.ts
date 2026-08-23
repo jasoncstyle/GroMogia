@@ -780,6 +780,36 @@ export type BuilderSectionContent = {
   whatsapp?: string
 };
 
+export type BuilderInspirationFields = {
+  businessType: string
+  layoutUrl1: string
+  layoutUrl2: string
+  layoutUrl3: string
+  copyUrl1: string
+  copyUrl2: string
+  copyUrl3: string
+  copyUrl4: string
+  copyUrl5: string
+};
+
+export const builderInspiration = pgTable("builder_inspiration", {
+  organizationId: uuid("organization_id")
+    .primaryKey()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  fields: jsonb("fields").$type<BuilderInspirationFields>().notNull().default({
+    businessType: "",
+    layoutUrl1: "",
+    layoutUrl2: "",
+    layoutUrl3: "",
+    copyUrl1: "",
+    copyUrl2: "",
+    copyUrl3: "",
+    copyUrl4: "",
+    copyUrl5: "",
+  }),
+  ...timestamps,
+});
+
 export const builderChrome = pgTable("builder_chrome", {
   organizationId: uuid("organization_id")
     .primaryKey()

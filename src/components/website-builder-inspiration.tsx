@@ -7,33 +7,18 @@ import { draftInspiredBuilderSite } from "@/lib/actions/website-builder";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  emptyInspirationFields,
+  parseInspirationFormFields,
+  type InspirationFormFields,
+} from "@/lib/website-builder/inspiration";
 
 const DRAFT_KEY = "groovgro.builderInspiration";
 
-type InspirationFields = {
-  businessType: string
-  layoutUrl1: string
-  layoutUrl2: string
-  layoutUrl3: string
-  copyUrl1: string
-  copyUrl2: string
-  copyUrl3: string
-  copyUrl4: string
-  copyUrl5: string
-};
+type InspirationFields = InspirationFormFields;
 
 function emptyFields(businessType: string): InspirationFields {
-  return {
-    businessType,
-    layoutUrl1: "",
-    layoutUrl2: "",
-    layoutUrl3: "",
-    copyUrl1: "",
-    copyUrl2: "",
-    copyUrl3: "",
-    copyUrl4: "",
-    copyUrl5: "",
-  };
+  return emptyInspirationFields(businessType);
 }
 
 function readDraft(businessType: string): InspirationFields {
@@ -42,7 +27,7 @@ function readDraft(businessType: string): InspirationFields {
   try {
     const raw = window.sessionStorage.getItem(DRAFT_KEY);
     if (!raw) return fallback;
-    const saved = JSON.parse(raw) as Partial<InspirationFields>;
+    const saved = parseInspirationFormFields(JSON.parse(raw));
     return {
       ...fallback,
       ...saved,
@@ -89,17 +74,44 @@ export function WebsiteBuilderInspiration({
   businessType,
   disabled,
   hasExistingHome = false,
+  savedFields,
 }: {
   businessType: string
   disabled?: boolean
   hasExistingHome?: boolean
+  savedFields?: InspirationFormFields | null
 }) {
   const router = useRouter();
-  const [fields, setFields] = useState(() => emptyFields(businessType));
+  const [fields, setFields] = useState(() =>
+    parseInspirationFormFields({
+      ...emptyFields(businessType),
+      ...savedFields,
+      businessType: savedFields?.businessType || businessType,
+    }),
+  );
 
   useEffect(() => {
-    setFields(readDraft(businessType));
-  }, [businessType]);
+    const local = readDraft(businessType);
+    const localFilled = [
+      local.layoutUrl1,
+      local.layoutUrl2,
+      local.layoutUrl3,
+      local.copyUrl1,
+      local.copyUrl2,
+      local.copyUrl3,
+      local.copyUrl4,
+      local.copyUrl5,
+    ].some(Boolean);
+    setFields(
+      parseInspirationFormFields({
+        ...emptyFields(businessType),
+        ...savedFields,
+        ...(localFilled ? local : {}),
+        businessType:
+          (localFilled ? local.businessType : savedFields?.businessType) || businessType,
+      }),
+    );
+  }, [businessType, savedFields]);
 
   function update<Key extends keyof InspirationFields>(
     key: Key,
@@ -118,7 +130,7 @@ export function WebsiteBuilderInspiration({
       successMessage="Draft website created."
       className="space-y-4"
       onSuccess={() => {
-        window.sessionStorage.removeItem(DRAFT_KEY);
+        writeDraft(fields);
         router.replace("/app/website-builder?restarted=1");
         router.refresh();
       }}

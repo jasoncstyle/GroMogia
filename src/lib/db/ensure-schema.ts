@@ -242,4 +242,12 @@ export async function ensureSchema(): Promise<void> {
   if (!goalProgress[0]?.name) {
     await applyMigration(sql, "0021_v2_goal_progress.sql");
   }
+
+  const builderInspiration = (await sql.query(
+    "select to_regclass('public.builder_inspiration') as name",
+  )) as RegistryRow[];
+
+  if (!builderInspiration[0]?.name) {
+    await applyMigration(sql, "0022_v2_builder_inspiration.sql");
+  }
 }
