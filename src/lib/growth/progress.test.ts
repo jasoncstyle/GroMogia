@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { liveGoalProgress } from "./progress";
+import {
+  liveGoalProgress,
+  planProgressSnapshot,
+  progressDayKey,
+  storedGoalFieldsFromLive,
+} from "./progress";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 const now = new Date("2026-08-23T12:00:00.000Z");
 
@@ -109,5 +116,61 @@ describe("live goal progress", () => {
     assert.equal(live.computable, false);
     assert.equal(live.currentValue, 3);
     assert.equal(live.progressPercent, 30);
+  });
+
+  it("stores one connected number per day and updates that day if it changed", () => {
+    assert.equal(progressDayKey(now), "2026-08-23");
+    assert.equal(
+      planProgressSnapshot({
+        existingSameDay: false,
+        existingValue: null,
+        nextValue: 4,
+      }),
+      "insert",
+    );
+    assert.equal(
+      planProgressSnapshot({
+        existingSameDay: true,
+        existingValue: 4,
+        nextValue: 4,
+      }),
+      "skip",
+    );
+    assert.equal(
+      planProgressSnapshot({
+        existingSameDay: true,
+        existingValue: 4,
+        nextValue: 6,
+      }),
+      "update",
+    );
+  });
+
+  it("marks an active goal achieved when the saved number meets the target", () => {
+    const stored = storedGoalFieldsFromLive(
+      { status: "active", completedAt: null, targetValue: 5 },
+      5,
+      now,
+    );
+    assert.equal(stored.currentValue, 5);
+    assert.equal(stored.status, "achieved");
+    assert.equal(stored.completedAt?.toISOString(), now.toISOString());
+  });
+
+  it("does not reopen or market from a paused goal when the number is saved", () => {
+    const stored = storedGoalFieldsFromLive(
+      { status: "paused", completedAt: null, targetValue: 2 },
+      4,
+      now,
+    );
+    assert.equal(stored.status, "paused");
+    assert.equal(stored.completedAt, null);
+  });
+
+  it("does not bake sailing or seat language into progress helpers", () => {
+    const source = readFileSync(join(process.cwd(), "src/lib/growth/progress.ts"), "utf8");
+    for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk"]) {
+      assert.equal(source.toLowerCase().includes(banned), false, banned);
+    }
   });
 });

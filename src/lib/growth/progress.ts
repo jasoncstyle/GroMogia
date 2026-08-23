@@ -1,4 +1,4 @@
-import { goalProgressPercent } from "@/lib/growth/types";
+import { goalProgressPercent, isGoalAchieved } from "@/lib/growth/types";
 
 export type ProgressLead = {
   createdAt: Date
@@ -175,5 +175,101 @@ export function liveGoalProgress(
     progressPercent: goalProgressPercent(bookings, goal.targetValue),
     note: `${bookings} booking${bookings === 1 ? "" : "s"} in the connected window.`,
     computable: true,
+  };
+}
+
+export function progressDayKey(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+export function planProgressSnapshot(input: {
+  existingSameDay: boolean
+  existingValue: number | null
+  nextValue: number
+}): "insert" | "update" | "skip" {
+  if (!input.existingSameDay) return "insert";
+  if (input.existingValue === input.nextValue) return "skip";
+  return "update";
+}
+
+export function storedGoalFieldsFromLive(
+  goal: {
+    status: string
+    completedAt: Date | null
+    targetValue: number | null
+  },
+  liveValue: number,
+  now: Date,
+) {
+  const achieved = isGoalAchieved(liveValue, goal.targetValue);
+  const canMarkAchieved =
+    achieved &&
+    goal.status !== "cancelled" &&
+    goal.status !== "missed" &&
+    goal.status !== "paused";
+  return {
+    currentValue: liveValue,
+    progressRecordedAt: now,
+    status: canMarkAchieved ? "achieved" : goal.status,
+    completedAt: canMarkAchieved
+      ? (goal.completedAt ?? now)
+      : goal.status === "achieved"
+        ? goal.completedAt
+        : null,
+  };
+}
+
+export function connectedProgressFacts(input: {
+  now: Date
+  leads: { createdAt: Date; offerId: string | null }[]
+  bookings: {
+    id: string
+    createdAt: Date
+    offerId: string | null
+    eventId: string | null
+    status: string
+  }[]
+  payments: {
+    createdAt: Date
+    amountCents: number
+    kind: string
+    bookingId: string | null
+  }[]
+  events: {
+    id: string
+    offerId: string | null
+    startsAt: Date | null
+    capacity: number | null
+    status: string
+  }[]
+}): ProgressFacts {
+  const bookingOfferById = new Map(
+    input.bookings.map((booking) => [booking.id, booking.offerId]),
+  );
+  return {
+    now: input.now,
+    leads: input.leads.map((lead) => ({
+      createdAt: lead.createdAt,
+      offerId: lead.offerId,
+    })),
+    bookings: input.bookings.map((booking) => ({
+      createdAt: booking.createdAt,
+      offerId: booking.offerId,
+      eventId: booking.eventId,
+      status: booking.status,
+    })),
+    payments: input.payments.map((payment) => ({
+      createdAt: payment.createdAt,
+      amountCents: payment.amountCents,
+      kind: payment.kind,
+      offerId: bookingOfferById.get(payment.bookingId ?? "") ?? null,
+    })),
+    events: input.events.map((event) => ({
+      id: event.id,
+      offerId: event.offerId,
+      startsAt: event.startsAt,
+      capacity: event.capacity,
+      status: event.status,
+    })),
   };
 }
