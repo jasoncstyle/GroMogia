@@ -12,11 +12,16 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl, missingFoundationServices } from "@/lib/env";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
+import {
+  buildStatusAlerts,
+  websiteWasRead,
+} from "@/lib/growth/status-alerts";
 import { formatMoney } from "@/lib/money";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { isModuleEnabled } from "@/lib/modules/catalog";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 import { ReviewConnectedDataButton } from "@/components/growth-review";
+import { StatusAlertList } from "@/components/status-alert";
 
 export default async function DashboardPage() {
   const session = await getAppSession();
@@ -26,12 +31,12 @@ export default async function DashboardPage() {
     session.organizationSlug,
   );
   const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
-  const snapshot = session.organizationId
-    ? await getDashboardSnapshot(session.organizationId)
-    : null;
-  const growth = session.organizationId
-    ? await getGrowthSnapshot(session.organizationId)
-    : null;
+  const [snapshot, growth] = session.organizationId
+    ? await Promise.all([
+        getDashboardSnapshot(session.organizationId),
+        getGrowthSnapshot(session.organizationId),
+      ])
+    : [null, null];
 
   const happening = snapshot
     ? `${snapshot.openLeadCount} open lead${snapshot.openLeadCount === 1 ? "" : "s"}, ${snapshot.customerCount} customer${snapshot.customerCount === 1 ? "" : "s"}, and ${formatMoney(snapshot.paymentTotalCents)} in payments this month.`
@@ -68,6 +73,18 @@ export default async function DashboardPage() {
       ? "Connect Stripe and sync recent test payments."
       : "Review connected data on Business if you have not yet, then keep the public lead form in use.";
 
+  const statusAlerts = buildStatusAlerts({
+    signedIn: Boolean(session.email),
+    organizationReady: Boolean(session.organizationId),
+    missingServices: missing,
+    websiteUrl: snapshot?.website?.publicUrl ?? "",
+    websiteRead: websiteWasRead(growth?.brain?.inferredSummary),
+    stripeConnected: snapshot?.stripeConnected ?? false,
+    paymentCount: snapshot?.paymentCount ?? 0,
+    recordedVisitCount:
+      snapshot?.topChannels.reduce((total, row) => total + row.count, 0) ?? 0,
+  });
+
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
       <div>
@@ -77,6 +94,8 @@ export default async function DashboardPage() {
           what should happen next — only when there is enough evidence.
         </p>
       </div>
+
+      <StatusAlertList alerts={statusAlerts} />
 
       {missing.length > 0 ? (
         <Card>

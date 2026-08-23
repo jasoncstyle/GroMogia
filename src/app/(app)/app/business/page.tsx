@@ -1,9 +1,18 @@
 import Link from "next/link";
+import { eq } from "drizzle-orm";
 
 import { updateBusinessBrain } from "@/lib/actions/growth";
 import { getAppSession } from "@/lib/auth/session";
+import { getDb } from "@/lib/db";
+import { websites } from "@/lib/db/schema";
+import { missingFoundationServices } from "@/lib/env";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
+import {
+  buildStatusAlerts,
+  websiteWasRead,
+} from "@/lib/growth/status-alerts";
 import { commaTextFromList } from "@/lib/growth/types";
+import { StatusAlertList } from "@/components/status-alert";
 import {
   ConfirmRejectButtons,
   InferredBadge,
@@ -27,11 +36,32 @@ const selectClassName =
 
 export default async function BusinessBrainPage() {
   const session = await getAppSession();
-  const snapshot = session.organizationId
-    ? await getGrowthSnapshot(session.organizationId)
-    : null;
+  const db = getDb();
+  const [snapshot, websiteRows] = await Promise.all([
+    session.organizationId
+      ? getGrowthSnapshot(session.organizationId)
+      : Promise.resolve(null),
+    db && session.organizationId
+      ? db
+          .select({ publicUrl: websites.publicUrl })
+          .from(websites)
+          .where(eq(websites.organizationId, session.organizationId))
+          .limit(1)
+      : Promise.resolve([]),
+  ]);
   const brain = snapshot?.brain;
   const brand = snapshot?.brand;
+  const statusAlerts = buildStatusAlerts({
+    signedIn: Boolean(session.email),
+    organizationReady: Boolean(session.organizationId),
+    missingServices: missingFoundationServices(),
+    websiteUrl: websiteRows[0]?.publicUrl ?? "",
+    websiteRead: websiteWasRead(brain?.inferredSummary),
+    stripeConnected: false,
+    paymentCount: 0,
+    recordedVisitCount: 0,
+    topics: ["workspace", "website"],
+  });
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -43,6 +73,8 @@ export default async function BusinessBrainPage() {
           tied to one industry.
         </p>
       </div>
+
+      <StatusAlertList alerts={statusAlerts} />
 
       <Card>
         <CardHeader>
