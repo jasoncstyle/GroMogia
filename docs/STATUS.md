@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-builder-create-button-label-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-complete-site-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** This branch keeps the Create my GroovGro website button name even when Home already exists. Do not start Growth Director, ads, or autonomy.
+**V2 growth foundation is on `main`.** This branch makes Create my GroovGro website draft a complete first site, not only Home, About, and Work. Do not start Growth Director, ads, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
@@ -46,7 +46,7 @@ Jason’s idea (23 August 2026): help the owner build a **GroovGro-hosted** site
 - Change Stripe checkout or stripe-osa.
 - Start ads or Growth Director.
 
-**First build slice (this branch):** The Create my GroovGro website button keeps that name after Home exists, so it is easy to find.
+**First build slice (this branch):** Create my GroovGro website drafts unpublished Home, About, What we offer, Contact, Questions, Where we work when locations exist, and a page per confirmed offer. Pages link to each other. Previous Home stays out of the public menu.
 
 ## Stripe (do not mix, do not replace)
 
@@ -59,7 +59,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Brand voice: profile, examples, drafts that stay in GroovGro
 - SEO: connected homepage check, GroovGro checks for Home and every extra page, drafts, score history, plain-language explanation, Search Console read-only
 - Website builder: visual GroovGro-hosted pages at `/w/[org]` (Home) and `/w/[org]/[slug]` (extra pages)
-- Create my GroovGro website: one button drafts unpublished Home, About, and Work from Brand, Business Brain, and confirmed offers. If Home already exists, it is saved as Previous Home first. Existing extra pages are left alone. Inspiration websites stay optional under a toggle. It does not clone other sites or change the connected website.
+- Create my GroovGro website: one button drafts an unpublished complete site from Brand, Business Brain, and confirmed offers — Home, About, What we offer, Contact, Questions, Where we work when locations exist, and a page per confirmed offer. If Home already exists, it is saved as Previous Home first. GroovGro-owned extra pages are rewritten. Inspiration websites stay optional under a toggle. It does not clone other sites or change the connected website.
 - Approved SEO title, description, and heading drafts can be applied to the matching GroovGro page
 - V2 foundation screens: Business, Offers, Goals, Decisions
 - Review connected data: draft Offers and suggested Goals from events, bookings, payments, and connected website pages; confirm or reject before anything becomes active

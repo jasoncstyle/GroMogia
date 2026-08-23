@@ -9,6 +9,8 @@ import {
   layoutForNewPage,
   parsePageSlug,
   suggestPageSlug,
+  builderChromePages,
+  isArchivedHomeSlug,
   uniqueSavedHomeSlug,
   uniqueSavedHomeTitle,
 } from "./pages";
@@ -34,6 +36,19 @@ describe("builder extra pages", () => {
     assert.equal(uniqueSavedHomeSlug(["saved-home"]), "saved-home-2");
     assert.equal(uniqueSavedHomeTitle([]), "Previous Home");
     assert.equal(uniqueSavedHomeTitle(["Previous Home"]), "Previous Home 2");
+    assert.equal(isArchivedHomeSlug("saved-home"), true);
+    assert.equal(isArchivedHomeSlug("saved-home-2"), true);
+    assert.equal(isArchivedHomeSlug("about"), false);
+    assert.deepEqual(
+      builderChromePages([
+        { slug: "faq", title: "Questions" },
+        { slug: "saved-home", title: "Previous Home" },
+        { slug: "", title: "Harbor Workshops" },
+        { slug: "contact", title: "Contact" },
+        { slug: "about", title: "About" },
+      ]).map((page) => page.slug),
+      ["", "about", "faq", "contact"],
+    );
   });
 
   it("suggests a safe address from the page name", () => {

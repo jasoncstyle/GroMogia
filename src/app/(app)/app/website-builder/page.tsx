@@ -69,7 +69,7 @@ export default async function WebsiteBuilderPage({
         <h1 className="text-2xl font-semibold tracking-tight">Website builder</h1>
         <p className="text-muted-foreground">
           Optional GroovGro-hosted pages built from rows and columns. Home is
-          always there. GroovGro can draft Home, About, and Work from your
+          always there. GroovGro can draft a complete first website from your
           business facts. This does not replace the connected existing
           website, and it does not change Stripe checkout.
         </p>
@@ -81,9 +81,9 @@ export default async function WebsiteBuilderPage({
           className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-950"
         >
           GroovGro drafted an unpublished website. Open Pages for Home, About,
-          and Work. If you started over, the last Home is Previous Home. Edit
-          every line before you publish. Your connected live site was not
-          changed.
+          What we offer, Contact, Questions, and any offer or area pages. If
+          you started over, the last Home is Previous Home. Edit every line
+          before you publish. Your connected live site was not changed.
         </p>
       ) : null}
 
@@ -91,10 +91,11 @@ export default async function WebsiteBuilderPage({
         <CardHeader>
           <CardTitle>How this works</CardTitle>
           <CardDescription>
-            Click Create my GroovGro website and GroovGro drafts Home, About,
-            and Work from Brand, Business Brain, and confirmed offers. Pages
-            stay unpublished. Pasted inspiration sites are optional and sit
-            under a toggle. Your connected public site stays as it is.
+            Click Create my GroovGro website and GroovGro drafts a complete
+            unpublished site from Brand, Business Brain, and confirmed offers:
+            Home, About, What we offer, Contact, Questions, and more when you
+            have locations or offers. Pasted inspiration sites are optional
+            and sit under a toggle. Your connected public site stays as it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -147,9 +148,11 @@ export default async function WebsiteBuilderPage({
             <CardHeader>
               <CardTitle>Create my GroovGro website</CardTitle>
               <CardDescription>
-                GroovGro writes a new unpublished Home, About, and Work from
-                your Brand, Business Brain, and confirmed offers. Your current
-                Home is saved as Previous Home first.
+                GroovGro writes a new unpublished complete website from your
+                Brand, Business Brain, and confirmed offers. Your current Home
+                is saved as Previous Home first. Extra pages GroovGro already
+                drafted are rewritten. Pages you added yourself stay unless
+                they use the same address.
               </CardDescription>
             </CardHeader>
             <CardContent>

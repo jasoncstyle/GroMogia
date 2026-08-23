@@ -58,7 +58,14 @@ import {
 import { saveBuilderInspiration } from "@/lib/website-builder/persist-inspiration";
 import { draftInspiredCopy } from "@/lib/website-builder/inspired-copy";
 import { polishInspiredCopy } from "@/lib/website-builder/inspired-copy-ai";
-import { ownedExtraPages } from "@/lib/website-builder/owned-site";
+import {
+  draftOwnedHomeRows,
+  ownedChromeFooter,
+  ownedExtraPages,
+  ownedHomeMeta,
+  readBrandContact,
+  readBrandSocialLinks,
+} from "@/lib/website-builder/owned-site";
 import { fetchPublicText } from "@/lib/seo/fetch";
 import {
   HOME_PAGE_SLUG,
@@ -495,6 +502,7 @@ export async function draftOwnedBuilderSite(
     ]);
 
     const title = brand?.businessName || session.organizationName || "Website";
+    const brandContact = readBrandContact(brand?.contact);
     const draftInput = {
       businessName: brand?.businessName || session.organizationName || "",
       description: brand?.description ?? "",
@@ -513,12 +521,19 @@ export async function draftOwnedBuilderSite(
       tone: voice?.tone ?? "",
       doSay: voice?.doSay ?? "",
       dontSay: voice?.dontSay ?? "",
+      operatingHours: brain?.operatingHours ?? "",
+      contactEmail: brandContact.email,
+      contactPhone: brandContact.phone,
+      contactAddress: brandContact.address,
+      socialLinks: readBrandSocialLinks(brand?.socialProfiles),
     };
     const { copy, usedAi } = await polishInspiredCopy(draftInspiredCopy(facts), facts);
-    const rows = draftInspiredRows({
-      ...draftInput,
+    const siteInput = {
+      orgSlug: session.organizationSlug ?? "",
       copy,
-    });
+      facts,
+    };
+    const rows = draftOwnedHomeRows(siteInput);
 
     let savedPageTitle = "";
     let site = existing ?? null;
@@ -560,6 +575,7 @@ export async function draftOwnedBuilderSite(
         .update(builderSites)
         .set({
           title,
+          metaDescription: ownedHomeMeta(copy),
           status: "draft",
           theme: inspiredTheme(),
           templateId: INSPIRED_TEMPLATE_ID,
@@ -577,6 +593,7 @@ export async function draftOwnedBuilderSite(
         organizationId: session.organizationId,
         title,
         slug: HOME_PAGE_SLUG,
+        metaDescription: ownedHomeMeta(copy),
         status: "draft",
         theme: inspiredTheme(),
         templateId: INSPIRED_TEMPLATE_ID,
@@ -605,13 +622,39 @@ export async function draftOwnedBuilderSite(
 
     const currentPages = await db
       .select({
+        id: builderSites.id,
         slug: builderSites.slug,
       })
       .from(builderSites)
       .where(eq(builderSites.organizationId, session.organizationId));
-    const createdPages: string[] = [];
-    for (const extra of ownedExtraPages(copy)) {
-      if (currentPages.some((page) => page.slug === extra.slug)) continue;
+    const writtenPages = ["Home"];
+    for (const extra of ownedExtraPages(siteInput)) {
+      const existingPage = currentPages.find((page) => page.slug === extra.slug);
+      if (existingPage) {
+        await db
+          .update(builderSites)
+          .set({
+            title: extra.title,
+            metaDescription: extra.metaDescription,
+            status: "draft",
+            theme: inspiredTheme(),
+            templateId: INSPIRED_TEMPLATE_ID,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(builderSites.id, existingPage.id),
+              eq(builderSites.organizationId, session.organizationId),
+            ),
+          );
+        await writeBuilderLayout(db, {
+          organizationId: session.organizationId,
+          siteId: existingPage.id,
+          rows: extra.rows,
+        });
+        writtenPages.push(extra.title);
+        continue;
+      }
       if (currentPages.length >= MAX_BUILDER_PAGES) break;
       const [page] = await db
         .insert(builderSites)
@@ -619,7 +662,7 @@ export async function draftOwnedBuilderSite(
           organizationId: session.organizationId,
           title: extra.title,
           slug: extra.slug,
-          metaDescription: copy.heroSubheading.slice(0, 160),
+          metaDescription: extra.metaDescription,
           status: "draft",
           theme: inspiredTheme(),
           templateId: INSPIRED_TEMPLATE_ID,
@@ -632,27 +675,39 @@ export async function draftOwnedBuilderSite(
         siteId: page.id,
         rows: extra.rows,
       });
-      currentPages.push({ slug: page.slug });
-      createdPages.push(extra.title);
+      currentPages.push({ id: page.id, slug: page.slug });
+      writtenPages.push(extra.title);
     }
 
     const [chrome] = await db
-      .select({ headerName: builderChrome.headerName })
+      .select({
+        headerName: builderChrome.headerName,
+        footerText: builderChrome.footerText,
+      })
       .from(builderChrome)
       .where(eq(builderChrome.organizationId, session.organizationId))
       .limit(1);
     const headerName = title.slice(0, MAX_HEADER_NAME);
+    const footerText = ownedChromeFooter(title);
     if (!chrome) {
       await db.insert(builderChrome).values({
         organizationId: session.organizationId,
         ...DEFAULT_BUILDER_CHROME,
         headerName,
+        footerText,
       });
-    } else if (!chrome.headerName.trim()) {
-      await db
-        .update(builderChrome)
-        .set({ headerName, updatedAt: new Date() })
-        .where(eq(builderChrome.organizationId, session.organizationId));
+    } else {
+      const chromeUpdate: { headerName?: string; footerText?: string; updatedAt: Date } = {
+        updatedAt: new Date(),
+      };
+      if (!chrome.headerName.trim()) chromeUpdate.headerName = headerName;
+      if (!chrome.footerText.trim()) chromeUpdate.footerText = footerText;
+      if (chromeUpdate.headerName || chromeUpdate.footerText) {
+        await db
+          .update(builderChrome)
+          .set(chromeUpdate)
+          .where(eq(builderChrome.organizationId, session.organizationId));
+      }
     }
 
     await recordAudit({
@@ -663,15 +718,12 @@ export async function draftOwnedBuilderSite(
       targetId: site.id,
       metadata: {
         savedPreviousHome: Boolean(savedPageTitle),
-        createdPages,
+        writtenPages,
         usedAi,
       },
     });
     revalidateBuilder(session.organizationSlug, site);
-    const extras =
-      createdPages.length > 0
-        ? ` GroovGro also drafted ${createdPages.join(" and ")}.`
-        : "";
+    const extras = ` Pages: ${writtenPages.join(", ")}.`;
     if (savedPageTitle) {
       return `Your previous Home was saved as “${savedPageTitle}” (still a draft). The new GroovGro website is unpublished until you publish.${extras} Edit every line. The connected live site was not changed.`;
     }

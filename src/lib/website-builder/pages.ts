@@ -59,6 +59,28 @@ export function uniqueSavedHomeTitle(existingTitles: string[]): string {
   return "Previous Home";
 }
 
+export function isArchivedHomeSlug(slug: string | null | undefined): boolean {
+  return /^saved-home(?:-\d+)?$/.test(slug ?? "");
+}
+
+const CHROME_NAV_ORDER = ["", "about", "work", "areas", "faq", "contact"];
+
+export function builderChromePages<T extends { slug: string; title?: string }>(
+  pages: T[],
+): T[] {
+  return pages
+    .filter((page) => !isArchivedHomeSlug(page.slug))
+    .slice()
+    .sort((a, b) => {
+      const aRank = CHROME_NAV_ORDER.indexOf(a.slug);
+      const bRank = CHROME_NAV_ORDER.indexOf(b.slug);
+      const aOrder = aRank >= 0 ? aRank : CHROME_NAV_ORDER.length;
+      const bOrder = bRank >= 0 ? bRank : CHROME_NAV_ORDER.length;
+      if (aOrder !== bOrder) return aOrder - bOrder;
+      return (a.title ?? a.slug).localeCompare(b.title ?? b.slug);
+    });
+}
+
 export function suggestPageSlug(name: string): string {
   return name
     .toLowerCase()

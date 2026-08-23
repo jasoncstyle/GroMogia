@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { BuilderPageView } from "@/components/builder-page-view";
 import { getAppSession } from "@/lib/auth/session";
 import { hasPermission } from "@/lib/permissions";
+import { builderChromePages } from "@/lib/website-builder/pages";
 import { getBuilderEditorData } from "@/lib/website-builder/queries";
 
 export const dynamic = "force-dynamic";
@@ -39,7 +40,7 @@ export default async function WebsiteBuilderPreviewPage({
       innerRows: [],
     })),
   }));
-  const navPages = data.pages.map((page) => ({
+  const navPages = builderChromePages(data.pages).map((page) => ({
     href: page.isHome
       ? "/app/website-builder/preview"
       : `/app/website-builder/preview?page=${page.id}`,
