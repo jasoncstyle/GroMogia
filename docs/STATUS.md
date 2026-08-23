@@ -1,6 +1,12 @@
 # Build status
 
-Last updated: 22 August 2026.
+Last updated: 23 August 2026.
+
+## V1 checkpoint (do not mix with V2)
+
+GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
+
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. V2 review work belongs on `cursor/v2-architecture-review-a329` after the new master plan is in hand.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -11,7 +17,9 @@ Last updated: 22 August 2026.
 
 ## Current phase
 
-**Phase 7 — Website builder**, full-page editor with preview (not live), numbered starter layouts (white with dark grey text), a color wheel plus hex and swatches, extra GroovGro pages, SEO checks for every GroovGro page, photo uploads to Vercel Blob, one-level inner rows inside a column, and a site-wide header and footer. Publish per page. Home cannot be deleted. Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
+**Phase 7 — Website builder (V1 baseline).** Full-page editor with preview (not live), numbered starter layouts (white with dark grey text), a color wheel plus hex and swatches, extra GroovGro pages, SEO checks for every GroovGro page, photo uploads to Vercel Blob, one-level inner rows inside a column, and a site-wide header and footer (edit on Home, including header/footer colors). Publish per page. Home cannot be deleted. Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
+
+V2 architecture review has not started. No V2 code changes yet.
 
 Do not start ads or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
 
