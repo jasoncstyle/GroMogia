@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-builder-create-site-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-builder-create-button-label-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** This branch lets GroovGro draft Home, About, and Work from the owner’s own facts. Do not start Growth Director, ads, or autonomy.
+**V2 growth foundation is on `main`.** This branch keeps the Create my GroovGro website button name even when Home already exists. Do not start Growth Director, ads, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
@@ -46,7 +46,7 @@ Jason’s idea (23 August 2026): help the owner build a **GroovGro-hosted** site
 - Change Stripe checkout or stripe-osa.
 - Start ads or Growth Director.
 
-**First build slice (this branch):** Create my GroovGro website drafts Home, About, and Work from Brand, Business Brain, and confirmed offers. Inspiration URLs stay optional. The owner still edits before publish.
+**First build slice (this branch):** The Create my GroovGro website button keeps that name after Home exists, so it is easy to find.
 
 ## Stripe (do not mix, do not replace)
 

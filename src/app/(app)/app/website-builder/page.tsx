@@ -145,11 +145,11 @@ export default async function WebsiteBuilderPage({
         <>
           <Card>
             <CardHeader>
-              <CardTitle>Create a new GroovGro draft</CardTitle>
+              <CardTitle>Create my GroovGro website</CardTitle>
               <CardDescription>
-                Replace Home with a new unpublished draft from your Brand,
-                Business Brain, and confirmed offers. About and Work are added
-                if they are not there yet.
+                GroovGro writes a new unpublished Home, About, and Work from
+                your Brand, Business Brain, and confirmed offers. Your current
+                Home is saved as Previous Home first.
               </CardDescription>
             </CardHeader>
             <CardContent>

@@ -35,7 +35,7 @@ export function WebsiteBuilderCreateSite({
         </p>
       ) : null}
       <SaveButton disabled={disabled} pendingLabel="Creating your GroovGro website…">
-        {hasExistingHome ? "Create a new GroovGro draft" : "Create my GroovGro website"}
+        Create my GroovGro website
       </SaveButton>
     </SaveForm>
   );
