@@ -1,5 +1,9 @@
+import { eq } from "drizzle-orm";
+
 import { createBuilderSite } from "@/lib/actions/website-builder";
 import { getAppSession } from "@/lib/auth/session";
+import { getDb } from "@/lib/db";
+import { businessBrains } from "@/lib/db/schema";
 import { appUrl } from "@/lib/env";
 import { isBlobConfigured } from "@/lib/media/blob";
 import { listMediaLibrary } from "@/lib/media/queries";
@@ -9,6 +13,7 @@ import { builderPublicUrl } from "@/lib/website-builder/apply-seo";
 import { BuilderTemplatePicker } from "@/components/builder-template-picker";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteBuilderEditor } from "@/components/website-builder-editor";
+import { WebsiteBuilderInspiration } from "@/components/website-builder-inspiration";
 import {
   Card,
   CardContent,
@@ -40,6 +45,15 @@ export default async function WebsiteBuilderPage({
   const recentMedia = session.organizationId
     ? await listMediaLibrary(session.organizationId, 12)
     : [];
+  const db = getDb();
+  const [brain] =
+    db && session.organizationId
+      ? await db
+          .select({ industry: businessBrains.industry })
+          .from(businessBrains)
+          .where(eq(businessBrains.organizationId, session.organizationId))
+          .limit(1)
+      : [];
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
@@ -57,10 +71,9 @@ export default async function WebsiteBuilderPage({
         <CardHeader>
           <CardTitle>How this works</CardTitle>
           <CardDescription>
-            Pick a starting layout, then click Create draft website for Home.
-            Add extra pages when you need them. Each page stays a draft until
-            you click Publish on that page. Your current public site stays as
-            it is.
+            Pick a starting layout, or let GroovGro draft Home from websites
+            you like. Each page stays a draft until you click Publish on that
+            page. Your current public site stays as it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -70,26 +83,44 @@ export default async function WebsiteBuilderPage({
           Sign in to create a GroovGro website.
         </p>
       ) : !data.site ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Choose a starting layout</CardTitle>
-            <CardDescription>
-              GroovGro fills the boxes from your brand name and description.
-              After you create the draft, click Open page editor when you want
-              to change the layout. Nothing is public until you click Publish.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <SaveForm
-              action={createBuilderSite}
-              successMessage="Draft website created."
-              className="space-y-4"
-            >
-              <BuilderTemplatePicker />
-              <SaveButton>Create draft website</SaveButton>
-            </SaveForm>
-          </CardContent>
-        </Card>
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>Help me build one</CardTitle>
+              <CardDescription>
+                Paste public websites you like. GroovGro drafts an unpublished
+                GroovGro Home from your brand and those pages. It does not
+                clone them or change your connected site.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <WebsiteBuilderInspiration
+                businessType={brain?.industry ?? ""}
+                disabled={!session.organizationId}
+              />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Or choose a starting layout</CardTitle>
+              <CardDescription>
+                GroovGro fills the boxes from your brand name and description.
+                After you create the draft, click Open page editor when you want
+                to change the layout. Nothing is public until you click Publish.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SaveForm
+                action={createBuilderSite}
+                successMessage="Draft website created."
+                className="space-y-4"
+              >
+                <BuilderTemplatePicker />
+                <SaveButton>Create draft website</SaveButton>
+              </SaveForm>
+            </CardContent>
+          </Card>
+        </>
       ) : (
         <WebsiteBuilderEditor
           key={data.site.id}

@@ -9,6 +9,7 @@ import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import {
   brandSettings,
+  businessBrains,
   builderChrome,
   builderRows,
   builderSections,
@@ -36,6 +37,16 @@ import {
 } from "@/lib/website-builder/chrome";
 import { MAX_INNER_ROWS_PER_COLUMN } from "@/lib/website-builder/nest";
 import { writeBuilderLayout } from "@/lib/website-builder/persist-layout";
+import {
+  INSPIRED_TEMPLATE_ID,
+  MAX_COPY_URLS,
+  MAX_LAYOUT_URLS,
+  draftInspiredRows,
+  inspiredTheme,
+  parseInspirationUrls,
+} from "@/lib/website-builder/inspiration";
+import { extractWebsitePage } from "@/lib/growth/website-discover";
+import { fetchPublicText } from "@/lib/seo/fetch";
 import {
   HOME_PAGE_SLUG,
   MAX_BUILDER_PAGES,
@@ -185,6 +196,140 @@ export async function createBuilderSite(formData: FormData): Promise<ActionResul
     });
     revalidateBuilder(session.organizationSlug, site);
     return "Draft website created. It is not public until you publish.";
+  });
+}
+
+async function loadPublicPages(urls: string[]) {
+  const pages = [];
+  for (const url of urls) {
+    const fetched = await fetchPublicText(url);
+    if (!fetched.ok || !fetched.body) continue;
+    pages.push(extractWebsitePage(url, fetched.body, "connected_website"));
+  }
+  return pages;
+}
+
+export async function draftInspiredBuilderSite(
+  formData: FormData,
+): Promise<ActionResult> {
+  return runAction("Could not draft the GroovGro website.", async () => {
+    const { session, db } = await requireBuilderEditor();
+    const [existing] = await db
+      .select()
+      .from(builderSites)
+      .where(
+        and(
+          eq(builderSites.organizationId, session.organizationId),
+          eq(builderSites.slug, HOME_PAGE_SLUG),
+        ),
+      )
+      .limit(1);
+    if (existing) {
+      throw new Error(
+        "This organization already has a GroovGro website. Edit that draft, or keep the connected site as it is.",
+      );
+    }
+
+    const layoutUrls = parseInspirationUrls(
+      [
+        String(formData.get("layoutUrl1") ?? ""),
+        String(formData.get("layoutUrl2") ?? ""),
+        String(formData.get("layoutUrl3") ?? ""),
+      ],
+      MAX_LAYOUT_URLS,
+    );
+    const copyUrls = parseInspirationUrls(
+      [
+        String(formData.get("copyUrl1") ?? ""),
+        String(formData.get("copyUrl2") ?? ""),
+        String(formData.get("copyUrl3") ?? ""),
+        String(formData.get("copyUrl4") ?? ""),
+        String(formData.get("copyUrl5") ?? ""),
+      ],
+      MAX_COPY_URLS,
+    );
+    if (layoutUrls.length === 0) {
+      throw new Error("Paste at least one public website you like the layout of.");
+    }
+
+    const businessType = z
+      .string()
+      .trim()
+      .max(80)
+      .parse(formData.get("businessType") ?? "");
+
+    const [brand, brain] = await Promise.all([
+      db
+        .select()
+        .from(brandSettings)
+        .where(eq(brandSettings.organizationId, session.organizationId))
+        .limit(1)
+        .then((rows) => rows[0] ?? null),
+      db
+        .select()
+        .from(businessBrains)
+        .where(eq(businessBrains.organizationId, session.organizationId))
+        .limit(1)
+        .then((rows) => rows[0] ?? null),
+    ]);
+
+    const layoutPages = await loadPublicPages(layoutUrls);
+    if (layoutPages.length === 0) {
+      throw new Error(
+        "GroovGro could not open those layout pages. Use public https addresses that open without a login.",
+      );
+    }
+    const copyPages = await loadPublicPages(copyUrls);
+
+    const title = brand?.businessName || session.organizationName || "Website";
+    await db.insert(builderSites).values({
+      organizationId: session.organizationId,
+      title,
+      slug: HOME_PAGE_SLUG,
+      status: "draft",
+      theme: inspiredTheme(),
+      templateId: INSPIRED_TEMPLATE_ID,
+      createdBy: session.userId,
+    });
+    const [site] = await db
+      .select()
+      .from(builderSites)
+      .where(
+        and(
+          eq(builderSites.organizationId, session.organizationId),
+          eq(builderSites.slug, HOME_PAGE_SLUG),
+        ),
+      )
+      .limit(1);
+    if (!site) throw new Error("Could not create the GroovGro website.");
+
+    await writeBuilderLayout(db, {
+      organizationId: session.organizationId,
+      siteId: site.id,
+      rows: draftInspiredRows({
+        businessName: brand?.businessName || session.organizationName || "",
+        description: brand?.description ?? "",
+        targetCustomers: brand?.targetCustomers ?? "",
+        businessType: businessType || brain?.industry || "",
+        layoutPages,
+        copyPages,
+      }),
+    });
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "website_builder.inspired",
+      targetType: "builder_site",
+      targetId: site.id,
+      metadata: {
+        layoutCount: layoutPages.length,
+        copyCount: copyPages.length,
+        businessType: businessType || brain?.industry || "",
+      },
+    });
+    revalidateBuilder(session.organizationSlug, site);
+    return `Draft website created from ${layoutPages.length} layout page${layoutPages.length === 1 ? "" : "s"}. It is not public until you publish. Edit every line. The live connected site was not changed.`;
   });
 }
 
