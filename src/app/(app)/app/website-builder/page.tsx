@@ -85,9 +85,10 @@ export default async function WebsiteBuilderPage({
           <CardTitle>How this works</CardTitle>
           <CardDescription>
             Pick a starting layout, or let GroovGro draft Home from websites
-            you like. If Home already exists, use Start Home over at the top.
-            Your current Home is saved as a draft page first. Your connected
-            public site stays as it is.
+            you like. GroovGro writes first-draft sentences from your Brand,
+            Business Brain, and confirmed offers. Pasted sites are for layout
+            and topic labels only. If Home already exists, use Start Home over
+            at the top. Your connected public site stays as it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -103,8 +104,9 @@ export default async function WebsiteBuilderPage({
               <CardTitle>Help me build one</CardTitle>
               <CardDescription>
                 Paste public websites you like. GroovGro drafts an unpublished
-                GroovGro Home from your brand and those pages. It does not
-                clone them or change your connected site.
+                GroovGro Home you could publish after a quick read-through. It
+                uses your Brand and Business Brain for the words. It does not
+                clone other sites or change your connected site.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -142,8 +144,8 @@ export default async function WebsiteBuilderPage({
               <CardTitle>Start Home over</CardTitle>
               <CardDescription>
                 Keep your current Home as a draft page named Previous Home,
-                then draft a new Home from websites you like. The new Home
-                stays unpublished.
+                then draft a new unpublished Home with first-pass sentences
+                from your Brand and Business Brain.
               </CardDescription>
             </CardHeader>
             <CardContent>

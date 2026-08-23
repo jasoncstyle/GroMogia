@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 import { recordAudit } from "@/lib/audit";
@@ -9,11 +9,13 @@ import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import {
   brandSettings,
+  brandVoiceProfiles,
   businessBrains,
   builderChrome,
   builderRows,
   builderSections,
   builderSites,
+  offers,
   seoDrafts,
 } from "@/lib/db/schema";
 import { hasPermission } from "@/lib/permissions";
@@ -45,11 +47,14 @@ import {
   MAX_COPY_URLS,
   MAX_LAYOUT_URLS,
   draftInspiredRows,
+  inspiredCopyFacts,
   inspiredTheme,
   loadInspirationPages,
   mergeInspirationPages,
   parseInspirationUrls,
 } from "@/lib/website-builder/inspiration";
+import { draftInspiredCopy } from "@/lib/website-builder/inspired-copy";
+import { polishInspiredCopy } from "@/lib/website-builder/inspired-copy-ai";
 import { fetchPublicText } from "@/lib/seo/fetch";
 import {
   HOME_PAGE_SLUG,
@@ -250,7 +255,7 @@ export async function draftInspiredBuilderSite(
       .max(80)
       .parse(formData.get("businessType") ?? "");
 
-    const [brand, brain] = await Promise.all([
+    const [brand, brain, confirmedOffers, voice] = await Promise.all([
       db
         .select()
         .from(brandSettings)
@@ -261,6 +266,30 @@ export async function draftInspiredBuilderSite(
         .select()
         .from(businessBrains)
         .where(eq(businessBrains.organizationId, session.organizationId))
+        .limit(1)
+        .then((rows) => rows[0] ?? null),
+      db
+        .select({
+          name: offers.name,
+          description: offers.description,
+        })
+        .from(offers)
+        .where(
+          and(
+            eq(offers.organizationId, session.organizationId),
+            eq(offers.discoveryStatus, "confirmed"),
+          ),
+        )
+        .orderBy(desc(offers.updatedAt))
+        .limit(6),
+      db
+        .select({
+          tone: brandVoiceProfiles.tone,
+          doSay: brandVoiceProfiles.doSay,
+          dontSay: brandVoiceProfiles.dontSay,
+        })
+        .from(brandVoiceProfiles)
+        .where(eq(brandVoiceProfiles.organizationId, session.organizationId))
         .limit(1)
         .then((rows) => rows[0] ?? null),
     ]);
@@ -276,13 +305,29 @@ export async function draftInspiredBuilderSite(
     }
     const unreadCount = layoutLoaded.failedUrls.length + copyLoaded.failedUrls.length;
     const title = brand?.businessName || session.organizationName || "Website";
-    const rows = draftInspiredRows({
+    const draftInput = {
       businessName: brand?.businessName || session.organizationName || "",
       description: brand?.description ?? "",
       targetCustomers: brand?.targetCustomers ?? "",
       businessType: businessType || brain?.industry || "",
+      locations: brain?.locations ?? [],
+      serviceAreas: brain?.serviceAreas ?? [],
+      notes: brain?.notes ?? "",
+      inferredSummary: brain?.inferredSummary ?? "",
+      offers: confirmedOffers,
       layoutPages,
       copyPages,
+    };
+    const facts = {
+      ...inspiredCopyFacts(draftInput),
+      tone: voice?.tone ?? "",
+      doSay: voice?.doSay ?? "",
+      dontSay: voice?.dontSay ?? "",
+    };
+    const { copy, usedAi } = await polishInspiredCopy(draftInspiredCopy(facts), facts);
+    const rows = draftInspiredRows({
+      ...draftInput,
+      copy,
     });
 
     let savedPageTitle = "";
@@ -380,6 +425,7 @@ export async function draftInspiredBuilderSite(
         unreadCount,
         businessType: businessType || brain?.industry || "",
         savedPreviousHome: Boolean(savedPageTitle),
+        usedAi,
       },
     });
     revalidateBuilder(session.organizationSlug, site);

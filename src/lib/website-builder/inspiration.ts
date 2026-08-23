@@ -10,6 +10,12 @@ import type { BuilderRowDraft, BuilderWidgetDraft } from "@/lib/website-builder/
 import type { BuilderSectionContent, BuilderSectionType } from "@/lib/db/schema";
 import type { RowContentWidth } from "@/lib/website-builder/layout";
 import { DEFAULT_BUILDER_THEME } from "@/lib/website-builder/style";
+import {
+  draftInspiredCopy,
+  type InspiredCopy,
+  type InspiredCopyFacts,
+  type InspiredOfferInput,
+} from "@/lib/website-builder/inspired-copy";
 
 export const INSPIRED_TEMPLATE_ID = "inspired";
 
@@ -21,8 +27,14 @@ export type InspiredDraftInput = {
   description: string
   targetCustomers: string
   businessType: string
+  locations?: string[]
+  serviceAreas?: string[]
+  notes?: string
+  inferredSummary?: string
+  offers?: InspiredOfferInput[]
   layoutPages: WebsitePageExtract[]
   copyPages: WebsitePageExtract[]
+  copy?: InspiredCopy
 };
 
 function clipTopic(value: string): string {
@@ -155,27 +167,36 @@ export function inspirationQuestions(pages: WebsitePageExtract[], limit = 4): st
   return questions;
 }
 
-export function draftInspiredRows(input: InspiredDraftInput): BuilderRowDraft[] {
-  const name = input.businessName.trim() || "Your business";
-  const businessType = input.businessType.trim();
-  const offer =
-    input.description.trim() ||
-    (businessType
-      ? `Tell people what this ${businessType} business does, in your own words.`
-      : "Tell people what you do and how to get in touch.");
-  const audience = input.targetCustomers.trim();
+export function inspiredCopyFacts(input: InspiredDraftInput): InspiredCopyFacts {
   const researchPages = [...input.copyPages, ...input.layoutPages];
-  const topics = inspirationTopics(researchPages);
-  const questions = inspirationQuestions(researchPages);
-  const about = audience ? `${offer} We work with ${audience}.` : offer;
+  return {
+    businessName: input.businessName,
+    description: input.description,
+    targetCustomers: input.targetCustomers,
+    businessType: input.businessType,
+    locations: input.locations ?? [],
+    serviceAreas: input.serviceAreas ?? [],
+    notes: input.notes ?? "",
+    inferredSummary: input.inferredSummary ?? "",
+    offers: input.offers ?? [],
+    topics: inspirationTopics(researchPages),
+    questions: inspirationQuestions(researchPages),
+  };
+}
+
+export function draftInspiredRows(input: InspiredDraftInput): BuilderRowDraft[] {
+  const facts = inspiredCopyFacts(input);
+  const copy = input.copy ?? draftInspiredCopy(facts);
+  const topics = facts.topics;
+  const button = copy.buttonLabel || "Get in touch";
 
   const rows: BuilderRowDraft[] = [
     band(
       [
         widget("hero", 0, {
-          heading: name,
-          subheading: offer,
-          buttonLabel: "Get in touch",
+          heading: copy.heroHeading,
+          subheading: copy.heroSubheading,
+          buttonLabel: button,
           buttonHref: "#lead",
           headingLevel: "h1",
         }),
@@ -184,13 +205,13 @@ export function draftInspiredRows(input: InspiredDraftInput): BuilderRowDraft[] 
     ),
   ];
 
-  if (businessType) {
+  if (copy.introBody) {
     rows.push(
       band(
         [
           widget("text", 0, {
-            heading: `A ${businessType} business`,
-            body: "Use this line for who you help and what a first visit or job looks like. Write it in your words.",
+            heading: copy.introHeading,
+            body: copy.introBody,
             headingLevel: "h2",
           }),
         ],
@@ -205,9 +226,9 @@ export function draftInspiredRows(input: InspiredDraftInput): BuilderRowDraft[] 
         topics.slice(0, 3).map((topic, index) =>
           widget("text", index, {
             heading: topic,
-            body: "Describe this in your own words. GroovGro used the heading as a starting label only.",
+            body: copy.topicBodies[index] || copy.heroSubheading,
             headingLevel: "h3",
-            linkLabel: "Get in touch",
+            linkLabel: button,
             linkHref: "#lead",
           }),
         ),
@@ -216,16 +237,14 @@ export function draftInspiredRows(input: InspiredDraftInput): BuilderRowDraft[] 
     );
   }
 
-  if (topics.length > 0) {
+  if (copy.featureItems.length > 0) {
     rows.push(
       band(
         [
           widget("features", 0, {
-            heading: "What people come for",
+            heading: copy.featuresHeading,
             headingLevel: "h2",
-            items: topics
-              .map((topic) => `${topic} | Write what this includes, in your words.`)
-              .join("\n"),
+            items: copy.featureItems.join("\n"),
           }),
         ],
         { contentWidth: "wide" },
@@ -237,8 +256,8 @@ export function draftInspiredRows(input: InspiredDraftInput): BuilderRowDraft[] 
     band(
       [
         widget("text", 0, {
-          heading: "About the work",
-          body: about,
+          heading: copy.aboutHeading,
+          body: copy.aboutBody,
           headingLevel: "h2",
         }),
       ],
@@ -246,16 +265,14 @@ export function draftInspiredRows(input: InspiredDraftInput): BuilderRowDraft[] 
     ),
   );
 
-  if (questions.length > 0) {
+  if (copy.faqItems.length > 0) {
     rows.push(
       band(
         [
           widget("faq", 0, {
             heading: "Questions people ask",
             headingLevel: "h2",
-            items: questions
-              .map((question) => `${question} | Write this answer in your own words.`)
-              .join("\n"),
+            items: copy.faqItems.join("\n"),
           }),
         ],
         { contentWidth: "normal" },
@@ -267,9 +284,9 @@ export function draftInspiredRows(input: InspiredDraftInput): BuilderRowDraft[] 
     band(
       [
         widget("cta", 0, {
-          heading: "Ready to talk?",
-          body: "This draft used public pages you pasted for layout and topics. Edit every line. GroovGro did not copy another website.",
-          buttonLabel: "Get in touch",
+          heading: copy.ctaHeading,
+          body: copy.ctaBody,
+          buttonLabel: button,
           buttonHref: "#lead",
           headingLevel: "h2",
         }),
@@ -281,9 +298,9 @@ export function draftInspiredRows(input: InspiredDraftInput): BuilderRowDraft[] 
     band(
       [
         widget("lead", 0, {
-          heading: "Get in touch",
+          heading: copy.leadHeading,
           headingLevel: "h2",
-          body: "Share your name and email. This form is hosted by GroovGro.",
+          body: copy.leadBody,
         }),
       ],
       { contentWidth: "narrow" },

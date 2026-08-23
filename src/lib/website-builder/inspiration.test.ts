@@ -109,7 +109,7 @@ describe("website builder inspiration", () => {
     assert.match(json, /Harbor Workshops/);
     assert.match(json, /Hands-on classes for beginners/);
     assert.match(json, /Weekend Workshop/);
-    assert.match(json, /your own words/);
+    assert.doesNotMatch(json, /your own words|starting label only/);
     assert.equal(rows.some((row) => row.widgets.some((widget) => widget.type === "hero")), true);
     assert.equal(rows.some((row) => row.widgets.some((widget) => widget.type === "lead")), true);
     assert.equal(rows.some((row) => row.widgets.some((widget) => widget.type === "features")), true);

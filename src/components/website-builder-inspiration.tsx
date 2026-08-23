@@ -126,9 +126,11 @@ export function WebsiteBuilderInspiration({
       <p className="text-sm text-muted-foreground">
         Search the web for something like “inspirational website design” or
         “[your kind of business] website.” Open pages you like. Paste the
-        public addresses below. GroovGro reads those public pages for layout
-        and topics. It does not copy the site, steal photos, or change any
-        live website. This can take up to a minute.
+        public addresses below. GroovGro uses those pages for layout and
+        topic labels only. It writes first-draft sentences from your Brand,
+        Business Brain, and confirmed offers — not from another company’s
+        words. Edit anything before you publish. This can take up to a
+        minute.
       </p>
       {hasExistingHome ? (
         <p className="text-sm text-muted-foreground">
@@ -181,8 +183,9 @@ export function WebsiteBuilderInspiration({
           Optional: websites for word and topic ideas
         </legend>
         <p className="text-xs text-muted-foreground">
-          Paste up to five public pages. GroovGro uses headings as labels. You
-          still write the sentences.
+          Paste up to five public pages. GroovGro uses their headings as
+          topic labels, then writes first-draft sentences from your own
+          business facts.
         </p>
         <UrlField
           id="copyUrl1"
