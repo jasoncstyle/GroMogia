@@ -6,6 +6,7 @@ import { UserButton } from "@clerk/nextjs";
 import {
   BarChart3,
   Bell,
+  Brain,
   Building2,
   CalendarDays,
   CreditCard,
@@ -13,6 +14,8 @@ import {
   LayoutDashboard,
   LayoutTemplate,
   Megaphone,
+  Package,
+  Target,
   Plug,
   ScrollText,
   Settings,
@@ -41,6 +44,9 @@ const ICONS: Partial<Record<ModuleId | "dashboard" | "settings" | "audit" | "not
   seo: Search,
   integrations: Plug,
   brand: Building2,
+  business_brain: Brain,
+  offers: Package,
+  growth_goals: Target,
   settings: Settings,
   audit: ScrollText,
   notifications: Bell,
@@ -171,7 +177,7 @@ export function AppShell({
               {session.name ?? `${PRODUCT_NAME} workspace`}
             </p>
             <p className="text-xs text-muted-foreground">
-              What is happening, why, what needs attention, what to do next.
+              What are we trying to accomplish, and what should happen next?
             </p>
           </div>
           {clerkEnabled ? <UserButton /> : null}

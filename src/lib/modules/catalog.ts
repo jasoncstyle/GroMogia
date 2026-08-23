@@ -1,5 +1,8 @@
 export type ModuleId =
   | "brand"
+  | "business_brain"
+  | "offers"
+  | "growth_goals"
   | "integrations"
   | "media"
   | "website_connect"
@@ -25,7 +28,14 @@ export type ModuleDefinition = {
   navGroup: "work" | "grow" | "settings";
 };
 
-export const PHASE_1_MODULES: ModuleId[] = ["brand", "integrations", "media"];
+export const PHASE_1_MODULES: ModuleId[] = [
+  "brand",
+  "business_brain",
+  "offers",
+  "growth_goals",
+  "integrations",
+  "media",
+];
 
 export const PHASE_2_MODULES: ModuleId[] = [
   "website_connect",
@@ -63,6 +73,30 @@ export const MODULE_CATALOG: ModuleDefinition[] = [
     phase: 1,
     href: "/app/settings/brand",
     navGroup: "settings",
+  },
+  {
+    id: "business_brain",
+    name: "Business",
+    description: "Structured understanding of the business, not an AI prompt.",
+    phase: 1,
+    href: "/app/business",
+    navGroup: "settings",
+  },
+  {
+    id: "offers",
+    name: "Offers",
+    description: "What the business promotes, sells, or wants customers to do.",
+    phase: 1,
+    href: "/app/offers",
+    navGroup: "work",
+  },
+  {
+    id: "growth_goals",
+    name: "Goals",
+    description: "Measurable outcomes GroovGro should help the business reach.",
+    phase: 1,
+    href: "/app/goals",
+    navGroup: "grow",
   },
   {
     id: "integrations",

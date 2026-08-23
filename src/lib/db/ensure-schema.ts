@@ -206,4 +206,12 @@ export async function ensureSchema(): Promise<void> {
   if (!builderChromeColors[0]?.name) {
     await applyMigration(sql, "0017_phase7_builder_chrome_colors.sql");
   }
+
+  const businessBrains = (await sql.query(
+    "select to_regclass('public.business_brains') as name",
+  )) as RegistryRow[];
+
+  if (!businessBrains[0]?.name) {
+    await applyMigration(sql, "0018_v2_growth_foundation.sql");
+  }
 }

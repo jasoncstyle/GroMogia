@@ -1,6 +1,12 @@
 # Build status
 
-Last updated: 22 August 2026.
+Last updated: 23 August 2026.
+
+## V1 checkpoint (do not mix with V2)
+
+GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
+
+Use that tag to compare, roll back, or see what V2 actually changed.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -11,9 +17,9 @@ Last updated: 22 August 2026.
 
 ## Current phase
 
-**Phase 7 — Website builder**, full-page editor with preview (not live), numbered starter layouts (white with dark grey text), a color wheel plus hex and swatches, extra GroovGro pages, SEO checks for every GroovGro page, photo uploads to Vercel Blob, one-level inner rows inside a column, and a site-wide header and footer. Publish per page. Home cannot be deleted. Does not replace a connected existing website. Does not change Stripe checkout. Public groovgro.com homepage stays Coming soon.
+**V2 growth foundation (first slice).** Business Brain, Offers, generalized availability/constraints, Growth Goals, versioned Growth Plans, Decision History, proposed Actions (not executed), review schedule, and simple evidence-window policies. Website builder and all earlier V1 modules stay as they were.
 
-Do not start ads or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
+Do not start ads, Growth Director execution, or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
 
 ## Stripe (do not mix, do not replace)
 
@@ -25,9 +31,10 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Marketing attribution and Intelligence (observe + recommend)
 - Brand voice: profile, examples, drafts that stay in GroovGro
 - SEO: connected homepage check, GroovGro checks for Home and every extra page, drafts, score history, plain-language explanation, Search Console read-only
-- Website builder: visual GroovGro-hosted pages at `/w/[org]` (Home) and `/w/[org]/[slug]` (extra pages), with a labeled starting template, full-page editor, draft preview, per-row width, white/dark-grey defaults, a color wheel plus hex and swatches, extra widgets, pasted photos fetched by GroovGro, photos uploaded to Vercel Blob, one-level inner rows inside a column, and a site-wide header and footer that you edit on Home
+- Website builder: visual GroovGro-hosted pages at `/w/[org]` (Home) and `/w/[org]/[slug]` (extra pages)
 - Approved SEO title, description, and heading drafts can be applied to the matching GroovGro page
+- V2 foundation screens: Business, Offers, Goals, Decisions (Preview of this branch; production after merge)
 
 ## Still later
 
-Builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), 9 AI execute, 10 commercialization.
+Goal progress from live conversions, weekly/monthly review generation, website discovery into the Business Brain, Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.

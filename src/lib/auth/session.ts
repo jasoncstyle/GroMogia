@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 
 import {
   ensureCatalog,
+  ensureGrowthDefaults,
   ensureLeadStages,
   ensureOrganizationModules,
   getEnabledModuleIds,
@@ -146,6 +147,7 @@ export async function getAppSession(): Promise<AppSession> {
 
     await ensureOrganizationModules(organization.id);
     await ensureLeadStages(organization.id);
+    await ensureGrowthDefaults(organization.id);
     const enabledModules = await getEnabledModuleIds(organization.id);
 
     return {

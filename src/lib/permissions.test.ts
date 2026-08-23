@@ -18,4 +18,20 @@ describe("RBAC", () => {
   it("does not treat missing grants as allowed", () => {
     assert.equal(hasPermission([], "view_financials"), false);
   });
+
+  it("lets owners create goals and view decision history", () => {
+    assert.equal(hasPermission(ROLE_PERMISSIONS.owner, "create_goals"), true);
+    assert.equal(
+      hasPermission(ROLE_PERMISSIONS.owner, "view_decision_history"),
+      true,
+    );
+  });
+
+  it("does not let viewers change goals or automation", () => {
+    assert.equal(hasPermission(ROLE_PERMISSIONS.viewer, "create_goals"), false);
+    assert.equal(
+      hasPermission(ROLE_PERMISSIONS.viewer, "configure_automation"),
+      false,
+    );
+  });
 });

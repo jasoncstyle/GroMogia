@@ -59,4 +59,20 @@ describe("module catalog", () => {
     assert.equal(items.some((item) => item.id === "website_builder"), true);
     assert.equal(items.some((item) => item.id === "website_connect"), true);
   });
+
+  it("lets Business, Offers, and Goals be enabled independently of the builder", () => {
+    const enabled = ["business_brain", "offers", "growth_goals"];
+    assert.equal(isModuleEnabled(enabled, "business_brain"), true);
+    assert.equal(isModuleEnabled(enabled, "offers"), true);
+    assert.equal(isModuleEnabled(enabled, "growth_goals"), true);
+    assert.equal(isModuleEnabled(enabled, "website_builder"), false);
+    assert.equal(
+      navModules(enabled, "work").some((item) => item.id === "offers"),
+      true,
+    );
+    assert.equal(
+      navModules(enabled, "grow").some((item) => item.id === "growth_goals"),
+      true,
+    );
+  });
 });
