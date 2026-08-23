@@ -138,22 +138,29 @@ export default async function DashboardPage() {
           }
         />
         <QuestionCard title="How are we doing?" body={happening} />
-        <QuestionCard title="What changed, and why?" body={why} />
-        <QuestionCard title="What needs attention?" body={attention} />
+        <QuestionCard
+          title="What changed, and why?"
+          body={growth?.weeklyReview.whatChanged ?? why}
+        />
+        <QuestionCard
+          title="What needs attention?"
+          body={growth?.weeklyReview.whatNeedsAttention ?? attention}
+        />
         <QuestionCard
           title="What should happen next?"
           body={
             growth?.awaitingApproval.length
               ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
-              : nextStep
+              : (growth?.weeklyReview.whatShouldHappenNext ?? nextStep)
           }
         />
         <QuestionCard
           title="What is GroovGro leaving alone?"
           body={
-            growth?.latestNoChange
+            growth?.weeklyReview.whatIsLeftAlone ??
+            (growth?.latestNoChange
               ? growth.latestNoChange.recommendation
-              : "Nothing recorded yet. If evidence is thin, the right recommendation is to wait. Open Decisions to record “no change yet.”"
+              : "Nothing recorded yet. If evidence is thin, the right recommendation is to wait. Open Growth review to see this week’s recommendation.")
           }
         />
       </div>
@@ -222,6 +229,11 @@ export default async function DashboardPage() {
         {isModuleEnabled(session.enabledModules, "growth_goals") ? (
           <Button asChild variant="outline">
             <Link href="/app/goals">Goals</Link>
+          </Button>
+        ) : null}
+        {isModuleEnabled(session.enabledModules, "growth_reviews") ? (
+          <Button asChild variant="outline">
+            <Link href="/app/growth-review">Growth review</Link>
           </Button>
         ) : null}
         {isModuleEnabled(session.enabledModules, "business_brain") ? (

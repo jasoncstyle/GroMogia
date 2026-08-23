@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. V2 foundation work is on `cursor/v2-foundation-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-discovery-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation + discovery.** Business Brain, Offers, constraints, Goals, Decision History, and review-from-connected-data. GroovGro can draft Offers and suggested Goals from events, bookings, and payments. Drafts stay inactive until you confirm. Website builder and all earlier V1 modules stay as they were.
+**V2 growth foundation + discovery + reviews.** Business Brain, Offers, constraints, Goals, Decision History, review-from-connected-data, and weekly/monthly Growth Reviews. GroovGro can draft Offers and suggested Goals from events, bookings, and payments. Drafts stay inactive until you confirm. Reviews can recommend leaving the plan alone. Website builder and all earlier V1 modules stay as they were.
 
 V1 on `main` remains Phase 7 website builder until this branch is merged. Public groovgro.com homepage stays Coming soon.
 
@@ -38,7 +38,8 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - V2 foundation screens: Business, Offers, Goals, Decisions (Preview of this branch; production after merge)
 - Review connected data: draft Offers and suggested Goals from events, bookings, and payments; confirm or reject before anything becomes active
 - Goal progress from connected leads, bookings, and payments; optional Offer/Goal links on events and leads
+- Weekly Growth Review and monthly strategy review from connected evidence, including “no change yet”
 
 ## Still later
 
-Goal progress from live conversions, weekly/monthly review generation, richer website-page discovery, Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.
+Richer website-page discovery, persisted goal progress writes, specialist READ/ANALYZE/RECOMMEND (no execute), Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.

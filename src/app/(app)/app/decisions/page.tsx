@@ -37,8 +37,14 @@ export default async function DecisionsPage() {
         <p className="text-muted-foreground">
           Decision History records why a change was recommended or left alone.
           The audit log records what changed. &quot;No change yet&quot; is a
-          valid and useful decision.
+          valid and useful decision. Weekly and monthly reviews can be saved
+          here from Growth review.
         </p>
+        <div className="mt-3">
+          <Button asChild variant="outline" size="sm">
+            <Link href="/app/growth-review">Open growth review</Link>
+          </Button>
+        </div>
       </div>
 
       <Card>

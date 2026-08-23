@@ -24,6 +24,8 @@ import {
 } from "@/lib/db/schema";
 import { assertSameOrganization } from "@/lib/db/tenant";
 import { discoverFromConnectedData, normalizeOfferKey } from "@/lib/growth/discover";
+import { getGrowthSnapshot } from "@/lib/growth/queries";
+import { REVIEW_KINDS } from "@/lib/growth/review";
 import {
   CONSTRAINT_TYPES,
   DECISION_TYPES,
@@ -65,6 +67,7 @@ function revalidateGrowth() {
   revalidatePath("/app/offers");
   revalidatePath("/app/goals");
   revalidatePath("/app/decisions");
+  revalidatePath("/app/growth-review");
 }
 
 async function requirePermission(permission: Permission) {
@@ -562,6 +565,59 @@ export async function recordDecision(formData: FormData): Promise<ActionResult> 
     return parsed.decisionType === "no_change"
       ? "No-change decision saved"
       : "Decision saved";
+  });
+}
+
+const reviewKindSchema = z.object({
+  kind: z.enum(REVIEW_KINDS),
+});
+
+export async function saveGrowthReview(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not save the growth review.", async () => {
+    const { session, db } = await requirePermission("view_decision_history");
+    const { kind } = reviewKindSchema.parse({ kind: formData.get("kind") });
+    const snapshot = await getGrowthSnapshot(session.organizationId);
+    if (!snapshot) throw new Error("Could not load connected data for this review.");
+    const review = kind === "monthly" ? snapshot.monthlyReview : snapshot.weeklyReview;
+
+    const decisionType =
+      review.primary.kind === "no_change_yet"
+        ? "no_change"
+        : review.primary.classification === "operational"
+          ? "operational"
+          : review.primary.classification === "strategic"
+            ? "strategic"
+            : "recommend";
+
+    const decisionId = crypto.randomUUID();
+    await db.insert(decisionRecords).values({
+      id: decisionId,
+      organizationId: session.organizationId,
+      goalId: review.primary.goalId,
+      decisionType,
+      recommendation: review.headline,
+      rationale: `${review.summary} ${review.whatShouldHappenNext}`,
+      supportingEvidence: review.whatChanged,
+      evidenceWindow: review.periodLabel,
+      confidence: review.primary.confidence,
+      alternatives: review.recommendations
+        .map((item) => `${item.title}: ${item.recommendation}`)
+        .join("\n"),
+      createdBy: session.userId,
+    });
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "growth_review.saved",
+      targetType: "decision_record",
+      targetId: decisionId,
+      metadata: { kind, decisionType },
+    });
+    revalidateGrowth();
+    return review.primary.kind === "no_change_yet"
+      ? "Review saved. GroovGro recorded that nothing should change yet."
+      : "Review saved to Decision History. GroovGro will not execute it.";
   });
 }
 

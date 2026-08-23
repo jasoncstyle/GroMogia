@@ -92,9 +92,14 @@ export default async function GoalsPage() {
             {autonomy?.description ?? "Recommend and explain."} Guarded
             autopilot is feature-flagged off.
           </p>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/app/decisions">Open decision history</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/app/growth-review">Open growth review</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/app/decisions">Open decision history</Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -103,7 +108,8 @@ export default async function GoalsPage() {
           <CardTitle>Growth review schedule</CardTitle>
           <CardDescription>
             This is when routine reviews are presented. It does not force
-            GroovGro to change the business on that day.
+            GroovGro to change the business on that day. Open Growth review
+            to read the current weekly and monthly summary.
           </CardDescription>
         </CardHeader>
         <CardContent>

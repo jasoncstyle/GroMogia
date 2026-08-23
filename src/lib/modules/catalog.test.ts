@@ -75,4 +75,23 @@ describe("module catalog", () => {
       true,
     );
   });
+
+  it("keeps Growth review independent of reputation Reviews and the builder", () => {
+    const enabled = ["growth_reviews", "growth_goals"];
+    assert.equal(isModuleEnabled(enabled, "growth_reviews"), true);
+    assert.equal(isModuleEnabled(enabled, "reviews"), false);
+    assert.equal(isModuleEnabled(enabled, "website_builder"), false);
+    assert.equal(
+      navModules(enabled, "grow").some((item) => item.id === "growth_reviews"),
+      true,
+    );
+    assert.equal(
+      MODULE_CATALOG.find((module) => module.id === "growth_reviews")?.href,
+      "/app/growth-review",
+    );
+    assert.equal(
+      MODULE_CATALOG.find((module) => module.id === "reviews")?.href,
+      "/app/reviews",
+    );
+  });
 });

@@ -18,6 +18,7 @@ import {
   payments,
 } from "@/lib/db/schema";
 import { liveGoalProgress } from "@/lib/growth/progress";
+import { generateGrowthReview } from "@/lib/growth/review";
 import { goalProgressPercent } from "@/lib/growth/types";
 
 export async function getGrowthSnapshot(organizationId: string) {
@@ -138,6 +139,39 @@ export async function getGrowthSnapshot(organizationId: string) {
     };
   });
 
+  const reviewFacts = {
+    now: facts.now,
+    goals: goals.map((goal) => ({
+      id: goal.id,
+      title: goal.title,
+      status: goal.status,
+      goalType: goal.goalType,
+      liveCurrentValue: goal.liveCurrentValue,
+      targetValue: goal.targetValue,
+      progressPercent: goal.progressPercent,
+      liveNote: goal.liveNote,
+      discoveryStatus: goal.discoveryStatus,
+    })),
+    offers: offerRows.map((offer) => ({
+      name: offer.name,
+      discoveryStatus: offer.discoveryStatus,
+    })),
+    decisions: decisionRows.map((decision) => ({
+      decisionType: decision.decisionType,
+      recommendation: decision.recommendation,
+      createdAt: decision.createdAt,
+    })),
+    policies: policyRows,
+    settings: settingRows[0] ?? null,
+    leads: leadRows.map((lead) => ({ createdAt: lead.createdAt })),
+    bookings: bookingRows.map((booking) => ({ createdAt: booking.createdAt })),
+    payments: paymentRows.map((payment) => ({
+      createdAt: payment.createdAt,
+      amountCents: payment.amountCents,
+      kind: payment.kind,
+    })),
+  };
+
   return {
     brain: brainRows[0] ?? null,
     brand: brandRows[0] ?? null,
@@ -149,6 +183,8 @@ export async function getGrowthSnapshot(organizationId: string) {
     actions: actionRows,
     settings: settingRows[0] ?? null,
     policies: policyRows,
+    weeklyReview: generateGrowthReview({ ...reviewFacts, kind: "weekly" }),
+    monthlyReview: generateGrowthReview({ ...reviewFacts, kind: "monthly" }),
     activeGoals: goals.filter((goal) => goal.status === "active"),
     inferredOffers: offerRows.filter((offer) => offer.discoveryStatus === "inferred"),
     inferredGoals: goals.filter((goal) => goal.discoveryStatus === "inferred"),

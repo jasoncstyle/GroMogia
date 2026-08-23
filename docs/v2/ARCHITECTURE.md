@@ -66,10 +66,9 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 ## BUILD NEXT (after this slice is tested)
 
-- Weekly Growth Review and monthly strategy review UI
-- Dashboard “what changed” from Decision History plus connected data
 - Specialist READ / ANALYZE / RECOMMEND interface (still no execute)
 - Richer website-page discovery (this slice uses events, bookings, payments, brand, and the connected URL — not a full site scrape)
+- Persist computed Goal progress onto stored `currentValue` when you want a historical series
 
 ## DESIGN FOR LATER
 
@@ -106,7 +105,7 @@ Unchanged rule: AI goes through application services. New Actions cannot execute
 
 ## Cadence representation
 
-`growth_settings` stores review frequency, day, time, and timezone. Evidence policies store waiting thresholds. No review generator and no daily job yet. Monitoring, analysis, decision, execution, and user review remain separate concepts.
+`growth_settings` stores review frequency, day, time, and timezone. Evidence policies store waiting thresholds. Weekly and monthly reviews are generated on read from connected data. Saving a review writes Decision History. There is no daily job and no auto-change. Monitoring, analysis, decision, execution, and user review remain separate concepts.
 
 ## Evidence windows without a stats engine
 
@@ -115,8 +114,6 @@ A policy is: minimum elapsed days, observations, and conversions. Helper `eviden
 ## What V2 still lacks (important, not in this slice)
 
 - Automatic discovery from the connected website
-- Review generation in plain English
-- Goal progress wired to live conversions
 - Attribution from campaign all the way to a Goal
 - Specialist execute path
 - Risk guardrail engine beyond stored fields and permissions
@@ -149,9 +146,9 @@ Organization
 
 ## Updated phased roadmap (practical)
 
-1. **This slice — foundation entities and UI.** You are here.
-2. **Connect live progress** — goals read leads, customers, payments.
-3. **Reviews** — scheduled weekly / monthly summaries, still no auto-change.
+1. **Foundation entities and UI.** Done.
+2. **Connect live progress** — goals read leads, customers, payments. Done.
+3. **Reviews** — weekly / monthly summaries, including no-change. Done in this slice.
 4. **Intelligence on goals** — summarize, explain, recommend, including no-change.
 5. **Specialist work with Goal linkage** — SEO, email, later ads.
 6. **Growth Director** — coordinate, still approval-first.
