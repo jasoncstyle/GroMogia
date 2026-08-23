@@ -6,8 +6,10 @@ import {
   reviewConnectedBusiness,
   saveGrowthReview,
 } from "@/lib/actions/growth";
+import { FoldableSample } from "@/components/foldable-sample";
 import type { GrowthReview } from "@/lib/growth/review";
 import { labelFor } from "@/lib/growth/types";
+import { isSafePublicHttpUrl } from "@/lib/seo/audit";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
@@ -70,6 +72,100 @@ export function InferredBadge({
       {source ? ` from ${labelFor(source)}` : ""}. Not active until you confirm.
       {confidence != null ? ` Confidence ${confidence}.` : ""}
     </p>
+  );
+}
+
+export function InferredOfferDraft({
+  offer,
+}: {
+  offer: {
+    id: string
+    name: string
+    description: string
+    offerType: string
+    location: string
+    conversionUrl: string
+    inferredFrom: string
+    confidence: number
+  }
+}) {
+  const pageUrl = isSafePublicHttpUrl(offer.conversionUrl);
+
+  return (
+    <FoldableSample
+      title={offer.name}
+      subtitle="Open to read this draft, then confirm or reject."
+    >
+      <div className="space-y-3">
+        <p className="text-sm whitespace-pre-wrap">
+          {offer.description ||
+            "No extra description was gathered for this draft."}
+        </p>
+        {offer.offerType && offer.offerType !== "other" ? (
+          <p className="text-sm text-muted-foreground">
+            Type: {labelFor(offer.offerType)}
+          </p>
+        ) : null}
+        {offer.location ? (
+          <p className="text-sm text-muted-foreground">Location: {offer.location}</p>
+        ) : null}
+        {pageUrl ? (
+          <p className="text-sm">
+            <span className="font-medium">Page GroovGro read: </span>
+            <a
+              href={pageUrl.href}
+              className="break-all underline"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {pageUrl.href}
+            </a>
+          </p>
+        ) : null}
+        <InferredBadge source={offer.inferredFrom} confidence={offer.confidence} />
+        <ConfirmRejectButtons id={offer.id} kind="offer" />
+      </div>
+    </FoldableSample>
+  );
+}
+
+export function InferredGoalDraft({
+  goal,
+}: {
+  goal: {
+    id: string
+    title: string
+    description: string
+    goalType: string
+    successDefinition: string
+    inferredFrom: string
+    confidence: number
+  }
+}) {
+  return (
+    <FoldableSample
+      title={goal.title}
+      subtitle="Open to read this draft, then confirm or reject."
+    >
+      <div className="space-y-3">
+        <p className="text-sm whitespace-pre-wrap">
+          {goal.description || "No extra description was gathered for this draft."}
+        </p>
+        {goal.successDefinition ? (
+          <p className="text-sm">
+            <span className="font-medium">Success looks like: </span>
+            {goal.successDefinition}
+          </p>
+        ) : null}
+        {goal.goalType ? (
+          <p className="text-sm text-muted-foreground">
+            Type: {labelFor(goal.goalType)}
+          </p>
+        ) : null}
+        <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
+        <ConfirmRejectButtons id={goal.id} kind="goal" />
+      </div>
+    </FoldableSample>
   );
 }
 

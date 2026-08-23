@@ -11,11 +11,11 @@ export function FoldableSample({
 }) {
   return (
     <details className="group rounded-lg border">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-3 py-2 [&::-webkit-details-marker]:hidden">
         <span className="min-w-0">
-          <span className="block truncate text-sm font-medium">{title}</span>
+          <span className="block text-sm font-medium">{title}</span>
           {subtitle ? (
-            <span className="block truncate text-xs text-muted-foreground">
+            <span className="block text-xs text-muted-foreground">
               {subtitle}
             </span>
           ) : null}

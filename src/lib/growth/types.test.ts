@@ -80,6 +80,17 @@ describe("growth foundation", () => {
     assert.equal(draftToggleTitle("goal", 2), "2 suggested goals");
   });
 
+  it("lets the owner read a draft before confirm or reject", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/components/growth-review.tsx"),
+      "utf8",
+    );
+    assert.match(source, /Open to read this draft/);
+    assert.match(source, /offer.description/);
+    assert.match(source, /Page GroovGro read/);
+    assert.match(source, /goal.successDefinition/);
+  });
+
   it("gives SEO a longer default window than email", () => {
     const seo = DEFAULT_EVIDENCE_POLICIES.find((row) => row.channel === "seo");
     const email = DEFAULT_EVIDENCE_POLICIES.find((row) => row.channel === "email");

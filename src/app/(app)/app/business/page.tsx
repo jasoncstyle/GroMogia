@@ -15,8 +15,8 @@ import { commaTextFromList, draftToggleTitle } from "@/lib/growth/types";
 import { FoldableSample } from "@/components/foldable-sample";
 import { StatusAlertList } from "@/components/status-alert";
 import {
-  ConfirmRejectButtons,
-  InferredBadge,
+  InferredGoalDraft,
+  InferredOfferDraft,
   ReviewConnectedDataButton,
 } from "@/components/growth-review";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -101,32 +101,20 @@ export default async function BusinessBrainPage() {
           {(snapshot?.inferredOffers.length ?? 0) > 0 ? (
             <FoldableSample
               title={draftToggleTitle("offer", snapshot?.inferredOffers.length ?? 0)}
-              subtitle="Open to confirm or reject. Drafts stay inactive."
+              subtitle="Open the list, then open each name to read it. Drafts stay inactive."
             >
               {snapshot?.inferredOffers.map((offer) => (
-                <div key={offer.id} className="rounded-lg border p-3">
-                  <p className="font-medium">{offer.name}</p>
-                  <InferredBadge source={offer.inferredFrom} confidence={offer.confidence} />
-                  <div className="mt-2">
-                    <ConfirmRejectButtons id={offer.id} kind="offer" />
-                  </div>
-                </div>
+                <InferredOfferDraft key={offer.id} offer={offer} />
               ))}
             </FoldableSample>
           ) : null}
           {(snapshot?.inferredGoals.length ?? 0) > 0 ? (
             <FoldableSample
               title={draftToggleTitle("goal", snapshot?.inferredGoals.length ?? 0)}
-              subtitle="Open to confirm or reject. Drafts stay inactive."
+              subtitle="Open the list, then open each name to read it. Drafts stay inactive."
             >
               {snapshot?.inferredGoals.map((goal) => (
-                <div key={goal.id} className="rounded-lg border p-3">
-                  <p className="font-medium">{goal.title}</p>
-                  <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
-                  <div className="mt-2">
-                    <ConfirmRejectButtons id={goal.id} kind="goal" />
-                  </div>
-                </div>
+                <InferredGoalDraft key={goal.id} goal={goal} />
               ))}
             </FoldableSample>
           ) : null}
