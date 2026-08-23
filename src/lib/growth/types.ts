@@ -195,3 +195,10 @@ export function parseOptionalInt(value: string | undefined): number | null {
 export function labelFor(value: string): string {
   return value.replaceAll("_", " ");
 }
+
+export function draftToggleTitle(kind: "offer" | "goal", count: number): string {
+  if (kind === "offer") {
+    return count === 1 ? "1 possible offer" : `${count} possible offers`;
+  }
+  return count === 1 ? "1 suggested goal" : `${count} suggested goals`;
+}
