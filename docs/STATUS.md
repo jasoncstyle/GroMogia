@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. V2 foundation work is on `cursor/v2-foundation-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -18,6 +18,8 @@ Use that tag to compare, roll back, or see what V2 actually changed.
 ## Current phase
 
 **V2 growth foundation (first slice).** Business Brain, Offers, generalized availability/constraints, Growth Goals, versioned Growth Plans, Decision History, proposed Actions (not executed), review schedule, and simple evidence-window policies. Website builder and all earlier V1 modules stay as they were.
+
+V1 on `main` remains Phase 7 website builder until this branch is merged. Public groovgro.com homepage stays Coming soon.
 
 Do not start ads, Growth Director execution, or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
 
