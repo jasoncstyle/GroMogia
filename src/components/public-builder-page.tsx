@@ -7,7 +7,7 @@ import {
   builderPublicUrl,
   publicBuilderPageSeo,
 } from "@/lib/website-builder/apply-seo";
-import { HOME_PAGE_SLUG } from "@/lib/website-builder/pages";
+import { HOME_PAGE_SLUG, builderChromePages } from "@/lib/website-builder/pages";
 import { getPublishedBuilderPage } from "@/lib/website-builder/queries";
 
 export async function publishedBuilderMetadata(orgSlug: string, pageSlug = HOME_PAGE_SLUG) {
@@ -53,7 +53,7 @@ export async function PublicBuilderPageScreen({
     businessName: page.brand?.businessName || page.organization.name,
     description: page.brand?.description ?? "",
   });
-  const navPages = page.pages.map((item) => ({
+  const navPages = builderChromePages(page.pages).map((item) => ({
     href: item.isHome
       ? `/w/${page.organization.slug}`
       : `/w/${page.organization.slug}/${item.slug}`,

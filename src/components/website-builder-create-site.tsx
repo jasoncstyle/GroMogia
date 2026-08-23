@@ -24,9 +24,11 @@ export function WebsiteBuilderCreateSite({
       }}
     >
       <p className="text-sm text-muted-foreground">
-        GroovGro drafts Home, About, and Work from your Brand, Business Brain,
-        and confirmed offers. The pages stay unpublished. This does not copy
-        other websites, change your connected live site, or touch Stripe.
+        GroovGro drafts a complete unpublished website: Home, About, What we
+        offer, Contact, Questions, and Where we work when you have locations.
+        Confirmed offers each get their own page. The header links those pages
+        together. This does not copy other websites, change your connected live
+        site, or touch Stripe.
       </p>
       {hasExistingHome ? (
         <p className="text-sm text-muted-foreground">

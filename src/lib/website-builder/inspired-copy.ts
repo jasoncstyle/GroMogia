@@ -18,6 +18,11 @@ export type InspiredCopyFacts = {
   tone?: string
   doSay?: string
   dontSay?: string
+  operatingHours?: string
+  contactEmail?: string
+  contactPhone?: string
+  contactAddress?: string
+  socialLinks?: { label: string; url: string }[]
 };
 
 export type InspiredCopy = {
