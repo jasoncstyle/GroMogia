@@ -66,7 +66,6 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 ## BUILD NEXT (after this slice is tested)
 
-- Specialist READ / ANALYZE / RECOMMEND interface (still no execute)
 - Richer website-page discovery (this slice uses events, bookings, payments, brand, and the connected URL — not a full site scrape)
 - Persist computed Goal progress onto stored `currentValue` when you want a historical series
 
@@ -149,8 +148,8 @@ Organization
 1. **Foundation entities and UI.** Done.
 2. **Connect live progress** — goals read leads, customers, payments. Done.
 3. **Reviews** — weekly / monthly summaries, including no-change. Done in this slice.
-4. **Intelligence on goals** — summarize, explain, recommend, including no-change.
-5. **Specialist work with Goal linkage** — SEO, email, later ads.
+4. **Intelligence on goals** — specialists read, analyze, and recommend, including no-change. Done in this slice.
+5. **Specialist work with Goal linkage** — SEO and other connected modules recommend; email and ads stay disconnected. Done for recommend-only.
 6. **Growth Director** — coordinate, still approval-first.
 7. **Guarded automation** — only after the above is trusted.
 

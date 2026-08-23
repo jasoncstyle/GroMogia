@@ -1,0 +1,209 @@
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+import { DEFAULT_EVIDENCE_POLICIES } from "./types";
+import {
+  buildSpecialistReports,
+  relatedGoalFor,
+  specialistById,
+  type SpecialistFacts,
+} from "./specialists";
+
+const now = new Date("2026-08-23T12:00:00.000Z");
+
+function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
+  return {
+    now,
+    goals: [],
+    inferredDraftCount: 0,
+    policies: [...DEFAULT_EVIDENCE_POLICIES],
+    websiteConnected: true,
+    websiteUrl: "https://example.com",
+    seoScore: null,
+    seoSummary: "",
+    seoFailCount: 0,
+    seoWarnCount: 0,
+    seoCheckedAt: null,
+    searchConsoleConnected: false,
+    openLeadCount: 0,
+    upcomingEventCount: 0,
+    evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
+    advertisingConnected: false,
+    emailConnected: false,
+    socialConnected: false,
+    ...overrides,
+  };
+}
+
+const visibilityGoal = {
+  id: "g-vis",
+  title: "Be easier to find",
+  status: "active" as const,
+  goalType: "visibility",
+  liveCurrentValue: 0,
+  targetValue: 10,
+  progressPercent: 0,
+  liveNote: "Updated by hand.",
+};
+
+const utilizationGoal = {
+  id: "g-util",
+  title: "Fill upcoming scheduled spots",
+  status: "active" as const,
+  goalType: "utilization",
+  liveCurrentValue: 0,
+  targetValue: 12,
+  progressPercent: 0,
+  liveNote: "0 of 12 upcoming spots are filled.",
+};
+
+describe("growth specialists", () => {
+  it("links SEO to a visibility Goal and asks for a check when none exists", () => {
+    const reports = buildSpecialistReports(
+      facts({ goals: [visibilityGoal, utilizationGoal] }),
+    );
+    const seo = specialistById(reports, "seo");
+    assert.ok(seo);
+    assert.equal(seo.relatedGoal?.id, "g-vis");
+    assert.equal(seo.recommend.kind, "recommend");
+    assert.equal(seo.recommend.classification, "operational");
+    assert.equal(seo.recommend.href, "/app/seo");
+    assert.equal(seo.executeAllowed, false);
+    assert.match(seo.recommend.body, /will not edit the website/);
+  });
+
+  it("recommends fixing blocking SEO items without executing them", () => {
+    const seo = specialistById(
+      buildSpecialistReports(
+        facts({
+          seoScore: 42,
+          seoSummary: "Missing title and description.",
+          seoFailCount: 2,
+          seoWarnCount: 1,
+          seoCheckedAt: now,
+          goals: [visibilityGoal],
+        }),
+      ),
+      "seo",
+    );
+    assert.ok(seo);
+    assert.match(seo.read, /42 out of 100/);
+    assert.equal(seo.recommend.title, "Fix blocking SEO items");
+    assert.match(seo.recommend.body, /will not change the connected website/);
+  });
+
+  it("leaves SEO alone when the page is fine and evidence is thin", () => {
+    const seo = specialistById(
+      buildSpecialistReports(
+        facts({
+          seoScore: 88,
+          seoSummary: "Looks complete.",
+          seoCheckedAt: now,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+        }),
+      ),
+      "seo",
+    );
+    assert.ok(seo);
+    assert.equal(seo.recommend.kind, "no_change_yet");
+    assert.match(seo.recommend.title, /Leave SEO alone/);
+  });
+
+  it("asks to connect an existing website and never to move it", () => {
+    const website = specialistById(
+      buildSpecialistReports(facts({ websiteConnected: false, websiteUrl: "" })),
+      "website",
+    );
+    assert.ok(website);
+    assert.match(website.recommend.body, /Do not move the site/);
+    assert.equal(website.recommend.href, "/app/website");
+  });
+
+  it("follows up open leads without sending email", () => {
+    const crm = specialistById(
+      buildSpecialistReports(facts({ openLeadCount: 3 })),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.match(crm.recommend.body, /will not email them/);
+    assert.equal(crm.recommend.href, "/app/crm");
+  });
+
+  it("notices a far-behind availability Goal only after enough evidence", () => {
+    const thin = specialistById(
+      buildSpecialistReports(
+        facts({
+          goals: [utilizationGoal],
+          upcomingEventCount: 2,
+          evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
+        }),
+      ),
+      "availability",
+    );
+    assert.equal(thin?.recommend.kind, "no_change_yet");
+
+    const enough = specialistById(
+      buildSpecialistReports(
+        facts({
+          goals: [utilizationGoal],
+          upcomingEventCount: 2,
+          evidenceSample: { elapsedDays: 30, observations: 40, conversions: 12 },
+        }),
+      ),
+      "availability",
+    );
+    assert.equal(enough?.recommend.classification, "optimization");
+    assert.match(enough?.recommend.body ?? "", /will not change ads or the website/);
+  });
+
+  it("never starts ads, email, or social", () => {
+    const reports = buildSpecialistReports(
+      facts({
+        goals: [
+          {
+            id: "g-rev",
+            title: "Match last month",
+            status: "active",
+            goalType: "revenue",
+            liveCurrentValue: 100,
+            targetValue: 400,
+            progressPercent: 25,
+            liveNote: "100 dollars.",
+          },
+        ],
+      }),
+    );
+    for (const id of ["advertising", "email", "social"] as const) {
+      const row = specialistById(reports, id);
+      assert.ok(row);
+      assert.equal(row.available, false);
+      assert.equal(row.executeAllowed, false);
+      assert.equal(row.recommend.kind, "no_change_yet");
+      assert.match(row.recommend.body, /will not buy ads, send email, or publish social posts/);
+    }
+  });
+
+  it("picks the matching Goal type for a specialist", () => {
+    const goal = relatedGoalFor([utilizationGoal, visibilityGoal], "seo");
+    assert.equal(goal?.id, "g-vis");
+  });
+
+  it("does not bake sailing or seat language into specialist copy", () => {
+    const source = readFileSync(join(process.cwd(), "src/lib/growth/specialists.ts"), "utf8");
+    for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk"]) {
+      assert.equal(source.toLowerCase().includes(banned), false, banned);
+    }
+  });
+
+  it("always stays on read, analyze, and recommend", () => {
+    const reports = buildSpecialistReports(facts());
+    assert.equal(reports.length, 7);
+    assert.equal(
+      reports.every((row) => row.mode === "read_analyze_recommend" && row.executeAllowed === false),
+      true,
+    );
+  });
+});

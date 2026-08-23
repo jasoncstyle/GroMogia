@@ -13,13 +13,20 @@ import {
   growthGoals,
   growthPlans,
   growthSettings,
+  integrationConnections,
   leadRecords,
   offers,
   payments,
+  seoAudits,
 } from "@/lib/db/schema";
 import { liveGoalProgress } from "@/lib/growth/progress";
 import { generateGrowthReview } from "@/lib/growth/review";
+import {
+  buildSpecialistReports,
+  type SpecialistFacts,
+} from "@/lib/growth/specialists";
 import { goalProgressPercent } from "@/lib/growth/types";
+import { getDashboardSnapshot } from "@/lib/phase2/queries";
 
 export async function getGrowthSnapshot(organizationId: string) {
   const db = getDb();
@@ -244,4 +251,93 @@ export async function getGrowthLinkOptions(organizationId: string) {
       (goal) => goal.status !== "cancelled" && goal.status !== "missed",
     ),
   };
+}
+
+async function getLatestSeoSummary(organizationId: string) {
+  const db = getDb();
+  if (!db) {
+    return {
+      seoScore: null as number | null,
+      seoSummary: "",
+      seoFailCount: 0,
+      seoWarnCount: 0,
+      seoCheckedAt: null as Date | null,
+      searchConsoleConnected: false,
+    };
+  }
+
+  const [audits, googleRows] = await Promise.all([
+    db
+      .select()
+      .from(seoAudits)
+      .where(eq(seoAudits.organizationId, organizationId))
+      .orderBy(desc(seoAudits.createdAt))
+      .limit(10),
+    db
+      .select({ status: integrationConnections.status })
+      .from(integrationConnections)
+      .where(
+        and(
+          eq(integrationConnections.organizationId, organizationId),
+          eq(integrationConnections.providerKey, "google"),
+        ),
+      )
+      .limit(1),
+  ]);
+
+  const audit = audits.find((row) => !row.builderSiteId) ?? audits[0] ?? null;
+  const findings = audit?.findings ?? [];
+
+  return {
+    seoScore: audit?.score ?? null,
+    seoSummary: audit?.summary ?? "",
+    seoFailCount: findings.filter((item) => item.severity === "fail").length,
+    seoWarnCount: findings.filter((item) => item.severity === "warn").length,
+    seoCheckedAt: audit?.createdAt ?? null,
+    searchConsoleConnected: googleRows[0]?.status === "connected",
+  };
+}
+
+export async function getSpecialistReports(organizationId: string) {
+  const [snapshot, dashboard, seo] = await Promise.all([
+    getGrowthSnapshot(organizationId),
+    getDashboardSnapshot(organizationId),
+    getLatestSeoSummary(organizationId),
+  ]);
+  if (!snapshot) return [];
+
+  const defaultCheck = snapshot.weeklyReview.evidenceChecks.find(
+    (row) => row.channel === "default",
+  );
+  const facts: SpecialistFacts = {
+    now: snapshot.weeklyReview.generatedAt,
+    goals: snapshot.goals.map((goal) => ({
+      id: goal.id,
+      title: goal.title,
+      status: goal.status,
+      goalType: goal.goalType,
+      liveCurrentValue: goal.liveCurrentValue,
+      targetValue: goal.targetValue,
+      progressPercent: goal.progressPercent,
+      liveNote: goal.liveNote,
+    })),
+    inferredDraftCount:
+      snapshot.inferredOffers.length + snapshot.inferredGoals.length,
+    policies: snapshot.policies,
+    websiteConnected: Boolean(dashboard.website?.publicUrl),
+    websiteUrl: dashboard.website?.publicUrl ?? "",
+    openLeadCount: dashboard.openLeadCount,
+    upcomingEventCount: dashboard.upcomingEvents.length,
+    evidenceSample: defaultCheck?.sample ?? {
+      elapsedDays: 0,
+      observations: 0,
+      conversions: 0,
+    },
+    advertisingConnected: false,
+    emailConnected: false,
+    socialConnected: false,
+    ...seo,
+  };
+
+  return buildSpecialistReports(facts);
 }

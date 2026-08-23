@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation + discovery + reviews.** Business Brain, Offers, constraints, Goals, Decision History, review-from-connected-data, and weekly/monthly Growth Reviews. GroovGro can draft Offers and suggested Goals from events, bookings, and payments. Drafts stay inactive until you confirm. Reviews can recommend leaving the plan alone. Website builder and all earlier V1 modules stay as they were.
+**V2 growth foundation + discovery + reviews + specialists.** Business Brain, Offers, constraints, Goals, Decision History, review-from-connected-data, weekly/monthly Growth Reviews, and specialist READ / ANALYZE / RECOMMEND on Intelligence. GroovGro can draft Offers and suggested Goals from events, bookings, and payments. Drafts stay inactive until you confirm. Reviews and specialists can recommend leaving a channel alone. Website builder and all earlier V1 modules stay as they were.
 
 V1 on `main` remains Phase 7 website builder until this branch is merged. Public groovgro.com homepage stays Coming soon.
 
@@ -39,7 +39,8 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Review connected data: draft Offers and suggested Goals from events, bookings, and payments; confirm or reject before anything becomes active
 - Goal progress from connected leads, bookings, and payments; optional Offer/Goal links on events and leads
 - Weekly Growth Review and monthly strategy review from connected evidence, including “no change yet”
+- Specialists on Intelligence: SEO, website, leads, schedule, advertising, email, and social. Each reads, analyzes against a Goal, and recommends — including no change. None execute.
 
 ## Still later
 
-Richer website-page discovery, persisted goal progress writes, specialist READ/ANALYZE/RECOMMEND (no execute), Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.
+Richer website-page discovery, persisted goal progress writes, Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.
