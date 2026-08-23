@@ -284,10 +284,11 @@ export default async function GoalsPage() {
                 <p className="font-medium">{goal.title}</p>
                 <p className="text-sm text-muted-foreground">{goal.description}</p>
                 <p className="text-sm">
-                  {goal.currentValue}
+                  {goal.liveCurrentValue}
                   {goal.targetValue != null ? ` / ${goal.targetValue}` : ""}
                   {goal.unit ? ` ${goal.unit}` : ""}
                 </p>
+                <p className="text-sm text-muted-foreground">{goal.liveNote}</p>
                 <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
                 <div className="mt-3">
                   <ConfirmRejectButtons id={goal.id} kind="goal" />
@@ -320,13 +321,16 @@ export default async function GoalsPage() {
                         : ""}
                     </p>
                     <p className="text-sm">
-                      {goal.currentValue}
+                      {goal.liveComputable ? goal.liveCurrentValue : goal.currentValue}
                       {goal.targetValue != null ? ` / ${goal.targetValue}` : ""}
                       {goal.unit ? ` ${goal.unit}` : ""}
                       {goal.deadline
                         ? ` · due ${goal.deadline.toLocaleDateString()}`
                         : ""}
                     </p>
+                    {goal.liveNote ? (
+                      <p className="text-sm text-muted-foreground">{goal.liveNote}</p>
+                    ) : null}
                   </div>
                   {goal.totalBudgetCents != null ? (
                     <p className="text-sm text-muted-foreground">

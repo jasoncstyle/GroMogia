@@ -21,6 +21,8 @@ const contactSchema = z.object({
   source: z.string().trim().max(80).optional().default("manual"),
   notes: z.string().trim().max(2000).optional().default(""),
   estimatedValue: z.string().optional().default(""),
+  offerId: z.string().optional().default(""),
+  goalId: z.string().optional().default(""),
 });
 
 export async function createLead(formData: FormData): Promise<ActionResult> {
@@ -37,6 +39,8 @@ export async function createLead(formData: FormData): Promise<ActionResult> {
     source: formData.get("source") ?? "manual",
     notes: formData.get("notes") ?? "",
     estimatedValue: formData.get("estimatedValue") ?? "",
+    offerId: formData.get("offerId") ?? "",
+    goalId: formData.get("goalId") ?? "",
   });
 
   if (!parsed.displayName && !parsed.email) {
@@ -77,6 +81,8 @@ export async function createLead(formData: FormData): Promise<ActionResult> {
     estimatedValueCents: parsed.estimatedValue
       ? dollarsToCents(parsed.estimatedValue)
       : null,
+    offerId: parsed.offerId || null,
+    goalId: parsed.goalId || null,
   });
   await db.insert(leadActivities).values({
     organizationId: session.organizationId,

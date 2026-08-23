@@ -66,9 +66,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 ## BUILD NEXT (after this slice is tested)
 
-- Optional Goal / Offer pickers on lead and event forms
 - Weekly Growth Review and monthly strategy review UI
-- Goal progress from real lead / payment counts
 - Dashboard “what changed” from Decision History plus connected data
 - Specialist READ / ANALYZE / RECOMMEND interface (still no execute)
 - Richer website-page discovery (this slice uses events, bookings, payments, brand, and the connected URL — not a full site scrape)

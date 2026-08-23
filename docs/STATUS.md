@@ -37,6 +37,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Approved SEO title, description, and heading drafts can be applied to the matching GroovGro page
 - V2 foundation screens: Business, Offers, Goals, Decisions (Preview of this branch; production after merge)
 - Review connected data: draft Offers and suggested Goals from events, bookings, and payments; confirm or reject before anything becomes active
+- Goal progress from connected leads, bookings, and payments; optional Offer/Goal links on events and leads
 
 ## Still later
 

@@ -4,6 +4,7 @@ import { convertLeadToCustomer, createLead, moveLead } from "@/lib/actions/crm";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { contacts, customers, leadRecords, leadStages } from "@/lib/db/schema";
+import { getGrowthLinkOptions } from "@/lib/growth/queries";
 import { appUrl } from "@/lib/env";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { formatMoney } from "@/lib/money";
@@ -73,6 +74,10 @@ export default async function CrmPage() {
           .orderBy(desc(customers.firstConvertedAt))
       : [];
 
+  const links = organizationId
+    ? await getGrowthLinkOptions(organizationId)
+    : { offers: [], goals: [] };
+
   const slug = await resolveOrganizationSlug(
     session.organizationId,
     session.organizationSlug,
@@ -140,6 +145,28 @@ export default async function CrmPage() {
               <Label htmlFor="estimatedValue">Estimated value (optional)</Label>
               <Input id="estimatedValue" name="estimatedValue" placeholder="0.00" />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="offerId">Related offer</Label>
+              <select id="offerId" name="offerId" className={selectClassName + " w-full"} defaultValue="">
+                <option value="">None</option>
+                {links.offers.map((offer) => (
+                  <option key={offer.id} value={offer.id}>
+                    {offer.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="goalId">Related goal</Label>
+              <select id="goalId" name="goalId" className={selectClassName + " w-full"} defaultValue="">
+                <option value="">None</option>
+                {links.goals.map((goal) => (
+                  <option key={goal.id} value={goal.id}>
+                    {goal.title}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="notes">Notes</Label>
               <Textarea id="notes" name="notes" rows={3} />
@@ -176,6 +203,13 @@ export default async function CrmPage() {
                     <TableCell>
                       <div className="font-medium">{contact.displayName}</div>
                       <div className="text-muted-foreground">{contact.email}</div>
+                      {lead.offerId || lead.goalId ? (
+                        <div className="text-muted-foreground">
+                          {links.offers.find((offer) => offer.id === lead.offerId)?.name ??
+                            links.goals.find((goal) => goal.id === lead.goalId)?.title ??
+                            ""}
+                        </div>
+                      ) : null}
                     </TableCell>
                     <TableCell>{stage.name}</TableCell>
                     <TableCell>{lead.source}</TableCell>
