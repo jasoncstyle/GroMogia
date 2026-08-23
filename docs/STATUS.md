@@ -42,6 +42,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Specialists on Intelligence: SEO, website, leads, schedule, advertising, email, and social. Each reads, analyzes against a Goal, and recommends — including no change. None execute.
 - Green status alerts when the workspace is working and the website has been connected and read. Amber when an address is saved but Review connected data has not run yet. Tracking stays silent until visits or clicks exist.
 - Possible offers and suggested goals on Business stay closed until you open the toggle. Confirm and reject still do not activate marketing.
+- Phones get a Menu button that opens the same app navigation as the desktop sidebar.
 
 ## Still later
 
