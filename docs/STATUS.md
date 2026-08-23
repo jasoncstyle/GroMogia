@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation (first slice).** Business Brain, Offers, generalized availability/constraints, Growth Goals, versioned Growth Plans, Decision History, proposed Actions (not executed), review schedule, and simple evidence-window policies. Website builder and all earlier V1 modules stay as they were.
+**V2 growth foundation + discovery.** Business Brain, Offers, constraints, Goals, Decision History, and review-from-connected-data. GroovGro can draft Offers and suggested Goals from events, bookings, and payments. Drafts stay inactive until you confirm. Website builder and all earlier V1 modules stay as they were.
 
 V1 on `main` remains Phase 7 website builder until this branch is merged. Public groovgro.com homepage stays Coming soon.
 
@@ -36,7 +36,8 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Website builder: visual GroovGro-hosted pages at `/w/[org]` (Home) and `/w/[org]/[slug]` (extra pages)
 - Approved SEO title, description, and heading drafts can be applied to the matching GroovGro page
 - V2 foundation screens: Business, Offers, Goals, Decisions (Preview of this branch; production after merge)
+- Review connected data: draft Offers and suggested Goals from events, bookings, and payments; confirm or reject before anything becomes active
 
 ## Still later
 
-Goal progress from live conversions, weekly/monthly review generation, website discovery into the Business Brain, Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.
+Goal progress from live conversions, weekly/monthly review generation, richer website-page discovery, Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.

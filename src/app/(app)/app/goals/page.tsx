@@ -6,6 +6,11 @@ import {
   updateGoalProgress,
   updateGrowthSettings,
 } from "@/lib/actions/growth";
+import {
+  ConfirmRejectButtons,
+  InferredBadge,
+  ReviewConnectedDataButton,
+} from "@/components/growth-review";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import {
@@ -46,7 +51,9 @@ export default async function GoalsPage() {
   const snapshot = session.organizationId
     ? await getGrowthSnapshot(session.organizationId)
     : null;
-  const goals = snapshot?.goals ?? [];
+  const goals = (snapshot?.goals ?? []).filter(
+    (goal) => goal.discoveryStatus !== "inferred",
+  );
   const offers = snapshot?.offers ?? [];
   const plans = snapshot?.plans ?? [];
   const settings = snapshot?.settings;
@@ -60,8 +67,12 @@ export default async function GoalsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Goals</h1>
         <p className="text-muted-foreground">
           A Goal is a measurable outcome. GroovGro should help get there, then
-          wait for enough evidence before changing course.
+          wait for enough evidence before changing course. Suggested goals stay
+          drafts until you confirm them.
         </p>
+        <div className="mt-3">
+          <ReviewConnectedDataButton disabled={!session.organizationId} />
+        </div>
       </div>
 
       <Card>
@@ -257,6 +268,35 @@ export default async function GoalsPage() {
           </SaveForm>
         </CardContent>
       </Card>
+
+      {(snapshot?.inferredGoals.length ?? 0) > 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Suggested goals waiting for you</CardTitle>
+            <CardDescription>
+              GroovGro drafted these from connected data. Confirming makes a
+              Goal active. Rejecting leaves it unused. Nothing else happens.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {snapshot?.inferredGoals.map((goal) => (
+              <div key={goal.id} className="rounded-lg border p-4">
+                <p className="font-medium">{goal.title}</p>
+                <p className="text-sm text-muted-foreground">{goal.description}</p>
+                <p className="text-sm">
+                  {goal.currentValue}
+                  {goal.targetValue != null ? ` / ${goal.targetValue}` : ""}
+                  {goal.unit ? ` ${goal.unit}` : ""}
+                </p>
+                <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
+                <div className="mt-3">
+                  <ConfirmRejectButtons id={goal.id} kind="goal" />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      ) : null}
 
       <Card>
         <CardHeader>
