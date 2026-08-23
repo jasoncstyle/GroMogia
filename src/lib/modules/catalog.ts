@@ -3,6 +3,7 @@ export type ModuleId =
   | "business_brain"
   | "offers"
   | "growth_goals"
+  | "growth_reviews"
   | "integrations"
   | "media"
   | "website_connect"
@@ -33,6 +34,7 @@ export const PHASE_1_MODULES: ModuleId[] = [
   "business_brain",
   "offers",
   "growth_goals",
+  "growth_reviews",
   "integrations",
   "media",
 ];
@@ -96,6 +98,14 @@ export const MODULE_CATALOG: ModuleDefinition[] = [
     description: "Measurable outcomes GroovGro should help the business reach.",
     phase: 1,
     href: "/app/goals",
+    navGroup: "grow",
+  },
+  {
+    id: "growth_reviews",
+    name: "Growth review",
+    description: "Weekly and monthly summaries. No change is a valid recommendation.",
+    phase: 1,
+    href: "/app/growth-review",
     navGroup: "grow",
   },
   {

@@ -16,6 +16,7 @@ import { formatMoney } from "@/lib/money";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { isModuleEnabled } from "@/lib/modules/catalog";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
+import { ReviewConnectedDataButton } from "@/components/growth-review";
 
 export default async function DashboardPage() {
   const session = await getAppSession();
@@ -44,8 +45,13 @@ export default async function DashboardPage() {
         : "No website visits or campaign sources yet. Connect the existing website to start attributing leads."
     : "Context needs a connected website and Stripe data.";
 
+  const inferredCount =
+    (growth?.inferredOffers.length ?? 0) + (growth?.inferredGoals.length ?? 0);
+
   const attention = missing.length
     ? `Connect ${missing.join(" and ")} so people can sign in and organizations can be stored.`
+    : inferredCount > 0
+      ? `${inferredCount} suggested offer${inferredCount === 1 ? "" : "s or goals"} waiting for you to confirm or reject.`
     : snapshot && !snapshot.stripeConnected
       ? snapshot.stripeConfigured
         ? "Stripe keys are on Vercel, but this organization has not been marked as connected. Open Bookings & payments and connect Stripe."
@@ -54,11 +60,13 @@ export default async function DashboardPage() {
         ? `${snapshot.openLeadCount} lead${snapshot.openLeadCount === 1 ? "" : "s"} still need a next step.`
         : "Brand, website, and Stripe are in a good starting place. Add an event or a lead to see the dashboard fill in.";
 
-  const nextStep = !snapshot?.website?.publicUrl
+  const nextStep = inferredCount > 0
+    ? "Open Business to confirm or reject what GroovGro drafted. Nothing becomes active until you confirm."
+    : !snapshot?.website?.publicUrl
     ? "Connect the existing website and paste the tracking snippet."
     : !snapshot.stripeConnected
       ? "Connect Stripe and sync recent test payments."
-      : "Open Intelligence for observe-and-recommend next steps, and keep the public lead form in use.";
+      : "Review connected data on Business if you have not yet, then keep the public lead form in use.";
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -122,7 +130,7 @@ export default async function DashboardPage() {
               ? growth.activeGoals
                   .map((goal) =>
                     goal.progressPercent != null
-                      ? `${goal.title} (${goal.progressPercent}% of target)`
+                      ? `${goal.title} (${goal.liveCurrentValue}/${goal.targetValue ?? "—"}, ${goal.progressPercent}% )`
                       : goal.title,
                   )
                   .join(" · ")
@@ -130,22 +138,29 @@ export default async function DashboardPage() {
           }
         />
         <QuestionCard title="How are we doing?" body={happening} />
-        <QuestionCard title="What changed, and why?" body={why} />
-        <QuestionCard title="What needs attention?" body={attention} />
+        <QuestionCard
+          title="What changed, and why?"
+          body={growth?.weeklyReview.whatChanged ?? why}
+        />
+        <QuestionCard
+          title="What needs attention?"
+          body={growth?.weeklyReview.whatNeedsAttention ?? attention}
+        />
         <QuestionCard
           title="What should happen next?"
           body={
             growth?.awaitingApproval.length
               ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
-              : nextStep
+              : (growth?.weeklyReview.whatShouldHappenNext ?? nextStep)
           }
         />
         <QuestionCard
           title="What is GroovGro leaving alone?"
           body={
-            growth?.latestNoChange
+            growth?.weeklyReview.whatIsLeftAlone ??
+            (growth?.latestNoChange
               ? growth.latestNoChange.recommendation
-              : "Nothing recorded yet. If evidence is thin, the right recommendation is to wait. Open Decisions to record “no change yet.”"
+              : "Nothing recorded yet. If evidence is thin, the right recommendation is to wait. Open Growth review to see this week’s recommendation.")
           }
         />
       </div>
@@ -208,9 +223,17 @@ export default async function DashboardPage() {
             </a>
           </Button>
         ) : null}
+        {isModuleEnabled(session.enabledModules, "business_brain") ? (
+          <ReviewConnectedDataButton disabled={!session.organizationId} />
+        ) : null}
         {isModuleEnabled(session.enabledModules, "growth_goals") ? (
           <Button asChild variant="outline">
             <Link href="/app/goals">Goals</Link>
+          </Button>
+        ) : null}
+        {isModuleEnabled(session.enabledModules, "growth_reviews") ? (
+          <Button asChild variant="outline">
+            <Link href="/app/growth-review">Growth review</Link>
           </Button>
         ) : null}
         {isModuleEnabled(session.enabledModules, "business_brain") ? (

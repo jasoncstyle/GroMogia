@@ -214,4 +214,16 @@ export async function ensureSchema(): Promise<void> {
   if (!businessBrains[0]?.name) {
     await applyMigration(sql, "0018_v2_growth_foundation.sql");
   }
+
+  const offerDiscovery = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'offers'
+       and column_name = 'discovery_status'`,
+  )) as RegistryRow[];
+
+  if (!offerDiscovery[0]?.name) {
+    await applyMigration(sql, "0019_v2_growth_discovery.sql");
+  }
 }

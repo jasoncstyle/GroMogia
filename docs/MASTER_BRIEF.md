@@ -107,7 +107,7 @@ Every automated action must pass authentication, organization authorization, mod
 
 The dashboard answers: what are we trying to accomplish, how are we doing, what changed, why, what needs attention, what should happen next, and what is intentionally being left alone.
 
-Traditional analytics remain accessible but should not dominate. Weekly and monthly reviews come in a later slice. Speak plain English. Do not design around AI employee personas.
+Traditional analytics remain accessible but should not dominate. Weekly and monthly reviews are generated from connected evidence and can be saved to Decision History. Speak plain English. Do not design around AI employee personas.
 
 ## 11. What stays from V1
 

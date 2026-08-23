@@ -23,6 +23,8 @@ const eventSchema = z.object({
   registrationUrl: z.string().trim().max(500).optional().default(""),
   visibility: z.enum(["public", "private"]).optional().default("public"),
   status: z.enum(["draft", "scheduled", "completed", "cancelled"]).optional().default("draft"),
+  offerId: z.string().optional().default(""),
+  goalId: z.string().optional().default(""),
 });
 
 function parseDate(value: string): Date | null {
@@ -50,6 +52,8 @@ export async function createEvent(formData: FormData): Promise<ActionResult> {
       registrationUrl: formData.get("registrationUrl") ?? "",
       visibility: formData.get("visibility") ?? "public",
       status: formData.get("status") ?? "draft",
+      offerId: formData.get("offerId") ?? "",
+      goalId: formData.get("goalId") ?? "",
     });
 
     const db = getDb();
@@ -70,6 +74,8 @@ export async function createEvent(formData: FormData): Promise<ActionResult> {
       registrationUrl: parsed.registrationUrl,
       visibility: parsed.visibility,
       status: parsed.status,
+      offerId: parsed.offerId || null,
+      goalId: parsed.goalId || null,
     });
 
     await recordAudit({

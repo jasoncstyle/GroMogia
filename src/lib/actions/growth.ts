@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 import { recordAudit } from "@/lib/audit";
@@ -9,15 +9,23 @@ import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import {
   availabilityConstraints,
+  bookings,
+  brandSettings,
   businessBrains,
   decisionRecords,
+  events,
   growthActions,
   growthGoals,
   growthPlans,
   growthSettings,
   offers,
+  payments,
+  websites,
 } from "@/lib/db/schema";
 import { assertSameOrganization } from "@/lib/db/tenant";
+import { discoverFromConnectedData, normalizeOfferKey } from "@/lib/growth/discover";
+import { getGrowthSnapshot } from "@/lib/growth/queries";
+import { REVIEW_KINDS } from "@/lib/growth/review";
 import {
   CONSTRAINT_TYPES,
   DECISION_TYPES,
@@ -59,6 +67,7 @@ function revalidateGrowth() {
   revalidatePath("/app/offers");
   revalidatePath("/app/goals");
   revalidatePath("/app/decisions");
+  revalidatePath("/app/growth-review");
 }
 
 async function requirePermission(permission: Permission) {
@@ -190,6 +199,9 @@ export async function createOffer(formData: FormData): Promise<ActionResult> {
       location: parsed.location,
       conversionUrl: parsed.conversionUrl,
       status: parsed.status,
+      source: "manual",
+      discoveryStatus: "confirmed",
+      confidence: 100,
     });
 
     await recordAudit({
@@ -327,6 +339,9 @@ export async function createGoal(formData: FormData): Promise<ActionResult> {
       createdBy: session.userId,
       status: isGoalAchieved(currentValue, targetValue) ? "achieved" : "active",
       completedAt: isGoalAchieved(currentValue, targetValue) ? new Date() : null,
+      source: "manual",
+      discoveryStatus: "confirmed",
+      confidence: 100,
     });
 
     await recordAudit({
@@ -553,6 +568,59 @@ export async function recordDecision(formData: FormData): Promise<ActionResult> 
   });
 }
 
+const reviewKindSchema = z.object({
+  kind: z.enum(REVIEW_KINDS),
+});
+
+export async function saveGrowthReview(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not save the growth review.", async () => {
+    const { session, db } = await requirePermission("view_decision_history");
+    const { kind } = reviewKindSchema.parse({ kind: formData.get("kind") });
+    const snapshot = await getGrowthSnapshot(session.organizationId);
+    if (!snapshot) throw new Error("Could not load connected data for this review.");
+    const review = kind === "monthly" ? snapshot.monthlyReview : snapshot.weeklyReview;
+
+    const decisionType =
+      review.primary.kind === "no_change_yet"
+        ? "no_change"
+        : review.primary.classification === "operational"
+          ? "operational"
+          : review.primary.classification === "strategic"
+            ? "strategic"
+            : "recommend";
+
+    const decisionId = crypto.randomUUID();
+    await db.insert(decisionRecords).values({
+      id: decisionId,
+      organizationId: session.organizationId,
+      goalId: review.primary.goalId,
+      decisionType,
+      recommendation: review.headline,
+      rationale: `${review.summary} ${review.whatShouldHappenNext}`,
+      supportingEvidence: review.whatChanged,
+      evidenceWindow: review.periodLabel,
+      confidence: review.primary.confidence,
+      alternatives: review.recommendations
+        .map((item) => `${item.title}: ${item.recommendation}`)
+        .join("\n"),
+      createdBy: session.userId,
+    });
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "growth_review.saved",
+      targetType: "decision_record",
+      targetId: decisionId,
+      metadata: { kind, decisionType },
+    });
+    revalidateGrowth();
+    return review.primary.kind === "no_change_yet"
+      ? "Review saved. GroovGro recorded that nothing should change yet."
+      : "Review saved to Decision History. GroovGro will not execute it.";
+  });
+}
+
 const actionSchema = z.object({
   goalId: optionalId,
   description: z.string().trim().min(1).max(2000),
@@ -591,5 +659,320 @@ export async function proposeGrowthAction(formData: FormData): Promise<ActionRes
     });
     revalidateGrowth();
     return "Proposed action saved. GroovGro will not execute it.";
+  });
+}
+
+export async function reviewConnectedBusiness(
+  _formData?: FormData,
+): Promise<ActionResult> {
+  return runAction("Could not review connected data.", async () => {
+    const { session, db } = await requirePermission("manage_offers");
+    const organizationId = session.organizationId;
+
+    const [
+      eventRows,
+      bookingRows,
+      paymentRows,
+      offerRows,
+      goalRows,
+      constraintRows,
+      websiteRows,
+      brandRows,
+      brainRows,
+    ] = await Promise.all([
+      db.select().from(events).where(eq(events.organizationId, organizationId)),
+      db.select().from(bookings).where(eq(bookings.organizationId, organizationId)),
+      db.select().from(payments).where(eq(payments.organizationId, organizationId)),
+      db.select().from(offers).where(eq(offers.organizationId, organizationId)),
+      db.select().from(growthGoals).where(eq(growthGoals.organizationId, organizationId)),
+      db
+        .select()
+        .from(availabilityConstraints)
+        .where(eq(availabilityConstraints.organizationId, organizationId)),
+      db.select().from(websites).where(eq(websites.organizationId, organizationId)).limit(1),
+      db.select().from(brandSettings).where(eq(brandSettings.organizationId, organizationId)).limit(1),
+      db.select().from(businessBrains).where(eq(businessBrains.organizationId, organizationId)).limit(1),
+    ]);
+
+    const discovery = discoverFromConnectedData({
+      events: eventRows,
+      bookings: bookingRows,
+      payments: paymentRows,
+      existingOffers: offerRows,
+      existingGoals: goalRows,
+      existingConstraints: constraintRows,
+      websiteUrl: websiteRows[0]?.publicUrl ?? "",
+      brandDescription: brandRows[0]?.description ?? "",
+    });
+
+    const createdOfferIds = new Map<string, string>();
+    let offersCreated = 0;
+    for (const proposal of discovery.offers) {
+      const offerId = crypto.randomUUID();
+      await db.insert(offers).values({
+        id: offerId,
+        organizationId,
+        name: proposal.name,
+        description: proposal.description,
+        offerType: proposal.offerType,
+        availabilityModel: proposal.availabilityModel,
+        priceCents: proposal.priceCents,
+        location: proposal.location,
+        conversionUrl: proposal.conversionUrl,
+        externalProvider: proposal.externalProvider,
+        externalId: proposal.externalId,
+        status: "draft",
+        source: "inferred",
+        discoveryStatus: "inferred",
+        inferredFrom: proposal.inferredFrom,
+        confidence: proposal.confidence,
+      });
+      createdOfferIds.set(proposal.externalId, offerId);
+      offersCreated += 1;
+      if (proposal.eventIds.length > 0) {
+        await db
+          .update(events)
+          .set({ offerId, updatedAt: new Date() })
+          .where(
+            and(
+              eq(events.organizationId, organizationId),
+              inArray(events.id, proposal.eventIds),
+            ),
+          );
+        await db
+          .update(bookings)
+          .set({ offerId, updatedAt: new Date() })
+          .where(
+            and(
+              eq(bookings.organizationId, organizationId),
+              inArray(bookings.eventId, proposal.eventIds),
+            ),
+          );
+      }
+    }
+
+    let constraintsCreated = 0;
+    for (const proposal of discovery.constraints) {
+      const offerId =
+        createdOfferIds.get(proposal.offerExternalId) ??
+        offerRows.find(
+          (offer) =>
+            offer.externalId === proposal.offerExternalId ||
+            normalizeOfferKey(offer.name) === proposal.offerExternalId,
+        )?.id ??
+        null;
+      await db.insert(availabilityConstraints).values({
+        organizationId,
+        offerId,
+        constraintType: proposal.constraintType,
+        unit: proposal.unit,
+        totalAvailability: proposal.totalAvailability,
+        remainingAvailability: proposal.remainingAvailability,
+        startsOn: proposal.startsOn,
+        endsOn: proposal.endsOn,
+        source: "inferred",
+        externalId: proposal.eventId,
+        notes: proposal.notes,
+      });
+      constraintsCreated += 1;
+    }
+
+    let goalsCreated = 0;
+    if (hasPermission(session.permissions, "create_goals")) {
+      for (const proposal of discovery.goals) {
+        await db.insert(growthGoals).values({
+          organizationId,
+          title: proposal.title,
+          description: proposal.description,
+          goalType: proposal.goalType,
+          status: "draft",
+          targetMetric: proposal.unit,
+          targetValue: proposal.targetValue,
+          baselineValue: proposal.baselineValue,
+          currentValue: proposal.currentValue,
+          unit: proposal.unit,
+          successDefinition: proposal.successDefinition,
+          createdBy: session.userId,
+          source: "inferred",
+          discoveryStatus: "inferred",
+          inferredFrom: proposal.inferredFrom,
+          confidence: proposal.confidence,
+        });
+        goalsCreated += 1;
+      }
+    }
+
+    const brain = brainRows[0];
+    await db
+      .insert(businessBrains)
+      .values({
+        organizationId,
+        inferredSummary: discovery.brainSummary,
+        inferredSource: discovery.brainSource,
+        confidence: discovery.confidence,
+        discoveryStatus:
+          brain?.discoveryStatus === "confirmed" ? "confirmed" : "inferred",
+      })
+      .onConflictDoUpdate({
+        target: businessBrains.organizationId,
+        set: {
+          inferredSummary: discovery.brainSummary,
+          inferredSource: discovery.brainSource,
+          confidence: discovery.confidence,
+          discoveryStatus:
+            brain?.discoveryStatus === "confirmed" ? "confirmed" : "inferred",
+          updatedAt: new Date(),
+        },
+      });
+
+    await recordAudit({
+      organizationId,
+      actorUserId: session.userId,
+      action: "business_brain.reviewed",
+      targetType: "business_brain",
+      targetId: organizationId,
+      metadata: { offersCreated, constraintsCreated, goalsCreated },
+    });
+    revalidateGrowth();
+
+    if (offersCreated === 0 && goalsCreated === 0 && constraintsCreated === 0) {
+      return "GroovGro did not find new drafts. Confirm or reject what is already waiting, or add your own.";
+    }
+    return `Drafted ${offersCreated} offer${offersCreated === 1 ? "" : "s"} and ${goalsCreated} suggested goal${goalsCreated === 1 ? "" : "s"}. Nothing is active until you confirm.`;
+  });
+}
+
+const idSchema = z.object({ id: z.string().uuid() });
+
+export async function confirmOffer(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not confirm the offer.", async () => {
+    const { session, db } = await requirePermission("manage_offers");
+    const { id } = idSchema.parse({ id: formData.get("id") });
+    const [offer] = await db.select().from(offers).where(eq(offers.id, id)).limit(1);
+    if (!offer) throw new Error("Offer not found.");
+    assertSameOrganization(offer.organizationId, session.organizationId);
+
+    await db
+      .update(offers)
+      .set({
+        status: "active",
+        discoveryStatus: "confirmed",
+        updatedAt: new Date(),
+      })
+      .where(and(eq(offers.id, id), eq(offers.organizationId, session.organizationId)));
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "offer.confirmed",
+      targetType: "offer",
+      targetId: id,
+    });
+    revalidateGrowth();
+    return "Offer confirmed";
+  });
+}
+
+export async function rejectOffer(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not reject the offer.", async () => {
+    const { session, db } = await requirePermission("manage_offers");
+    const { id } = idSchema.parse({ id: formData.get("id") });
+    const [offer] = await db.select().from(offers).where(eq(offers.id, id)).limit(1);
+    if (!offer) throw new Error("Offer not found.");
+    assertSameOrganization(offer.organizationId, session.organizationId);
+
+    await db
+      .update(offers)
+      .set({
+        status: "archived",
+        discoveryStatus: "rejected",
+        updatedAt: new Date(),
+      })
+      .where(and(eq(offers.id, id), eq(offers.organizationId, session.organizationId)));
+
+    await db
+      .update(events)
+      .set({ offerId: null, updatedAt: new Date() })
+      .where(
+        and(eq(events.organizationId, session.organizationId), eq(events.offerId, id)),
+      );
+    await db
+      .update(bookings)
+      .set({ offerId: null, updatedAt: new Date() })
+      .where(
+        and(eq(bookings.organizationId, session.organizationId), eq(bookings.offerId, id)),
+      );
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "offer.rejected",
+      targetType: "offer",
+      targetId: id,
+    });
+    revalidateGrowth();
+    return "Offer rejected";
+  });
+}
+
+export async function confirmGoal(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not confirm the goal.", async () => {
+    const { session, db } = await requirePermission("modify_goals");
+    const { id } = idSchema.parse({ id: formData.get("id") });
+    const [goal] = await db.select().from(growthGoals).where(eq(growthGoals.id, id)).limit(1);
+    if (!goal) throw new Error("Goal not found.");
+    assertSameOrganization(goal.organizationId, session.organizationId);
+
+    await db
+      .update(growthGoals)
+      .set({
+        status: "active",
+        discoveryStatus: "confirmed",
+        updatedAt: new Date(),
+      })
+      .where(
+        and(eq(growthGoals.id, id), eq(growthGoals.organizationId, session.organizationId)),
+      );
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "goal.confirmed",
+      targetType: "growth_goal",
+      targetId: id,
+    });
+    revalidateGrowth();
+    return "Goal confirmed";
+  });
+}
+
+export async function rejectGoal(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not reject the goal.", async () => {
+    const { session, db } = await requirePermission("modify_goals");
+    const { id } = idSchema.parse({ id: formData.get("id") });
+    const [goal] = await db.select().from(growthGoals).where(eq(growthGoals.id, id)).limit(1);
+    if (!goal) throw new Error("Goal not found.");
+    assertSameOrganization(goal.organizationId, session.organizationId);
+
+    await db
+      .update(growthGoals)
+      .set({
+        status: "cancelled",
+        discoveryStatus: "rejected",
+        updatedAt: new Date(),
+      })
+      .where(
+        and(eq(growthGoals.id, id), eq(growthGoals.organizationId, session.organizationId)),
+      );
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "goal.rejected",
+      targetType: "growth_goal",
+      targetId: id,
+    });
+    revalidateGrowth();
+    return "Goal rejected";
   });
 }

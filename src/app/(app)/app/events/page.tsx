@@ -4,6 +4,7 @@ import { createEvent } from "@/lib/actions/events";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { events } from "@/lib/db/schema";
+import { getGrowthLinkOptions } from "@/lib/growth/queries";
 import { formatMoney } from "@/lib/money";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import {
@@ -39,6 +40,9 @@ export default async function EventsPage() {
           .where(eq(events.organizationId, session.organizationId))
           .orderBy(desc(events.startsAt))
       : [];
+  const links = session.organizationId
+    ? await getGrowthLinkOptions(session.organizationId)
+    : { offers: [], goals: [] };
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
@@ -109,6 +113,28 @@ export default async function EventsPage() {
                 <option value="cancelled">Cancelled</option>
               </select>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="offerId">Related offer</Label>
+              <select id="offerId" name="offerId" className={selectClassName} defaultValue="">
+                <option value="">None</option>
+                {links.offers.map((offer) => (
+                  <option key={offer.id} value={offer.id}>
+                    {offer.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="goalId">Related goal</Label>
+              <select id="goalId" name="goalId" className={selectClassName} defaultValue="">
+                <option value="">None</option>
+                {links.goals.map((goal) => (
+                  <option key={goal.id} value={goal.id}>
+                    {goal.title}
+                  </option>
+                ))}
+              </select>
+            </div>
             <div className="space-y-2 md:col-span-2">
               <Label htmlFor="registrationUrl">Registration or booking link</Label>
               <Input id="registrationUrl" name="registrationUrl" placeholder="https://" />
@@ -139,6 +165,7 @@ export default async function EventsPage() {
                 <TableRow>
                   <TableHead>Event</TableHead>
                   <TableHead>When</TableHead>
+                  <TableHead>Linked to</TableHead>
                   <TableHead>Price</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
@@ -155,6 +182,11 @@ export default async function EventsPage() {
                     </TableCell>
                     <TableCell>
                       {event.startsAt ? event.startsAt.toLocaleString() : "Not set"}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {links.offers.find((offer) => offer.id === event.offerId)?.name ??
+                        links.goals.find((goal) => goal.id === event.goalId)?.title ??
+                        "—"}
                     </TableCell>
                     <TableCell>{formatMoney(event.priceCents, event.currency)}</TableCell>
                     <TableCell>{event.status}</TableCell>

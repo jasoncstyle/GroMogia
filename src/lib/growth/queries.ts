@@ -3,16 +3,22 @@ import { and, desc, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import {
   availabilityConstraints,
+  bookings,
   brandSettings,
+  businessBrains,
   decisionRecords,
+  events,
   evidencePolicies,
   growthActions,
   growthGoals,
   growthPlans,
   growthSettings,
+  leadRecords,
   offers,
-  businessBrains,
+  payments,
 } from "@/lib/db/schema";
+import { liveGoalProgress } from "@/lib/growth/progress";
+import { generateGrowthReview } from "@/lib/growth/review";
 import { goalProgressPercent } from "@/lib/growth/types";
 
 export async function getGrowthSnapshot(organizationId: string) {
@@ -30,6 +36,10 @@ export async function getGrowthSnapshot(organizationId: string) {
     actionRows,
     settingRows,
     policyRows,
+    eventRows,
+    bookingRows,
+    paymentRows,
+    leadRows,
   ] = await Promise.all([
     db
       .select()
@@ -80,12 +90,87 @@ export async function getGrowthSnapshot(organizationId: string) {
       .select()
       .from(evidencePolicies)
       .where(eq(evidencePolicies.organizationId, organizationId)),
+    db.select().from(events).where(eq(events.organizationId, organizationId)),
+    db.select().from(bookings).where(eq(bookings.organizationId, organizationId)),
+    db.select().from(payments).where(eq(payments.organizationId, organizationId)),
+    db.select().from(leadRecords).where(eq(leadRecords.organizationId, organizationId)),
   ]);
 
-  const goals = goalRows.map((goal) => ({
-    ...goal,
-    progressPercent: goalProgressPercent(goal.currentValue, goal.targetValue),
-  }));
+  const bookingOfferById = new Map(
+    bookingRows.map((booking) => [booking.id, booking.offerId]),
+  );
+  const facts = {
+    now: new Date(),
+    leads: leadRows.map((lead) => ({
+      createdAt: lead.createdAt,
+      offerId: lead.offerId,
+    })),
+    bookings: bookingRows.map((booking) => ({
+      createdAt: booking.createdAt,
+      offerId: booking.offerId,
+      eventId: booking.eventId,
+      status: booking.status,
+    })),
+    payments: paymentRows.map((payment) => ({
+      createdAt: payment.createdAt,
+      amountCents: payment.amountCents,
+      kind: payment.kind,
+      offerId: bookingOfferById.get(payment.bookingId ?? "") ?? null,
+    })),
+    events: eventRows.map((event) => ({
+      id: event.id,
+      offerId: event.offerId,
+      startsAt: event.startsAt,
+      capacity: event.capacity,
+      status: event.status,
+    })),
+  };
+
+  const goals = goalRows.map((goal) => {
+    const live = liveGoalProgress(goal, facts);
+    return {
+      ...goal,
+      liveCurrentValue: live.currentValue,
+      liveNote: live.note,
+      liveComputable: live.computable,
+      progressPercent: live.computable
+        ? live.progressPercent
+        : goalProgressPercent(goal.currentValue, goal.targetValue),
+    };
+  });
+
+  const reviewFacts = {
+    now: facts.now,
+    goals: goals.map((goal) => ({
+      id: goal.id,
+      title: goal.title,
+      status: goal.status,
+      goalType: goal.goalType,
+      liveCurrentValue: goal.liveCurrentValue,
+      targetValue: goal.targetValue,
+      progressPercent: goal.progressPercent,
+      liveNote: goal.liveNote,
+      discoveryStatus: goal.discoveryStatus,
+    })),
+    offers: offerRows.map((offer) => ({
+      name: offer.name,
+      discoveryStatus: offer.discoveryStatus,
+    })),
+    decisions: decisionRows.map((decision) => ({
+      decisionType: decision.decisionType,
+      recommendation: decision.recommendation,
+      createdAt: decision.createdAt,
+    })),
+    policies: policyRows,
+    settings: settingRows[0] ?? null,
+    leads: leadRows.map((lead) => ({ createdAt: lead.createdAt })),
+    bookings: bookingRows.map((booking) => ({ createdAt: booking.createdAt })),
+    payments: paymentRows.map((payment) => ({
+      createdAt: payment.createdAt,
+      amountCents: payment.amountCents,
+      kind: payment.kind,
+    })),
+  };
 
   return {
     brain: brainRows[0] ?? null,
@@ -98,7 +183,11 @@ export async function getGrowthSnapshot(organizationId: string) {
     actions: actionRows,
     settings: settingRows[0] ?? null,
     policies: policyRows,
+    weeklyReview: generateGrowthReview({ ...reviewFacts, kind: "weekly" }),
+    monthlyReview: generateGrowthReview({ ...reviewFacts, kind: "monthly" }),
     activeGoals: goals.filter((goal) => goal.status === "active"),
+    inferredOffers: offerRows.filter((offer) => offer.discoveryStatus === "inferred"),
+    inferredGoals: goals.filter((goal) => goal.discoveryStatus === "inferred"),
     latestNoChange: decisionRows.find((row) => row.decisionType === "no_change") ?? null,
     awaitingApproval: actionRows.filter((row) => row.status === "awaiting_approval"),
   };
@@ -126,4 +215,33 @@ export async function getGoalById(organizationId: string, goalId: string) {
     )
     .limit(1);
   return rows[0] ?? null;
+}
+
+export async function getGrowthLinkOptions(organizationId: string) {
+  const db = getDb();
+  if (!db) return { offers: [], goals: [] };
+
+  const [linkOffers, linkGoals] = await Promise.all([
+    db
+      .select({ id: offers.id, name: offers.name, status: offers.status })
+      .from(offers)
+      .where(eq(offers.organizationId, organizationId))
+      .orderBy(desc(offers.updatedAt)),
+    db
+      .select({
+        id: growthGoals.id,
+        title: growthGoals.title,
+        status: growthGoals.status,
+      })
+      .from(growthGoals)
+      .where(eq(growthGoals.organizationId, organizationId))
+      .orderBy(desc(growthGoals.updatedAt)),
+  ]);
+
+  return {
+    offers: linkOffers.filter((offer) => offer.status !== "archived"),
+    goals: linkGoals.filter(
+      (goal) => goal.status !== "cancelled" && goal.status !== "missed",
+    ),
+  };
 }

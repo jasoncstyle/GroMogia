@@ -6,6 +6,11 @@ import {
   updateGoalProgress,
   updateGrowthSettings,
 } from "@/lib/actions/growth";
+import {
+  ConfirmRejectButtons,
+  InferredBadge,
+  ReviewConnectedDataButton,
+} from "@/components/growth-review";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import {
@@ -46,7 +51,9 @@ export default async function GoalsPage() {
   const snapshot = session.organizationId
     ? await getGrowthSnapshot(session.organizationId)
     : null;
-  const goals = snapshot?.goals ?? [];
+  const goals = (snapshot?.goals ?? []).filter(
+    (goal) => goal.discoveryStatus !== "inferred",
+  );
   const offers = snapshot?.offers ?? [];
   const plans = snapshot?.plans ?? [];
   const settings = snapshot?.settings;
@@ -60,8 +67,12 @@ export default async function GoalsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Goals</h1>
         <p className="text-muted-foreground">
           A Goal is a measurable outcome. GroovGro should help get there, then
-          wait for enough evidence before changing course.
+          wait for enough evidence before changing course. Suggested goals stay
+          drafts until you confirm them.
         </p>
+        <div className="mt-3">
+          <ReviewConnectedDataButton disabled={!session.organizationId} />
+        </div>
       </div>
 
       <Card>
@@ -81,9 +92,14 @@ export default async function GoalsPage() {
             {autonomy?.description ?? "Recommend and explain."} Guarded
             autopilot is feature-flagged off.
           </p>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/app/decisions">Open decision history</Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/app/growth-review">Open growth review</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/app/decisions">Open decision history</Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -92,7 +108,8 @@ export default async function GoalsPage() {
           <CardTitle>Growth review schedule</CardTitle>
           <CardDescription>
             This is when routine reviews are presented. It does not force
-            GroovGro to change the business on that day.
+            GroovGro to change the business on that day. Open Growth review
+            to read the current weekly and monthly summary.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -258,6 +275,36 @@ export default async function GoalsPage() {
         </CardContent>
       </Card>
 
+      {(snapshot?.inferredGoals.length ?? 0) > 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>Suggested goals waiting for you</CardTitle>
+            <CardDescription>
+              GroovGro drafted these from connected data. Confirming makes a
+              Goal active. Rejecting leaves it unused. Nothing else happens.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {snapshot?.inferredGoals.map((goal) => (
+              <div key={goal.id} className="rounded-lg border p-4">
+                <p className="font-medium">{goal.title}</p>
+                <p className="text-sm text-muted-foreground">{goal.description}</p>
+                <p className="text-sm">
+                  {goal.liveCurrentValue}
+                  {goal.targetValue != null ? ` / ${goal.targetValue}` : ""}
+                  {goal.unit ? ` ${goal.unit}` : ""}
+                </p>
+                <p className="text-sm text-muted-foreground">{goal.liveNote}</p>
+                <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
+                <div className="mt-3">
+                  <ConfirmRejectButtons id={goal.id} kind="goal" />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      ) : null}
+
       <Card>
         <CardHeader>
           <CardTitle>Active and recent goals</CardTitle>
@@ -280,13 +327,16 @@ export default async function GoalsPage() {
                         : ""}
                     </p>
                     <p className="text-sm">
-                      {goal.currentValue}
+                      {goal.liveComputable ? goal.liveCurrentValue : goal.currentValue}
                       {goal.targetValue != null ? ` / ${goal.targetValue}` : ""}
                       {goal.unit ? ` ${goal.unit}` : ""}
                       {goal.deadline
                         ? ` · due ${goal.deadline.toLocaleDateString()}`
                         : ""}
                     </p>
+                    {goal.liveNote ? (
+                      <p className="text-sm text-muted-foreground">{goal.liveNote}</p>
+                    ) : null}
                   </div>
                   {goal.totalBudgetCents != null ? (
                     <p className="text-sm text-muted-foreground">
