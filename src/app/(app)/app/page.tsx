@@ -249,7 +249,7 @@ export default async function DashboardPage() {
         </Button>
         {isModuleEnabled(session.enabledModules, "intelligence") ? (
           <Button asChild variant="outline">
-            <Link href="/app/intelligence">Intelligence</Link>
+            <Link href="/app/intelligence">Intelligence and specialists</Link>
           </Button>
         ) : null}
       </div>

@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { refreshIntelligence } from "@/lib/actions/intelligence";
+import { SpecialistReports } from "@/components/specialist-reports";
+import { getSpecialistReports } from "@/lib/growth/queries";
 import { hasPermission } from "@/lib/permissions";
 import {
   getIntelligencePageData,
@@ -24,6 +26,10 @@ export default async function IntelligencePage() {
   const data = session.organizationId
     ? await getIntelligencePageData(session.organizationId, { showFinancials })
     : null;
+  const specialists = session.organizationId
+    ? await getSpecialistReports(session.organizationId)
+    : [];
+  const canSaveDecision = hasPermission(session.permissions, "view_decision_history");
   const latest = data?.logs[0];
   const stored = latest ? parseStoredBrief(latest.output) : null;
   const storedNarrative = latest ? readNarrative(latest.output) : null;
@@ -35,9 +41,10 @@ export default async function IntelligencePage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Intelligence</h1>
         <p className="text-muted-foreground">
-          Observe and recommend only. GroovGro will not send email, change ads,
-          edit a website, or take a payment. Live checkout for bunks and
-          passages stays on the existing Stripe destination.
+          Observe and recommend only, now including specialists linked to
+          Goals. GroovGro will not send email, change ads, edit a website, or
+          take a payment. Live checkout stays on the existing Stripe
+          destination.
         </p>
       </div>
 
@@ -96,6 +103,10 @@ export default async function IntelligencePage() {
               </CardContent>
             </Card>
           </div>
+
+          {specialists.length > 0 ? (
+            <SpecialistReports reports={specialists} canSave={canSaveDecision} />
+          ) : null}
 
           {storedNarrative ? (
             <Card>

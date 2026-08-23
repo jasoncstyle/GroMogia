@@ -54,6 +54,9 @@ export default async function GrowthReviewPage() {
             <Button asChild variant="outline" size="sm">
               <Link href="/app/decisions">Open Decision History</Link>
             </Button>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/app/intelligence">Open specialists</Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
