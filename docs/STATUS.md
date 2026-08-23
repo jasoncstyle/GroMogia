@@ -35,7 +35,7 @@ Jason’s idea (23 August 2026): help the owner build a **GroovGro-hosted** site
 **Add (recommended)**
 
 1. Owner pastes **three public websites** they like the *layout* of. GroovGro shows a short how-to, including a search they can run themselves (for example “inspirational website design” or “[their industry] website”).
-2. For *words*, the owner either pastes **3–5 public websites** or types the kind of business (electrician, clinic, shop — their words). GroovGro uses Brand, Business Brain, and those pages as research — not as text to copy.
+2. For *words*, GroovGro drafts first-pass sentences from Brand, Business Brain, and confirmed offers. Pasted pages are research for topic labels only — not text to copy.
 3. GroovGro drafts rows and widgets in **our builder**. The owner reviews, edits, and publishes the GroovGro page. Nothing goes live until they say so.
 
 **Do not do**
