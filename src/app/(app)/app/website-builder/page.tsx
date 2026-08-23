@@ -13,7 +13,6 @@ import { builderPublicUrl } from "@/lib/website-builder/apply-seo";
 import { BuilderTemplatePicker } from "@/components/builder-template-picker";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteBuilderEditor } from "@/components/website-builder-editor";
-import { FoldableSample } from "@/components/foldable-sample";
 import { WebsiteBuilderInspiration } from "@/components/website-builder-inspiration";
 import {
   Card,
@@ -23,13 +22,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+export const maxDuration = 60;
+
 export default async function WebsiteBuilderPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>
+  searchParams: Promise<{ page?: string; restarted?: string }>
 }) {
   const session = await getAppSession();
-  const { page: pageId } = await searchParams;
+  const { page: pageId, restarted } = await searchParams;
   const data = session.organizationId
     ? await getBuilderEditorData(session.organizationId, pageId)
     : { pages: [], site: null, rows: [], brand: null };
@@ -68,14 +69,25 @@ export default async function WebsiteBuilderPage({
         </p>
       </div>
 
+      {restarted ? (
+        <p
+          role="status"
+          className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-950"
+        >
+          Home was started over. Open Pages to find Previous Home. This Home
+          is a new unpublished draft. Edit every line before you publish.
+          Your connected live site was not changed.
+        </p>
+      ) : null}
+
       <Card>
         <CardHeader>
           <CardTitle>How this works</CardTitle>
           <CardDescription>
             Pick a starting layout, or let GroovGro draft Home from websites
-            you like. If Home already exists, open Start Home over. Your
-            current Home is saved as a draft page first. Your connected public
-            site stays as it is.
+            you like. If Home already exists, use Start Home over at the top.
+            Your current Home is saved as a draft page first. Your connected
+            public site stays as it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -125,18 +137,25 @@ export default async function WebsiteBuilderPage({
         </>
       ) : (
         <>
-          <FoldableSample
-            title="Start Home over"
-            subtitle="Keep your current Home as a draft page, then draft a new Home from websites you like."
-          >
-            <WebsiteBuilderInspiration
-              businessType={brain?.industry ?? ""}
-              disabled={!session.organizationId}
-              hasExistingHome
-            />
-          </FoldableSample>
+          <Card>
+            <CardHeader>
+              <CardTitle>Start Home over</CardTitle>
+              <CardDescription>
+                Keep your current Home as a draft page named Previous Home,
+                then draft a new Home from websites you like. The new Home
+                stays unpublished.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <WebsiteBuilderInspiration
+                businessType={brain?.industry ?? ""}
+                disabled={!session.organizationId}
+                hasExistingHome
+              />
+            </CardContent>
+          </Card>
           <WebsiteBuilderEditor
-            key={data.site.id}
+            key={`${data.site.id}-${String(data.site.updatedAt)}-${data.site.templateId}-${data.rows.length}`}
             site={{
               id: data.site.id,
               title: data.site.title,

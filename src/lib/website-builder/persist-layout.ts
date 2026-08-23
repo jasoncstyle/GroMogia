@@ -1,4 +1,4 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNotNull } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import { builderRows, builderSections } from "@/lib/db/schema";
@@ -20,6 +20,11 @@ export async function writeBuilderLayout(
     rows: BuilderRowDraft[]
   },
 ) {
+  await db
+    .delete(builderRows)
+    .where(
+      and(eq(builderRows.siteId, input.siteId), isNotNull(builderRows.parentRowId)),
+    );
   await db.delete(builderRows).where(eq(builderRows.siteId, input.siteId));
 
   for (const [sortOrder, row] of input.rows.entries()) {
