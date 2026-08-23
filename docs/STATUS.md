@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-goal-progress-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-builder-idea-park-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,11 +17,19 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation through saved Goal progress.** Business Brain, Offers, constraints, Goals, Decision History, reviews, specialists, website page checklist, and review-from-connected-data. Connected Goals can save today’s number from leads, bookings, and payments so there is a history. Drafts stay inactive until you confirm. GroovGro does not change the connected website. Website builder and all earlier V1 modules stay as they were.
+**V2 growth foundation is on `main` through saved Goal progress (#56 checklist, #57 progress history).** Next build slice waits on Jason’s website builder idea so it is not forgotten. Do not start Growth Director, ads, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
-Do not start ads, Growth Director execution, or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
+Do not start ads, Growth Director execution, or autonomous AI. Custom domains for builder sites wait unless Jason’s parked idea is that work. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
+
+## Parked: website builder idea (review now)
+
+Jason has a new thought about the GroovGro website builder. Review it **now**, before Growth Director or ads, so it is not forgotten.
+
+**What Jason wants (waiting for his words):** _not written yet — paste the idea here in the next message._
+
+Do not guess the idea. Do not overwrite a connected existing website. Do not change Stripe checkout or stripe-osa.
 
 ## Stripe (do not mix, do not replace)
 
@@ -35,7 +43,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - SEO: connected homepage check, GroovGro checks for Home and every extra page, drafts, score history, plain-language explanation, Search Console read-only
 - Website builder: visual GroovGro-hosted pages at `/w/[org]` (Home) and `/w/[org]/[slug]` (extra pages)
 - Approved SEO title, description, and heading drafts can be applied to the matching GroovGro page
-- V2 foundation screens: Business, Offers, Goals, Decisions (Preview of this branch; production after merge)
+- V2 foundation screens: Business, Offers, Goals, Decisions
 - Review connected data: draft Offers and suggested Goals from events, bookings, payments, and connected website pages; confirm or reject before anything becomes active
 - Goal progress from connected leads, bookings, and payments; optional Offer/Goal links on events and leads
 - Save progress from connected data stores today’s Goal number and a short history. Review connected data also saves those numbers. Custom goals still use the Current box. Nothing starts marketing.
