@@ -64,6 +64,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Affected:** `src/lib/db/bootstrap.ts` flags `growth_director` and `guarded_automation` default false. `v2_growth_foundation` default true.
 
+### 6. Website page checklist before Review reads
+
+**Reason:** Discover → ask → confirm. A full automatic crawl is unreliable (JavaScript calendars, third-party widgets, huge event HTML) and can treat homepage slogans as offers.
+
+**Affected:** `website_discovered_pages` (`drizzle/0020_v2_website_page_checklist.sql`), Website and Business screens, `reviewConnectedBusiness`.
+
+**Migration risk:** Additive table. Existing reviews still work: if no checklist exists yet, Review finds pages, stores them, and reads the suggested-important ones.
+
+**Current functionality:** Saving a website address still does not read pages. Find pages lists what GroovGro can see. Review reads only checked pages. The live site is not changed. Drafts stay inactive until confirm.
+
 ## BUILD NEXT (after this slice is tested)
 
 - Persist computed Goal progress onto stored `currentValue` when you want a historical series
@@ -132,6 +142,8 @@ Organization
   ├─ Business Brain (industry, model, locations, hours, discovery)
   ├─ Growth settings (autonomy, review schedule)
   ├─ Evidence policies (per channel)
+  ├─ Website
+  │    └─ Discovered pages (checklist of what Review may read)
   ├─ Offers
   │    └─ Availability constraints (optional)
   ├─ Growth Goals (optional Offer)

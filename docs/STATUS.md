@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-website-crawl-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-page-checklist-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation through website-page discovery.** Business Brain, Offers, constraints, Goals, Decision History, reviews, specialists, and review-from-connected-data including pages on the connected website. Drafts stay inactive until you confirm. GroovGro does not change the connected website. Website builder and all earlier V1 modules stay as they were.
+**V2 growth foundation through website page checklist.** Business Brain, Offers, constraints, Goals, Decision History, reviews, specialists, and review-from-connected-data. GroovGro finds pages on the connected website, you check the important ones, and Review reads only those pages. Drafts stay inactive until you confirm. GroovGro does not change the connected website. Website builder and all earlier V1 modules stay as they were.
 
 V1 on `main` remains Phase 7 website builder until this branch is merged. Public groovgro.com homepage stays Coming soon.
 
@@ -40,9 +40,10 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Goal progress from connected leads, bookings, and payments; optional Offer/Goal links on events and leads
 - Weekly Growth Review and monthly strategy review from connected evidence, including “no change yet”
 - Specialists on Intelligence: SEO, website, leads, schedule, advertising, email, and social. Each reads, analyzes against a Goal, and recommends — including no change. None execute.
-- Green status alerts when the workspace is working and the website has been connected and read. Amber when an address is saved but Review connected data has not run yet. Tracking stays silent until visits or clicks exist.
+- Green status alerts when the workspace is working and the website has been connected and read. Amber when an address is saved but pages have not been read yet. Find pages, check the important ones, then Review connected data. Tracking stays silent until visits or clicks exist.
 - Possible offers and suggested goals on Business stay closed until you open the list. Each draft also has its own toggle so you can read the description and the page GroovGro used before confirm or reject. Confirm and reject still do not activate marketing.
 - Review connected data walks more of the connected website: program pages, calendar/booking pages, and event detail pages, and it tries a public booking embed on another site when one is linked. It does not copy the site or change it. Homepage slogans are not treated as offers when real inner pages exist.
+- Website page checklist: Find pages lists what GroovGro can see. Home, program, calendar, event, and public booking pages start checked. About, login, and legal stay unchecked. You can add a missing URL. Review connected data then reads only the checked pages. Event detail URLs sit under Calendar so they are not 40 separate boxes.
 - Phones get a Menu button that opens the same app navigation as the desktop sidebar.
 
 ## Still later

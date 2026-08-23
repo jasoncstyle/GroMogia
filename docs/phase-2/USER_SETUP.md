@@ -63,9 +63,10 @@ If only one organization exists, incoming webhooks go there. If you later have m
 
 1. In GroovGro, open **Website connection**.
 2. Paste the public website address.
-3. Save.
-4. Copy the tracking snippet and paste it before the closing `</body>` tag on that site.
-5. Share the public lead form link shown on the same page.
+3. Save. Saving the address does not read the pages.
+4. Click **Find pages**, check the important ones, then open **Business** and click **Review connected data**.
+5. Copy the tracking snippet and paste it before the closing `</body>` tag on that site.
+6. Share the public lead form link shown on the same page.
 
 This does **not** build a new website. The website builder is a later phase.
 

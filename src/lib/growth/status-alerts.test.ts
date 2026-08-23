@@ -50,6 +50,7 @@ describe("status alerts", () => {
       topics: ["website"],
     });
     assert.equal(waiting[0]?.tone, "wait");
+    assert.match(waiting[0]?.body ?? "", /Find pages/);
     assert.match(waiting[0]?.body ?? "", /Review connected data/);
 
     const ready = buildStatusAlerts({

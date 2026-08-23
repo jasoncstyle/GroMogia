@@ -136,6 +136,8 @@ organization_id, level (1–5), action_type, input_summary, output, status (`obs
 
 organization_id, kind (`connected` | `built`), public_url, provider (`siteground` | `wordpress` | `groovgro` | `other`), tracking_id, status.
 
+V2 adds `website_discovered_pages` so the owner can check which connected pages GroovGro should read. That list does not replace or overwrite the connected site.
+
 ### `contacts`
 
 organization_id, display_name, email, phone, unique (organization_id, email) where email is not null.

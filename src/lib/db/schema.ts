@@ -325,6 +325,41 @@ export const websites = pgTable(
   ],
 );
 
+export const websiteDiscoveredPages = pgTable(
+  "website_discovered_pages",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    websiteId: uuid("website_id")
+      .notNull()
+      .references(() => websites.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    urlKey: text("url_key").notNull(),
+    label: text("label").notNull().default(""),
+    pageGroup: text("page_group").notNull().default("other"),
+    important: boolean("important").notNull().default(false),
+    source: text("source").notNull().default("crawl"),
+    isHome: boolean("is_home").notNull().default(false),
+    title: text("title").notNull().default(""),
+    description: text("description").notNull().default(""),
+    headings: jsonb("headings").$type<string[]>().notNull().default([]),
+    lastSeenAt: timestamp("last_seen_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("website_discovered_pages_org_url_idx").on(
+      table.organizationId,
+      table.urlKey,
+    ),
+    index("website_discovered_pages_org_idx").on(table.organizationId),
+    index("website_discovered_pages_website_idx").on(table.websiteId),
+  ],
+);
+
 export const contacts = pgTable(
   "contacts",
   {

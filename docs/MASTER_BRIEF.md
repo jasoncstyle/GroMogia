@@ -67,6 +67,8 @@ Use structured data. Do not represent the Business Brain solely as an AI prompt 
 
 Discovery flow: DISCOVER → INFER → ASK → CONFIRM → LEARN. AI inference must not silently become authoritative when uncertainty is meaningful.
 
+For a connected website, GroovGro finds pages, asks which ones matter, then reads only the checked pages. Drafts from those pages stay inactive until the owner confirms.
+
 ## 6. Offers, availability, and constraints
 
 An Offer is what an organization promotes, sells, provides, or wants customers to act upon. It is not assumed to be a physical product.
