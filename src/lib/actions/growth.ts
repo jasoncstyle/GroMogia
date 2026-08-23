@@ -674,17 +674,20 @@ export async function proposeGrowthAction(formData: FormData): Promise<ActionRes
 async function loadWebsiteDiscoveryPages(
   organizationId: string,
   publicUrl: string,
-): Promise<WebsitePageExtract[]> {
+): Promise<{ pages: WebsitePageExtract[]; note: string }> {
   const pages: WebsitePageExtract[] = [];
-  const home = isSafePublicHttpUrl(publicUrl);
-  if (home) {
+  let note = "";
+  const home = publicUrl ? isSafePublicHttpUrl(publicUrl) : null;
+  if (publicUrl && !home) {
+    note = "The saved website address is not a public page GroovGro can open.";
+  } else if (home) {
     const fetched = await fetchPublicText(home.toString());
     if (fetched.ok && fetched.body) {
       pages.push({
         ...extractWebsitePage(home.toString(), fetched.body, "connected_website"),
         isHome: true,
       });
-      const extras = sameOriginPageUrls(fetched.body, home.toString(), 4);
+      const extras = sameOriginPageUrls(fetched.body, home.toString(), 6);
       const extraPages = await Promise.all(
         extras.map(async (url) => {
           const page = await fetchPublicText(url);
@@ -698,6 +701,10 @@ async function loadWebsiteDiscoveryPages(
       for (const extra of extraPages) {
         if (extra) pages.push(extra);
       }
+      note = `Read ${pages.length} page${pages.length === 1 ? "" : "s"} on the connected website. The website was not changed.`;
+    } else {
+      note =
+        "GroovGro could not download the connected homepage. The address is saved, but the pages were not read.";
     }
   }
 
@@ -718,7 +725,7 @@ async function loadWebsiteDiscoveryPages(
     });
   }
 
-  return pages;
+  return { pages, note };
 }
 
 export async function reviewConnectedBusiness(
@@ -753,7 +760,7 @@ export async function reviewConnectedBusiness(
       db.select().from(businessBrains).where(eq(businessBrains.organizationId, organizationId)).limit(1),
     ]);
 
-    const websitePages = await loadWebsiteDiscoveryPages(
+    const websiteLoad = await loadWebsiteDiscoveryPages(
       organizationId,
       websiteRows[0]?.publicUrl ?? "",
     );
@@ -767,7 +774,7 @@ export async function reviewConnectedBusiness(
       existingConstraints: constraintRows,
       websiteUrl: websiteRows[0]?.publicUrl ?? "",
       brandDescription: brandRows[0]?.description ?? "",
-      websitePages,
+      websitePages: websiteLoad.pages,
     });
 
     const createdOfferIds = new Map<string, string>();
@@ -896,14 +903,21 @@ export async function reviewConnectedBusiness(
       action: "business_brain.reviewed",
       targetType: "business_brain",
       targetId: organizationId,
-      metadata: { offersCreated, constraintsCreated, goalsCreated },
+      metadata: {
+        offersCreated,
+        constraintsCreated,
+        goalsCreated,
+        websitePagesRead: websiteLoad.pages.length,
+        websiteNote: websiteLoad.note,
+      },
     });
     revalidateGrowth();
 
+    const websiteNote = websiteLoad.note ? ` ${websiteLoad.note}` : "";
     if (offersCreated === 0 && goalsCreated === 0 && constraintsCreated === 0) {
-      return "GroovGro did not find new drafts. Confirm or reject what is already waiting, or add your own.";
+      return `GroovGro did not find new drafts.${websiteNote} Confirm or reject what is already waiting, or add your own.`;
     }
-    return `Drafted ${offersCreated} offer${offersCreated === 1 ? "" : "s"} and ${goalsCreated} suggested goal${goalsCreated === 1 ? "" : "s"}. Nothing is active until you confirm.`;
+    return `Drafted ${offersCreated} offer${offersCreated === 1 ? "" : "s"} and ${goalsCreated} suggested goal${goalsCreated === 1 ? "" : "s"}.${websiteNote} Nothing is active until you confirm.`;
   });
 }
 

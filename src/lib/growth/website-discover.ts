@@ -62,6 +62,19 @@ const GENERIC_LABELS = new Set([
   "our services",
   "what we do",
   "services",
+  "book now",
+  "book your spot",
+  "calendar",
+  "calendar book now",
+  "training",
+  "customer portal",
+  "admin",
+  "admin and partner login",
+  "partner login",
+  "explore training",
+  "view calendar",
+  "view full calendar",
+  "what to expect",
 ]);
 
 const SKIP_PATH_EXT = /\.(pdf|jpe?g|png|gif|webp|svg|css|js|zip|mp4|mp3)(\?|$)/i;
@@ -101,7 +114,8 @@ export function isGenericWebsiteLabel(value: string): boolean {
 }
 
 export function looksLikeBrandTitle(value: string): boolean {
-  return /[|–—]/.test(value) || value.split(/\s+/).length > 8;
+  const words = value.trim().split(/\s+/).filter(Boolean);
+  return /[|–—]/.test(value) || /[.?!]$/.test(value.trim()) || words.length > 6;
 }
 
 export function extractWebsitePage(
@@ -123,6 +137,7 @@ export function extractWebsitePage(
   const headings = [
     ...allMatches(clean, /<h1\b[^>]*>([\s\S]*?)<\/h1>/gi),
     ...allMatches(clean, /<h2\b[^>]*>([\s\S]*?)<\/h2>/gi),
+    ...allMatches(clean, /<h3\b[^>]*>([\s\S]*?)<\/h3>/gi),
   ];
   const navHtml = (clean.match(/<nav\b[\s\S]*?<\/nav>/gi) ?? []).join(" ");
   const headerHtml = (clean.match(/<header\b[\s\S]*?<\/header>/gi) ?? []).join(" ");
@@ -148,10 +163,24 @@ export function extractWebsitePage(
   };
 }
 
+const SKIP_PATH =
+  /(^|\/)(about|about-us|contact|contact-us|faq|faqs|privacy|terms|login|signin|sign-in|signup|sign-up|customer|admin|blog|news|cart|checkout)(\/|$)/i;
+
+function pathPriority(pathname: string): number {
+  const path = pathname.toLowerCase();
+  if (SKIP_PATH.test(path)) return -1;
+  let score = 1;
+  if (/(train|program|course|workshop|class|offer|service|product|session)/.test(path)) {
+    score += 3;
+  }
+  if (path.split("/").filter(Boolean).length >= 2) score += 2;
+  return score;
+}
+
 export function sameOriginPageUrls(
   html: string,
   pageUrl: string,
-  limit = 4,
+  limit = 6,
 ): string[] {
   let origin: URL;
   try {
@@ -159,7 +188,7 @@ export function sameOriginPageUrls(
   } catch {
     return [];
   }
-  const urls: string[] = [];
+  const found: { url: string; score: number }[] = [];
   const seen = new Set<string>();
   const clean = stripNoise(html);
   for (const match of clean.matchAll(/<a\b[^>]*href\s*=\s*["']([^"']+)["'][^>]*>/gi)) {
@@ -175,15 +204,19 @@ export function sameOriginPageUrls(
     }
     if (next.origin !== origin.origin) continue;
     if (SKIP_PATH_EXT.test(next.pathname)) continue;
+    const score = pathPriority(next.pathname);
+    if (score < 0) continue;
     next.hash = "";
     const normalized = next.toString();
     if (normalized === origin.toString()) continue;
     if (seen.has(normalized)) continue;
     seen.add(normalized);
-    urls.push(normalized);
-    if (urls.length >= limit) break;
+    found.push({ url: normalized, score });
   }
-  return urls;
+  return found
+    .sort((left, right) => right.score - left.score)
+    .slice(0, limit)
+    .map((row) => row.url);
 }
 
 function addCandidate(
@@ -216,11 +249,14 @@ export function websiteOfferCandidates(
 ): WebsiteOfferCandidate[] {
   const candidates: WebsiteOfferCandidate[] = [];
   const seen = new Set<string>();
+  const homeTitle = pages.find((page) => page.isHome)?.title ?? "";
 
   for (const page of pages) {
-    const isHome = page.isHome;
-
-    if (!isHome && page.title) {
+    if (
+      !page.isHome &&
+      page.title &&
+      normalizeOfferKey(page.title) !== normalizeOfferKey(homeTitle)
+    ) {
       addCandidate(
         candidates,
         seen,
@@ -232,8 +268,7 @@ export function websiteOfferCandidates(
       );
     }
 
-    const heading = page.headings[0];
-    if (heading && heading !== page.title) {
+    for (const heading of page.headings) {
       addCandidate(
         candidates,
         seen,
@@ -241,22 +276,24 @@ export function websiteOfferCandidates(
         page.description || `Suggested from a heading on ${page.url}.`,
         page.url,
         page.source,
-        isHome ? 50 : 70,
+        page.isHome ? 55 : 70,
       );
     }
   }
 
-  for (const page of pages) {
-    for (const label of page.navLabels) {
-      addCandidate(
-        candidates,
-        seen,
-        label,
-        `Suggested from a website menu label. Confirm only if this is something you sell or want people to do.`,
-        page.url,
-        page.source,
-        45,
-      );
+  if (candidates.length === 0) {
+    for (const page of pages) {
+      for (const label of page.navLabels) {
+        addCandidate(
+          candidates,
+          seen,
+          label,
+          `Suggested from a website menu label. Confirm only if this is something you sell or want people to do.`,
+          page.url,
+          page.source,
+          45,
+        );
+      }
     }
   }
 
