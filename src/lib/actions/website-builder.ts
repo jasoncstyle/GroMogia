@@ -36,7 +36,10 @@ import {
   parseChromeLogoUrl,
 } from "@/lib/website-builder/chrome";
 import { MAX_INNER_ROWS_PER_COLUMN } from "@/lib/website-builder/nest";
-import { writeBuilderLayout } from "@/lib/website-builder/persist-layout";
+import {
+  copyBuilderSiteContent,
+  writeBuilderLayout,
+} from "@/lib/website-builder/persist-layout";
 import {
   INSPIRED_TEMPLATE_ID,
   MAX_COPY_URLS,
@@ -55,6 +58,8 @@ import {
   layoutForNewPage,
   parsePageSlug,
   suggestPageSlug,
+  uniqueSavedHomeSlug,
+  uniqueSavedHomeTitle,
 } from "@/lib/website-builder/pages";
 import {
   defaultContentForType,
@@ -224,11 +229,6 @@ export async function draftInspiredBuilderSite(
         ),
       )
       .limit(1);
-    if (existing) {
-      throw new Error(
-        "This organization already has a GroovGro website. Edit that draft, or keep the connected site as it is.",
-      );
-    }
 
     const layoutUrls = parseInspirationUrls(
       [
@@ -280,40 +280,97 @@ export async function draftInspiredBuilderSite(
       );
     }
     const copyPages = await loadPublicPages(copyUrls);
-
     const title = brand?.businessName || session.organizationName || "Website";
-    await db.insert(builderSites).values({
-      organizationId: session.organizationId,
-      title,
-      slug: HOME_PAGE_SLUG,
-      status: "draft",
-      theme: inspiredTheme(),
-      templateId: INSPIRED_TEMPLATE_ID,
-      createdBy: session.userId,
+    const rows = draftInspiredRows({
+      businessName: brand?.businessName || session.organizationName || "",
+      description: brand?.description ?? "",
+      targetCustomers: brand?.targetCustomers ?? "",
+      businessType: businessType || brain?.industry || "",
+      layoutPages,
+      copyPages,
     });
-    const [site] = await db
-      .select()
-      .from(builderSites)
-      .where(
-        and(
-          eq(builderSites.organizationId, session.organizationId),
-          eq(builderSites.slug, HOME_PAGE_SLUG),
-        ),
-      )
-      .limit(1);
+
+    let savedPageTitle = "";
+    let site = existing ?? null;
+
+    if (existing) {
+      const allPages = await db
+        .select({
+          id: builderSites.id,
+          slug: builderSites.slug,
+          title: builderSites.title,
+        })
+        .from(builderSites)
+        .where(eq(builderSites.organizationId, session.organizationId));
+      if (allPages.length >= MAX_BUILDER_PAGES) {
+        throw new Error(
+          "This website already has the maximum number of pages. Delete an unused extra page, then try again.",
+        );
+      }
+      savedPageTitle = uniqueSavedHomeTitle(allPages.map((page) => page.title));
+      const savedSlug = uniqueSavedHomeSlug(allPages.map((page) => page.slug));
+      const savedId = crypto.randomUUID();
+      await db.insert(builderSites).values({
+        id: savedId,
+        organizationId: session.organizationId,
+        title: savedPageTitle,
+        slug: savedSlug,
+        metaDescription: existing.metaDescription,
+        status: "draft",
+        theme: existing.theme,
+        templateId: existing.templateId,
+        createdBy: session.userId,
+      });
+      await copyBuilderSiteContent(db, {
+        organizationId: session.organizationId,
+        fromSiteId: existing.id,
+        toSiteId: savedId,
+      });
+      await db
+        .update(builderSites)
+        .set({
+          title,
+          status: "draft",
+          theme: inspiredTheme(),
+          templateId: INSPIRED_TEMPLATE_ID,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(builderSites.id, existing.id),
+            eq(builderSites.organizationId, session.organizationId),
+          ),
+        );
+      site = existing;
+    } else {
+      await db.insert(builderSites).values({
+        organizationId: session.organizationId,
+        title,
+        slug: HOME_PAGE_SLUG,
+        status: "draft",
+        theme: inspiredTheme(),
+        templateId: INSPIRED_TEMPLATE_ID,
+        createdBy: session.userId,
+      });
+      const [created] = await db
+        .select()
+        .from(builderSites)
+        .where(
+          and(
+            eq(builderSites.organizationId, session.organizationId),
+            eq(builderSites.slug, HOME_PAGE_SLUG),
+          ),
+        )
+        .limit(1);
+      site = created ?? null;
+    }
+
     if (!site) throw new Error("Could not create the GroovGro website.");
 
     await writeBuilderLayout(db, {
       organizationId: session.organizationId,
       siteId: site.id,
-      rows: draftInspiredRows({
-        businessName: brand?.businessName || session.organizationName || "",
-        description: brand?.description ?? "",
-        targetCustomers: brand?.targetCustomers ?? "",
-        businessType: businessType || brain?.industry || "",
-        layoutPages,
-        copyPages,
-      }),
+      rows,
     });
 
     await recordAudit({
@@ -326,9 +383,13 @@ export async function draftInspiredBuilderSite(
         layoutCount: layoutPages.length,
         copyCount: copyPages.length,
         businessType: businessType || brain?.industry || "",
+        savedPreviousHome: Boolean(savedPageTitle),
       },
     });
     revalidateBuilder(session.organizationSlug, site);
+    if (savedPageTitle) {
+      return `Your previous Home was saved as “${savedPageTitle}” (still a draft). The new Home is unpublished until you publish. Edit every line. The connected live site was not changed.`;
+    }
     return `Draft website created from ${layoutPages.length} layout page${layoutPages.length === 1 ? "" : "s"}. It is not public until you publish. Edit every line. The live connected site was not changed.`;
   });
 }

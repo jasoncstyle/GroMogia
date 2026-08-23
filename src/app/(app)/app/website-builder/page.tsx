@@ -13,6 +13,7 @@ import { builderPublicUrl } from "@/lib/website-builder/apply-seo";
 import { BuilderTemplatePicker } from "@/components/builder-template-picker";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteBuilderEditor } from "@/components/website-builder-editor";
+import { FoldableSample } from "@/components/foldable-sample";
 import { WebsiteBuilderInspiration } from "@/components/website-builder-inspiration";
 import {
   Card,
@@ -72,8 +73,9 @@ export default async function WebsiteBuilderPage({
           <CardTitle>How this works</CardTitle>
           <CardDescription>
             Pick a starting layout, or let GroovGro draft Home from websites
-            you like. Each page stays a draft until you click Publish on that
-            page. Your current public site stays as it is.
+            you like. If Home already exists, open Start Home over. Your
+            current Home is saved as a draft page first. Your connected public
+            site stays as it is.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -122,27 +124,39 @@ export default async function WebsiteBuilderPage({
           </Card>
         </>
       ) : (
-        <WebsiteBuilderEditor
-          key={data.site.id}
-          site={{
-            id: data.site.id,
-            title: data.site.title,
-            slug: data.site.slug,
-            metaDescription: data.site.metaDescription,
-            status: data.site.status,
-            theme: data.site.theme,
-            templateId: data.site.templateId,
-          }}
-          pages={data.pages}
-          rows={data.rows}
-          brandName={data.brand?.businessName ?? null}
-          orgSlug={slug ?? ""}
-          publicUrl={publicUrl}
-          uploadsEnabled={isBlobConfigured()}
-          recentMedia={recentMedia}
-          chrome={data.chrome}
-          chromeView={data.chromeView}
-        />
+        <>
+          <FoldableSample
+            title="Start Home over"
+            subtitle="Keep your current Home as a draft page, then draft a new Home from websites you like."
+          >
+            <WebsiteBuilderInspiration
+              businessType={brain?.industry ?? ""}
+              disabled={!session.organizationId}
+              hasExistingHome
+            />
+          </FoldableSample>
+          <WebsiteBuilderEditor
+            key={data.site.id}
+            site={{
+              id: data.site.id,
+              title: data.site.title,
+              slug: data.site.slug,
+              metaDescription: data.site.metaDescription,
+              status: data.site.status,
+              theme: data.site.theme,
+              templateId: data.site.templateId,
+            }}
+            pages={data.pages}
+            rows={data.rows}
+            brandName={data.brand?.businessName ?? null}
+            orgSlug={slug ?? ""}
+            publicUrl={publicUrl}
+            uploadsEnabled={isBlobConfigured()}
+            recentMedia={recentMedia}
+            chrome={data.chrome}
+            chromeView={data.chromeView}
+          />
+        </>
       )}
     </div>
   );

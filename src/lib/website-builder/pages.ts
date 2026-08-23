@@ -39,6 +39,26 @@ export function builderPageLabel(page: { slug: string; title: string }): string 
   return isHomePageSlug(page.slug) ? "Home" : page.title.trim() || "Untitled page";
 }
 
+export function uniqueSavedHomeSlug(existingSlugs: string[]): string {
+  const taken = new Set(existingSlugs.filter(Boolean));
+  if (!taken.has("saved-home")) return "saved-home";
+  for (let index = 2; index <= MAX_BUILDER_PAGES; index += 1) {
+    const slug = `saved-home-${index}`;
+    if (!taken.has(slug)) return slug;
+  }
+  throw new Error("Too many saved Home pages. Delete an unused extra page first.");
+}
+
+export function uniqueSavedHomeTitle(existingTitles: string[]): string {
+  const taken = new Set(existingTitles.map((title) => title.trim().toLowerCase()));
+  if (!taken.has("previous home")) return "Previous Home";
+  for (let index = 2; index <= MAX_BUILDER_PAGES; index += 1) {
+    const title = `Previous Home ${index}`;
+    if (!taken.has(title.toLowerCase())) return title;
+  }
+  return "Previous Home";
+}
+
 export function suggestPageSlug(name: string): string {
   return name
     .toLowerCase()
