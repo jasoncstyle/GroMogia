@@ -4,10 +4,16 @@ import { saveWebsiteConnection } from "@/lib/actions/website";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { websites } from "@/lib/db/schema";
-import { appUrl } from "@/lib/env";
+import { appUrl, missingFoundationServices } from "@/lib/env";
+import { getGrowthSnapshot } from "@/lib/growth/queries";
+import {
+  buildStatusAlerts,
+  websiteWasRead,
+} from "@/lib/growth/status-alerts";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { CopyLink } from "@/components/copy-link";
 import { SaveButton, SaveForm } from "@/components/save-form";
+import { StatusAlertList } from "@/components/status-alert";
 import { TrackingSnippet } from "@/components/tracking-snippet";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
 import {
@@ -23,24 +29,37 @@ import { Label } from "@/components/ui/label";
 export default async function WebsitePage() {
   const session = await getAppSession();
   const db = getDb();
-  const [website] =
+  const [websiteRows, growth, slug] = await Promise.all([
     db && session.organizationId
-      ? await db
+      ? db
           .select()
           .from(websites)
           .where(eq(websites.organizationId, session.organizationId))
           .limit(1)
-      : [];
+      : Promise.resolve([]),
+    session.organizationId
+      ? getGrowthSnapshot(session.organizationId)
+      : Promise.resolve(null),
+    resolveOrganizationSlug(session.organizationId, session.organizationSlug),
+  ]);
+  const [website] = websiteRows;
 
   const base = appUrl();
   const snippet = website
     ? `<script src="${base}/t.js" data-groovgro-id="${website.trackingId}" data-gromogia-id="${website.trackingId}" async></script>`
     : "";
-  const slug = await resolveOrganizationSlug(
-    session.organizationId,
-    session.organizationSlug,
-  );
   const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
+  const statusAlerts = buildStatusAlerts({
+    signedIn: Boolean(session.email),
+    organizationReady: Boolean(session.organizationId),
+    missingServices: missingFoundationServices(),
+    websiteUrl: website?.publicUrl ?? "",
+    websiteRead: websiteWasRead(growth?.brain?.inferredSummary),
+    stripeConnected: false,
+    paymentCount: 0,
+    recordedVisitCount: 0,
+    topics: ["workspace", "website"],
+  });
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -54,6 +73,8 @@ export default async function WebsitePage() {
           and does not overwrite this connection.
         </p>
       </div>
+
+      <StatusAlertList alerts={statusAlerts} />
 
       <WebsiteUpdateExpectation />
 
