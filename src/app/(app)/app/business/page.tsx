@@ -11,7 +11,8 @@ import {
   buildStatusAlerts,
   websiteWasRead,
 } from "@/lib/growth/status-alerts";
-import { commaTextFromList } from "@/lib/growth/types";
+import { commaTextFromList, draftToggleTitle } from "@/lib/growth/types";
+import { FoldableSample } from "@/components/foldable-sample";
 import { StatusAlertList } from "@/components/status-alert";
 import {
   ConfirmRejectButtons,
@@ -98,8 +99,10 @@ export default async function BusinessBrainPage() {
           )}
           <ReviewConnectedDataButton disabled={!session.organizationId} />
           {(snapshot?.inferredOffers.length ?? 0) > 0 ? (
-            <div className="space-y-3">
-              <p className="text-sm font-medium">Possible offers</p>
+            <FoldableSample
+              title={draftToggleTitle("offer", snapshot?.inferredOffers.length ?? 0)}
+              subtitle="Open to confirm or reject. Drafts stay inactive."
+            >
               {snapshot?.inferredOffers.map((offer) => (
                 <div key={offer.id} className="rounded-lg border p-3">
                   <p className="font-medium">{offer.name}</p>
@@ -109,11 +112,13 @@ export default async function BusinessBrainPage() {
                   </div>
                 </div>
               ))}
-            </div>
+            </FoldableSample>
           ) : null}
           {(snapshot?.inferredGoals.length ?? 0) > 0 ? (
-            <div className="space-y-3">
-              <p className="text-sm font-medium">Suggested goals</p>
+            <FoldableSample
+              title={draftToggleTitle("goal", snapshot?.inferredGoals.length ?? 0)}
+              subtitle="Open to confirm or reject. Drafts stay inactive."
+            >
               {snapshot?.inferredGoals.map((goal) => (
                 <div key={goal.id} className="rounded-lg border p-3">
                   <p className="font-medium">{goal.title}</p>
@@ -123,7 +128,7 @@ export default async function BusinessBrainPage() {
                   </div>
                 </div>
               ))}
-            </div>
+            </FoldableSample>
           ) : null}
         </CardContent>
       </Card>

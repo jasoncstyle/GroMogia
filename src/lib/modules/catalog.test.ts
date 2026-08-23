@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
 import { isModuleEnabled, MODULE_CATALOG, navModules } from "./catalog";
 
@@ -93,5 +95,15 @@ describe("module catalog", () => {
       MODULE_CATALOG.find((module) => module.id === "reviews")?.href,
       "/app/reviews",
     );
+  });
+
+  it("keeps a labeled Menu button so phones can open the app nav", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/components/app-shell.tsx"),
+      "utf8",
+    );
+    assert.match(source, /Menu/);
+    assert.match(source, /md:hidden/);
+    assert.match(source, /app-mobile-menu/);
   });
 });

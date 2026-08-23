@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-status-alerts-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-offer-toggle-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -41,6 +41,8 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Weekly Growth Review and monthly strategy review from connected evidence, including “no change yet”
 - Specialists on Intelligence: SEO, website, leads, schedule, advertising, email, and social. Each reads, analyzes against a Goal, and recommends — including no change. None execute.
 - Green status alerts when the workspace is working and the website has been connected and read. Amber when an address is saved but Review connected data has not run yet. Tracking stays silent until visits or clicks exist.
+- Possible offers and suggested goals on Business stay closed until you open the toggle. Confirm and reject still do not activate marketing.
+- Phones get a Menu button that opens the same app navigation as the desktop sidebar.
 
 ## Still later
 

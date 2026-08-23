@@ -7,6 +7,7 @@ import { join } from "node:path";
 import {
   CONSTRAINT_TYPES,
   DEFAULT_EVIDENCE_POLICIES,
+  draftToggleTitle,
   evidenceRecommendation,
   goalProgressPercent,
   hasEnoughEvidence,
@@ -70,6 +71,13 @@ describe("growth foundation", () => {
 
   it("splits comma lists without empty items", () => {
     assert.deepEqual(listFromCommaText("Austin,  , Dallas"), ["Austin", "Dallas"]);
+  });
+
+  it("names the draft toggle with a count", () => {
+    assert.equal(draftToggleTitle("offer", 1), "1 possible offer");
+    assert.equal(draftToggleTitle("offer", 6), "6 possible offers");
+    assert.equal(draftToggleTitle("goal", 1), "1 suggested goal");
+    assert.equal(draftToggleTitle("goal", 2), "2 suggested goals");
   });
 
   it("gives SEO a longer default window than email", () => {
