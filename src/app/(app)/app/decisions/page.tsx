@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { proposeGrowthAction, recordDecision } from "@/lib/actions/growth";
+import { WaitingActionButtons } from "@/components/next-step-actions";
+import { hasPermission } from "@/lib/permissions";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { DECISION_TYPES, labelFor } from "@/lib/growth/types";
@@ -29,6 +31,7 @@ export default async function DecisionsPage() {
   const decisions = snapshot?.decisions ?? [];
   const actions = snapshot?.actions ?? [];
   const policies = snapshot?.policies ?? [];
+  const canApprove = hasPermission(session.permissions, "approve_actions");
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
@@ -245,12 +248,18 @@ export default async function DecisionsPage() {
             <p className="text-sm text-muted-foreground">None proposed yet.</p>
           ) : (
             actions.map((action) => (
-              <div key={action.id} className="rounded-lg border p-4 text-sm">
+              <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
                 <p className="font-medium">{action.description}</p>
                 <p className="text-muted-foreground">
                   {action.status} · {labelFor(action.risk)}
                   {action.module ? ` · ${action.module}` : ""}
                 </p>
+                {action.status === "proposed" || action.status === "awaiting_approval" ? (
+                  <WaitingActionButtons
+                    actionId={action.id}
+                    canApprove={canApprove}
+                  />
+                ) : null}
               </div>
             ))
           )}

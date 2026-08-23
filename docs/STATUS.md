@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-complete-site-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-next-step-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,15 +17,21 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** This branch makes Create my GroovGro website draft a complete first site, not only Home, About, and Work. Do not start Growth Director, ads, or autonomy.
+**V2 growth foundation is on `main`.** The website builder is paused. This branch is the next owner-assistance step: one coordinated Next step from Goals, specialists, and connected data. Approve or leave it alone. Do not start ads, execution, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
-Do not start ads, Growth Director execution, or autonomous AI. Custom domains for builder sites wait unless Jason’s parked idea is that work. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
+Do not start ads, Growth Director execution, or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
+
+## Parked: website builder (23 August 2026)
+
+The optional GroovGro-hosted builder stays in the app. Do not add builder features on this branch. GroovGro’s main job is to assist the business and the owner — connect, understand, set a Goal, and name what should happen next.
+
+What already shipped for the builder stays: scratch editor, templates, Create my GroovGro website, Start Home over, inspiration toggle. Do not overwrite a connected live site. Do not change Stripe.
 
 ## Parked: website builder from inspiration (agreed direction)
 
-Jason’s idea (23 August 2026): help the owner build a **GroovGro-hosted** site, not by cloning the live connected site.
+Jason’s idea (23 August 2026): help the owner build a **GroovGro-hosted** site, not by cloning the live connected site. **Paused.** Resume only when Jason asks.
 
 **Keep**
 
@@ -46,7 +52,7 @@ Jason’s idea (23 August 2026): help the owner build a **GroovGro-hosted** site
 - Change Stripe checkout or stripe-osa.
 - Start ads or Growth Director.
 
-**First build slice (this branch):** Create my GroovGro website drafts unpublished Home, About, What we offer, Contact, Questions, Where we work when locations exist, and a page per confirmed offer. Pages link to each other. Previous Home stays out of the public menu.
+**First build slice (this branch):** Next step coordinates Goals, specialist recommendations, and Business drafts into one thing to do — or “nothing yet.” The owner can accept it, leave it alone, or approve/reject a saved proposal. GroovGro does not execute.
 
 ## Stripe (do not mix, do not replace)
 
@@ -72,6 +78,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Review connected data walks more of the connected website: program pages, calendar/booking pages, and event detail pages, and it tries a public booking embed on another site when one is linked. It does not copy the site or change it. Homepage slogans are not treated as offers when real inner pages exist.
 - Website page checklist: Find pages lists what GroovGro can see. Home, program, calendar, event, and public booking pages start checked. About, login, and legal stay unchecked. You can add a missing URL. Review connected data then reads only the checked pages. Event detail URLs sit under Calendar so they are not 40 separate boxes.
 - Phones get a Menu button that opens the same app navigation as the desktop sidebar.
+- Next step: one coordinated recommendation from Goals, specialists, and connected data. The owner accepts it or leaves it alone. Proposed actions can be approved or rejected. Nothing runs. Ads, email, and social stay left alone.
 
 ## Still later
 

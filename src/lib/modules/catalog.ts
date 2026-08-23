@@ -4,6 +4,7 @@ export type ModuleId =
   | "offers"
   | "growth_goals"
   | "growth_reviews"
+  | "growth_next"
   | "integrations"
   | "media"
   | "website_connect"
@@ -35,6 +36,7 @@ export const PHASE_1_MODULES: ModuleId[] = [
   "offers",
   "growth_goals",
   "growth_reviews",
+  "growth_next",
   "integrations",
   "media",
 ];
@@ -106,6 +108,14 @@ export const MODULE_CATALOG: ModuleDefinition[] = [
     description: "Weekly and monthly summaries. No change is a valid recommendation.",
     phase: 1,
     href: "/app/growth-review",
+    navGroup: "grow",
+  },
+  {
+    id: "growth_next",
+    name: "Next step",
+    description: "One coordinated next step. Approve or leave alone. GroovGro does not execute.",
+    phase: 1,
+    href: "/app/next-step",
     navGroup: "grow",
   },
   {

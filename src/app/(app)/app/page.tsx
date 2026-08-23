@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl, missingFoundationServices } from "@/lib/env";
-import { getGrowthSnapshot } from "@/lib/growth/queries";
+import { getCoordinatedNextStep, getGrowthSnapshot } from "@/lib/growth/queries";
 import {
   buildStatusAlerts,
   websiteWasRead,
@@ -31,12 +31,13 @@ export default async function DashboardPage() {
     session.organizationSlug,
   );
   const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
-  const [snapshot, growth] = session.organizationId
+  const [snapshot, growth, nextStep] = session.organizationId
     ? await Promise.all([
         getDashboardSnapshot(session.organizationId),
         getGrowthSnapshot(session.organizationId),
+        getCoordinatedNextStep(session.organizationId),
       ])
-    : [null, null];
+    : [null, null, null];
 
   const happening = snapshot
     ? `${snapshot.openLeadCount} open lead${snapshot.openLeadCount === 1 ? "" : "s"}, ${snapshot.customerCount} customer${snapshot.customerCount === 1 ? "" : "s"}, and ${formatMoney(snapshot.paymentTotalCents)} in payments this month.`
@@ -65,7 +66,7 @@ export default async function DashboardPage() {
         ? `${snapshot.openLeadCount} lead${snapshot.openLeadCount === 1 ? "" : "s"} still need a next step.`
         : "Brand, website, and Stripe are in a good starting place. Add an event or a lead to see the dashboard fill in.";
 
-  const nextStep = inferredCount > 0
+  const nextStepText = inferredCount > 0
     ? "Open Business to confirm or reject what GroovGro drafted. Nothing becomes active until you confirm."
     : !snapshot?.website?.publicUrl
     ? "Connect the existing website and paste the tracking snippet."
@@ -168,9 +169,11 @@ export default async function DashboardPage() {
         <QuestionCard
           title="What should happen next?"
           body={
-            growth?.awaitingApproval.length
-              ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
-              : (growth?.weeklyReview.whatShouldHappenNext ?? nextStep)
+            nextStep
+              ? `${nextStep.primary.title}. ${nextStep.waitingActions.length > 0 ? `${nextStep.waitingActions.length} proposed action${nextStep.waitingActions.length === 1 ? "" : "s"} still need your say. ` : ""}GroovGro will not execute this.`
+              : growth?.awaitingApproval.length
+                ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
+                : (growth?.weeklyReview.whatShouldHappenNext ?? nextStepText)
           }
         />
         <QuestionCard
@@ -248,6 +251,11 @@ export default async function DashboardPage() {
         {isModuleEnabled(session.enabledModules, "growth_goals") ? (
           <Button asChild variant="outline">
             <Link href="/app/goals">Goals</Link>
+          </Button>
+        ) : null}
+        {isModuleEnabled(session.enabledModules, "growth_next") ? (
+          <Button asChild variant="outline">
+            <Link href="/app/next-step">Next step</Link>
           </Button>
         ) : null}
         {isModuleEnabled(session.enabledModules, "growth_reviews") ? (

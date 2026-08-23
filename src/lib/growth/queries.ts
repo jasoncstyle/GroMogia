@@ -21,6 +21,7 @@ import {
   seoAudits,
 } from "@/lib/db/schema";
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
+import { coordinateNextStep } from "@/lib/growth/next-step";
 import { generateGrowthReview } from "@/lib/growth/review";
 import {
   buildSpecialistReports,
@@ -189,7 +190,9 @@ export async function getGrowthSnapshot(organizationId: string) {
     inferredOffers: offerRows.filter((offer) => offer.discoveryStatus === "inferred"),
     inferredGoals: goals.filter((goal) => goal.discoveryStatus === "inferred"),
     latestNoChange: decisionRows.find((row) => row.decisionType === "no_change") ?? null,
-    awaitingApproval: actionRows.filter((row) => row.status === "awaiting_approval"),
+    awaitingApproval: actionRows.filter(
+      (row) => row.status === "proposed" || row.status === "awaiting_approval",
+    ),
   };
 }
 
@@ -333,4 +336,25 @@ export async function getSpecialistReports(organizationId: string) {
   };
 
   return buildSpecialistReports(facts);
+}
+
+export async function getCoordinatedNextStep(organizationId: string) {
+  const [snapshot, reports] = await Promise.all([
+    getGrowthSnapshot(organizationId),
+    getSpecialistReports(organizationId),
+  ]);
+  if (!snapshot) return null;
+
+  return coordinateNextStep({
+    inferredDraftCount:
+      snapshot.inferredOffers.length + snapshot.inferredGoals.length,
+    reports,
+    waitingActions: snapshot.actions.map((action) => ({
+      id: action.id,
+      description: action.description,
+      module: action.module,
+      status: action.status,
+      risk: action.risk,
+    })),
+  });
 }
