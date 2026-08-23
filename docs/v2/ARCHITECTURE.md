@@ -86,8 +86,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 ## BUILD NEXT (after this slice is tested)
 
-- **Website builder from inspiration (this slice).** Owner pastes public layout URLs and optional copy-research URLs or a business type. GroovGro reads those public pages and drafts an unpublished GroovGro-hosted Home. Do not scrape search-engine result pages. Do not clone sites. Do not overwrite a connected website.
-- Growth Director coordination, still approval-first. Do not start it in the inspiration slice.
+- **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
+- **Growth Director coordination (this slice), approval-first.** Shown to the owner as Next step. Reads Goals, specialists, and drafts. One recommendation or “nothing yet.” Approve or reject. Do not execute. Do not start ads.
 
 ## DESIGN FOR LATER
 
