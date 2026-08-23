@@ -69,6 +69,64 @@ export function normalizeInspirationUrl(value: string): string | null {
   return parsed ? parsed.toString() : null;
 }
 
+export type InspirationFormFields = {
+  businessType: string
+  layoutUrl1: string
+  layoutUrl2: string
+  layoutUrl3: string
+  copyUrl1: string
+  copyUrl2: string
+  copyUrl3: string
+  copyUrl4: string
+  copyUrl5: string
+};
+
+export function emptyInspirationFields(businessType = ""): InspirationFormFields {
+  return {
+    businessType,
+    layoutUrl1: "",
+    layoutUrl2: "",
+    layoutUrl3: "",
+    copyUrl1: "",
+    copyUrl2: "",
+    copyUrl3: "",
+    copyUrl4: "",
+    copyUrl5: "",
+  };
+}
+
+function clipField(value: unknown, max: number): string {
+  return typeof value === "string" ? value.trim().slice(0, max) : "";
+}
+
+export function parseInspirationFormFields(input: unknown): InspirationFormFields {
+  const raw = input && typeof input === "object" ? (input as Record<string, unknown>) : {};
+  const parsed = emptyInspirationFields(clipField(raw.businessType, 80));
+  parsed.layoutUrl1 = clipField(raw.layoutUrl1, 500);
+  parsed.layoutUrl2 = clipField(raw.layoutUrl2, 500);
+  parsed.layoutUrl3 = clipField(raw.layoutUrl3, 500);
+  parsed.copyUrl1 = clipField(raw.copyUrl1, 500);
+  parsed.copyUrl2 = clipField(raw.copyUrl2, 500);
+  parsed.copyUrl3 = clipField(raw.copyUrl3, 500);
+  parsed.copyUrl4 = clipField(raw.copyUrl4, 500);
+  parsed.copyUrl5 = clipField(raw.copyUrl5, 500);
+  return parsed;
+}
+
+export function inspirationFieldsFromFormData(formData: FormData): InspirationFormFields {
+  return parseInspirationFormFields({
+    businessType: formData.get("businessType"),
+    layoutUrl1: formData.get("layoutUrl1"),
+    layoutUrl2: formData.get("layoutUrl2"),
+    layoutUrl3: formData.get("layoutUrl3"),
+    copyUrl1: formData.get("copyUrl1"),
+    copyUrl2: formData.get("copyUrl2"),
+    copyUrl3: formData.get("copyUrl3"),
+    copyUrl4: formData.get("copyUrl4"),
+    copyUrl5: formData.get("copyUrl5"),
+  });
+}
+
 export function parseInspirationUrls(values: string[], limit: number): string[] {
   const found: string[] = [];
   const seen = new Set<string>();

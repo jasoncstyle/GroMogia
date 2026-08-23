@@ -11,6 +11,8 @@ import {
   inspirationTopics,
   loadInspirationPages,
   mergeInspirationPages,
+  inspirationFieldsFromFormData,
+  parseInspirationFormFields,
   parseInspirationUrls,
 } from "./inspiration";
 
@@ -43,6 +45,21 @@ describe("website builder inspiration", () => {
     assert.equal(urls.includes("https://example.com/one"), true);
     assert.equal(urls.includes("https://www.example.com/two"), true);
     assert.equal(urls.length, 2);
+  });
+
+  it("keeps pasted inspiration boxes so they can be shown again", () => {
+    const fields = parseInspirationFormFields({
+      businessType: "workshops",
+      layoutUrl1: " https://www.example.com/look ",
+      copyUrl2: "example.com/words",
+    });
+    assert.equal(fields.businessType, "workshops");
+    assert.equal(fields.layoutUrl1, "https://www.example.com/look");
+    assert.equal(fields.copyUrl2, "example.com/words");
+    assert.equal(fields.layoutUrl2, "");
+    const form = new FormData();
+    form.set("layoutUrl1", "https://www.example.com/a");
+    assert.equal(inspirationFieldsFromFormData(form).layoutUrl1, "https://www.example.com/a");
   });
 
   it("accepts wrapped public addresses", () => {

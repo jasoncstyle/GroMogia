@@ -51,8 +51,10 @@ import {
   inspiredTheme,
   loadInspirationPages,
   mergeInspirationPages,
+  inspirationFieldsFromFormData,
   parseInspirationUrls,
 } from "@/lib/website-builder/inspiration";
+import { saveBuilderInspiration } from "@/lib/website-builder/persist-inspiration";
 import { draftInspiredCopy } from "@/lib/website-builder/inspired-copy";
 import { polishInspiredCopy } from "@/lib/website-builder/inspired-copy-ai";
 import { fetchPublicText } from "@/lib/seo/fetch";
@@ -227,21 +229,20 @@ export async function draftInspiredBuilderSite(
       )
       .limit(1);
 
+    const savedFields = inspirationFieldsFromFormData(formData);
+    await saveBuilderInspiration(db, session.organizationId, savedFields);
+
     const layoutUrls = parseInspirationUrls(
-      [
-        String(formData.get("layoutUrl1") ?? ""),
-        String(formData.get("layoutUrl2") ?? ""),
-        String(formData.get("layoutUrl3") ?? ""),
-      ],
+      [savedFields.layoutUrl1, savedFields.layoutUrl2, savedFields.layoutUrl3],
       MAX_LAYOUT_URLS,
     );
     const copyUrls = parseInspirationUrls(
       [
-        String(formData.get("copyUrl1") ?? ""),
-        String(formData.get("copyUrl2") ?? ""),
-        String(formData.get("copyUrl3") ?? ""),
-        String(formData.get("copyUrl4") ?? ""),
-        String(formData.get("copyUrl5") ?? ""),
+        savedFields.copyUrl1,
+        savedFields.copyUrl2,
+        savedFields.copyUrl3,
+        savedFields.copyUrl4,
+        savedFields.copyUrl5,
       ],
       MAX_COPY_URLS,
     );
@@ -249,11 +250,7 @@ export async function draftInspiredBuilderSite(
       throw new Error("Paste at least one public website you like the layout of.");
     }
 
-    const businessType = z
-      .string()
-      .trim()
-      .max(80)
-      .parse(formData.get("businessType") ?? "");
+    const businessType = savedFields.businessType;
 
     const [brand, brain, confirmedOffers, voice] = await Promise.all([
       db
