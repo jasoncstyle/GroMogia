@@ -48,10 +48,10 @@ export default async function BusinessBrainPage() {
         <CardHeader>
           <CardTitle>Review connected data</CardTitle>
           <CardDescription>
-            GroovGro can draft Offers and suggested Goals from events, bookings,
-            payments, and pages on the connected website. Drafts stay inactive
-            until you confirm. It will not guess an industry, change the
-            website, or start marketing.
+            Saving a website address is not enough. Click the button below so
+            GroovGro can read events, bookings, payments, and pages on the
+            connected website. Drafts stay inactive until you confirm. It will
+            not guess an industry, change the website, or start marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -59,7 +59,9 @@ export default async function BusinessBrainPage() {
             <p className="text-sm text-muted-foreground">{brain.inferredSummary}</p>
           ) : (
             <p className="text-sm text-muted-foreground">
-              No review yet. Use this after events or payments are connected.
+              No review yet. If a website is connected, click the button so
+              GroovGro can read the pages. Connecting the address does not do
+              that by itself.
             </p>
           )}
           <ReviewConnectedDataButton disabled={!session.organizationId} />

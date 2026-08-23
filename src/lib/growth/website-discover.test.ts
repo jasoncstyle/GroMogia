@@ -48,16 +48,12 @@ describe("website page discovery", () => {
     assert.equal(page.headings.includes("Ignore this"), false);
   });
 
-  it("follows only same-origin page links and skips files and chrome", () => {
+  it("follows useful same-origin pages and skips About, Contact, and files", () => {
     const urls = sameOriginPageUrls(html, "https://www.example.com/");
-    assert.deepEqual(urls, [
-      "https://www.example.com/workshops",
-      "https://www.example.com/about",
-      "https://www.example.com/contact",
-    ]);
+    assert.deepEqual(urls, ["https://www.example.com/workshops"]);
   });
 
-  it("drafts offers from extra pages and skips About, Contact, and brand titles", () => {
+  it("drafts offers from headings and extra pages, not chrome or slogans", () => {
     const home = extractWebsitePage("https://www.example.com/", html);
     const extra = extractWebsitePage(
       "https://www.example.com/workshops",
@@ -66,11 +62,44 @@ describe("website page discovery", () => {
     const candidates = websiteOfferCandidates([home, extra]);
     const names = candidates.map((row) => row.name);
     assert.equal(names.includes("Weekend Workshop"), true);
-    assert.equal(names.includes("Private Session"), false);
+    assert.equal(names.includes("Private Session"), true);
     assert.equal(names.includes("About"), false);
     assert.equal(names.includes("Contact"), false);
     assert.equal(names.includes("Harbor Skills | Learn with us"), false);
     assert.equal(candidates[0]?.source, "connected_website");
+  });
+
+  it("reads named program cards and inner pages, not the homepage slogan", () => {
+    const osaHome = extractWebsitePage(
+      "https://www.example.com/",
+      `<html><head><title>Example Adventures</title><meta name="description" content="Training and trips." /></head>
+      <body>
+        <nav><a href="/training-programs">Training</a><a href="/about">About</a><a href="/customer">Customer Portal</a></nav>
+        <h1>Where training becomes real practice.</h1>
+        <h3>Coastal Training</h3>
+        <p><a href="/training-programs/coastal-training">Explore Coastal Training</a></p>
+        <h3>Certification Pathways</h3>
+        <h3>Offshore Passage Training</h3>
+      </body></html>`,
+    );
+    const coastal = extractWebsitePage(
+      "https://www.example.com/training-programs/coastal-training",
+      `<html><head><title>Example Adventures</title></head><body><h1>Coastal Training</h1></body></html>`,
+    );
+    const names = websiteOfferCandidates([osaHome, coastal]).map((row) => row.name);
+    assert.equal(names.includes("Coastal Training"), true);
+    assert.equal(names.includes("Certification Pathways"), true);
+    assert.equal(names.includes("Offshore Passage Training"), true);
+    assert.equal(names.includes("Where training becomes real practice."), false);
+    assert.equal(names.includes("Training"), false);
+    assert.equal(names.includes("Customer Portal"), false);
+    const followed = sameOriginPageUrls(
+      `<a href="/training-programs">Training</a><a href="/about">About</a><a href="/training-programs/coastal-training">Explore Coastal Training</a><a href="/customer">Customer Portal</a>`,
+      "https://www.example.com/",
+    );
+    assert.equal(followed[0], "https://www.example.com/training-programs/coastal-training");
+    assert.equal(followed.includes("https://www.example.com/about"), false);
+    assert.equal(followed.includes("https://www.example.com/customer"), false);
   });
 
   it("treats Home, About, and Contact as generic labels", () => {

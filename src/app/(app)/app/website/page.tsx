@@ -87,8 +87,9 @@ export default async function WebsitePage() {
         <CardHeader>
           <CardTitle>Existing website</CardTitle>
           <CardDescription>
-            Paste the public address of the site customers already use. GroovGro
-            does not need to know who hosts it.
+            Paste the public address of the site customers already use. Saving
+            it does not read the pages. After you save, open Business and click
+            Review connected data.
           </CardDescription>
         </CardHeader>
         <CardContent>
