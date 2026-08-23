@@ -1,357 +1,138 @@
 # GroovGro — Project Master Brief
 
-Source of truth for product intent. Architecture and implementation must follow this document unless a later approved decision supersedes it.
+**Version 2.0 — Goal-Driven Growth Architecture**
 
-**Product:** GroovGro (formerly GroMogia)  
-**Parent company:** Mogia Group  
-**Product domain:** groovgro.com  
-**Parent domain:** mogiagroup.com  
+Source of truth for product intent. Architecture and implementation must follow this document unless a later approved decision supersedes it. The V1 brief is archived at [MASTER_BRIEF_V1.md](MASTER_BRIEF_V1.md). The first V2 implementation notes are in [v2/ARCHITECTURE.md](v2/ARCHITECTURE.md).
 
-**MOGIA:** Marketing · Operations · Growth · Intelligence · Analytics
+**Product:** GroovGro  
+**Primary domain:** groovgro.com  
+**Alternate domain:** groovegro.com  
+**Parent company:** Mogia Group · mogiagroup.com  
 
 ---
 
 ## 1. Vision
 
-Build GroovGro as a professional, cloud-based, modular business management, marketing, website, automation, analytics, and AI platform.
+Build GroovGro as a professional, cloud-based, modular business growth, marketing, website, automation, analytics, CRM, and AI platform.
 
-GroovGro should help a business connect the systems it already uses, optionally build and manage its website, manage marketing, capture and understand leads, manage customers, analyze business performance, and use AI to recommend and eventually automate actions that improve the business.
+GroovGro should help a business connect the systems it already uses, understand itself, understand what it sells, understand its customers and constraints, define measurable growth objectives, create coordinated strategies, execute marketing, capture leads, connect customers to revenue, analyze performance, recommend actions, eventually execute approved actions, and learn from outcomes.
 
-**CONNECT THE BUSINESS. UNDERSTAND THE BUSINESS. GROW THE BUSINESS.**
+GroovGro must not simply become another website builder, CRM, social scheduler, SEO app, ads dashboard, AI content generator, analytics platform, or collection of unrelated AI agents.
 
-GroovGro should not simply become another website builder, CRM, marketing platform, or analytics dashboard. Its primary value comes from connecting these functions and understanding the relationships between them.
+Primary value comes from understanding the relationships between the business, its objectives, its customers, its marketing activities, and its financial outcomes.
 
-Example journey:
+**CONNECT THE BUSINESS. UNDERSTAND THE BUSINESS. DEFINE THE GOAL. GROW THE BUSINESS.**
 
-Website → Traffic → Marketing Source → Lead → Customer → Booking / Purchase → Payment → Revenue → Review → Repeat Customer
+Journeys to understand:
 
-The platform should eventually understand that entire journey and answer questions such as:
+Website → Traffic → Marketing Source → Lead → Customer → Booking / Purchase / Conversion → Payment / Revenue → Review → Repeat Customer
 
-- Which marketing campaigns actually create paying customers?
-- Which website pages generate the best leads?
-- Which advertising channels generate the most revenue?
-- What marketing should the business increase or reduce?
-- What SEO opportunities exist?
-- What website changes could increase conversions?
-- Which leads are most valuable?
-- Which customers may return?
-- Which business activities are producing measurable growth?
-- What has changed recently?
-- What problems need attention?
-- What should the business owner do next?
+V2 layer:
 
-Eventually GroovGro should move beyond reporting and recommendations and, with appropriate user permissions, assist with or automate selected actions.
+BUSINESS OBJECTIVE → GROWTH PLAN → MARKETING ACTIONS → CUSTOMER RESPONSE → BUSINESS OUTCOME → LEARNING → NEXT ACTION
 
-## 2. Modular product
+The system should eventually answer: what is this business trying to accomplish, are we closer, which activities help or waste, what should get more or fewer resources, what should happen next, is there enough evidence to change, should we leave something unchanged, has a constraint changed, has the objective already been achieved, and what did GroovGro learn?
 
-A customer must not be required to use every GroovGro feature.
+## 2. Industry neutrality
 
-Examples:
+Examples in this brief are illustrative only. They are never universal business models, database fields, terminology, customer types, capacity types, inventory models, sales processes, conversion types, workflows, or industry assumptions.
 
-- Customer A: website builder + SEO + marketing + CRM + analytics
-- Customer B: already has WordPress; wants analytics, marketing, leads, and AI
-- Customer C: advertising management and reporting only
-- Customer D: website management and SEO only
-- Customer E: external booking platform connected to GroovGro
-- Customer F: events/calendar but not the website builder
+Do not design the core around seat, student, appointment, room, class, ticket, boat, or product unit. Model availability, availability_unit, resource, and constraint. Industry meaning belongs in organization data.
 
-Database, permissions, navigation, billing, and application structure must treat modules as independently enabled. Do not tightly couple modules unnecessarily.
+GroovGro must understand the actual business rather than force the business into GroovGro's assumptions.
 
-## 3. Multi-tenant architecture
+## 3. Modular architecture
 
-GroovGro is a commercial SaaS product and must be multi-tenant.
+Customers are not required to use every capability. Design database, permissions, navigation, billing, application architecture, AI architecture, and integrations around independently enabled modules. Do not tightly couple modules.
+
+## 4. Multi-tenant architecture
 
 | Term | Meaning |
 | --- | --- |
 | Organization | Customer / business account |
-| User | Person with access to an organization |
-| Module | GroovGro capability enabled for an organization |
-| Integration | External service connected by an organization |
+| User | Person accessing an organization |
+| Module | GroovGro capability |
+| Integration | Connected external service |
+| Goal | Measurable business objective |
+| Growth Plan | Coordinated strategy pursuing a goal |
+| Action | Proposed, approved, or executed activity |
 
-One user may belong to multiple organizations.
+Isolate per organization: users, roles, websites, customers, leads, marketing data, integrations, analytics, AI context, Business Brain, Brand Voice, assets, events, settings, goals, plans, actions, decision history, billing, and audit history.
 
-Every organization must have isolated: users, roles, websites, customers, leads, marketing data, integrations, analytics, AI context, brand voice, files/assets, events, settings, billing, and audit history.
+## 5. Business Brain
 
-Tenant isolation is a critical security requirement.
+Every organization develops a structured Business Brain. It is the shared source of organizational context. It may contain identity, offers, customers, brand, constraints, and performance.
 
-## 4. Roles and permissions
+Use structured data. Do not represent the Business Brain solely as an AI prompt or vector store. Store confidence and source where inference is used. Owners can correct GroovGro.
 
-Flexible role-based access. Initial roles may include:
+Discovery flow: DISCOVER → INFER → ASK → CONFIRM → LEARN. AI inference must not silently become authoritative when uncertainty is meaningful.
 
-- Platform Super Admin
-- Organization Owner
-- Organization Admin
-- Marketing Manager
-- Website Manager
-- Sales / Lead Manager
-- Staff
-- Viewer
+## 6. Offers, availability, and constraints
 
-Do not hard-code the application around only these roles. Permissions must be granular and extensible.
+An Offer is what an organization promotes, sells, provides, or wants customers to act upon. It is not assumed to be a physical product.
 
-Example permissions: manage website, publish website, manage SEO, manage advertising, manage social, view analytics, manage leads, manage customers, manage events, manage integrations, manage billing, manage users, approve AI actions, view financial/revenue information.
+Availability is optional and generalized: inventory, capacity, schedule, resource, workload, time window, externally determined, or unconstrained. Organizations may use several at once.
 
-## 5. Main dashboard
+## 7. Growth Goals, Plans, Actions, and Decision History
 
-The dashboard must not become a wall of meaningless charts. It answers:
+Goals are first-class measurable outcomes. Plans are versioned strategies for a Goal. Do not overwrite meaningful historical strategy.
 
-- What is happening?
-- Why is it happening?
-- What needs attention?
-- What should I do next?
+Decision History records what GroovGro decided and why. Audit History records what changed. Both are required.
 
-Potential sections (shown only when the matching module is enabled): business overview, website, marketing, leads, customers, bookings/sales, revenue, SEO health, reviews, upcoming events, tasks/recommendations, AI insights, alerts, recent changes.
+Actions are structured entities with risk, approval, and execution fields. They are not executed in this foundation slice.
 
-## 6. Website builder
+## 8. Evidence and cadence
 
-Optional professional website builder: templates + reusable sections + visual customization.
+Do not equate new data with a requirement to act. “No change is recommended yet” is a valid and important recommendation.
 
-Do not start with an unrestricted free-form canvas. Start with professionally designed responsive sections that users can add, remove, reorder, and customize.
+Separate monitoring, analysis, decision-making, execution, and user review. Daily analysis does not imply daily optimization changes.
 
-Section examples: hero, text, image + text, gallery, testimonials, features, services, pricing, team, FAQ, contact, lead form, newsletter, CTA, map, events, calendar, booking, reviews, blog/news, custom content.
+Users control when routine Growth Reviews are presented. That schedule does not force GroovGro to change the business.
 
-Editable without coding: text, images, spacing, backgrounds, fonts, brand colors, buttons, links, section order, visibility.
+Channel-specific evidence windows: advertising, SEO, email, social, and website/CRO each wait differently.
 
-Websites must be responsive, fast, SEO-friendly, accessible, and secure.
+Classify changes as operational, optimization, or strategic. That classification influences evidence threshold, approval, cadence, and automation eligibility.
 
-A business must also be able to connect an existing website rather than using GroovGro’s builder.
+Urgent operational issues may bypass the routine review schedule.
 
-**How GroovGro applies website changes**
+## 9. Autonomy and guardrails
 
-- Suggest → the user approves or rejects → apply only when a real connector allows it.
-- GroovGro website builder, WordPress, or a similar official API: approved updates can be applied automatically later.
-- Custom or code-hosted sites: GroovGro drafts the change and shows how and where to apply it. The owner updates the site manually.
-- Daily jobs may re-check and suggest. They must not rewrite the live site overnight.
-- Say this in onboarding and, when public signup exists, in the features section. The public homepage stays Coming soon until commercialization.
+1 Observe · 2 Recommend · 3 Draft · 4 Approve to execute · 5 Guarded autopilot · 6 Future autonomous growth.
 
-## 7. Industry-specific website modules
+Do not build unrestricted autonomy. Growth Director and guarded automation stay feature-flagged off until later phases.
 
-Support optional industry modules (for example sailing schools/clubs) on top of a **generic** event system. Do not make the database sailing-specific.
+Every automated action must pass authentication, organization authorization, module entitlement, provider capability, risk policy, and automation guardrails. AI must never bypass application authorization.
 
-Generic events can represent classes, seminars, tours, workshops, club events, training, appointments, open houses, meetups, and special events. Industry templates configure the generic engine.
+## 10. Dashboard and reviews
 
-Event fields may include: title, description, type, location, start/end, capacity, price, registration link, featured image, visibility, status.
+The dashboard answers: what are we trying to accomplish, how are we doing, what changed, why, what needs attention, what should happen next, and what is intentionally being left alone.
 
-## 8. SEO system
+Traditional analytics remain accessible but should not dominate. Weekly and monthly reviews come in a later slice. Speak plain English. Do not design around AI employee personas.
 
-Independent module: audit, titles, meta, headings, canonicals, structured data, sitemap, robots, alt text, internal links, broken links, redirects, performance, keywords, content recommendations, local SEO, Search Console, Google Business Profile where APIs permit.
+## 11. What stays from V1
 
-AI should explain recommendations in plain language. Selected changes may later be applied automatically with permission.
+Multi-tenancy, modularity, RBAC, cloud architecture, provider adapters, jobs, audit, notifications, tenant isolation, generic events, Stripe read-copy strategy, optional website builder, lightweight CRM, provider independence, feature flags, modular monolith, incremental development, and security.
 
-## 9. Marketing
+Do not delete or rewrite working V1 functionality simply because V2 adds concepts. The website builder remains optional and must not overwrite a connected existing website or change Stripe checkout.
 
-Core capability. Eventually: Google Ads, Meta/Facebook Ads, Instagram, social, email, campaign planning, content, tracking, attribution.
+## 12. What not to build yet
 
-Marketing must not exist in isolation. Connect campaign → click → visitor → lead → customer → booking/purchase → revenue. Long-term goal is business-level attribution, not vanity metrics.
+Unrestricted Growth Director, autonomous cross-channel budget management, fully autonomous advertising, premature sophisticated attribution, native mobile apps, unnecessary microservices, unrestricted website canvas, dozens of integrations at once, gimmicky AI employees, unsupported predictive models, or complex ML infrastructure.
 
-## 10. Social media
+Do not create fake sophistication. Do not start ads. Do not store payment card data.
 
-Future: post creation, AI writing, media, calendar, scheduling, campaign organization, performance, recommendations. Networks: Facebook, Instagram, others where APIs permit. Follow each platform’s API policies.
+## 13. Operating principle
 
-## 11. Brand voice
+**Continuously observe without continuously interfering.**
 
-Each organization has a Brand Voice Profile learned from **approved** examples (website copy, social, email, ads, blog, samples). Structured preferences: tone, sentence length, formality, vocabulary, phrases to avoid, CTA style, emoji, humor, technical depth, audience, personality, good/bad examples.
+More activity is not inherently better. More changes are not inherently better. The objective is better business outcomes.
 
-Users can say: more like this, less like this, never use this phrase, this sounds like us, this does not.
+North star: *What is this business trying to accomplish, and based on sufficient evidence, what should happen next to increase the probability of achieving it?*
 
-Do not blindly train from everything a business has ever written.
+Sometimes the correct answer is: nothing yet. Keep collecting evidence.
 
-## 12. Lead management
+## 14. Development
 
-Lightweight CRM. Fields may include name, email, phone, source, campaign, landing page, form, date, status, notes, assigned user, tags, estimated value, conversion status.
+Cloud-first. GitHub is the source of truth. Production is Vercel, not a laptop. Public repository: never commit secrets. TypeScript, strong typing, modular files, tests for critical logic, migrations, documented env vars.
 
-Default stages: New, Contacted, Qualified, Proposal, Won, Lost — ultimately customizable.
-
-Maintain attribution whenever possible: where did this lead come from, and did it become revenue?
-
-## 13. Customer management
-
-Converted leads become customers. Profiles may include contact info, history, bookings, purchases, payments, communications, notes, tags, marketing source, lifetime value, reviews, activities.
-
-Avoid duplicating information unnecessarily between leads and customers.
-
-## 14. Bookings / commerce
-
-Integrate existing booking systems. An existing Stripe-based booking system for Ocean Sailing Adventures is an early integration/test case.
-
-Potential records: booking, customer, product/service, dates, capacity, payments, deposits, balances, refunds, source, campaign attribution.
-
-Do not rebuild Stripe. Never store payment card data.
-
-## 15. Events and calendar
-
-Optional generic events module: calendar/list views, event pages, categories, capacity, pricing, registration links, recurring events, private/public, featured, filters, website integration.
-
-## 16. Reviews / reputation
-
-Aggregate or reference reviews from authorized third-party sources (Google, Facebook, TripAdvisor, others) **using official APIs only**. No scraping in violation of terms.
-
-Capabilities: monitoring, notifications, analytics, testimonial approval, website display, sentiment, response drafting. Users approve responses unless later automation permissions are configured.
-
-## 17. Analytics
-
-Do not merely reproduce Google Analytics. Combine website, SEO, Search Console, GA, ads, social, email, leads, customers, bookings, Stripe, events, and reviews.
-
-Connect activity to outcomes (spend → visitors → leads → customers → revenue), not vanity metrics.
-
-## 18. Mogia intelligence layer
-
-AI operates across GroovGro, not as a bolted-on chatbot. It should understand organization, brand voice, website, marketing, SEO, customers, leads, analytics, events, history, and integrations.
-
-Capabilities: summarize, detect anomalies, identify opportunities, explain analytics, generate content, recommend campaigns/SEO/website changes, draft communication, compare periods, suggest next actions, answer natural-language questions with evidence.
-
-## 19. AI action / automation model
-
-| Level | Name | Behavior |
-| --- | --- | --- |
-| 1 | Observe | Analyze only |
-| 2 | Recommend | Recommend actions |
-| 3 | Draft | Prepare changes; require approval |
-| 4 | Approved automation | Execute specifically authorized classes of actions |
-| 5 | Autonomous rules | Predefined low-risk activities within organization-defined rules |
-
-Do not allow unrestricted AI modification of customer systems. Log AI actions and approvals.
-
-## 20. Third-party integrations
-
-Clean integration framework with provider adapters.
-
-Known services: Vercel, SiteGround, Resend, GitHub, Stripe, Expo.
-
-Future: Mailchimp, Google Analytics, Search Console, Google Ads, Google Business Profile, Meta, Facebook, Instagram, TripAdvisor, Square, other CRMs, booking platforms, calendars, email providers.
-
-Do not tightly couple the internal data model to one vendor.
-
-## 21. Existing infrastructure
-
-| System | Role |
-| --- | --- |
-| Vercel | Primary candidate for app hosting |
-| SiteGround | Existing WordPress/web hosting; some sites stay there and connect |
-| GitHub | Source control |
-| Stripe | Payments, subscriptions, booking payments, SaaS billing |
-| Resend | Transactional email |
-| Expo | Native mobile later, if required |
-
-Production must operate in the cloud. Cursor is the development environment, not the production server.
-
-## 22. Cloud architecture
-
-Cloud-native. The developer’s computer is only for local development. Production continues when that computer is off.
-
-Use appropriate cloud services for hosting, database, auth, files, background jobs, scheduled jobs, webhooks, AI, email, monitoring, and logging.
-
-Do not assume Vercel must perform every function. Prefer managed services for a small team.
-
-## 23. Background jobs
-
-Examples: SEO scans, analytics imports, ad/social/review sync, scheduled posts/emails, AI analysis, summaries, integration refresh, webhook processing.
-
-Jobs must run in cloud infrastructure. Design them to be retryable, idempotent where appropriate, observable, logged, and failure-aware.
-
-## 24–25. Security
-
-Foundational: authentication, authorization, tenant isolation, encrypted secrets, secure credential storage, CSRF/XSS/SQL injection protections, rate limiting, secure webhooks, audit logs, least privilege, environment separation, input validation, dependency monitoring, backups.
-
-Never expose API keys, Stripe secrets, OAuth tokens, or database credentials to client-side code.
-
-OAuth where supported. Users can connect, see status and permissions, refresh/reconnect, and disconnect. Store tokens securely. Track provider, organization, status, scopes, expiration, last sync, errors.
-
-## 26. Audit log
-
-Record important actions early: invites, role changes, publishes, SEO/campaign changes, integration connect/disconnect, AI approvals and executions, customer changes, billing changes.
-
-## 27. Notifications
-
-Centralized: in-app, email, future push. Examples: new lead, booking, payment, failed integration, SEO issue, campaign anomaly, review, event registration, AI recommendation, system alert. Users eventually configure preferences.
-
-## 28. File / media library
-
-Tenant-isolated library for logos, brand images, website images, social assets, documents, campaign assets. Cloud object storage.
-
-## 29. Brand management
-
-Central brand settings: name, logo, colors, fonts, contact, locations, social profiles, brand voice, description, target customers, services/products, approved imagery, terminology. Other modules reference this rather than duplicating it.
-
-## 30. Onboarding
-
-Adaptive: create organization → business info → brand → select modules → connect or create website → connect Google/Meta/Stripe/email → import → brand voice → invite team → dashboard.
-
-## 31. Billing / subscriptions
-
-Design for later commercial billing: base subscription + optional modules + usage where appropriate. Do not finalize pricing yet. Stripe is the preferred billing platform. The system must know which modules an organization is entitled to use.
-
-## 32. Mogia Group administration
-
-Separate platform admin: organizations, subscriptions, health, integration failures, templates, modules, feature flags, support, usage, announcements, AI config, global settings. Never expose this to normal organization users.
-
-## 33. Feature flags
-
-Enable experimental features for Mogia Group, test orgs, beta customers, specific plans, or all customers. Mogia Group businesses are the first real-world test environment.
-
-## 34. Internal test businesses
-
-Use Mogia Group businesses as real test cases (websites, marketing, customers, bookings, Stripe, events, content, analytics, SEO).
-
-Do not hard-code GroovGro around sailing. Generalize into reusable commercial functionality (for example “Events Module” with a sailing template, not a sailing-only calendar).
-
-## 35. Development philosophy
-
-Do not build the entire platform simultaneously. Prioritize correct architecture, maintainability, security, modularity, testing, documentation, UX, and scalability.
-
-Avoid premature complexity and unnecessary microservices. A well-structured modular monolith is preferred initially.
-
-## 36. Code quality
-
-TypeScript, clear naming, modular architecture, reusable components, strong typing, validation, consistent errors, structured logging, tests for critical logic, migrations, documented env vars, README, API docs where appropriate.
-
-Avoid huge files, duplicated logic, hard-coded organization IDs or secrets, vendor logic spread throughout the app, unnecessary dependencies.
-
-## 37. UI / UX
-
-Professional but approachable. Target: small and medium-sized business owners who may not be technical.
-
-Avoid jargon and overwhelming dashboards. Use plain English, explain recommendations, make setup easy, show status, offer contextual help, use progressive disclosure. Mobile responsive.
-
-## 38. Initial development priorities
-
-| Phase | Focus |
-| --- | --- |
-| 1 | Foundation: architecture, DB, auth, orgs, users, roles, modules, nav, dashboard shell, settings, brand, integrations, audit, notifications, feature flags |
-| 2 | First real business data: website connection, Stripe, leads, customers, basic analytics, events if useful |
-| 3 | Marketing / attribution: campaign → lead → customer → revenue |
-| 4 | Intelligence: summarize, explain, compare, detect, recommend on real data |
-| 5 | Brand voice / content |
-| 6 | SEO |
-| 7 | Website builder (after the core platform proves useful) |
-| 8 | Additional integrations |
-| 9 | Controlled automation |
-| 10 | Commercialization: plans, public signup, onboarding, support |
-
-## 39. Critical design principle
-
-GroovGro should not merely display data. It should create understanding.
-
-- Bad: “Google Ads clicks increased 17%.”
-- Better: “Google Ads clicks increased 17%, but leads remained flat.”
-- Best: evidence-based explanation plus a next action.
-
-Guide the product with: **DATA → CONTEXT → INSIGHT → RECOMMENDATION → ACTION**.
-
-## 40. Do not do yet
-
-Do not: build every feature at once; build native mobile apps; create unnecessary microservices; implement unrestricted AI automation; rebuild Stripe; store card data; hard-code sailing-specific functionality; lock to one website, email, or ads provider; create an unrestricted drag-and-drop canvas; spend significant time on cosmetics before core architecture works.
-
-## 41. First task (Phase 0)
-
-Before substantial production code: review this specification; inspect the repository; identify stack and existing functionality; do not delete working functionality without understanding it; propose technical architecture, stack, modules, schema, tenant isolation, auth, integrations, jobs, AI, deployment, folder structure, security, phased roadmap, expensive-to-change decisions, and anything in this specification that should change before development.
-
-**Stop after architecture and planning. Present it for review and approval.**
-
-## 42. Long-term product goal
-
-GroovGro should become the intelligent operating layer connecting the digital side of a small or medium-sized business. It does not need to replace everything the customer already has.
-
-**CONNECT → COLLECT → UNDERSTAND → RECOMMEND → ACT → LEARN → IMPROVE**
-
-Build the foundation with that vision while keeping the initial implementation simple, modular, secure, and maintainable.
+Current implementation checkpoint: [STATUS.md](STATUS.md).

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl, missingFoundationServices } from "@/lib/env";
+import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { formatMoney } from "@/lib/money";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { isModuleEnabled } from "@/lib/modules/catalog";
@@ -26,6 +27,9 @@ export default async function DashboardPage() {
   const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
   const snapshot = session.organizationId
     ? await getDashboardSnapshot(session.organizationId)
+    : null;
+  const growth = session.organizationId
+    ? await getGrowthSnapshot(session.organizationId)
     : null;
 
   const happening = snapshot
@@ -61,8 +65,8 @@ export default async function DashboardPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          GroovGro answers four questions from real connected data, not empty
-          charts.
+          What is this business trying to accomplish, how is it doing, and
+          what should happen next — only when there is enough evidence.
         </p>
       </div>
 
@@ -90,8 +94,9 @@ export default async function DashboardPage() {
               {session.organizationName ?? "Your organization"}
             </CardTitle>
             <CardDescription>
-              Signed in as {session.email}. Connected data, marketing
-              attribution, and observe-only intelligence are on.
+              Signed in as {session.email}. Connected data stays. Goals and
+              the Business Brain are now first-class. GroovGro will not change
+              marketing by itself.
             </CardDescription>
           </CardHeader>
         </Card>
@@ -110,10 +115,39 @@ export default async function DashboardPage() {
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-2">
-        <QuestionCard title="What is happening?" body={happening} />
-        <QuestionCard title="Why is it happening?" body={why} />
+        <QuestionCard
+          title="What are we trying to accomplish?"
+          body={
+            growth && growth.activeGoals.length > 0
+              ? growth.activeGoals
+                  .map((goal) =>
+                    goal.progressPercent != null
+                      ? `${goal.title} (${goal.progressPercent}% of target)`
+                      : goal.title,
+                  )
+                  .join(" · ")
+              : "No active Growth Goal yet. Open Goals and write the first measurable outcome."
+          }
+        />
+        <QuestionCard title="How are we doing?" body={happening} />
+        <QuestionCard title="What changed, and why?" body={why} />
         <QuestionCard title="What needs attention?" body={attention} />
-        <QuestionCard title="What should I do next?" body={nextStep} />
+        <QuestionCard
+          title="What should happen next?"
+          body={
+            growth?.awaitingApproval.length
+              ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
+              : nextStep
+          }
+        />
+        <QuestionCard
+          title="What is GroovGro leaving alone?"
+          body={
+            growth?.latestNoChange
+              ? growth.latestNoChange.recommendation
+              : "Nothing recorded yet. If evidence is thin, the right recommendation is to wait. Open Decisions to record “no change yet.”"
+          }
+        />
       </div>
 
       {snapshot ? (
@@ -172,6 +206,16 @@ export default async function DashboardPage() {
             <a href={leadFormUrl} target="_blank" rel="noreferrer">
               Open public lead form
             </a>
+          </Button>
+        ) : null}
+        {isModuleEnabled(session.enabledModules, "growth_goals") ? (
+          <Button asChild variant="outline">
+            <Link href="/app/goals">Goals</Link>
+          </Button>
+        ) : null}
+        {isModuleEnabled(session.enabledModules, "business_brain") ? (
+          <Button asChild variant="outline">
+            <Link href="/app/business">Business</Link>
           </Button>
         ) : null}
         <Button asChild variant="outline">

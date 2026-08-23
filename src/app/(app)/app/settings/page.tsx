@@ -22,6 +22,18 @@ export default function SettingsPage() {
       <div className="grid gap-4">
         <Card>
           <CardHeader>
+            <CardTitle>Business</CardTitle>
+            <CardDescription>
+              Structured understanding of the organization: model, locations,
+              constraints, and how sure GroovGro is.
+            </CardDescription>
+            <Button asChild className="w-fit">
+              <Link href="/app/business">Edit Business Brain</Link>
+            </Button>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
             <CardTitle>Brand</CardTitle>
             <CardDescription>
               Name, description, and who you serve. Website, email, and ads

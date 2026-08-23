@@ -3,7 +3,9 @@ import { and, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import {
   brandSettings,
+  evidencePolicies,
   featureFlags,
+  growthSettings,
   integrationProviders,
   leadStages,
   modules,
@@ -11,6 +13,7 @@ import {
   permissions,
   roles,
 } from "@/lib/db/schema";
+import { DEFAULT_EVIDENCE_POLICIES } from "@/lib/growth/types";
 import {
   ENABLED_BY_DEFAULT_MODULES,
   MODULE_CATALOG,
@@ -92,14 +95,28 @@ export async function ensureCatalog(): Promise<void> {
       key: "phase_7_website_builder",
       description: "Optional section-based GroovGro-hosted pages; does not replace a connected site",
     },
+    {
+      key: "v2_growth_foundation",
+      description: "Business Brain, Offers, constraints, Goals, and Decision History",
+    },
+    {
+      key: "growth_director",
+      description: "Cross-channel Growth Director. Off until later V2 phases.",
+    },
+    {
+      key: "guarded_automation",
+      description: "Guarded autopilot. Off until later V2 phases.",
+    },
   ]) {
     await db
       .insert(featureFlags)
       .values({
         key: flag.key,
         description: flag.description,
-        enabledGlobally: true,
-        enabledForPlatform: true,
+        enabledGlobally:
+          flag.key !== "growth_director" && flag.key !== "guarded_automation",
+        enabledForPlatform:
+          flag.key !== "growth_director" && flag.key !== "guarded_automation",
       })
       .onConflictDoNothing();
   }
@@ -178,8 +195,33 @@ export async function provisionOrganization(
 
   await ensureOrganizationModules(organizationId);
   await ensureLeadStages(organizationId);
+  await ensureGrowthDefaults(organizationId);
 
   return ROLE_PERMISSIONS;
+}
+
+export async function ensureGrowthDefaults(organizationId: string) {
+  const db = getDb();
+  if (!db) return;
+
+  await db
+    .insert(growthSettings)
+    .values({ organizationId })
+    .onConflictDoNothing();
+
+  for (const policy of DEFAULT_EVIDENCE_POLICIES) {
+    await db
+      .insert(evidencePolicies)
+      .values({
+        organizationId,
+        channel: policy.channel,
+        minElapsedDays: policy.minElapsedDays,
+        minObservations: policy.minObservations,
+        minConversions: policy.minConversions,
+        notes: policy.notes,
+      })
+      .onConflictDoNothing();
+  }
 }
 
 export async function getEnabledModuleIds(organizationId: string) {

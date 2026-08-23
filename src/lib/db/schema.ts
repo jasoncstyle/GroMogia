@@ -383,6 +383,9 @@ export const leadRecords = pgTable(
     estimatedValueCents: integer("estimated_value_cents"),
     notes: text("notes").notNull().default(""),
     convertedAt: timestamp("converted_at", { withTimezone: true }),
+    goalId: uuid("goal_id"),
+    planId: uuid("plan_id"),
+    offerId: uuid("offer_id"),
     ...timestamps,
   },
   (table) => [
@@ -452,6 +455,7 @@ export const attributionTouches = pgTable(
     landingPage: text("landing_page"),
     referrer: text("referrer"),
     raw: jsonb("raw").$type<Record<string, unknown>>().notNull().default({}),
+    goalId: uuid("goal_id"),
   },
   (table) => [
     index("attribution_touches_org_idx").on(table.organizationId),
@@ -479,6 +483,8 @@ export const events = pgTable(
     featuredAssetId: uuid("featured_asset_id"),
     visibility: text("visibility").notNull().default("public"),
     status: text("status").notNull().default("draft"),
+    goalId: uuid("goal_id"),
+    offerId: uuid("offer_id"),
     ...timestamps,
   },
   (table) => [index("events_org_idx").on(table.organizationId)],
@@ -503,6 +509,8 @@ export const bookings = pgTable(
     status: text("status").notNull().default("confirmed"),
     source: text("source").notNull().default("stripe"),
     campaignId: text("campaign_id"),
+    goalId: uuid("goal_id"),
+    offerId: uuid("offer_id"),
     ...timestamps,
   },
   (table) => [
@@ -823,6 +831,256 @@ export const builderSections = pgTable(
     index("builder_sections_org_idx").on(table.organizationId),
     index("builder_sections_site_idx").on(table.siteId),
     index("builder_sections_row_idx").on(table.rowId),
+  ],
+);
+
+export const businessBrains = pgTable("business_brains", {
+  organizationId: uuid("organization_id")
+    .primaryKey()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  industry: text("industry").notNull().default(""),
+  businessModel: text("business_model").notNull().default(""),
+  locations: jsonb("locations").$type<string[]>().notNull().default([]),
+  serviceAreas: jsonb("service_areas").$type<string[]>().notNull().default([]),
+  operatingHours: text("operating_hours").notNull().default(""),
+  seasonality: text("seasonality").notNull().default(""),
+  notes: text("notes").notNull().default(""),
+  discoveryStatus: text("discovery_status").notNull().default("not_started"),
+  inferredSummary: text("inferred_summary").notNull().default(""),
+  inferredSource: text("inferred_source").notNull().default(""),
+  confidence: integer("confidence").notNull().default(0),
+  ...timestamps,
+});
+
+export const offers = pgTable(
+  "offers",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    description: text("description").notNull().default(""),
+    offerType: text("offer_type").notNull().default("other"),
+    category: text("category").notNull().default(""),
+    pricingModel: text("pricing_model").notNull().default("unspecified"),
+    priceCents: integer("price_cents"),
+    costCents: integer("cost_cents"),
+    estimatedMarginCents: integer("estimated_margin_cents"),
+    currency: text("currency").notNull().default("usd"),
+    availabilityModel: text("availability_model").notNull().default("unconstrained"),
+    activeFrom: timestamp("active_from", { withTimezone: true }),
+    activeTo: timestamp("active_to", { withTimezone: true }),
+    location: text("location").notNull().default(""),
+    conversionUrl: text("conversion_url").notNull().default(""),
+    externalProvider: text("external_provider").notNull().default(""),
+    externalId: text("external_id").notNull().default(""),
+    status: text("status").notNull().default("active"),
+    ...timestamps,
+  },
+  (table) => [index("offers_org_idx").on(table.organizationId)],
+);
+
+export const availabilityConstraints = pgTable(
+  "availability_constraints",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    offerId: uuid("offer_id").references(() => offers.id, { onDelete: "set null" }),
+    constraintType: text("constraint_type").notNull(),
+    unit: text("unit").notNull().default(""),
+    totalAvailability: integer("total_availability"),
+    remainingAvailability: integer("remaining_availability"),
+    resourceName: text("resource_name").notNull().default(""),
+    startsOn: timestamp("starts_on", { withTimezone: true }),
+    endsOn: timestamp("ends_on", { withTimezone: true }),
+    source: text("source").notNull().default("manual"),
+    externalId: text("external_id").notNull().default(""),
+    refreshedAt: timestamp("refreshed_at", { withTimezone: true }),
+    notes: text("notes").notNull().default(""),
+    ...timestamps,
+  },
+  (table) => [
+    index("availability_constraints_org_idx").on(table.organizationId),
+    index("availability_constraints_offer_idx").on(table.offerId),
+  ],
+);
+
+export const growthGoals = pgTable(
+  "growth_goals",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    description: text("description").notNull().default(""),
+    goalType: text("goal_type").notNull().default("custom"),
+    status: text("status").notNull().default("active"),
+    priority: text("priority").notNull().default("normal"),
+    startsOn: timestamp("starts_on", { withTimezone: true }),
+    deadline: timestamp("deadline", { withTimezone: true }),
+    targetMetric: text("target_metric").notNull().default(""),
+    targetValue: integer("target_value"),
+    baselineValue: integer("baseline_value"),
+    currentValue: integer("current_value").notNull().default(0),
+    unit: text("unit").notNull().default(""),
+    offerId: uuid("offer_id").references(() => offers.id, { onDelete: "set null" }),
+    customerSegment: text("customer_segment").notNull().default(""),
+    location: text("location").notNull().default(""),
+    expectedRevenueCents: integer("expected_revenue_cents"),
+    expectedMarginCents: integer("expected_margin_cents"),
+    totalBudgetCents: integer("total_budget_cents"),
+    channelLimits: text("channel_limits").notNull().default(""),
+    applicableConstraints: text("applicable_constraints").notNull().default(""),
+    successDefinition: text("success_definition").notNull().default(""),
+    createdBy: uuid("created_by").references(() => users.id),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (table) => [
+    index("growth_goals_org_idx").on(table.organizationId),
+    index("growth_goals_offer_idx").on(table.offerId),
+  ],
+);
+
+export const growthPlans = pgTable(
+  "growth_plans",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    goalId: uuid("goal_id")
+      .notNull()
+      .references(() => growthGoals.id, { onDelete: "cascade" }),
+    strategySummary: text("strategy_summary").notNull().default(""),
+    status: text("status").notNull().default("draft"),
+    version: integer("version").notNull().default(1),
+    startsOn: timestamp("starts_on", { withTimezone: true }),
+    endsOn: timestamp("ends_on", { withTimezone: true }),
+    budgetCents: integer("budget_cents"),
+    createdBy: uuid("created_by").references(() => users.id),
+    createdByAi: boolean("created_by_ai").notNull().default(false),
+    approvedBy: uuid("approved_by").references(() => users.id),
+    approvedAt: timestamp("approved_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (table) => [
+    index("growth_plans_org_idx").on(table.organizationId),
+    index("growth_plans_goal_idx").on(table.goalId),
+  ],
+);
+
+export const decisionRecords = pgTable(
+  "decision_records",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    goalId: uuid("goal_id").references(() => growthGoals.id, {
+      onDelete: "set null",
+    }),
+    planId: uuid("plan_id").references(() => growthPlans.id, {
+      onDelete: "set null",
+    }),
+    actionId: uuid("action_id"),
+    decisionType: text("decision_type").notNull(),
+    recommendation: text("recommendation").notNull(),
+    rationale: text("rationale").notNull().default(""),
+    supportingEvidence: text("supporting_evidence").notNull().default(""),
+    evidenceWindow: text("evidence_window").notNull().default(""),
+    confidence: integer("confidence").notNull().default(0),
+    alternatives: text("alternatives").notNull().default(""),
+    userResponse: text("user_response").notNull().default(""),
+    approvalStatus: text("approval_status").notNull().default("none"),
+    resultingAction: text("resulting_action").notNull().default(""),
+    outcome: text("outcome").notNull().default(""),
+    createdBy: uuid("created_by").references(() => users.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("decision_records_org_idx").on(table.organizationId),
+    index("decision_records_goal_idx").on(table.goalId),
+  ],
+);
+
+export const growthActions = pgTable(
+  "growth_actions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    goalId: uuid("goal_id").references(() => growthGoals.id, {
+      onDelete: "set null",
+    }),
+    planId: uuid("plan_id").references(() => growthPlans.id, {
+      onDelete: "set null",
+    }),
+    module: text("module").notNull().default(""),
+    actionType: text("action_type").notNull().default(""),
+    description: text("description").notNull(),
+    status: text("status").notNull().default("proposed"),
+    risk: text("risk").notNull().default("optimization"),
+    proposedBy: uuid("proposed_by").references(() => users.id),
+    proposedAt: timestamp("proposed_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    approvedBy: uuid("approved_by").references(() => users.id),
+    approvedAt: timestamp("approved_at", { withTimezone: true }),
+    executedAt: timestamp("executed_at", { withTimezone: true }),
+    provider: text("provider").notNull().default(""),
+    externalId: text("external_id").notNull().default(""),
+    result: text("result").notNull().default(""),
+    error: text("error").notNull().default(""),
+    rollbackAvailable: boolean("rollback_available").notNull().default(false),
+    ...timestamps,
+  },
+  (table) => [
+    index("growth_actions_org_idx").on(table.organizationId),
+    index("growth_actions_goal_idx").on(table.goalId),
+  ],
+);
+
+export const growthSettings = pgTable("growth_settings", {
+  organizationId: uuid("organization_id")
+    .primaryKey()
+    .references(() => organizations.id, { onDelete: "cascade" }),
+  autonomyLevel: integer("autonomy_level").notNull().default(2),
+  reviewFrequency: text("review_frequency").notNull().default("weekly"),
+  reviewDay: text("review_day").notNull().default("monday"),
+  reviewTime: text("review_time").notNull().default("10:00"),
+  timezone: text("timezone").notNull().default("America/New_York"),
+  recommendedFrequency: text("recommended_frequency").notNull().default(""),
+  ...timestamps,
+});
+
+export const evidencePolicies = pgTable(
+  "evidence_policies",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    channel: text("channel").notNull(),
+    minElapsedDays: integer("min_elapsed_days").notNull().default(7),
+    minObservations: integer("min_observations").notNull().default(0),
+    minConversions: integer("min_conversions").notNull().default(0),
+    notes: text("notes").notNull().default(""),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("evidence_policies_org_channel_idx").on(
+      table.organizationId,
+      table.channel,
+    ),
+    index("evidence_policies_org_idx").on(table.organizationId),
   ],
 );
 

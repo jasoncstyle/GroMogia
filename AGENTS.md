@@ -2,8 +2,8 @@
 
 These rules apply to every Cloud Agent and every human working in this repository.
 
-Product intent: [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md).  
-Approved architecture (until superseded): [docs/phase-0/](docs/phase-0/).  
+Product intent: [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) (V2). V1 brief: [docs/MASTER_BRIEF_V1.md](docs/MASTER_BRIEF_V1.md).  
+Approved architecture (until superseded): [docs/phase-0/](docs/phase-0/) plus [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).  
 Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
 
 The product is **GroovGro** (domain groovgro.com). The GitHub repository may still be named GroMogia until it is renamed on GitHub.
@@ -45,8 +45,9 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 ## Phase gate
 
 - Phase 0 architecture is approved in `docs/phase-0/`.
-- Current implementation phase is **Phase 7 website builder** (full-page editor, draft preview, colors, heading/link controls, extra widgets, SEO apply onto GroovGro-hosted pages). See [docs/STATUS.md](docs/STATUS.md).
-- Do not skip ahead to ads or autonomous AI.
+- V2 source of truth is [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md). First V2 slice is **growth foundation** (Business Brain, Offers, constraints, Goals, Decision History). See [docs/STATUS.md](docs/STATUS.md).
+- Keep working V1 features, including the optional website builder. Do not rewrite them to match a later V2 phase number.
+- Do not skip ahead to ads, Growth Director execution, or autonomous AI.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.
 - The website builder must not overwrite a connected existing website or change Stripe checkout.
 - Custom domains for GroovGro-built sites wait for a later Phase 7 slice.

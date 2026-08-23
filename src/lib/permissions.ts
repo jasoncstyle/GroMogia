@@ -16,6 +16,14 @@ export const PERMISSIONS = [
   "manage_brand",
   "manage_settings",
   "view_audit",
+  "manage_offers",
+  "create_goals",
+  "modify_goals",
+  "approve_plans",
+  "approve_actions",
+  "configure_automation",
+  "configure_spending_limits",
+  "view_decision_history",
 ] as const;
 
 export type Permission = (typeof PERMISSIONS)[number];
@@ -42,6 +50,11 @@ export const ROLE_PERMISSIONS: Record<SystemRole, Permission[]> = {
     "manage_social",
     "view_analytics",
     "manage_leads",
+    "manage_offers",
+    "create_goals",
+    "modify_goals",
+    "approve_plans",
+    "view_decision_history",
   ],
   website_manager: [
     "manage_website",
@@ -55,6 +68,9 @@ export const ROLE_PERMISSIONS: Record<SystemRole, Permission[]> = {
     "manage_events",
     "view_analytics",
     "view_financials",
+    "manage_offers",
+    "create_goals",
+    "view_decision_history",
   ],
   staff: ["manage_leads", "manage_customers", "manage_events"],
   viewer: ["view_analytics"],
