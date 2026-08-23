@@ -6,8 +6,11 @@ import { join } from "node:path";
 import { extractWebsitePage } from "@/lib/growth/website-discover";
 import {
   draftInspiredRows,
+  inspirationPageFromUrl,
   inspirationQuestions,
   inspirationTopics,
+  loadInspirationPages,
+  mergeInspirationPages,
   parseInspirationUrls,
 } from "./inspiration";
 
@@ -40,6 +43,45 @@ describe("website builder inspiration", () => {
     assert.equal(urls.includes("https://example.com/one"), true);
     assert.equal(urls.includes("https://www.example.com/two"), true);
     assert.equal(urls.length, 2);
+  });
+
+  it("accepts wrapped public addresses", () => {
+    const urls = parseInspirationUrls(["<https://www.example.com/look>", '"https://www.example.com/words"'], 3);
+    assert.deepEqual(urls, [
+      "https://www.example.com/look",
+      "https://www.example.com/words",
+    ]);
+  });
+
+  it("reads pasted pages in parallel and keeps site names when a page will not open", async () => {
+    const loaded = await loadInspirationPages(
+      ["https://www.example.com/open", "https://www.example.com/blocked"],
+      async (url) =>
+        url.endsWith("/open")
+          ? { ok: true, status: 200, body: layoutHtml }
+          : { ok: false, status: 403, body: "" },
+    );
+    assert.equal(loaded.pages.length, 1);
+    assert.deepEqual(loaded.failedUrls, ["https://www.example.com/blocked"]);
+    const merged = mergeInspirationPages(loaded);
+    assert.equal(merged.length, 2);
+    assert.equal(merged.some((page) => page.headings.includes("Weekend Workshop")), true);
+    assert.equal(merged.some((page) => page.headings.includes("example.com")), true);
+  });
+
+  it("drafts topic labels from a site name when the page cannot be read", () => {
+    const page = inspirationPageFromUrl("https://www.studio-example.com/work");
+    const rows = draftInspiredRows({
+      businessName: "Harbor Workshops",
+      description: "Hands-on classes for beginners.",
+      targetCustomers: "",
+      businessType: "workshops",
+      layoutPages: [page],
+      copyPages: [],
+    });
+    const json = JSON.stringify(rows);
+    assert.match(json, /studio-example.com/);
+    assert.equal(rows.some((row) => row.widgets.some((widget) => widget.type === "hero")), true);
   });
 
   it("uses headings as topics and skips chrome and questions", () => {

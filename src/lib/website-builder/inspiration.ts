@@ -1,9 +1,11 @@
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
 import {
+  extractWebsitePage,
   isGenericWebsiteLabel,
   looksLikeBrandTitle,
   type WebsitePageExtract,
 } from "@/lib/growth/website-discover";
+import type { FetchedText } from "@/lib/seo/fetch";
 import type { BuilderRowDraft, BuilderWidgetDraft } from "@/lib/website-builder/row-templates";
 import type { BuilderSectionContent, BuilderSectionType } from "@/lib/db/schema";
 import type { RowContentWidth } from "@/lib/website-builder/layout";
@@ -48,7 +50,7 @@ function band(
 }
 
 export function normalizeInspirationUrl(value: string): string | null {
-  const raw = value.trim();
+  const raw = value.trim().replace(/^['"<\[]+|['">\]]+$/g, "").trim();
   if (!raw) return null;
   const withProtocol = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
   const parsed = isSafePublicHttpUrl(withProtocol);
@@ -66,6 +68,55 @@ export function parseInspirationUrls(values: string[], limit: number): string[] 
     if (found.length >= limit) break;
   }
   return found;
+}
+
+export function inspirationPageFromUrl(url: string): WebsitePageExtract {
+  let label = url.slice(0, 60);
+  let isHome = true;
+  try {
+    const parsed = new URL(url);
+    label = parsed.hostname.replace(/^www\./i, "");
+    isHome = parsed.pathname === "/" || parsed.pathname === "";
+  } catch {
+    isHome = false;
+  }
+  return {
+    url,
+    title: label,
+    description: "",
+    headings: [label],
+    navLabels: [],
+    source: "connected_website",
+    isHome,
+  };
+}
+
+export async function loadInspirationPages(
+  urls: string[],
+  fetchText: (url: string) => Promise<FetchedText>,
+): Promise<{ pages: WebsitePageExtract[]; failedUrls: string[] }> {
+  const results = await Promise.all(
+    urls.map(async (url) => {
+      const fetched = await fetchText(url);
+      if (!fetched.ok || !fetched.body) {
+        return { url, page: null };
+      }
+      return {
+        url,
+        page: extractWebsitePage(url, fetched.body, "connected_website"),
+      };
+    }),
+  );
+  return {
+    pages: results.flatMap((result) => (result.page ? [result.page] : [])),
+    failedUrls: results.filter((result) => !result.page).map((result) => result.url),
+  };
+}
+
+export function mergeInspirationPages(
+  loaded: { pages: WebsitePageExtract[]; failedUrls: string[] },
+): WebsitePageExtract[] {
+  return [...loaded.pages, ...loaded.failedUrls.map(inspirationPageFromUrl)];
 }
 
 export function inspirationTopics(pages: WebsitePageExtract[], limit = 6): string[] {
