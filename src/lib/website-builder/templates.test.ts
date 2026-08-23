@@ -26,6 +26,7 @@ describe("website builder templates", () => {
     assert.equal(DEFAULT_BUILDER_TEMPLATE_ID, "1");
     assert.equal(builderTemplateLabel("1"), "Template 1");
     assert.equal(builderTemplateLabel("blank"), "Blank page");
+    assert.equal(builderTemplateLabel("inspired"), "Inspired draft");
     assert.equal(builderTemplateLabel(""), "Custom layout");
     assert.deepEqual(widthsForLayout("1-1-1"), [34, 33, 33]);
     assert.equal(ROW_LAYOUTS.some((layout) => layout.id === "1-1-1"), true);
