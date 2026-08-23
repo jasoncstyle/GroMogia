@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-builder-idea-park-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-builder-inspiration-note-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,19 +17,36 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main` through saved Goal progress (#56 checklist, #57 progress history).** Next build slice waits on Jason’s website builder idea so it is not forgotten. Do not start Growth Director, ads, or autonomy.
+**V2 growth foundation is on `main`.** Next recommended builder slice: help the owner start a GroovGro-hosted site from layout and copy inspiration URLs they paste. Do not start Growth Director, ads, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
 Do not start ads, Growth Director execution, or autonomous AI. Custom domains for builder sites wait unless Jason’s parked idea is that work. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
 
-## Parked: website builder idea (review now)
+## Parked: website builder from inspiration (agreed direction)
 
-Jason has a new thought about the GroovGro website builder. Review it **now**, before Growth Director or ads, so it is not forgotten.
+Jason’s idea (23 August 2026): help the owner build a **GroovGro-hosted** site, not by cloning the live connected site.
 
-**What Jason wants (waiting for his words):** _not written yet — paste the idea here in the next message._
+**Keep**
 
-Do not guess the idea. Do not overwrite a connected existing website. Do not change Stripe checkout or stripe-osa.
+- Build from scratch in the existing visual builder
+- Simple template choice (today there are four numbered templates; a later UI can highlight two starters plus blank)
+
+**Add (recommended)**
+
+1. Owner pastes **three public websites** they like the *layout* of. GroovGro shows a short how-to, including a search they can run themselves (for example “inspirational website design” or “[their industry] website”).
+2. For *words*, the owner either pastes **3–5 public websites** or types the kind of business (electrician, clinic, shop — their words). GroovGro uses Brand, Business Brain, and those pages as research — not as text to copy.
+3. GroovGro drafts rows and widgets in **our builder**. The owner reviews, edits, and publishes the GroovGro page. Nothing goes live until they say so.
+
+**Do not do**
+
+- Secretly search Google (or similar) for “top electrician sites” and scrape the results. That breaks other companies’ terms and can copy their words.
+- Clone another site’s look, photos, or exact sentences.
+- Overwrite a connected existing website (including Ocean Sailing Adventures).
+- Change Stripe checkout or stripe-osa.
+- Start ads or Growth Director.
+
+**First build slice when Jason says go:** a Website Builder screen to paste layout URLs and copy URLs (or a business type), read public pages the same way Review already reads a connected site, and draft an unpublished GroovGro Home. Owner confirms before publish.
 
 ## Stripe (do not mix, do not replace)
 
