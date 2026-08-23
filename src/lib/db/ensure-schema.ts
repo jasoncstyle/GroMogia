@@ -226,4 +226,12 @@ export async function ensureSchema(): Promise<void> {
   if (!offerDiscovery[0]?.name) {
     await applyMigration(sql, "0019_v2_growth_discovery.sql");
   }
+
+  const discoveredPages = (await sql.query(
+    "select to_regclass('public.website_discovered_pages') as name",
+  )) as RegistryRow[];
+
+  if (!discoveredPages[0]?.name) {
+    await applyMigration(sql, "0020_v2_website_page_checklist.sql");
+  }
 }

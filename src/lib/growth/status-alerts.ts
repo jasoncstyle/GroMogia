@@ -74,7 +74,7 @@ export function buildStatusAlerts(facts: StatusAlertFacts): StatusAlertItem[] {
         id: "website",
         tone: "wait",
         title: "Website address is saved",
-        body: "GroovGro has the address, but it has not read the pages yet. Open Business and click Review connected data.",
+        body: "GroovGro has the address, but it has not read the pages yet. Find pages, check the important ones, then click Review connected data.",
       })
     }
   }

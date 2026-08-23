@@ -20,15 +20,25 @@ import {
   growthSettings,
   offers,
   payments,
+  websiteDiscoveredPages,
   websites,
 } from "@/lib/db/schema";
 import { assertSameOrganization } from "@/lib/db/tenant";
 import { discoverFromConnectedData, normalizeOfferKey } from "@/lib/growth/discover";
 import {
   crawlConnectedWebsite,
+  extractWebsitePage,
   isGenericWebsiteLabel,
   type WebsitePageExtract,
 } from "@/lib/growth/website-discover";
+import {
+  discoveredPageFromExtract,
+  extractFromDiscoveredPage,
+  hasStoredExtract,
+  mergeDiscoveredPages,
+  recordFromStoredPage,
+  type DiscoveredPageRecord,
+} from "@/lib/growth/website-pages";
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
 import { fetchPublicText } from "@/lib/seo/fetch";
 import { listBuilderPages } from "@/lib/website-builder/queries";
@@ -76,6 +86,7 @@ function revalidateGrowth() {
   revalidatePath("/app/goals");
   revalidatePath("/app/decisions");
   revalidatePath("/app/growth-review");
+  revalidatePath("/app/website");
 }
 
 async function requirePermission(permission: Permission) {
@@ -86,6 +97,80 @@ async function requirePermission(permission: Permission) {
   const db = getDb();
   if (!db) throw new Error("Database is not configured");
   return { session, db };
+}
+
+async function requireWebsitePageEditor() {
+  const session = await requireOrgSession();
+  if (
+    !hasPermission(session.permissions, "manage_website") &&
+    !hasPermission(session.permissions, "manage_offers")
+  ) {
+    throw new Error("You do not have permission to do that.");
+  }
+  const db = getDb();
+  if (!db) throw new Error("Database is not configured");
+  return { session, db };
+}
+
+type AppDb = NonNullable<ReturnType<typeof getDb>>;
+
+function valuesFromRecord(
+  organizationId: string,
+  websiteId: string,
+  record: DiscoveredPageRecord,
+) {
+  return {
+    organizationId,
+    websiteId,
+    url: record.url,
+    urlKey: record.urlKey,
+    label: record.label,
+    pageGroup: record.pageGroup,
+    important: record.important,
+    source: record.source,
+    isHome: record.isHome,
+    title: record.title,
+    description: record.description,
+    headings: record.headings,
+    lastSeenAt: new Date(),
+    updatedAt: new Date(),
+  };
+}
+
+async function persistDiscoveredPages(
+  db: AppDb,
+  organizationId: string,
+  websiteId: string,
+  incoming: DiscoveredPageRecord[],
+) {
+  const existing = await db
+    .select()
+    .from(websiteDiscoveredPages)
+    .where(eq(websiteDiscoveredPages.organizationId, organizationId));
+  const { toInsert, toUpdate } = mergeDiscoveredPages(
+    existing.map(recordFromStoredPage),
+    incoming,
+  );
+
+  for (const record of toInsert) {
+    await db.insert(websiteDiscoveredPages).values({
+      id: crypto.randomUUID(),
+      ...valuesFromRecord(organizationId, websiteId, record),
+    });
+  }
+  for (const record of toUpdate) {
+    await db
+      .update(websiteDiscoveredPages)
+      .set(valuesFromRecord(organizationId, websiteId, record))
+      .where(
+        and(
+          eq(websiteDiscoveredPages.organizationId, organizationId),
+          eq(websiteDiscoveredPages.urlKey, record.urlKey),
+        ),
+      );
+  }
+
+  return existing.length + toInsert.length;
 }
 
 const brainSchema = z.object({
@@ -670,26 +755,23 @@ export async function proposeGrowthAction(formData: FormData): Promise<ActionRes
   });
 }
 
-async function loadWebsiteDiscoveryPages(
+const MAX_REVIEW_FETCHES = 20;
+
+async function appendBuilderDiscoveryPages(
   organizationId: string,
   publicUrl: string,
-): Promise<{ pages: WebsitePageExtract[]; note: string }> {
-  const pages: WebsitePageExtract[] = [];
-  let note = "";
-  const home = publicUrl ? isSafePublicHttpUrl(publicUrl) : null;
-  if (publicUrl && !home) {
-    note = "The saved website address is not a public page GroovGro can open.";
-  } else if (home) {
-    const crawled = await crawlConnectedWebsite(home.toString(), fetchPublicText);
-    pages.push(...crawled.pages);
-    note = crawled.note;
-  }
-
+  pages: WebsitePageExtract[],
+) {
+  const seen = new Set(
+    pages.map((page) => page.title.trim().toLowerCase()).filter(Boolean),
+  );
   const builderPages = await listBuilderPages(organizationId);
   for (const page of builderPages) {
     if (page.isHome) continue;
     const name = page.title || page.label;
     if (!name || isGenericWebsiteLabel(name)) continue;
+    if (seen.has(name.trim().toLowerCase())) continue;
+    seen.add(name.trim().toLowerCase());
     pages.push({
       url: publicUrl || page.slug,
       title: name,
@@ -701,8 +783,268 @@ async function loadWebsiteDiscoveryPages(
       isHome: false,
     });
   }
+}
 
+async function loadWebsiteDiscoveryPages(
+  db: AppDb,
+  organizationId: string,
+  website: { id: string; publicUrl: string } | undefined,
+): Promise<{ pages: WebsitePageExtract[]; note: string }> {
+  const pages: WebsitePageExtract[] = [];
+  let note = "";
+  const publicUrl = website?.publicUrl ?? "";
+  const home = publicUrl ? isSafePublicHttpUrl(publicUrl) : null;
+  const stored = website
+    ? await db
+        .select()
+        .from(websiteDiscoveredPages)
+        .where(eq(websiteDiscoveredPages.organizationId, organizationId))
+    : [];
+
+  if (publicUrl && !home) {
+    note = "The saved website address is not a public page GroovGro can open.";
+  } else if (home && website && stored.length === 0) {
+    const crawled = await crawlConnectedWebsite(home.toString(), fetchPublicText);
+    const incoming = crawled.pages.map((page) =>
+      discoveredPageFromExtract(page, home.origin, "crawl"),
+    );
+    await persistDiscoveredPages(db, organizationId, website.id, incoming);
+    pages.push(
+      ...incoming
+        .filter((page) => page.important)
+        .map((page) => extractFromDiscoveredPage(page)),
+    );
+    note =
+      crawled.pages.length === 0
+        ? crawled.note
+        : `Found ${crawled.pages.length} pages and read the ${pages.length} GroovGro marked important. Check the list if you want to change that. The website was not changed.`;
+  } else if (stored.length > 0) {
+    const important = stored.filter((row) => row.important);
+    if (important.length === 0) {
+      note = "Check the pages GroovGro should read, then click Review again.";
+    } else {
+      let fetches = 0;
+      for (const row of important) {
+        if (hasStoredExtract(row) || fetches >= MAX_REVIEW_FETCHES) {
+          pages.push(extractFromDiscoveredPage(row));
+          continue;
+        }
+        fetches += 1;
+        const fetched = await fetchPublicText(row.url);
+        if (fetched.ok && fetched.body) {
+          const extracted = extractWebsitePage(
+            row.url,
+            fetched.body,
+            "connected_website",
+          );
+          pages.push({ ...extracted, isHome: row.isHome });
+          await db
+            .update(websiteDiscoveredPages)
+            .set({
+              title: extracted.title,
+              description: extracted.description,
+              headings: extracted.headings,
+              lastSeenAt: new Date(),
+              updatedAt: new Date(),
+            })
+            .where(
+              and(
+                eq(websiteDiscoveredPages.id, row.id),
+                eq(websiteDiscoveredPages.organizationId, organizationId),
+              ),
+            );
+        } else {
+          pages.push(extractFromDiscoveredPage(row));
+        }
+      }
+      note = `Read ${pages.length} checked page${pages.length === 1 ? "" : "s"} on the connected website. The website was not changed.`;
+    }
+  }
+
+  await appendBuilderDiscoveryPages(organizationId, publicUrl, pages);
   return { pages, note };
+}
+
+export async function findWebsitePages(
+  _formData?: FormData,
+): Promise<ActionResult> {
+  return runAction("Could not find website pages.", async () => {
+    const { session, db } = await requireWebsitePageEditor();
+    const [website] = await db
+      .select()
+      .from(websites)
+      .where(eq(websites.organizationId, session.organizationId))
+      .limit(1);
+    if (!website?.publicUrl) {
+      throw new Error("Save a website address first.");
+    }
+    const home = isSafePublicHttpUrl(website.publicUrl);
+    if (!home) {
+      throw new Error("The saved website address is not a public page GroovGro can open.");
+    }
+
+    const crawled = await crawlConnectedWebsite(home.toString(), fetchPublicText);
+    const incoming = crawled.pages.map((page) =>
+      discoveredPageFromExtract(page, home.origin, "crawl"),
+    );
+    await persistDiscoveredPages(db, session.organizationId, website.id, incoming);
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "website_pages.found",
+      targetType: "website",
+      targetId: website.id,
+      metadata: { pageCount: crawled.pages.length },
+    });
+    revalidateGrowth();
+
+    if (crawled.pages.length === 0) return crawled.note;
+    return `Found ${crawled.pages.length} pages. Check the important ones, then Review connected data.`;
+  });
+}
+
+export async function saveWebsitePageChecks(
+  formData: FormData,
+): Promise<ActionResult> {
+  return runAction("Could not save the page list.", async () => {
+    const { session, db } = await requireWebsitePageEditor();
+    const checked = new Set(
+      formData
+        .getAll("pageIds")
+        .map((value) => String(value))
+        .filter((value) => z.string().uuid().safeParse(value).success),
+    );
+    const rows = await db
+      .select()
+      .from(websiteDiscoveredPages)
+      .where(eq(websiteDiscoveredPages.organizationId, session.organizationId));
+
+    for (const row of rows) {
+      const important = checked.has(row.id);
+      if (row.important === important) continue;
+      await db
+        .update(websiteDiscoveredPages)
+        .set({ important, updatedAt: new Date() })
+        .where(
+          and(
+            eq(websiteDiscoveredPages.id, row.id),
+            eq(websiteDiscoveredPages.organizationId, session.organizationId),
+          ),
+        );
+    }
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "website_pages.saved",
+      targetType: "website",
+      targetId: session.organizationId,
+      metadata: { checkedCount: checked.size },
+    });
+    revalidateGrowth();
+    return "Page list saved. Review connected data will read only the checked pages.";
+  });
+}
+
+export async function addWebsitePage(formData: FormData): Promise<ActionResult> {
+  return runAction("Could not add that page.", async () => {
+    const { session, db } = await requireWebsitePageEditor();
+    let raw = String(formData.get("pageUrl") ?? "").trim();
+    if (raw && !/^https?:\/\//i.test(raw)) raw = `https://${raw}`;
+    const parsed = isSafePublicHttpUrl(raw);
+    if (!parsed) {
+      throw new Error("Paste a public page address starting with https.");
+    }
+
+    const [website] = await db
+      .select()
+      .from(websites)
+      .where(eq(websites.organizationId, session.organizationId))
+      .limit(1);
+    if (!website?.publicUrl) {
+      throw new Error("Save a website address first.");
+    }
+
+    const urlKey = discoveredPageFromExtract(
+      {
+        url: parsed.toString(),
+        title: "",
+        description: "",
+        headings: [],
+        navLabels: [],
+        source: "connected_website",
+        isHome: false,
+      },
+      "",
+      "manual",
+    ).urlKey;
+
+    const [existing] = await db
+      .select()
+      .from(websiteDiscoveredPages)
+      .where(
+        and(
+          eq(websiteDiscoveredPages.organizationId, session.organizationId),
+          eq(websiteDiscoveredPages.urlKey, urlKey),
+        ),
+      )
+      .limit(1);
+
+    const fetched = await fetchPublicText(parsed.toString());
+    const extracted =
+      fetched.ok && fetched.body
+        ? extractWebsitePage(parsed.toString(), fetched.body, "connected_website")
+        : {
+            url: parsed.toString(),
+            title: "",
+            description: "",
+            headings: [] as string[],
+            navLabels: [] as string[],
+            source: "connected_website" as const,
+            isHome: false,
+          };
+    let homeOrigin = "";
+    try {
+      homeOrigin = new URL(website.publicUrl).origin;
+    } catch {
+      homeOrigin = "";
+    }
+    const record = {
+      ...discoveredPageFromExtract(extracted, homeOrigin, "manual"),
+      important: true,
+    };
+
+    if (existing) {
+      await db
+        .update(websiteDiscoveredPages)
+        .set(valuesFromRecord(session.organizationId, website.id, record))
+        .where(
+          and(
+            eq(websiteDiscoveredPages.id, existing.id),
+            eq(websiteDiscoveredPages.organizationId, session.organizationId),
+          ),
+        );
+      revalidateGrowth();
+      return "That page is already on the list and is now checked.";
+    }
+
+    await db.insert(websiteDiscoveredPages).values({
+      id: crypto.randomUUID(),
+      ...valuesFromRecord(session.organizationId, website.id, record),
+    });
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "website_pages.added",
+      targetType: "website",
+      targetId: website.id,
+      metadata: { url: record.url },
+    });
+    revalidateGrowth();
+    return "Page added and checked. Review connected data will read it.";
+  });
 }
 
 export async function reviewConnectedBusiness(
@@ -738,8 +1080,11 @@ export async function reviewConnectedBusiness(
     ]);
 
     const websiteLoad = await loadWebsiteDiscoveryPages(
+      db,
       organizationId,
-      websiteRows[0]?.publicUrl ?? "",
+      websiteRows[0]
+        ? { id: websiteRows[0].id, publicUrl: websiteRows[0].publicUrl }
+        : undefined,
     );
 
     const discovery = discoverFromConnectedData({
