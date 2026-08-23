@@ -86,7 +86,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 ## BUILD NEXT (after this slice is tested)
 
-- Growth Director coordination, still approval-first. Do not start it in this slice.
+- Review Jason’s parked website builder idea first (see `docs/STATUS.md`). Do not guess it.
+- Growth Director coordination, still approval-first. Do not start it until the builder idea is written down and either built or explicitly deferred.
 
 ## DESIGN FOR LATER
 
