@@ -46,9 +46,10 @@ import {
   MAX_LAYOUT_URLS,
   draftInspiredRows,
   inspiredTheme,
+  loadInspirationPages,
+  mergeInspirationPages,
   parseInspirationUrls,
 } from "@/lib/website-builder/inspiration";
-import { extractWebsitePage } from "@/lib/growth/website-discover";
 import { fetchPublicText } from "@/lib/seo/fetch";
 import {
   HOME_PAGE_SLUG,
@@ -204,15 +205,6 @@ export async function createBuilderSite(formData: FormData): Promise<ActionResul
   });
 }
 
-async function loadPublicPages(urls: string[]) {
-  const pages = [];
-  for (const url of urls) {
-    const fetched = await fetchPublicText(url);
-    if (!fetched.ok || !fetched.body) continue;
-    pages.push(extractWebsitePage(url, fetched.body, "connected_website"));
-  }
-  return pages;
-}
 
 export async function draftInspiredBuilderSite(
   formData: FormData,
@@ -273,13 +265,16 @@ export async function draftInspiredBuilderSite(
         .then((rows) => rows[0] ?? null),
     ]);
 
-    const layoutPages = await loadPublicPages(layoutUrls);
+    const [layoutLoaded, copyLoaded] = await Promise.all([
+      loadInspirationPages(layoutUrls, fetchPublicText),
+      loadInspirationPages(copyUrls, fetchPublicText),
+    ]);
+    const layoutPages = mergeInspirationPages(layoutLoaded);
+    const copyPages = mergeInspirationPages(copyLoaded);
     if (layoutPages.length === 0) {
-      throw new Error(
-        "GroovGro could not open those layout pages. Use public https addresses that open without a login.",
-      );
+      throw new Error("Paste at least one public website you like the layout of.");
     }
-    const copyPages = await loadPublicPages(copyUrls);
+    const unreadCount = layoutLoaded.failedUrls.length + copyLoaded.failedUrls.length;
     const title = brand?.businessName || session.organizationName || "Website";
     const rows = draftInspiredRows({
       businessName: brand?.businessName || session.organizationName || "",
@@ -380,17 +375,22 @@ export async function draftInspiredBuilderSite(
       targetType: "builder_site",
       targetId: site.id,
       metadata: {
-        layoutCount: layoutPages.length,
-        copyCount: copyPages.length,
+        layoutCount: layoutLoaded.pages.length,
+        copyCount: copyLoaded.pages.length,
+        unreadCount,
         businessType: businessType || brain?.industry || "",
         savedPreviousHome: Boolean(savedPageTitle),
       },
     });
     revalidateBuilder(session.organizationSlug, site);
+    const unreadNote =
+      unreadCount > 0
+        ? ` GroovGro could not open ${unreadCount} pasted address${unreadCount === 1 ? "" : "es"}, so those boxes used the site name only.`
+        : "";
     if (savedPageTitle) {
-      return `Your previous Home was saved as “${savedPageTitle}” (still a draft). The new Home is unpublished until you publish. Edit every line. The connected live site was not changed.`;
+      return `Your previous Home was saved as “${savedPageTitle}” (still a draft). The new Home is unpublished until you publish.${unreadNote} Edit every line. The connected live site was not changed.`;
     }
-    return `Draft website created from ${layoutPages.length} layout page${layoutPages.length === 1 ? "" : "s"}. It is not public until you publish. Edit every line. The live connected site was not changed.`;
+    return `Draft website created from ${layoutPages.length} layout page${layoutPages.length === 1 ? "" : "s"}.${unreadNote} It is not public until you publish. Edit every line. The live connected site was not changed.`;
   });
 }
 

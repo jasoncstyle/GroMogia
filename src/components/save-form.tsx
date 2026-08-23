@@ -25,7 +25,7 @@ export function SaveForm({
   children: React.ReactNode
 }) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [, formAction] = useActionState(
+  const [state, formAction] = useActionState(
     async (_previous: ActionResult | null, formData: FormData) => {
       const result = await action(formData);
       if (result.ok) {
@@ -42,6 +42,11 @@ export function SaveForm({
 
   return (
     <form ref={formRef} action={formAction} className={className}>
+      {state && !state.ok ? (
+        <p role="alert" className="text-sm text-destructive">
+          {state.error}
+        </p>
+      ) : null}
       {children}
     </form>
   );
