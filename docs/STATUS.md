@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-builder-inspiration-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-builder-start-over-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -59,7 +59,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Brand voice: profile, examples, drafts that stay in GroovGro
 - SEO: connected homepage check, GroovGro checks for Home and every extra page, drafts, score history, plain-language explanation, Search Console read-only
 - Website builder: visual GroovGro-hosted pages at `/w/[org]` (Home) and `/w/[org]/[slug]` (extra pages)
-- Help me build one: paste public websites you like; GroovGro drafts an unpublished GroovGro Home from Brand plus those page headings. It does not clone the sites or change the connected website.
+- Help me build one: paste public websites you like; GroovGro drafts an unpublished GroovGro Home from Brand plus those page headings. If Home already exists, Start Home over saves the current Home as a draft page named Previous Home, then drafts the new Home. It does not clone the sites or change the connected website.
 - Approved SEO title, description, and heading drafts can be applied to the matching GroovGro page
 - V2 foundation screens: Business, Offers, Goals, Decisions
 - Review connected data: draft Offers and suggested Goals from events, bookings, payments, and connected website pages; confirm or reject before anything becomes active

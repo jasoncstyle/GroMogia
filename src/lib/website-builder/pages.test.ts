@@ -9,6 +9,8 @@ import {
   layoutForNewPage,
   parsePageSlug,
   suggestPageSlug,
+  uniqueSavedHomeSlug,
+  uniqueSavedHomeTitle,
 } from "./pages";
 
 const brand = {
@@ -25,6 +27,13 @@ describe("builder extra pages", () => {
     assert.equal(builderPageLabel({ slug: "about", title: "About us" }), "About us");
     assert.equal(builderPagePath("jasons-test"), "/w/jasons-test");
     assert.equal(builderPagePath("jasons-test", "about"), "/w/jasons-test/about");
+  });
+
+  it("names a saved Home page without colliding with one already there", () => {
+    assert.equal(uniqueSavedHomeSlug([]), "saved-home");
+    assert.equal(uniqueSavedHomeSlug(["saved-home"]), "saved-home-2");
+    assert.equal(uniqueSavedHomeTitle([]), "Previous Home");
+    assert.equal(uniqueSavedHomeTitle(["Previous Home"]), "Previous Home 2");
   });
 
   it("suggests a safe address from the page name", () => {

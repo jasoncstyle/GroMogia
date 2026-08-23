@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import { builderRows, builderSections } from "@/lib/db/schema";
@@ -53,5 +53,69 @@ export async function writeBuilderLayout(
         content: widget.content,
       });
     }
+  }
+}
+
+export async function copyBuilderSiteContent(
+  db: Db,
+  input: {
+    organizationId: string
+    fromSiteId: string
+    toSiteId: string
+  },
+) {
+  const rows = await db
+    .select()
+    .from(builderRows)
+    .where(
+      and(
+        eq(builderRows.organizationId, input.organizationId),
+        eq(builderRows.siteId, input.fromSiteId),
+      ),
+    )
+    .orderBy(asc(builderRows.sortOrder));
+  const sections = await db
+    .select()
+    .from(builderSections)
+    .where(
+      and(
+        eq(builderSections.organizationId, input.organizationId),
+        eq(builderSections.siteId, input.fromSiteId),
+      ),
+    )
+    .orderBy(asc(builderSections.sortOrder));
+
+  const parents = rows.filter((row) => !row.parentRowId);
+  const children = rows.filter((row) => row.parentRowId);
+  const idMap = new Map<string, string>();
+
+  for (const row of [...parents, ...children]) {
+    const id = crypto.randomUUID();
+    await db.insert(builderRows).values({
+      id,
+      organizationId: input.organizationId,
+      siteId: input.toSiteId,
+      sortOrder: row.sortOrder,
+      columnWidths: row.columnWidths,
+      backgroundColor: row.backgroundColor,
+      contentWidth: row.contentWidth,
+      parentRowId: row.parentRowId ? (idMap.get(row.parentRowId) ?? null) : null,
+      parentColumnIndex: row.parentColumnIndex,
+    });
+    idMap.set(row.id, id);
+  }
+
+  for (const section of sections) {
+    await db.insert(builderSections).values({
+      id: crypto.randomUUID(),
+      organizationId: input.organizationId,
+      siteId: input.toSiteId,
+      rowId: section.rowId ? (idMap.get(section.rowId) ?? null) : null,
+      columnIndex: section.columnIndex,
+      type: section.type,
+      sortOrder: section.sortOrder,
+      visible: section.visible,
+      content: section.content,
+    });
   }
 }

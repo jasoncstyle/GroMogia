@@ -28,9 +28,11 @@ function UrlField({
 export function WebsiteBuilderInspiration({
   businessType,
   disabled,
+  hasExistingHome = false,
 }: {
   businessType: string
   disabled?: boolean
+  hasExistingHome?: boolean
 }) {
   return (
     <SaveForm
@@ -45,6 +47,13 @@ export function WebsiteBuilderInspiration({
         and topics. It does not copy the site, steal photos, or change any
         live website.
       </p>
+      {hasExistingHome ? (
+        <p className="text-sm text-muted-foreground">
+          Your current Home is copied to a draft page named Previous Home.
+          The new Home stays unpublished until you publish. Extra pages stay
+          as they are.
+        </p>
+      ) : null}
 
       <div className="space-y-1">
         <Label htmlFor="businessType">Kind of business</Label>
@@ -81,7 +90,7 @@ export function WebsiteBuilderInspiration({
       </fieldset>
 
       <SaveButton disabled={disabled} pendingLabel="Reading pages…">
-        Draft my GroovGro site
+        {hasExistingHome ? "Start Home over from these sites" : "Draft my GroovGro site"}
       </SaveButton>
     </SaveForm>
   );
