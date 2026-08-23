@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   createGoal,
   createGrowthPlan,
+  refreshConnectedGoalProgress,
   updateGoalProgress,
   updateGrowthSettings,
 } from "@/lib/actions/growth";
@@ -22,6 +23,7 @@ import {
   labelFor,
 } from "@/lib/growth/types";
 import { formatMoney } from "@/lib/money";
+import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -311,8 +313,22 @@ export default async function GoalsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Active and recent goals</CardTitle>
+          <CardDescription>
+            Connected goals can save today&apos;s number from leads, bookings,
+            and payments. That stores a history. It does not start marketing.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {goals.some((goal) => goal.liveComputable) ? (
+            <SaveForm
+              action={refreshConnectedGoalProgress}
+              successMessage="Progress saved"
+            >
+              <SaveButton type="submit" disabled={!session.organizationId}>
+                Save progress from connected data
+              </SaveButton>
+            </SaveForm>
+          ) : null}
           {goals.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               No goals yet. Add the first measurable outcome above.
@@ -340,6 +356,18 @@ export default async function GoalsPage() {
                     {goal.liveNote ? (
                       <p className="text-sm text-muted-foreground">{goal.liveNote}</p>
                     ) : null}
+                    {goal.progressRecordedAt ? (
+                      <p className="text-sm text-muted-foreground">
+                        Last saved: {goal.currentValue}
+                        {goal.unit ? ` ${goal.unit}` : ""} on{" "}
+                        {goal.progressRecordedAt.toLocaleDateString()}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        No saved history yet. Save progress to keep today&apos;s
+                        number.
+                      </p>
+                    )}
                   </div>
                   {goal.totalBudgetCents != null ? (
                     <p className="text-sm text-muted-foreground">
@@ -382,6 +410,25 @@ export default async function GoalsPage() {
                     Update
                   </SaveButton>
                 </SaveForm>
+                {goal.progressHistory.length > 0 ? (
+                  <div className="mt-3">
+                    <FoldableSample
+                      title="Saved progress"
+                      subtitle={`${goal.progressHistory.length} stored number${goal.progressHistory.length === 1 ? "" : "s"}. Open to read the history.`}
+                    >
+                      {goal.progressHistory.map((row) => (
+                        <p key={row.id} className="text-sm text-muted-foreground">
+                          {row.recordedAt.toLocaleDateString()}: {row.value}
+                          {goal.unit ? ` ${goal.unit}` : ""}
+                          {row.source === "manual"
+                            ? " · saved by hand"
+                            : " · from connected data"}
+                          {row.note ? ` · ${row.note}` : ""}
+                        </p>
+                      ))}
+                    </FoldableSample>
+                  </div>
+                ) : null}
               </div>
             ))
           )}

@@ -234,4 +234,12 @@ export async function ensureSchema(): Promise<void> {
   if (!discoveredPages[0]?.name) {
     await applyMigration(sql, "0020_v2_website_page_checklist.sql");
   }
+
+  const goalProgress = (await sql.query(
+    "select to_regclass('public.goal_progress_snapshots') as name",
+  )) as RegistryRow[];
+
+  if (!goalProgress[0]?.name) {
+    await applyMigration(sql, "0021_v2_goal_progress.sql");
+  }
 }

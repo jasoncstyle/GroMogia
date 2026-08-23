@@ -6,7 +6,7 @@ Last updated: 23 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-page-checklist-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-goal-progress-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,9 +17,9 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation through website page checklist.** Business Brain, Offers, constraints, Goals, Decision History, reviews, specialists, and review-from-connected-data. GroovGro finds pages on the connected website, you check the important ones, and Review reads only those pages. Drafts stay inactive until you confirm. GroovGro does not change the connected website. Website builder and all earlier V1 modules stay as they were.
+**V2 growth foundation through saved Goal progress.** Business Brain, Offers, constraints, Goals, Decision History, reviews, specialists, website page checklist, and review-from-connected-data. Connected Goals can save today’s number from leads, bookings, and payments so there is a history. Drafts stay inactive until you confirm. GroovGro does not change the connected website. Website builder and all earlier V1 modules stay as they were.
 
-V1 on `main` remains Phase 7 website builder until this branch is merged. Public groovgro.com homepage stays Coming soon.
+Public groovgro.com homepage stays Coming soon.
 
 Do not start ads, Growth Director execution, or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
 
@@ -38,6 +38,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - V2 foundation screens: Business, Offers, Goals, Decisions (Preview of this branch; production after merge)
 - Review connected data: draft Offers and suggested Goals from events, bookings, payments, and connected website pages; confirm or reject before anything becomes active
 - Goal progress from connected leads, bookings, and payments; optional Offer/Goal links on events and leads
+- Save progress from connected data stores today’s Goal number and a short history. Review connected data also saves those numbers. Custom goals still use the Current box. Nothing starts marketing.
 - Weekly Growth Review and monthly strategy review from connected evidence, including “no change yet”
 - Specialists on Intelligence: SEO, website, leads, schedule, advertising, email, and social. Each reads, analyzes against a Goal, and recommends — including no change. None execute.
 - Green status alerts when the workspace is working and the website has been connected and read. Amber when an address is saved but pages have not been read yet. Find pages, check the important ones, then Review connected data. Tracking stays silent until visits or clicks exist.
@@ -48,4 +49,4 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 ## Still later
 
-Persisted goal progress writes, Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.
+Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.

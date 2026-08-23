@@ -14,8 +14,10 @@ import {
   businessBrains,
   decisionRecords,
   events,
+  goalProgressSnapshots,
   growthActions,
   growthGoals,
+  leadRecords,
   growthPlans,
   growthSettings,
   offers,
@@ -25,6 +27,12 @@ import {
 } from "@/lib/db/schema";
 import { assertSameOrganization } from "@/lib/db/tenant";
 import { discoverFromConnectedData, normalizeOfferKey } from "@/lib/growth/discover";
+import {
+  connectedProgressFacts,
+  liveGoalProgress,
+  progressDayKey,
+  storedGoalFieldsFromLive,
+} from "@/lib/growth/progress";
 import {
   crawlConnectedWebsite,
   extractWebsitePage,
@@ -113,6 +121,93 @@ async function requireWebsitePageEditor() {
 }
 
 type AppDb = NonNullable<ReturnType<typeof getDb>>;
+
+async function writeGoalSnapshot(
+  db: AppDb,
+  input: {
+    organizationId: string
+    goalId: string
+    value: number
+    note: string
+    source: "connected" | "manual"
+    now: Date
+  },
+) {
+  const recordedOn = progressDayKey(input.now);
+  await db
+    .insert(goalProgressSnapshots)
+    .values({
+      id: crypto.randomUUID(),
+      organizationId: input.organizationId,
+      goalId: input.goalId,
+      value: input.value,
+      note: input.note,
+      source: input.source,
+      recordedOn,
+      recordedAt: input.now,
+    })
+    .onConflictDoUpdate({
+      target: [
+        goalProgressSnapshots.goalId,
+        goalProgressSnapshots.recordedOn,
+        goalProgressSnapshots.source,
+      ],
+      set: {
+        value: input.value,
+        note: input.note,
+        recordedAt: input.now,
+        updatedAt: input.now,
+      },
+    });
+}
+
+async function persistComputableGoalProgress(
+  db: AppDb,
+  organizationId: string,
+): Promise<number> {
+  const now = new Date();
+  const [goalRows, leadRows, bookingRows, paymentRows, eventRows] = await Promise.all([
+    db.select().from(growthGoals).where(eq(growthGoals.organizationId, organizationId)),
+    db.select().from(leadRecords).where(eq(leadRecords.organizationId, organizationId)),
+    db.select().from(bookings).where(eq(bookings.organizationId, organizationId)),
+    db.select().from(payments).where(eq(payments.organizationId, organizationId)),
+    db.select().from(events).where(eq(events.organizationId, organizationId)),
+  ]);
+  const facts = connectedProgressFacts({
+    now,
+    leads: leadRows,
+    bookings: bookingRows,
+    payments: paymentRows,
+    events: eventRows,
+  });
+
+  let saved = 0;
+  for (const goal of goalRows) {
+    if (goal.status === "cancelled") continue;
+    const live = liveGoalProgress(goal, facts);
+    if (!live.computable) continue;
+    const stored = storedGoalFieldsFromLive(goal, live.currentValue, now);
+    await db
+      .update(growthGoals)
+      .set({
+        ...stored,
+        updatedAt: now,
+      })
+      .where(
+        and(eq(growthGoals.id, goal.id), eq(growthGoals.organizationId, organizationId)),
+      );
+    await writeGoalSnapshot(db, {
+      organizationId,
+      goalId: goal.id,
+      value: live.currentValue,
+      note: live.note,
+      source: "connected",
+      now,
+    });
+    saved += 1;
+  }
+  return saved;
+}
 
 function valuesFromRecord(
   organizationId: string,
@@ -422,6 +517,7 @@ export async function createGoal(formData: FormData): Promise<ActionResult> {
       targetValue,
       baselineValue: parseOptionalInt(parsed.baselineValue),
       currentValue,
+      progressRecordedAt: new Date(),
       unit: parsed.unit,
       offerId: optionalUuid(parsed.offerId),
       customerSegment: parsed.customerSegment,
@@ -435,6 +531,15 @@ export async function createGoal(formData: FormData): Promise<ActionResult> {
       source: "manual",
       discoveryStatus: "confirmed",
       confidence: 100,
+    });
+
+    await writeGoalSnapshot(db, {
+      organizationId: session.organizationId,
+      goalId,
+      value: currentValue,
+      note: "Starting number saved with the goal.",
+      source: "manual",
+      now: new Date(),
     });
 
     await recordAudit({
@@ -476,14 +581,16 @@ export async function updateGoalProgress(formData: FormData): Promise<ActionResu
     const currentValue = parseOptionalInt(parsed.currentValue) ?? 0;
     const achieved = isGoalAchieved(currentValue, goal.targetValue);
     const status = parsed.status ?? (achieved ? "achieved" : goal.status);
+    const now = new Date();
 
     await db
       .update(growthGoals)
       .set({
         currentValue,
         status,
-        completedAt: status === "achieved" ? goal.completedAt ?? new Date() : null,
-        updatedAt: new Date(),
+        completedAt: status === "achieved" ? goal.completedAt ?? now : null,
+        progressRecordedAt: now,
+        updatedAt: now,
       })
       .where(
         and(
@@ -491,6 +598,15 @@ export async function updateGoalProgress(formData: FormData): Promise<ActionResu
           eq(growthGoals.organizationId, session.organizationId),
         ),
       );
+
+    await writeGoalSnapshot(db, {
+      organizationId: session.organizationId,
+      goalId: parsed.goalId,
+      value: currentValue,
+      note: "Number saved by hand.",
+      source: "manual",
+      now,
+    });
 
     await recordAudit({
       organizationId: session.organizationId,
@@ -501,6 +617,28 @@ export async function updateGoalProgress(formData: FormData): Promise<ActionResu
     });
     revalidateGrowth();
     return "Goal updated";
+  });
+}
+
+export async function refreshConnectedGoalProgress(
+  _formData?: FormData,
+): Promise<ActionResult> {
+  return runAction("Could not save goal progress.", async () => {
+    const { session, db } = await requirePermission("modify_goals");
+    const saved = await persistComputableGoalProgress(db, session.organizationId);
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "goal.progress_saved",
+      targetType: "growth_goal",
+      targetId: session.organizationId,
+      metadata: { saved },
+    });
+    revalidateGrowth();
+    if (saved === 0) {
+      return "No connected goal numbers to save yet. Custom goals still use the Current box.";
+    }
+    return `Saved today's number on ${saved} goal${saved === 1 ? "" : "s"} from connected data. GroovGro did not start marketing.`;
   });
 }
 
@@ -1235,11 +1373,16 @@ export async function reviewConnectedBusiness(
     });
     revalidateGrowth();
 
+    const progressSaved = await persistComputableGoalProgress(db, organizationId);
     const websiteNote = websiteLoad.note ? ` ${websiteLoad.note}` : "";
+    const progressNote =
+      progressSaved > 0
+        ? ` Saved today's number on ${progressSaved} goal${progressSaved === 1 ? "" : "s"}.`
+        : "";
     if (offersCreated === 0 && goalsCreated === 0 && constraintsCreated === 0) {
-      return `GroovGro did not find new drafts.${websiteNote} Confirm or reject what is already waiting, or add your own.`;
+      return `GroovGro did not find new drafts.${websiteNote}${progressNote} Confirm or reject what is already waiting, or add your own.`;
     }
-    return `Drafted ${offersCreated} offer${offersCreated === 1 ? "" : "s"} and ${goalsCreated} suggested goal${goalsCreated === 1 ? "" : "s"}.${websiteNote} Nothing is active until you confirm.`;
+    return `Drafted ${offersCreated} offer${offersCreated === 1 ? "" : "s"} and ${goalsCreated} suggested goal${goalsCreated === 1 ? "" : "s"}.${websiteNote}${progressNote} Nothing is active until you confirm.`;
   });
 }
 

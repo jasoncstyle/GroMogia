@@ -74,9 +74,19 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Saving a website address still does not read pages. Find pages lists what GroovGro can see. Review reads only checked pages. The live site is not changed. Drafts stay inactive until confirm.
 
+### 7. Persist Goal progress from connected data
+
+**Reason:** Live counts on read are not a history. Reviews and owners need a stored number they can compare later.
+
+**Affected:** `growth_goals.progress_recorded_at`, `goal_progress_snapshots` (`drizzle/0021_v2_goal_progress.sql`), Goals screen, Review connected data.
+
+**Migration risk:** Additive column and table. Existing goals keep working with no history until the owner saves progress or reviews connected data.
+
+**Current functionality:** Computable goals write `currentValue` and one snapshot per day from connected leads, bookings, and payments. Manual Current updates write a hand-saved snapshot. GroovGro does not execute marketing.
+
 ## BUILD NEXT (after this slice is tested)
 
-- Persist computed Goal progress onto stored `currentValue` when you want a historical series
+- Growth Director coordination, still approval-first. Do not start it in this slice.
 
 ## DESIGN FOR LATER
 
@@ -147,6 +157,7 @@ Organization
   ├─ Offers
   │    └─ Availability constraints (optional)
   ├─ Growth Goals (optional Offer)
+  │    ├─ Progress snapshots (one stored number per day)
   │    ├─ Growth Plans (versioned)
   │    ├─ Decision records
   │    └─ Growth Actions (proposed only)
@@ -156,7 +167,7 @@ Organization
 ## Updated phased roadmap (practical)
 
 1. **Foundation entities and UI.** Done.
-2. **Connect live progress** — goals read leads, customers, payments. Done.
+2. **Connect live progress** — goals read leads, customers, payments. Done. Stored snapshots added in this slice.
 3. **Reviews** — weekly / monthly summaries, including no-change. Done in this slice.
 4. **Intelligence on goals** — specialists read, analyze, and recommend, including no-change. Done in this slice.
 5. **Specialist work with Goal linkage** — SEO and other connected modules recommend; email and ads stay disconnected. Done for recommend-only.

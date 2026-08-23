@@ -965,6 +965,7 @@ export const growthGoals = pgTable(
     targetValue: integer("target_value"),
     baselineValue: integer("baseline_value"),
     currentValue: integer("current_value").notNull().default(0),
+    progressRecordedAt: timestamp("progress_recorded_at", { withTimezone: true }),
     unit: text("unit").notNull().default(""),
     offerId: uuid("offer_id").references(() => offers.id, { onDelete: "set null" }),
     customerSegment: text("customer_segment").notNull().default(""),
@@ -986,6 +987,36 @@ export const growthGoals = pgTable(
   (table) => [
     index("growth_goals_org_idx").on(table.organizationId),
     index("growth_goals_offer_idx").on(table.offerId),
+  ],
+);
+
+export const goalProgressSnapshots = pgTable(
+  "goal_progress_snapshots",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    goalId: uuid("goal_id")
+      .notNull()
+      .references(() => growthGoals.id, { onDelete: "cascade" }),
+    value: integer("value").notNull(),
+    note: text("note").notNull().default(""),
+    source: text("source").notNull().default("connected"),
+    recordedOn: text("recorded_on").notNull(),
+    recordedAt: timestamp("recorded_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("goal_progress_snapshots_goal_day_source_idx").on(
+      table.goalId,
+      table.recordedOn,
+      table.source,
+    ),
+    index("goal_progress_snapshots_org_idx").on(table.organizationId),
+    index("goal_progress_snapshots_goal_idx").on(table.goalId),
   ],
 );
 

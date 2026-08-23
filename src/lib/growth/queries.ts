@@ -9,6 +9,7 @@ import {
   decisionRecords,
   events,
   evidencePolicies,
+  goalProgressSnapshots,
   growthActions,
   growthGoals,
   growthPlans,
@@ -19,7 +20,7 @@ import {
   payments,
   seoAudits,
 } from "@/lib/db/schema";
-import { liveGoalProgress } from "@/lib/growth/progress";
+import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { generateGrowthReview } from "@/lib/growth/review";
 import {
   buildSpecialistReports,
@@ -47,6 +48,7 @@ export async function getGrowthSnapshot(organizationId: string) {
     bookingRows,
     paymentRows,
     leadRows,
+    snapshotRows,
   ] = await Promise.all([
     db
       .select()
@@ -101,37 +103,27 @@ export async function getGrowthSnapshot(organizationId: string) {
     db.select().from(bookings).where(eq(bookings.organizationId, organizationId)),
     db.select().from(payments).where(eq(payments.organizationId, organizationId)),
     db.select().from(leadRecords).where(eq(leadRecords.organizationId, organizationId)),
+    db
+      .select()
+      .from(goalProgressSnapshots)
+      .where(eq(goalProgressSnapshots.organizationId, organizationId))
+      .orderBy(desc(goalProgressSnapshots.recordedAt)),
   ]);
 
-  const bookingOfferById = new Map(
-    bookingRows.map((booking) => [booking.id, booking.offerId]),
-  );
-  const facts = {
+  const facts = connectedProgressFacts({
     now: new Date(),
-    leads: leadRows.map((lead) => ({
-      createdAt: lead.createdAt,
-      offerId: lead.offerId,
-    })),
-    bookings: bookingRows.map((booking) => ({
-      createdAt: booking.createdAt,
-      offerId: booking.offerId,
-      eventId: booking.eventId,
-      status: booking.status,
-    })),
-    payments: paymentRows.map((payment) => ({
-      createdAt: payment.createdAt,
-      amountCents: payment.amountCents,
-      kind: payment.kind,
-      offerId: bookingOfferById.get(payment.bookingId ?? "") ?? null,
-    })),
-    events: eventRows.map((event) => ({
-      id: event.id,
-      offerId: event.offerId,
-      startsAt: event.startsAt,
-      capacity: event.capacity,
-      status: event.status,
-    })),
-  };
+    leads: leadRows,
+    bookings: bookingRows,
+    payments: paymentRows,
+    events: eventRows,
+  });
+
+  const historyByGoal = new Map<string, (typeof snapshotRows)[number][]>();
+  for (const row of snapshotRows) {
+    const list = historyByGoal.get(row.goalId) ?? [];
+    if (list.length < 8) list.push(row);
+    historyByGoal.set(row.goalId, list);
+  }
 
   const goals = goalRows.map((goal) => {
     const live = liveGoalProgress(goal, facts);
@@ -143,6 +135,7 @@ export async function getGrowthSnapshot(organizationId: string) {
       progressPercent: live.computable
         ? live.progressPercent
         : goalProgressPercent(goal.currentValue, goal.targetValue),
+      progressHistory: historyByGoal.get(goal.id) ?? [],
     };
   });
 

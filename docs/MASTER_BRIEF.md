@@ -77,7 +77,7 @@ Availability is optional and generalized: inventory, capacity, schedule, resourc
 
 ## 7. Growth Goals, Plans, Actions, and Decision History
 
-Goals are first-class measurable outcomes. Plans are versioned strategies for a Goal. Do not overwrite meaningful historical strategy.
+Goals are first-class measurable outcomes. Plans are versioned strategies for a Goal. Do not overwrite meaningful historical strategy. Store computed Goal progress when connected data can measure it, so later reviews can compare a history instead of only a live count.
 
 Decision History records what GroovGro decided and why. Audit History records what changed. Both are required.
 
