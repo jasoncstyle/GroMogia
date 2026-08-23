@@ -25,9 +25,8 @@ import {
 import { assertSameOrganization } from "@/lib/db/tenant";
 import { discoverFromConnectedData, normalizeOfferKey } from "@/lib/growth/discover";
 import {
-  extractWebsitePage,
+  crawlConnectedWebsite,
   isGenericWebsiteLabel,
-  sameOriginPageUrls,
   type WebsitePageExtract,
 } from "@/lib/growth/website-discover";
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
@@ -681,31 +680,9 @@ async function loadWebsiteDiscoveryPages(
   if (publicUrl && !home) {
     note = "The saved website address is not a public page GroovGro can open.";
   } else if (home) {
-    const fetched = await fetchPublicText(home.toString());
-    if (fetched.ok && fetched.body) {
-      pages.push({
-        ...extractWebsitePage(home.toString(), fetched.body, "connected_website"),
-        isHome: true,
-      });
-      const extras = sameOriginPageUrls(fetched.body, home.toString(), 6);
-      const extraPages = await Promise.all(
-        extras.map(async (url) => {
-          const page = await fetchPublicText(url);
-          if (!page.ok || !page.body) return null;
-          return {
-            ...extractWebsitePage(url, page.body, "connected_website"),
-            isHome: false,
-          };
-        }),
-      );
-      for (const extra of extraPages) {
-        if (extra) pages.push(extra);
-      }
-      note = `Read ${pages.length} page${pages.length === 1 ? "" : "s"} on the connected website. The website was not changed.`;
-    } else {
-      note =
-        "GroovGro could not download the connected homepage. The address is saved, but the pages were not read.";
-    }
+    const crawled = await crawlConnectedWebsite(home.toString(), fetchPublicText);
+    pages.push(...crawled.pages);
+    note = crawled.note;
   }
 
   const builderPages = await listBuilderPages(organizationId);
