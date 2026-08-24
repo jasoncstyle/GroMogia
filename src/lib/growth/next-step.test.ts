@@ -1620,4 +1620,14 @@ describe("coordinated next step", () => {
     assert.match(actions, /href !== "\/app\/next-step"/);
     assert.match(workButtons, /Open Next step/);
   });
+
+  it("puts the growth review schedule on Growth review instead of sending the owner to Goals", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/growth-review/page.tsx"),
+      "utf8",
+    );
+    assert.match(page, /GrowthSettingsForm/);
+    assert.doesNotMatch(page, /Change the schedule/);
+    assert.doesNotMatch(page, /href="\/app\/goals"/);
+  });
 });
