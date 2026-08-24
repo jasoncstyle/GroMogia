@@ -118,7 +118,7 @@ export default async function GoalsPage() {
               <Link href="/app">Read the path so far</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
-              <Link href="/app/next-step">Open next step</Link>
+              <Link href="/app/next-step">Open Next step</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/app/growth-review">Open growth review</Link>

@@ -56,7 +56,7 @@ describe("coordinated next step", () => {
       reports: buildSpecialistReports(facts({ inferredDraftCount: 2, openLeadCount: 4 })),
       waitingActions: [],
     });
-    assert.equal(step.primary.href, "/app/business");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
     assert.equal(step.primary.classification, "operational");
     assert.equal(step.executeAllowed, false);
@@ -128,6 +128,7 @@ describe("coordinated next step", () => {
       waitingActions: [],
     });
     assert.equal(step.primary.kind, "no_change_yet");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.primary.source, "review");
     assert.match(step.primary.body, /will not start ads/);
   });
@@ -161,7 +162,7 @@ describe("coordinated next step", () => {
       waitingActions: [],
       openWorkCount: 2,
     });
-    assert.equal(step.primary.href, "/app/work");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.primary.source, "owner_work");
     assert.equal(step.primary.title, "Do the work you already approved");
     assert.match(step.primary.body, /will not run/);
@@ -204,6 +205,7 @@ describe("coordinated next step", () => {
       ],
     });
     assert.equal(step.primary.title, "Check what changed");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.primary.source, "learning");
     assert.equal(step.uncheckedWork.length, 1);
     assert.equal(step.uncheckedWork[0]?.id, "w1");
@@ -241,7 +243,7 @@ describe("coordinated next step", () => {
       waitingActions: [],
       openWorkCount: 2,
     });
-    assert.equal(step.primary.href, "/app/business");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.primary.source, "drafts");
   });
 
@@ -288,7 +290,7 @@ describe("coordinated next step", () => {
       activateGoalTitle: "Next: More people get in touch",
     });
     assert.equal(step.primary.source, "drafts");
-    assert.equal(step.primary.href, "/app/business");
+    assert.equal(step.primary.href, "/app/next-step");
   });
 
   it("asks the owner to draft a plan for an active Goal after moving on", () => {
@@ -554,6 +556,7 @@ describe("coordinated next step", () => {
       websiteRead: false,
     });
     assert.equal(step.primary.title, "Review the connected website");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.primary.source, "website");
     assert.match(step.primary.body, /Find pages here/);
     assert.match(step.primary.body, /will not change the live site/);
@@ -1663,5 +1666,21 @@ describe("coordinated next step", () => {
       const page = readFileSync(join(process.cwd(), file), "utf8");
       assert.match(page, /OpenNextStepLink/, file);
     }
+  });
+
+  it("keeps confirm drafts, review site, owner work, and wait on Next step", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/lib/growth/next-step.ts"),
+      "utf8",
+    );
+    assert.doesNotMatch(source, /href: "\/app\/business"/);
+    assert.doesNotMatch(source, /href: "\/app\/website"/);
+    assert.doesNotMatch(source, /href: "\/app\/work"/);
+    assert.doesNotMatch(source, /href: "\/app\/growth-review"/);
+    const goals = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/goals/page.tsx"),
+      "utf8",
+    );
+    assert.match(goals, /Open Next step/);
   });
 });

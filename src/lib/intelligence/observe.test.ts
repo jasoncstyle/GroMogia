@@ -118,4 +118,16 @@ describe("intelligence observe", () => {
       true,
     );
   });
+
+  it("sends website and Stripe connect observations to Next step", () => {
+    const brief = buildIntelligenceBrief(
+      facts({ websiteConnected: false, stripeConnected: false }),
+    );
+    const website = brief.observations.find((item) => item.title === "Website not connected");
+    const stripe = brief.observations.find(
+      (item) => item.title === "Stripe is not marked connected",
+    );
+    assert.equal(website?.href, "/app/next-step");
+    assert.equal(stripe?.href, "/app/next-step");
+  });
 });

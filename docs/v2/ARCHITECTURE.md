@@ -622,7 +622,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Those pages have an outline Open Next step button. GroovGro does not execute.
 
-### 62. Remaining owner pages offer Next step (this slice)
+### 62. Remaining owner pages offer Next step
 
 **Reason:** Growth review, Intelligence, Decisions, Settings, Brand, Team, Media, Integrations, Marketing, Analytics, Notifications, and Audit still had no way back to Next step if the owner landed there. Dashboard, Your work, Goals, and Next step already name Next step. The website builder stays paused.
 
@@ -631,6 +631,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Those pages have an outline Open Next step button. GroovGro does not execute. The website builder is unchanged.
+
+### 63. Confirm drafts, review site, owner work, and wait stay on Next step (this slice)
+
+**Reason:** The coordinator still named Business, Website, Your work, or Growth review for loops whose buttons already live on Next step. Intelligence website and Stripe connect observations still opened those module pages.
+
+**Affected:** Next step coordinator, Intelligence observations, Goals label.
+
+**Migration risk:** None.
+
+**Current functionality:** Confirm drafts, review the unread site, do approved work, check what changed, and save a wait all name Next step. Intelligence website and Stripe connect observations open Next step. Matching charges still names Bookings. Goal and plan work still names Goals. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -685,7 +695,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **What changed and next-Goal copy name Next step is parked.** Read the history and review a drafted next Goal on Next step. SEO Connect website opens Next step. Do not start marketing.
 - **Dashboard Connect website opens Next step is parked.** The outline Connect website button opens Next step. Do not move the live site.
 - **Owner module pages offer Next step is parked.** Website, Leads, Bookings, SEO, Brand voice, Business, Events, and Offers have Open Next step. Do not execute.
-- **Remaining owner pages offer Next step (this slice).** Growth review, Intelligence, Decisions, Settings, Brand, Team, Media, Integrations, Marketing, Analytics, Notifications, and Audit have Open Next step. Do not execute.
+- **Remaining owner pages offer Next step is parked.** Growth review, Intelligence, Decisions, Settings, Brand, Team, Media, Integrations, Marketing, Analytics, Notifications, and Audit have Open Next step. Do not execute.
+- **Confirm drafts, review site, owner work, and wait stay on Next step (this slice).** Those coordinator loops name Next step. Intelligence website and Stripe connect observations open Next step. Matching charges still names Bookings. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -820,7 +831,8 @@ Organization
 54. **What changed and next-Goal copy name Next step** — read the history and review a drafted next Goal on Next step; SEO Connect website opens Next step. Done.
 55. **Dashboard Connect website opens Next step** — the outline Connect website button opens Next step. Done.
 56. **Owner module pages offer Next step** — Website, Leads, Bookings, SEO, Brand voice, Business, Events, and Offers have Open Next step. Done.
-57. **Remaining owner pages offer Next step** — Growth review, Intelligence, Decisions, Settings, Brand, Team, Media, Integrations, Marketing, Analytics, Notifications, and Audit have Open Next step. This slice.
-58. **Guarded automation** — only after the above is trusted.
+57. **Remaining owner pages offer Next step** — Growth review, Intelligence, Decisions, Settings, Brand, Team, Media, Integrations, Marketing, Analytics, Notifications, and Audit have Open Next step. Done.
+58. **Confirm drafts, review site, owner work, and wait stay on Next step** — those coordinator loops name Next step; Intelligence website and Stripe connect observations open Next step. This slice.
+59. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -73,7 +73,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Stripe is not marked connected",
       body: "This workspace is not connected to Stripe yet, so payments will not show here. Do not create a new Stripe account for GroovGro.",
       evidence: ["integration_connections.stripe missing"],
-      href: "/app/commerce",
+      href: "/app/next-step",
     });
   }
 
@@ -119,7 +119,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Website not connected",
       body: "No existing website is connected, so visits and campaign clicks cannot be recorded.",
       evidence: ["websites missing"],
-      href: "/app/website",
+      href: "/app/next-step",
     });
   }
 
