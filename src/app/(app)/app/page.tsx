@@ -60,13 +60,13 @@ export default async function DashboardPage() {
   const attention = missing.length
     ? `Connect ${missing.join(" and ")} so people can sign in and organizations can be stored.`
     : inferredCount > 0
-      ? `${inferredCount} suggested offer${inferredCount === 1 ? "" : "s or goals"} waiting for you to confirm or reject.`
+      ? `${inferredCount} suggested offer${inferredCount === 1 ? "" : "s or goals"} waiting. Open Next step to confirm or reject.`
     : snapshot && !snapshot.stripeConnected
       ? snapshot.stripeConfigured
-        ? "Stripe keys are on Vercel, but this organization has not been marked as connected. Open Bookings & payments and connect Stripe."
-        : "Stripe is not connected yet. Add test keys in Vercel, then connect Stripe so bookings become customers."
+        ? "Stripe keys are on Vercel, but this organization has not been marked as connected. Open Next step to connect so GroovGro can read a copy of payments."
+        : "Stripe is not connected yet. Open Next step after test keys are on Vercel so GroovGro can read a copy of payments."
       : snapshot && snapshot.openLeadCount > 0
-        ? `${snapshot.openLeadCount} lead${snapshot.openLeadCount === 1 ? "" : "s"} still need a next step.`
+        ? `${snapshot.openLeadCount} lead${snapshot.openLeadCount === 1 ? "" : "s"} still need a next step. Open Next step to follow up.`
         : "Brand, website, and Stripe are in a good starting place. Add an event or a lead to see the dashboard fill in.";
 
   const ownerWork = partitionOwnerWork(growth?.actions ?? []);
@@ -93,12 +93,12 @@ export default async function DashboardPage() {
   );
 
   const nextStepText = inferredCount > 0
-    ? "Open Business to confirm or reject what GroovGro drafted. Nothing becomes active until you confirm."
+    ? "Open Next step to confirm or reject what GroovGro drafted. Nothing becomes active until you confirm."
     : !snapshot?.website?.publicUrl
-    ? "Connect the existing website and paste the tracking snippet."
+    ? "Open Next step to connect the existing website and paste the tracking snippet."
     : !snapshot.stripeConnected
-      ? "Connect Stripe and sync recent test payments."
-      : "Review connected data on Business if you have not yet, then keep the public lead form in use.";
+      ? "Open Next step to connect so GroovGro can read a copy of payments."
+      : "Open Next step if GroovGro names something to do. GroovGro will not start marketing.";
 
   const statusAlerts = buildStatusAlerts({
     signedIn: Boolean(session.email),
@@ -191,7 +191,7 @@ export default async function DashboardPage() {
                 ]
                   .filter(Boolean)
                   .join(" ")
-              : "No active Growth Goal yet. Open Goals and write the first measurable outcome."
+              : "No active Growth Goal yet. Open Next step or Goals to write the first measurable outcome."
           }
         />
         <QuestionCard title="How are we doing?" body={happening} />
@@ -271,7 +271,7 @@ export default async function DashboardPage() {
 
       <div className="flex flex-wrap gap-2">
         {isModuleEnabled(session.enabledModules, "website_connect") ? (
-          <Button asChild>
+          <Button asChild variant="outline">
             <Link href="/app/website">Connect website</Link>
           </Button>
         ) : null}

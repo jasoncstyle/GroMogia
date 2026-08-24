@@ -1576,6 +1576,14 @@ describe("coordinated next step", () => {
     assert.match(source, /Propose the first actions on Next step/);
     assert.match(source, /Open Next step to do it/);
     assert.doesNotMatch(source, /Propose the first actions there/);
+    assert.match(source, /Open Next step to connect so GroovGro can read a copy of payments/);
+    assert.match(source, /Open Next step to confirm or reject what GroovGro drafted/);
+    assert.doesNotMatch(source, /Open Bookings & payments and connect Stripe/);
+    assert.doesNotMatch(source, /Open Business to confirm or reject/);
+    assert.match(
+      source,
+      /website_connect[\s\S]*?<Button asChild variant="outline">\s*<Link href="\/app\/website">Connect website<\/Link>/,
+    );
     assert.match(
       source,
       /growth_next[\s\S]*?<Button asChild>\s*<Link href="\/app\/next-step">Next step<\/Link>/,
