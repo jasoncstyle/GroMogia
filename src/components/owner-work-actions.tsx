@@ -14,16 +14,22 @@ export function OwnerWorkButtons({
   actionId,
   href,
   canUpdate,
+  showOpenPage = true,
 }: {
   actionId: string
   href: string
   canUpdate: boolean
+  showOpenPage?: boolean
 }) {
   return (
     <div className="flex flex-wrap gap-2">
-      <Button asChild>
-        <Link href={href}>Open the page</Link>
-      </Button>
+      {showOpenPage ? (
+        <Button asChild>
+          <Link href={href}>
+            {href === "/app/next-step" ? "Open Next step" : "Open the page"}
+          </Link>
+        </Button>
+      ) : null}
       {canUpdate ? (
         <>
           <SaveForm

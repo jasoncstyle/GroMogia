@@ -92,6 +92,19 @@ describe("module catalog", () => {
     );
   });
 
+  it("puts Next step first after Dashboard in the signed-in nav", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/components/app-shell.tsx"),
+      "utf8",
+    );
+    assert.match(
+      source,
+      /label="Dashboard"[\s\S]*\{nextStep \?[\s\S]*work\.map/,
+    );
+    assert.match(source, /growRest/);
+    assert.doesNotMatch(source, /\{grow\.map/);
+  });
+
   it("shows Your work in grow nav independently of the website builder", () => {
     const enabled = ["growth_work", "growth_goals"];
     assert.equal(isModuleEnabled(enabled, "growth_work"), true);
@@ -133,5 +146,17 @@ describe("module catalog", () => {
     assert.match(source, /Menu/);
     assert.match(source, /md:hidden/);
     assert.match(source, /app-mobile-menu/);
+  });
+
+  it("puts a Next step button in the phone header", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/components/app-shell.tsx"),
+      "utf8",
+    );
+    assert.match(source, /isModuleEnabled\(session.enabledModules, "growth_next"\)/);
+    assert.match(
+      source,
+      /aria-controls="app-mobile-menu"[\s\S]*href="\/app\/next-step">Next step/,
+    );
   });
 });

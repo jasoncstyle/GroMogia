@@ -1,12 +1,13 @@
 import { desc, eq } from "drizzle-orm";
 
-import { createEvent } from "@/lib/actions/events";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { events } from "@/lib/db/schema";
 import { getGrowthLinkOptions } from "@/lib/growth/queries";
 import { formatMoney } from "@/lib/money";
-import { SaveButton, SaveForm } from "@/components/save-form";
+import { EventCreateForm } from "@/components/event-create-form";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
+import { hasPermission } from "@/lib/permissions";
 import {
   Card,
   CardContent,
@@ -14,9 +15,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -25,9 +23,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-const selectClassName =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm";
 
 export default async function EventsPage() {
   const session = await getAppSession();
@@ -64,89 +59,11 @@ export default async function EventsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SaveForm
-            action={createEvent}
-            successMessage="Event saved"
-            className="grid gap-4 md:grid-cols-2"
-          >
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="title">Title</Label>
-              <Input id="title" name="title" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="eventType">Type</Label>
-              <Input id="eventType" name="eventType" placeholder="class, workshop, appointment" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input id="location" name="location" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="startsAt">Starts</Label>
-              <Input id="startsAt" name="startsAt" type="datetime-local" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="endsAt">Ends</Label>
-              <Input id="endsAt" name="endsAt" type="datetime-local" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="capacity">Capacity</Label>
-              <Input id="capacity" name="capacity" type="number" min="0" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="price">Price</Label>
-              <Input id="price" name="price" placeholder="0.00" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="visibility">Visibility</Label>
-              <select id="visibility" name="visibility" className={selectClassName} defaultValue="public">
-                <option value="public">Public</option>
-                <option value="private">Private</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <select id="status" name="status" className={selectClassName} defaultValue="draft">
-                <option value="draft">Draft</option>
-                <option value="scheduled">Scheduled</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="offerId">Related offer</Label>
-              <select id="offerId" name="offerId" className={selectClassName} defaultValue="">
-                <option value="">None</option>
-                {links.offers.map((offer) => (
-                  <option key={offer.id} value={offer.id}>
-                    {offer.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="goalId">Related goal</Label>
-              <select id="goalId" name="goalId" className={selectClassName} defaultValue="">
-                <option value="">None</option>
-                {links.goals.map((goal) => (
-                  <option key={goal.id} value={goal.id}>
-                    {goal.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="registrationUrl">Registration or booking link</Label>
-              <Input id="registrationUrl" name="registrationUrl" placeholder="https://" />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" name="description" rows={3} />
-            </div>
-            <SaveButton type="submit" disabled={!session.organizationId}>
-              Save event
-            </SaveButton>
-          </SaveForm>
+          <EventCreateForm
+            offers={links.offers}
+            goals={links.goals}
+            disabled={!hasPermission(session.permissions, "manage_events")}
+          />
         </CardContent>
       </Card>
 
@@ -197,6 +114,8 @@ export default async function EventsPage() {
           )}
         </CardContent>
       </Card>
+
+      <OpenNextStepLink />
     </div>
   );
 }

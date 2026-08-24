@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { eq } from "drizzle-orm";
 
-import { updateBusinessBrain } from "@/lib/actions/growth";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
-import { websiteDiscoveredPages, websites } from "@/lib/db/schema";
+import { websites } from "@/lib/db/schema";
 import { missingFoundationServices } from "@/lib/env";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import {
   buildStatusAlerts,
   websiteWasRead,
 } from "@/lib/growth/status-alerts";
-import { commaTextFromList, draftToggleTitle } from "@/lib/growth/types";
+import { draftToggleTitle } from "@/lib/growth/types";
+import { BusinessBrainForm } from "@/components/business-brain-form";
 import { FoldableSample } from "@/components/foldable-sample";
 import { StatusAlertList } from "@/components/status-alert";
 import {
@@ -19,8 +19,7 @@ import {
   InferredOfferDraft,
   ReviewConnectedDataButton,
 } from "@/components/growth-review";
-import { SaveButton, SaveForm } from "@/components/save-form";
-import { WebsitePageChecklist } from "@/components/website-page-checklist";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -29,17 +28,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-
-const selectClassName =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm";
 
 export default async function BusinessBrainPage() {
   const session = await getAppSession();
   const db = getDb();
-  const [snapshot, websiteRows, discoveredRows] = await Promise.all([
+  const [snapshot, websiteRows] = await Promise.all([
     session.organizationId
       ? getGrowthSnapshot(session.organizationId)
       : Promise.resolve(null),
@@ -49,12 +42,6 @@ export default async function BusinessBrainPage() {
           .from(websites)
           .where(eq(websites.organizationId, session.organizationId))
           .limit(1)
-      : Promise.resolve([]),
-    db && session.organizationId
-      ? db
-          .select()
-          .from(websiteDiscoveredPages)
-          .where(eq(websiteDiscoveredPages.organizationId, session.organizationId))
       : Promise.resolve([]),
   ]);
   const brain = snapshot?.brain;
@@ -88,38 +75,38 @@ export default async function BusinessBrainPage() {
         <CardHeader>
           <CardTitle>Review connected data</CardTitle>
           <CardDescription>
-            Saving a website address is not enough. Find pages, check the
-            important ones, then click Review connected data so GroovGro can
-            read events, bookings, payments, and those checked pages. Drafts
-            stay inactive until you confirm. It will not guess an industry,
-            change the website, or start marketing.
+            Saving a website address is not enough. Find pages and check the
+            important ones on Next step, then click Review connected data so
+            GroovGro can read events, bookings, payments, and those checked
+            pages. Confirm or reject suggested drafts on Next step. It will
+            not guess an industry, change the website, or start marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {websiteRows[0]?.publicUrl ? (
-            <WebsitePageChecklist
-              pages={discoveredRows}
-              disabled={!session.organizationId}
-            />
+            <p className="text-sm text-muted-foreground">
+              Find pages and check the important ones on Next step, then
+              review here. GroovGro will not change the live site.
+            </p>
           ) : (
             <p className="text-sm text-muted-foreground">
-              Save a website address on Website first. Then you can find pages
-              here.
+              Save a website address on Next step first. Then find pages
+              there.
             </p>
           )}
           {brain?.inferredSummary ? (
             <p className="text-sm text-muted-foreground">{brain.inferredSummary}</p>
           ) : (
             <p className="text-sm text-muted-foreground">
-              No review yet. Check the pages GroovGro should read, then click
-              the button. Connecting the address does not do that by itself.
+              No review yet. Find pages on Next step, then click the button
+              here. Connecting the address does not do that by itself.
             </p>
           )}
           <ReviewConnectedDataButton disabled={!session.organizationId} />
           {(snapshot?.inferredOffers.length ?? 0) > 0 ? (
             <FoldableSample
               title={draftToggleTitle("offer", snapshot?.inferredOffers.length ?? 0)}
-              subtitle="Open the list, then open each name to read it. Drafts stay inactive."
+              subtitle="Open the list, then open each name to read it. Confirm or reject on Next step."
             >
               {snapshot?.inferredOffers.map((offer) => (
                 <InferredOfferDraft key={offer.id} offer={offer} />
@@ -129,7 +116,7 @@ export default async function BusinessBrainPage() {
           {(snapshot?.inferredGoals.length ?? 0) > 0 ? (
             <FoldableSample
               title={draftToggleTitle("goal", snapshot?.inferredGoals.length ?? 0)}
-              subtitle="Open the list, then open each name to read it. Drafts stay inactive."
+              subtitle="Open the list, then open each name to read it. Confirm or reject on Next step."
             >
               {snapshot?.inferredGoals.map((goal) => (
                 <InferredGoalDraft key={goal.id} goal={goal} />
@@ -170,91 +157,10 @@ export default async function BusinessBrainPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SaveForm
-            action={updateBusinessBrain}
-            successMessage="Business saved"
-            className="grid gap-4 md:grid-cols-2"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="industry">Industry</Label>
-              <Input
-                id="industry"
-                name="industry"
-                defaultValue={brain?.industry ?? ""}
-                placeholder="What kind of business is this?"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="businessModel">Business model</Label>
-              <Input
-                id="businessModel"
-                name="businessModel"
-                defaultValue={brain?.businessModel ?? ""}
-                placeholder="How it makes money or creates value"
-              />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="locations">Locations</Label>
-              <Input
-                id="locations"
-                name="locations"
-                defaultValue={commaTextFromList(brain?.locations)}
-                placeholder="Separate with commas"
-              />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="serviceAreas">Service areas</Label>
-              <Input
-                id="serviceAreas"
-                name="serviceAreas"
-                defaultValue={commaTextFromList(brain?.serviceAreas)}
-                placeholder="Where customers come from"
-              />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="operatingHours">Operating hours</Label>
-              <Textarea
-                id="operatingHours"
-                name="operatingHours"
-                rows={3}
-                defaultValue={brain?.operatingHours ?? ""}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="seasonality">Seasonality</Label>
-              <Input
-                id="seasonality"
-                name="seasonality"
-                defaultValue={brain?.seasonality ?? ""}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="discoveryStatus">How sure is this?</Label>
-              <select
-                id="discoveryStatus"
-                name="discoveryStatus"
-                className={selectClassName}
-                defaultValue={brain?.discoveryStatus ?? "not_started"}
-              >
-                <option value="not_started">Not started</option>
-                <option value="inferred">Inferred — still confirm</option>
-                <option value="confirmed">Confirmed by the owner</option>
-              </select>
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="notes">Notes and constraints</Label>
-              <Textarea
-                id="notes"
-                name="notes"
-                rows={4}
-                defaultValue={brain?.notes ?? ""}
-                placeholder="Budget, staffing, compliance, or anything GroovGro should not ignore"
-              />
-            </div>
-            <SaveButton type="submit" disabled={!session.organizationId}>
-              Save business
-            </SaveButton>
-          </SaveForm>
+          <BusinessBrainForm
+            brain={brain}
+            disabled={!session.organizationId}
+          />
         </CardContent>
       </Card>
 
@@ -272,9 +178,11 @@ export default async function BusinessBrainPage() {
         <Stat
           label="Active goals"
           value={String(snapshot?.activeGoals.length ?? 0)}
-          href="/app/goals"
+          href="/app/next-step"
         />
       </div>
+
+      <OpenNextStepLink />
     </div>
   );
 }

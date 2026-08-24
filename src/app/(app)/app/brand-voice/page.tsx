@@ -1,17 +1,11 @@
-import {
-  addBrandVoiceExample,
-  generateBrandVoiceDraft,
-  removeBrandVoiceExample,
-  saveBrandVoiceProfile,
-} from "@/lib/actions/brand-voice";
+import { removeBrandVoiceExample } from "@/lib/actions/brand-voice";
 import { getAppSession } from "@/lib/auth/session";
 import { purposeLabel } from "@/lib/brand-voice/draft";
-import {
-  VOICE_AUDIENCE_MAX,
-  VOICE_GUIDELINE_MAX,
-  VOICE_TONE_MAX,
-} from "@/lib/brand-voice/limits";
 import { getBrandVoicePageData, readDraftOutput } from "@/lib/phase5/queries";
+import { BrandVoiceDraftForm } from "@/components/brand-voice-draft-form";
+import { BrandVoiceExampleForm } from "@/components/brand-voice-example-form";
+import { BrandVoiceProfileForm } from "@/components/brand-voice-profile-form";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import {
@@ -21,12 +15,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-
-const selectClassName =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm";
 
 export default async function BrandVoicePage() {
   const session = await getAppSession();
@@ -62,63 +50,7 @@ export default async function BrandVoicePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <SaveForm
-                action={saveBrandVoiceProfile}
-                successMessage="Brand voice saved"
-                className="grid gap-4 md:grid-cols-2"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="tone">Tone</Label>
-                  <Textarea
-                    id="tone"
-                    name="tone"
-                    rows={3}
-                    maxLength={VOICE_TONE_MAX}
-                    defaultValue={data.profile?.tone ?? ""}
-                    placeholder="warm, direct, practical"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Up to {VOICE_TONE_MAX} characters.
-                  </p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="audience">Who you are speaking to</Label>
-                  <Textarea
-                    id="audience"
-                    name="audience"
-                    rows={3}
-                    maxLength={VOICE_AUDIENCE_MAX}
-                    defaultValue={data.profile?.audience ?? ""}
-                    placeholder="first-time guests, returning customers"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Up to {VOICE_AUDIENCE_MAX} characters.
-                  </p>
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="doSay">Do say</Label>
-                  <Textarea
-                    id="doSay"
-                    name="doSay"
-                    rows={4}
-                    maxLength={VOICE_GUIDELINE_MAX}
-                    defaultValue={data.profile?.doSay ?? ""}
-                  />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="dontSay">Do not say</Label>
-                  <Textarea
-                    id="dontSay"
-                    name="dontSay"
-                    rows={4}
-                    maxLength={VOICE_GUIDELINE_MAX}
-                    defaultValue={data.profile?.dontSay ?? ""}
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <SaveButton>Save voice</SaveButton>
-                </div>
-              </SaveForm>
+              <BrandVoiceProfileForm profile={data.profile} />
             </CardContent>
           </Card>
 
@@ -132,34 +64,7 @@ export default async function BrandVoicePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <SaveForm
-                  action={addBrandVoiceExample}
-                  successMessage="Example saved"
-                  resetOnSuccess
-                  className="space-y-3"
-                >
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Short name</Label>
-                    <Input id="title" name="title" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="direction">This example is</Label>
-                    <select
-                      id="direction"
-                      name="direction"
-                      className={selectClassName}
-                      defaultValue="more_like_this"
-                    >
-                      <option value="more_like_this">More like this</option>
-                      <option value="less_like_this">Less like this</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="body">The writing</Label>
-                    <Textarea id="body" name="body" rows={5} required />
-                  </div>
-                  <SaveButton>Save example</SaveButton>
-                </SaveForm>
+                <BrandVoiceExampleForm />
               </CardContent>
             </Card>
 
@@ -212,36 +117,7 @@ export default async function BrandVoicePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <SaveForm
-                action={generateBrandVoiceDraft}
-                successMessage="Draft saved in GroovGro. It was not sent or published."
-                className="space-y-3"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="purpose">Draft type</Label>
-                  <select
-                    id="purpose"
-                    name="purpose"
-                    className={selectClassName}
-                    defaultValue="website_blurb"
-                  >
-                    <option value="website_blurb">Website blurb</option>
-                    <option value="follow_up_note">Follow-up note (not sent)</option>
-                    <option value="social_post">Social post (not published)</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="topic">Topic</Label>
-                  <Textarea
-                    id="topic"
-                    name="topic"
-                    rows={3}
-                    required
-                    placeholder="What this piece should cover"
-                  />
-                </div>
-                <SaveButton pendingLabel="Drafting…">Create draft</SaveButton>
-              </SaveForm>
+              <BrandVoiceDraftForm />
 
               {data.drafts.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
@@ -275,6 +151,8 @@ export default async function BrandVoicePage() {
           </Card>
         </>
       )}
+
+      <OpenNextStepLink />
     </div>
   );
 }

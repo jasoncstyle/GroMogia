@@ -1,3 +1,5 @@
+import { OpenNextStepLink } from "@/components/open-next-step-link";
+
 export default function NotificationsPage() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4">
@@ -7,6 +9,7 @@ export default function NotificationsPage() {
         integrations, and later AI recommendations. Preferences come after the
         first real events exist.
       </p>
+      <OpenNextStepLink />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 
-import { convertLeadToCustomer, createLead, moveLead } from "@/lib/actions/crm";
+import { convertLeadToCustomer, moveLead } from "@/lib/actions/crm";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { contacts, customers, leadRecords, leadStages } from "@/lib/db/schema";
@@ -9,6 +9,8 @@ import { appUrl } from "@/lib/env";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { formatMoney } from "@/lib/money";
 import { CopyLink } from "@/components/copy-link";
+import { LeadCreateForm } from "@/components/lead-create-form";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
@@ -17,9 +19,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -120,61 +119,11 @@ export default async function CrmPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SaveForm
-            action={createLead}
-            successMessage="Lead saved"
-            className="grid gap-4 md:grid-cols-2"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="displayName">Name</Label>
-              <Input id="displayName" name="displayName" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input id="phone" name="phone" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="source">Source</Label>
-              <Input id="source" name="source" placeholder="website, phone, referral" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="estimatedValue">Estimated value (optional)</Label>
-              <Input id="estimatedValue" name="estimatedValue" placeholder="0.00" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="offerId">Related offer</Label>
-              <select id="offerId" name="offerId" className={selectClassName + " w-full"} defaultValue="">
-                <option value="">None</option>
-                {links.offers.map((offer) => (
-                  <option key={offer.id} value={offer.id}>
-                    {offer.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="goalId">Related goal</Label>
-              <select id="goalId" name="goalId" className={selectClassName + " w-full"} defaultValue="">
-                <option value="">None</option>
-                {links.goals.map((goal) => (
-                  <option key={goal.id} value={goal.id}>
-                    {goal.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="notes">Notes</Label>
-              <Textarea id="notes" name="notes" rows={3} />
-            </div>
-            <SaveButton type="submit" disabled={!organizationId}>
-              Save as new lead
-            </SaveButton>
-          </SaveForm>
+          <LeadCreateForm
+            offers={links.offers}
+            goals={links.goals}
+            disabled={!organizationId}
+          />
         </CardContent>
       </Card>
 
@@ -287,6 +236,8 @@ export default async function CrmPage() {
           )}
         </CardContent>
       </Card>
+
+      <OpenNextStepLink />
     </div>
   );
 }

@@ -88,7 +88,7 @@ Google’s menu may say **OAuth consent screen** or **Google Auth Platform**. Us
 6. If GroovGro asks you to pick a property, choose the one that matches the connected website, then click **Use this property**.
 7. You should see clicks, impressions, and top queries. That is a copy of Search Console, not a change to the website.
 
-You can also start the same connect from **Integrations** → Google.
+You can also start the same connect from **Next step** or **Integrations** → Google. After Google, GroovGro brings you back to **Next step** to pick the property if it still needs one.
 
 ## If something fails
 

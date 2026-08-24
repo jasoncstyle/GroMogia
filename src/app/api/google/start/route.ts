@@ -9,14 +9,14 @@ import {
   googleOAuthConfig,
 } from "@/modules/integrations/google-search-console";
 
-function seoRedirect(query: string) {
-  return NextResponse.redirect(`${appUrl().replace(/\/$/, "")}/app/seo?${query}`);
+function nextStepRedirect(query: string) {
+  return NextResponse.redirect(`${appUrl().replace(/\/$/, "")}/app/next-step?${query}`);
 }
 
 export async function GET() {
   const config = googleOAuthConfig();
   if (!config || !hasTokenEncryptionKey()) {
-    return seoRedirect(
+    return nextStepRedirect(
       "gsc=error&error=" +
         encodeURIComponent(
           "Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in the Vercel project, then redeploy.",
@@ -32,7 +32,7 @@ export async function GET() {
     !hasPermission(session.permissions, "manage_seo") &&
     !hasPermission(session.permissions, "manage_integrations")
   ) {
-    return seoRedirect(
+    return nextStepRedirect(
       "gsc=error&error=" +
         encodeURIComponent("You do not have permission to connect Search Console."),
     );

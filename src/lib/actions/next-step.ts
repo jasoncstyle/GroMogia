@@ -9,6 +9,7 @@ import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import { decisionRecords, growthActions } from "@/lib/db/schema";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
+import { skipsDuplicateNextStepAction } from "@/lib/growth/plan-draft";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
@@ -18,6 +19,7 @@ function revalidateNextStep() {
   revalidatePath("/app/decisions");
   revalidatePath("/app/intelligence");
   revalidatePath("/app/growth-review");
+  revalidatePath("/app/work");
 }
 
 async function requireActionEditor() {
@@ -67,7 +69,11 @@ export async function saveNextStepResponse(
       createdBy: session.userId,
     });
 
-    if (!leaveAlone && hasPermission(session.permissions, "modify_goals")) {
+    if (
+      !leaveAlone &&
+      hasPermission(session.permissions, "modify_goals") &&
+      !skipsDuplicateNextStepAction(primary.title)
+    ) {
       const already = coordinated.waitingActions.some(
         (action) =>
           action.description === primary.body &&
@@ -98,7 +104,7 @@ export async function saveNextStepResponse(
     revalidateNextStep();
     return leaveAlone
       ? "GroovGro recorded that nothing should change yet. It did not execute anything."
-      : "Next step saved. GroovGro will not execute it. Open the linked page when you are ready.";
+      : "Next step saved. GroovGro will not execute it.";
   });
 }
 

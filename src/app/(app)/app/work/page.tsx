@@ -4,7 +4,6 @@ import {
   CheckWhatChangedButton,
   OwnerWorkButtons,
 } from "@/components/owner-work-actions";
-import { WaitingActionButtons } from "@/components/next-step-actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,11 +30,7 @@ export default async function OwnerWorkPage() {
     : null;
   const work = partitionOwnerWork(snapshot?.actions ?? []);
   const canUpdate = hasPermission(session.permissions, "modify_goals");
-  const canApprove = hasPermission(session.permissions, "approve_actions");
   const canCheck = hasPermission(session.permissions, "view_decision_history");
-  const approvedPlan = snapshot?.plans.find(
-    (plan) => plan.status === "approved" || plan.status === "active",
-  );
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -52,15 +47,15 @@ export default async function OwnerWorkPage() {
         <CardHeader>
           <CardTitle>Ready for you</CardTitle>
           <CardDescription>
-            Open the page, do the work, then click I did this. GroovGro only
+            Open Next step, do the work, then click I did this. GroovGro only
             records that you did it.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {work.open.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Nothing is ready yet. Approve a proposed action on Next step
-              or Goals, or propose the first actions from an approved plan.
+              Nothing is ready yet. Open Next step to approve a proposed action
+              or propose the first actions from an approved plan.
             </p>
           ) : (
             work.open.map((action) => (
@@ -86,7 +81,7 @@ export default async function OwnerWorkPage() {
           <CardHeader>
             <CardTitle>Still waiting for your say</CardTitle>
             <CardDescription>
-              Approve these first. Approving does not run them.
+              Approve or reject these on Next step. Approving does not run them.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -96,10 +91,6 @@ export default async function OwnerWorkPage() {
                 <p className="text-muted-foreground">
                   {action.status} · {labelFor(action.risk)}
                 </p>
-                <WaitingActionButtons
-                  actionId={action.id}
-                  canApprove={canApprove}
-                />
               </div>
             ))}
           </CardContent>
@@ -140,23 +131,8 @@ export default async function OwnerWorkPage() {
       ) : null}
 
       <div className="flex flex-wrap gap-2">
-        {approvedPlan ? (
-          <Button asChild>
-            <Link href="/app/goals">Open the approved plan</Link>
-          </Button>
-        ) : (
-          <Button asChild>
-            <Link href="/app/goals">Draft or approve a plan</Link>
-          </Button>
-        )}
-        <Button asChild variant="outline">
-          <Link href="/app">The path so far</Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/app/next-step">Next step</Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/app/decisions">Decisions</Link>
+        <Button asChild>
+          <Link href="/app/next-step">Open Next step</Link>
         </Button>
       </div>
     </div>

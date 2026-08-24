@@ -1,4 +1,4 @@
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export type PlanActionRisk = "operational" | "optimization" | "strategic";
 
@@ -40,7 +40,10 @@ function isLoopingNextStep(title: string): boolean {
     text === PROPOSE_ACTIONS_STEP_TITLE ||
     text === APPROVE_ACTIONS_STEP_TITLE ||
     text === OWNER_WORK_STEP_TITLE ||
-    text === CHECK_CHANGED_STEP_TITLE
+    text === CHECK_CHANGED_STEP_TITLE ||
+    text === CONFIRM_DRAFTS_STEP_TITLE ||
+    text === CONNECT_WEBSITE_STEP_TITLE ||
+    text === REVIEW_SITE_STEP_TITLE
   );
 }
 
@@ -95,7 +98,7 @@ export function draftActionsFromApprovedPlan(
       module: "crm",
       risk: "operational",
       description: clip(
-        `Open Leads & customers and give each of the ${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"} a next step. GroovGro will not email them.`,
+        `On Next step, give each of the ${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"} a next step. GroovGro will not email them.`,
         2000,
       ),
     });
@@ -107,7 +110,7 @@ export function draftActionsFromApprovedPlan(
       module: "website",
       risk: "operational",
       description: clip(
-        "Connect the existing website and paste the tracking snippet. Do not move the live site into GroovGro.",
+        "On Next step, connect the existing website and paste the tracking snippet. Do not move the live site into GroovGro.",
         2000,
       ),
     });
@@ -119,7 +122,7 @@ export function draftActionsFromApprovedPlan(
       module: "offers",
       risk: "operational",
       description: clip(
-        "Open Business and confirm or reject the draft offers. Do not promote anything that is still a draft.",
+        "On Next step, confirm or reject the draft offers. Do not promote anything that is still a draft.",
         2000,
       ),
     });

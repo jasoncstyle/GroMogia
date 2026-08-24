@@ -1,3 +1,4 @@
+import { FOLLOW_UP_LEADS_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { formatMoney } from "@/lib/money";
 
 export type IntelligenceSource = {
@@ -72,7 +73,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Stripe is not marked connected",
       body: "This workspace is not connected to Stripe yet, so payments will not show here. Do not create a new Stripe account for GroovGro.",
       evidence: ["integration_connections.stripe missing"],
-      href: "/app/commerce",
+      href: "/app/next-step",
     });
   }
 
@@ -81,7 +82,10 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     title: "People in the workspace",
     body: `${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"}, ${facts.customerCount} customer${facts.customerCount === 1 ? "" : "s"}, and ${facts.contactCount} contact${facts.contactCount === 1 ? "" : "s"}.`,
     evidence: ["lead_records", "customers", "contacts"],
-    href: "/app/crm",
+    href:
+      facts.openLeadCount > 0 || facts.contactCount === 0
+        ? "/app/next-step"
+        : "/app/crm",
   });
 
   if (facts.showFinancials && topRevenue && topRevenue.revenueCents > 0) {
@@ -118,7 +122,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Website not connected",
       body: "No existing website is connected, so visits and campaign clicks cannot be recorded.",
       evidence: ["websites missing"],
-      href: "/app/website",
+      href: "/app/next-step",
     });
   }
 
@@ -135,10 +139,10 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   if (facts.openLeadCount > 0) {
     recommendations.push({
       kind: "recommendation",
-      title: "Follow up open leads",
-      body: "Open Leads & customers and give each open lead a next step. GroovGro will not email them for you.",
+      title: FOLLOW_UP_LEADS_STEP_TITLE,
+      body: "Give each open lead a next step on Next step. GroovGro will not email them.",
       evidence: ["open lead_records"],
-      href: "/app/crm",
+      href: "/app/next-step",
     });
   }
 
@@ -166,9 +170,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Connect the existing website",
-      body: "Paste the tracking snippet on the site you already have. Do not move the site into GroovGro.",
+      body: "Open Next step to connect the site you already have. Do not move the site into GroovGro.",
       evidence: ["websites missing"],
-      href: "/app/website",
+      href: "/app/next-step",
     });
   }
 
@@ -176,9 +180,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Connect Stripe in this workspace",
-      body: "Use the existing Stripe account. GroovGro only listens for events. It must not replace live checkout.",
+      body: "Open Next step to connect so GroovGro can read a copy of payments. Use the existing Stripe account. It must not replace live checkout.",
       evidence: ["stripe not connected"],
-      href: "/app/commerce",
+      href: "/app/next-step",
     });
   }
 
@@ -186,9 +190,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Keep recording the journey",
-      body: "Website, leads, customers, and Stripe charges are in a usable starting place. Review Marketing after the next real purchase.",
+      body: "Website, leads, customers, and Stripe charges are in a usable starting place. Open Next step. GroovGro will not start ads.",
       evidence: ["dashboard snapshot"],
-      href: "/app/marketing",
+      href: "/app/next-step",
     });
   }
 

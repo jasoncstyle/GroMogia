@@ -10,6 +10,7 @@ import { isGoogleOAuthConfigured, isStripeConfigured } from "@/lib/env";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SaveButton, SaveForm } from "@/components/save-form";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import {
   Card,
   CardDescription,
@@ -113,6 +114,8 @@ export default async function IntegrationsPage() {
           );
         })}
       </div>
+
+      <OpenNextStepLink />
     </div>
   );
 }

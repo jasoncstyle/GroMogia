@@ -5,6 +5,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ROLE_PERMISSIONS, SYSTEM_ROLES } from "@/lib/permissions";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 
 export default function TeamSettingsPage() {
   return (
@@ -30,6 +31,8 @@ export default function TeamSettingsPage() {
           </Card>
         ))}
       </div>
+
+      <OpenNextStepLink />
     </div>
   );
 }

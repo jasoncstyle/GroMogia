@@ -50,8 +50,9 @@ describe("status alerts", () => {
       topics: ["website"],
     });
     assert.equal(waiting[0]?.tone, "wait");
-    assert.match(waiting[0]?.body ?? "", /Find pages/);
-    assert.match(waiting[0]?.body ?? "", /Review connected data/);
+    assert.match(waiting[0]?.body ?? "", /find pages/i);
+    assert.match(waiting[0]?.body ?? "", /Open Next step/);
+    assert.equal(waiting[0]?.href, "/app/next-step");
 
     const ready = buildStatusAlerts({
       ...readyWorkspace,
@@ -62,6 +63,12 @@ describe("status alerts", () => {
     assert.equal(ready[0]?.tone, "ok");
     assert.equal(ready[0]?.title, "Website is connected");
     assert.match(ready[0]?.body ?? "", /was not changed/);
+    assert.equal(ready[0]?.href, undefined);
+    const alertUi = readFileSync(
+      join(process.cwd(), "src/components/status-alert.tsx"),
+      "utf8",
+    );
+    assert.match(alertUi, /Open Next step/);
   });
 
   it("does not claim tracking works until visits or clicks exist", () => {

@@ -29,6 +29,8 @@ export async function getDashboardSnapshot(organizationId: string) {
       website: null as { publicUrl: string; provider: string; trackingId: string } | null,
       stripeConnected: false,
       stripeConfigured: false,
+      stripeSynced: false,
+      stripeLastError: null as string | null,
       topChannels: [] as { channel: string; count: number }[],
     };
   }
@@ -161,6 +163,8 @@ export async function getDashboardSnapshot(organizationId: string) {
     website: website ?? null,
     stripeConnected: stripe?.status === "connected",
     stripeConfigured: Boolean(process.env.STRIPE_SECRET_KEY),
+    stripeSynced: Boolean(stripe?.lastSyncAt),
+    stripeLastError: stripe?.lastError ?? null,
     topChannels: channelRows.map((row) => ({
       ...row,
       count: Number(row.count),

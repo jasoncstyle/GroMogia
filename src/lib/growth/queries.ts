@@ -1,11 +1,16 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
 
+import { readGoogleSecret } from "@/lib/actions/search-console";
 import { getDb } from "@/lib/db";
 import {
+  aiActionLogs,
   availabilityConstraints,
   bookings,
   brandSettings,
+  brandVoiceExamples,
+  brandVoiceProfiles,
   businessBrains,
+  contacts,
   decisionRecords,
   events,
   evidencePolicies,
@@ -16,18 +21,23 @@ import {
   growthSettings,
   integrationConnections,
   leadRecords,
+  leadStages,
   offers,
   payments,
   seoAudits,
+  seoDrafts,
+  searchConsoleSnapshots,
+  websiteDiscoveredPages,
 } from "@/lib/db/schema";
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
 import { findPlanNeedingActions } from "@/lib/growth/plan-actions";
-import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal } from "@/lib/growth/plan-draft";
-import { coordinateNextStep } from "@/lib/growth/next-step";
-import { isOpenOwnerWork, needsWhatChangedCheck } from "@/lib/growth/owner-work";
+import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal, findReadableGoal, findReadableGrowthPlan } from "@/lib/growth/plan-draft";
+import { coordinateNextStep, type LearningGoal } from "@/lib/growth/next-step";
+import { isFinishedOwnerWork, isOpenOwnerWork, needsWhatChangedCheck } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
 import { generateGrowthReview } from "@/lib/growth/review";
+import { websiteWasRead } from "@/lib/growth/status-alerts";
 import {
   buildSpecialistReports,
   type SpecialistFacts,
@@ -254,6 +264,88 @@ export async function getGrowthLinkOptions(organizationId: string) {
   };
 }
 
+async function getOpenSeoDrafts(organizationId: string) {
+  const db = getDb();
+  if (!db) return [];
+  return db
+    .select({
+      id: seoDrafts.id,
+      title: seoDrafts.title,
+      proposedChange: seoDrafts.proposedChange,
+      howToApply: seoDrafts.howToApply,
+    })
+    .from(seoDrafts)
+    .where(
+      and(
+        eq(seoDrafts.organizationId, organizationId),
+        eq(seoDrafts.status, "draft"),
+        isNull(seoDrafts.builderSiteId),
+      ),
+    )
+    .orderBy(desc(seoDrafts.createdAt));
+}
+
+async function getOpenLeadsAndStages(organizationId: string) {
+  const db = getDb();
+  if (!db) return { openLeads: [], leadStages: [] as { id: string; name: string }[] };
+
+  const stages = await db
+    .select({
+      id: leadStages.id,
+      name: leadStages.name,
+      sortOrder: leadStages.sortOrder,
+      isWon: leadStages.isWon,
+      isLost: leadStages.isLost,
+    })
+    .from(leadStages)
+    .where(eq(leadStages.organizationId, organizationId))
+    .orderBy(asc(leadStages.sortOrder));
+  const openStageIds = stages
+    .filter((stage) => !stage.isWon && !stage.isLost)
+    .map((stage) => stage.id);
+  if (openStageIds.length === 0) {
+    return {
+      openLeads: [],
+      leadStages: stages.map((stage) => ({ id: stage.id, name: stage.name })),
+    };
+  }
+
+  const rows = await db
+    .select({
+      id: leadRecords.id,
+      name: contacts.displayName,
+      email: contacts.email,
+      stageId: leadStages.id,
+      stageName: leadStages.name,
+      source: leadRecords.source,
+      isWon: leadStages.isWon,
+    })
+    .from(leadRecords)
+    .innerJoin(contacts, eq(leadRecords.contactId, contacts.id))
+    .innerJoin(leadStages, eq(leadRecords.stageId, leadStages.id))
+    .where(
+      and(
+        eq(leadRecords.organizationId, organizationId),
+        inArray(leadRecords.stageId, openStageIds),
+      ),
+    )
+    .orderBy(desc(leadRecords.createdAt))
+    .limit(8);
+
+  return {
+    openLeads: rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      email: row.email ?? "",
+      stageId: row.stageId,
+      stageName: row.stageName,
+      source: row.source,
+      isWon: row.isWon,
+    })),
+    leadStages: stages.map((stage) => ({ id: stage.id, name: stage.name })),
+  };
+}
+
 async function getLatestSeoSummary(organizationId: string) {
   const db = getDb();
   if (!db) {
@@ -264,10 +356,13 @@ async function getLatestSeoSummary(organizationId: string) {
       seoWarnCount: 0,
       seoCheckedAt: null as Date | null,
       searchConsoleConnected: false,
+      searchConsoleProperty: false,
+      searchConsoleSnapshot: false,
+      searchConsoleSnapshotAt: null as Date | null,
     };
   }
 
-  const [audits, googleRows] = await Promise.all([
+  const [audits, googleRows, snapshotRows] = await Promise.all([
     db
       .select()
       .from(seoAudits)
@@ -284,10 +379,23 @@ async function getLatestSeoSummary(organizationId: string) {
         ),
       )
       .limit(1),
+    db
+      .select({
+        id: searchConsoleSnapshots.id,
+        createdAt: searchConsoleSnapshots.createdAt,
+      })
+      .from(searchConsoleSnapshots)
+      .where(eq(searchConsoleSnapshots.organizationId, organizationId))
+      .orderBy(desc(searchConsoleSnapshots.createdAt))
+      .limit(1),
   ]);
 
   const audit = audits.find((row) => !row.builderSiteId) ?? audits[0] ?? null;
   const findings = audit?.findings ?? [];
+  const searchConsoleConnected = googleRows[0]?.status === "connected";
+  const secret = searchConsoleConnected
+    ? await readGoogleSecret(organizationId)
+    : null;
 
   return {
     seoScore: audit?.score ?? null,
@@ -295,15 +403,142 @@ async function getLatestSeoSummary(organizationId: string) {
     seoFailCount: findings.filter((item) => item.severity === "fail").length,
     seoWarnCount: findings.filter((item) => item.severity === "warn").length,
     seoCheckedAt: audit?.createdAt ?? null,
-    searchConsoleConnected: googleRows[0]?.status === "connected",
+    searchConsoleConnected,
+    searchConsoleProperty: Boolean(secret?.siteUrl),
+    searchConsoleSnapshot: snapshotRows.length > 0,
+    searchConsoleSnapshotAt: snapshotRows[0]?.createdAt ?? null,
+  };
+}
+
+export async function getDiscoveredWebsitePages(organizationId: string) {
+  const db = getDb();
+  if (!db) return [];
+  return db
+    .select({
+      id: websiteDiscoveredPages.id,
+      url: websiteDiscoveredPages.url,
+      label: websiteDiscoveredPages.label,
+      pageGroup: websiteDiscoveredPages.pageGroup,
+      important: websiteDiscoveredPages.important,
+    })
+    .from(websiteDiscoveredPages)
+    .where(eq(websiteDiscoveredPages.organizationId, organizationId));
+}
+
+export async function getBrandSettingsForm(organizationId: string) {
+  const db = getDb();
+  if (!db) return null;
+  const rows = await db
+    .select({
+      businessName: brandSettings.businessName,
+      description: brandSettings.description,
+      targetCustomers: brandSettings.targetCustomers,
+    })
+    .from(brandSettings)
+    .where(eq(brandSettings.organizationId, organizationId))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+function brandSettingsAreSaved(
+  brand: { description?: string | null; targetCustomers?: string | null } | null,
+): boolean {
+  return Boolean(brand?.description?.trim() && brand?.targetCustomers?.trim());
+}
+
+export async function getBusinessBrainForm(organizationId: string) {
+  const db = getDb();
+  if (!db) return null;
+  const rows = await db
+    .select({
+      industry: businessBrains.industry,
+      businessModel: businessBrains.businessModel,
+      locations: businessBrains.locations,
+      serviceAreas: businessBrains.serviceAreas,
+      operatingHours: businessBrains.operatingHours,
+      seasonality: businessBrains.seasonality,
+      notes: businessBrains.notes,
+      discoveryStatus: businessBrains.discoveryStatus,
+    })
+    .from(businessBrains)
+    .where(eq(businessBrains.organizationId, organizationId))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+function businessBrainIsSaved(
+  brain: { industry?: string | null; businessModel?: string | null } | null,
+): boolean {
+  return Boolean(brain?.industry?.trim() && brain?.businessModel?.trim());
+}
+
+export async function getGrowthSettingsForm(organizationId: string) {
+  const db = getDb();
+  if (!db) return null;
+  const rows = await db
+    .select({
+      reviewFrequency: growthSettings.reviewFrequency,
+      reviewDay: growthSettings.reviewDay,
+      reviewTime: growthSettings.reviewTime,
+      timezone: growthSettings.timezone,
+    })
+    .from(growthSettings)
+    .where(eq(growthSettings.organizationId, organizationId))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+function growthScheduleIsSaved(
+  settings: { createdAt?: Date | null; updatedAt?: Date | null } | null,
+): boolean {
+  if (!settings?.createdAt || !settings?.updatedAt) return false;
+  return settings.updatedAt.getTime() > settings.createdAt.getTime();
+}
+
+async function getBrandVoiceFacts(organizationId: string) {
+  const db = getDb();
+  if (!db) {
+    return {
+      brandVoiceSaved: false,
+      brandVoiceExampleSaved: false,
+      brandVoiceDraftSaved: false,
+    };
+  }
+  const [profileRows, exampleRows, draftRows] = await Promise.all([
+    db
+      .select({ organizationId: brandVoiceProfiles.organizationId })
+      .from(brandVoiceProfiles)
+      .where(eq(brandVoiceProfiles.organizationId, organizationId))
+      .limit(1),
+    db
+      .select({ id: brandVoiceExamples.id })
+      .from(brandVoiceExamples)
+      .where(eq(brandVoiceExamples.organizationId, organizationId))
+      .limit(1),
+    db
+      .select({ id: aiActionLogs.id })
+      .from(aiActionLogs)
+      .where(
+        and(
+          eq(aiActionLogs.organizationId, organizationId),
+          eq(aiActionLogs.actionType, "brand_voice_draft"),
+        ),
+      )
+      .limit(1),
+  ]);
+  return {
+    brandVoiceSaved: profileRows.length > 0,
+    brandVoiceExampleSaved: exampleRows.length > 0,
+    brandVoiceDraftSaved: draftRows.length > 0,
   };
 }
 
 export async function getSpecialistReports(organizationId: string) {
-  const [snapshot, dashboard, seo] = await Promise.all([
+  const [snapshot, dashboard, seo, brandVoice] = await Promise.all([
     getGrowthSnapshot(organizationId),
     getDashboardSnapshot(organizationId),
     getLatestSeoSummary(organizationId),
+    getBrandVoiceFacts(organizationId),
   ]);
   if (!snapshot) return [];
 
@@ -328,6 +563,31 @@ export async function getSpecialistReports(organizationId: string) {
     websiteConnected: Boolean(dashboard.website?.publicUrl),
     websiteUrl: dashboard.website?.publicUrl ?? "",
     openLeadCount: dashboard.openLeadCount,
+    contactCount: dashboard.contactCount,
+    recordedVisitCount: dashboard.topChannels.reduce(
+      (total, row) => total + row.count,
+      0,
+    ),
+    brandVoiceSaved: brandVoice.brandVoiceSaved,
+    brandVoiceExampleSaved: brandVoice.brandVoiceExampleSaved,
+    brandVoiceDraftSaved: brandVoice.brandVoiceDraftSaved,
+    brandSettingsSaved: brandSettingsAreSaved(snapshot.brand),
+    businessBrainSaved: businessBrainIsSaved(snapshot.brain),
+    goalProgressNeedsSave: snapshot.goals.some(
+      (goal) =>
+        goal.status === "active" &&
+        (goal.discoveryStatus ?? "confirmed") !== "inferred" &&
+        (goal.discoveryStatus ?? "confirmed") !== "rejected" &&
+        goal.liveComputable &&
+        !goal.progressRecordedAt,
+    ),
+    stripeConfigured: dashboard.stripeConfigured,
+    stripeConnected: dashboard.stripeConnected,
+    stripeSynced: dashboard.stripeSynced,
+    growthScheduleSaved: growthScheduleIsSaved(snapshot.settings),
+    confirmedOfferCount: snapshot.offers.filter(
+      (offer) => (offer.discoveryStatus ?? "confirmed") === "confirmed",
+    ).length,
     upcomingEventCount: dashboard.upcomingEvents.length,
     evidenceSample: defaultCheck?.sample ?? {
       elapsedDays: 0,
@@ -344,9 +604,12 @@ export async function getSpecialistReports(organizationId: string) {
 }
 
 export async function getCoordinatedNextStep(organizationId: string) {
-  const [snapshot, reports] = await Promise.all([
+  const [snapshot, reports, dashboard, openSeoDrafts, pipeline] = await Promise.all([
     getGrowthSnapshot(organizationId),
     getSpecialistReports(organizationId),
+    getDashboardSnapshot(organizationId),
+    getOpenSeoDrafts(organizationId),
+    getOpenLeadsAndStages(organizationId),
   ]);
   if (!snapshot) return null;
 
@@ -360,6 +623,8 @@ export async function getCoordinatedNextStep(organizationId: string) {
     snapshot.plans,
   );
   const approve = findDraftPlanToApprove(snapshot.activeGoals, snapshot.plans);
+  const readable = findReadableGrowthPlan(snapshot.activeGoals, snapshot.plans);
+  const readableGoal = findReadableGoal(snapshot.activeGoals);
   const propose = findPlanNeedingActions(
     snapshot.activeGoals,
     snapshot.plans,
@@ -392,6 +657,24 @@ export async function getCoordinatedNextStep(organizationId: string) {
         description: action.description,
         status: action.status,
       })),
+    inferredDrafts: [
+      ...snapshot.inferredOffers.map((offer) => ({
+        id: offer.id,
+        kind: "offer" as const,
+        title: offer.name,
+        description: offer.description,
+        inferredFrom: offer.inferredFrom,
+        confidence: offer.confidence,
+      })),
+      ...snapshot.inferredGoals.map((goal) => ({
+        id: goal.id,
+        kind: "goal" as const,
+        title: goal.title,
+        description: goal.description,
+        inferredFrom: goal.inferredFrom,
+        confidence: goal.confidence,
+      })),
+    ],
     latestLearningKind: learned
       ? (learningKindFromOutcome(learned.outcome) ?? "")
       : "",
@@ -411,5 +694,102 @@ export async function getCoordinatedNextStep(organizationId: string) {
     proposePlanGoalTitle: propose?.goal.title ?? "",
     proposePlanVersion: propose?.plan.version,
     activeGoalIds: snapshot.activeGoals.map((goal) => goal.id),
+    websiteConnected: Boolean(dashboard.website?.publicUrl),
+    websiteRead: websiteWasRead(snapshot.brain?.inferredSummary),
+    seoDrafts: openSeoDrafts,
+    openLeads: pipeline.openLeads,
+    leadStages: pipeline.leadStages,
+    learningGoal: learned?.goalId
+      ? (() => {
+          const goal = snapshot.goals.find((row) => row.id === learned.goalId);
+          return goal ? toReadableGoal(goal) : null;
+        })()
+      : null,
+    readablePlan: readable
+      ? {
+          id: readable.plan.id,
+          goalId: readable.goal.id,
+          goalTitle: readable.goal.title,
+          version: readable.plan.version,
+          status: readable.plan.status,
+          strategySummary: readable.plan.strategySummary,
+        }
+      : null,
+    readableGoal: readableGoal ? toReadableGoal(readableGoal) : null,
+    weeklyLook: {
+      periodLabel: snapshot.weeklyReview.periodLabel,
+      headline: snapshot.weeklyReview.headline,
+      summary: snapshot.weeklyReview.summary,
+      whatChanged: snapshot.weeklyReview.whatChanged,
+      howWeAreDoing: snapshot.weeklyReview.howWeAreDoing,
+      whatNeedsAttention: snapshot.weeklyReview.whatNeedsAttention,
+      whatShouldHappenNext: snapshot.weeklyReview.whatShouldHappenNext,
+      whatIsLeftAlone: snapshot.weeklyReview.whatIsLeftAlone,
+      strategyNote: snapshot.weeklyReview.strategyNote,
+      recommendations: snapshot.weeklyReview.recommendations.map((item) => ({
+        title: item.title,
+        recommendation: item.recommendation,
+        rationale: item.rationale,
+        evidence: item.evidence,
+        kind: item.kind,
+        classification: item.classification,
+        confidence: item.confidence,
+      })),
+      evidenceChecks: snapshot.weeklyReview.evidenceChecks.map((check) => ({
+        channel: check.channel,
+        verdict: check.verdict,
+        reason: check.reason,
+      })),
+    },
+    readableDecisions: snapshot.decisions.slice(0, 5).map((decision) => ({
+      id: decision.id,
+      decisionType: decision.decisionType,
+      recommendation: decision.recommendation,
+      rationale: decision.rationale,
+      outcome: decision.outcome,
+      evidenceWindow: decision.evidenceWindow,
+      confidence: decision.confidence,
+      createdAtLabel: decision.createdAt.toLocaleString(),
+    })),
+    finishedWorkCount: snapshot.actions.filter((action) =>
+      isFinishedOwnerWork(action.status),
+    ).length,
+    latestLearning: learned?.outcome ?? "",
   });
+}
+
+function toReadableGoal(goal: {
+  id: string
+  title: string
+  liveCurrentValue: number
+  targetValue: number | null
+  unit: string
+  liveNote: string
+  progressPercent: number | null
+  liveComputable?: boolean
+  progressHistory?: {
+    id: string
+    recordedAt: Date
+    value: number
+    source: string
+    note: string
+  }[]
+}): LearningGoal {
+  return {
+    id: goal.id,
+    title: goal.title,
+    liveCurrentValue: goal.liveCurrentValue,
+    targetValue: goal.targetValue,
+    unit: goal.unit,
+    liveNote: goal.liveNote,
+    progressPercent: goal.progressPercent,
+    liveComputable: Boolean(goal.liveComputable),
+    progressHistory: (goal.progressHistory ?? []).map((row) => ({
+      id: row.id,
+      recordedAtLabel: row.recordedAt.toLocaleDateString(),
+      value: row.value,
+      source: row.source,
+      note: row.note,
+    })),
+  };
 }

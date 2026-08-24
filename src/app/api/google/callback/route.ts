@@ -9,15 +9,15 @@ import {
   googleOAuthConfig,
 } from "@/modules/integrations/google-search-console";
 
-function seoRedirect(query: string) {
-  return NextResponse.redirect(`${appUrl().replace(/\/$/, "")}/app/seo?${query}`);
+function nextStepRedirect(query: string) {
+  return NextResponse.redirect(`${appUrl().replace(/\/$/, "")}/app/next-step?${query}`);
 }
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const error = url.searchParams.get("error");
   if (error) {
-    return seoRedirect(
+    return nextStepRedirect(
       "gsc=error&error=" +
         encodeURIComponent("Google sign-in was cancelled. Search Console was not connected."),
     );
@@ -26,7 +26,7 @@ export async function GET(request: Request) {
   const code = url.searchParams.get("code");
   const stateValue = url.searchParams.get("state");
   if (!code || !stateValue) {
-    return seoRedirect(
+    return nextStepRedirect(
       "gsc=error&error=" +
         encodeURIComponent("Google sign-in did not finish. Start connect again."),
     );
@@ -67,6 +67,6 @@ export async function GET(request: Request) {
       caught instanceof Error
         ? caught.message
         : "Could not connect Search Console.";
-    return seoRedirect("gsc=error&error=" + encodeURIComponent(message));
+    return nextStepRedirect("gsc=error&error=" + encodeURIComponent(message));
   }
 }

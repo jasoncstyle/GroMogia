@@ -78,7 +78,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "no_goal",
       changeCourse: false,
       outcome: clip(
-        `This work is not tied to a Goal number, so GroovGro cannot compare progress.${leaveAlone} Open Goals if you want a measurable outcome.`,
+        `This work is not tied to a Goal number, so GroovGro cannot compare progress.${leaveAlone} Add a Goal here so GroovGro can compare a number.`,
         2000,
       ),
     };
@@ -110,7 +110,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "target_reached",
       changeCourse: false,
       outcome: clip(
-        `After you did this work, “${goal}” reached its target (${withUnit(current, facts.unit)}). ${moved} Open Goals to read the history. GroovGro will not start a new campaign.${leaveAlone}`,
+        `After you did this work, “${goal}” reached its target (${withUnit(current, facts.unit)}). ${moved} Read the history on Next step. GroovGro will not start a new campaign.${leaveAlone}`,
         2000,
       ),
     };
@@ -143,7 +143,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "declined",
       changeCourse: false,
       outcome: clip(
-        `After you did this work, “${goal}” is lower. ${moved} Do not add spend. Open Goals and Next step.${leaveAlone}`,
+        `After you did this work, “${goal}” is lower. ${moved} Do not add spend. Read the Goal number here.${leaveAlone}`,
         2000,
       ),
     };

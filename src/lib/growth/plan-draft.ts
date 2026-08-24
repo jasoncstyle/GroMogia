@@ -62,6 +62,181 @@ export const PROPOSE_ACTIONS_STEP_TITLE = "Propose the first actions";
 export const APPROVE_ACTIONS_STEP_TITLE = "Approve or reject these actions";
 export const OWNER_WORK_STEP_TITLE = "Do the work you already approved";
 export const CHECK_CHANGED_STEP_TITLE = "Check what changed";
+export const CONFIRM_DRAFTS_STEP_TITLE = "Confirm or reject what GroovGro drafted";
+export const CONNECT_WEBSITE_STEP_TITLE = "Connect the existing website";
+export const REVIEW_SITE_STEP_TITLE = "Review the connected website";
+export const FOLLOW_UP_LEADS_STEP_TITLE = "Follow up open leads";
+export const SHARE_LEAD_FORM_STEP_TITLE = "Share the public lead form";
+export const SAVE_BRAND_VOICE_STEP_TITLE = "Save your brand voice";
+export const ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE = "Add a brand voice example";
+export const DRAFT_BRAND_VOICE_STEP_TITLE = "Draft copy in your voice";
+export const RUN_SEO_STEP_TITLE = "Run an SEO check";
+export const FIX_SEO_STEP_TITLE = "Fix blocking SEO items";
+export const IMPROVE_SEO_STEP_TITLE = "Improve the page when you have time";
+export const CONNECT_SEARCH_CONSOLE_STEP_TITLE = "Connect Search Console";
+export const PICK_SEARCH_CONSOLE_STEP_TITLE = "Choose the Search Console property";
+export const REFRESH_SEARCH_CONSOLE_STEP_TITLE = "Refresh Search Console numbers";
+export const PASTE_SNIPPET_STEP_TITLE = "Paste the tracking snippet";
+export const REVIEW_SCHEDULE_STEP_TITLE = "Review the schedule or how people find it";
+export const GOAL_REACHED_STEP_TITLE = "This Goal is reached";
+export const ACTIVATE_GOAL_STEP_TITLE = "Make this the active Goal";
+export const READ_GOAL_STEP_TITLE = "Read the Goal before changing course";
+export const ADD_GOAL_STEP_TITLE = "Add a Goal so GroovGro can compare a number";
+export const ADD_OFFER_STEP_TITLE = "Add an offer";
+export const SAVE_BRAND_STEP_TITLE = "Save your brand";
+export const SAVE_BUSINESS_STEP_TITLE = "Save how this business works";
+export const SAVE_PROGRESS_STEP_TITLE = "Save today's Goal number";
+export const CONNECT_STRIPE_STEP_TITLE = "Connect payments";
+export const SYNC_STRIPE_STEP_TITLE = "Sync recent payments";
+export const SAVE_REVIEW_SCHEDULE_STEP_TITLE = "Choose when you look at growth";
+
+export function skipsDuplicateNextStepAction(title: string): boolean {
+  const text = clean(title);
+  return (
+    text === FOLLOW_UP_LEADS_STEP_TITLE ||
+    text === SHARE_LEAD_FORM_STEP_TITLE ||
+    text === SAVE_BRAND_VOICE_STEP_TITLE ||
+    text === ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE ||
+    text === DRAFT_BRAND_VOICE_STEP_TITLE ||
+    text === RUN_SEO_STEP_TITLE ||
+    text === FIX_SEO_STEP_TITLE ||
+    text === IMPROVE_SEO_STEP_TITLE ||
+    text === CONNECT_SEARCH_CONSOLE_STEP_TITLE ||
+    text === PICK_SEARCH_CONSOLE_STEP_TITLE ||
+    text === REFRESH_SEARCH_CONSOLE_STEP_TITLE ||
+    text === PASTE_SNIPPET_STEP_TITLE ||
+    text === REVIEW_SCHEDULE_STEP_TITLE ||
+    text === GOAL_REACHED_STEP_TITLE ||
+    text === ACTIVATE_GOAL_STEP_TITLE ||
+    text === DRAFT_PLAN_STEP_TITLE ||
+    text === APPROVE_PLAN_STEP_TITLE ||
+    text === PROPOSE_ACTIONS_STEP_TITLE ||
+    text === READ_GOAL_STEP_TITLE ||
+    text === ADD_GOAL_STEP_TITLE ||
+    text === ADD_OFFER_STEP_TITLE ||
+    text === SAVE_BRAND_STEP_TITLE ||
+    text === SAVE_BUSINESS_STEP_TITLE ||
+    text === SAVE_PROGRESS_STEP_TITLE ||
+    text === CONNECT_STRIPE_STEP_TITLE ||
+    text === SYNC_STRIPE_STEP_TITLE ||
+    text === SAVE_REVIEW_SCHEDULE_STEP_TITLE ||
+    text === CONFIRM_DRAFTS_STEP_TITLE ||
+    text === CONNECT_WEBSITE_STEP_TITLE ||
+    text === REVIEW_SITE_STEP_TITLE ||
+    text === APPROVE_ACTIONS_STEP_TITLE ||
+    text === OWNER_WORK_STEP_TITLE ||
+    text === CHECK_CHANGED_STEP_TITLE
+  );
+}
+
+export function hasDedicatedNextStepControls(title: string): boolean {
+  const text = clean(title);
+  return (
+    text === GOAL_REACHED_STEP_TITLE ||
+    text === ACTIVATE_GOAL_STEP_TITLE ||
+    text === DRAFT_PLAN_STEP_TITLE ||
+    text === APPROVE_PLAN_STEP_TITLE ||
+    text === PROPOSE_ACTIONS_STEP_TITLE
+  );
+}
+
+export function showsDedicatedNextStepControl(
+  title: string,
+  access: {
+    canCreateGoal: boolean
+    canActivateGoal: boolean
+    canDraftPlan: boolean
+    goalId?: string | null
+    planId?: string | null
+  },
+): boolean {
+  const text = clean(title);
+  if (text === GOAL_REACHED_STEP_TITLE) return Boolean(access.canCreateGoal && access.goalId);
+  if (text === ACTIVATE_GOAL_STEP_TITLE) return Boolean(access.canActivateGoal && access.goalId);
+  if (text === DRAFT_PLAN_STEP_TITLE) return Boolean(access.canDraftPlan && access.goalId);
+  if (text === APPROVE_PLAN_STEP_TITLE) return Boolean(access.planId);
+  if (text === PROPOSE_ACTIONS_STEP_TITLE) return Boolean(access.canDraftPlan && access.planId);
+  return false;
+}
+
+export function openPageLabelForNextStep(title: string): string | null {
+  return null;
+}
+
+export function isSeoDraftNextStep(title: string): boolean {
+  const text = clean(title);
+  return text === FIX_SEO_STEP_TITLE || text === IMPROVE_SEO_STEP_TITLE;
+}
+
+export function isSearchConsoleNextStep(title: string): boolean {
+  const text = clean(title);
+  return (
+    text === CONNECT_SEARCH_CONSOLE_STEP_TITLE ||
+    text === PICK_SEARCH_CONSOLE_STEP_TITLE ||
+    text === REFRESH_SEARCH_CONSOLE_STEP_TITLE
+  );
+}
+
+export function isPasteSnippetNextStep(title: string): boolean {
+  return clean(title) === PASTE_SNIPPET_STEP_TITLE;
+}
+
+export function isReviewScheduleNextStep(title: string): boolean {
+  return clean(title) === REVIEW_SCHEDULE_STEP_TITLE;
+}
+
+export function isFollowUpLeadsNextStep(title: string): boolean {
+  return clean(title) === FOLLOW_UP_LEADS_STEP_TITLE;
+}
+
+export function isShareLeadFormNextStep(title: string): boolean {
+  return clean(title) === SHARE_LEAD_FORM_STEP_TITLE;
+}
+
+export function isSaveBrandVoiceNextStep(title: string): boolean {
+  return clean(title) === SAVE_BRAND_VOICE_STEP_TITLE;
+}
+
+export function isAddBrandVoiceExampleNextStep(title: string): boolean {
+  return clean(title) === ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE;
+}
+
+export function isDraftBrandVoiceNextStep(title: string): boolean {
+  return clean(title) === DRAFT_BRAND_VOICE_STEP_TITLE;
+}
+
+export function isAddGoalNextStep(title: string): boolean {
+  return clean(title) === ADD_GOAL_STEP_TITLE;
+}
+
+export function isAddOfferNextStep(title: string): boolean {
+  return clean(title) === ADD_OFFER_STEP_TITLE;
+}
+
+export function isSaveBrandNextStep(title: string): boolean {
+  return clean(title) === SAVE_BRAND_STEP_TITLE;
+}
+
+export function isSaveBusinessNextStep(title: string): boolean {
+  return clean(title) === SAVE_BUSINESS_STEP_TITLE;
+}
+
+export function isSaveProgressNextStep(title: string): boolean {
+  return clean(title) === SAVE_PROGRESS_STEP_TITLE;
+}
+
+export function isStripeReadCopyNextStep(title: string): boolean {
+  const text = clean(title);
+  return text === CONNECT_STRIPE_STEP_TITLE || text === SYNC_STRIPE_STEP_TITLE;
+}
+
+export function isSaveReviewScheduleNextStep(title: string): boolean {
+  return clean(title) === SAVE_REVIEW_SCHEDULE_STEP_TITLE;
+}
+
+export function isReadGoalNextStep(title: string): boolean {
+  return clean(title) === READ_GOAL_STEP_TITLE;
+}
 
 function isPlanLoopNextStep(title: string): boolean {
   const text = clean(title);
@@ -71,7 +246,10 @@ function isPlanLoopNextStep(title: string): boolean {
     text === PROPOSE_ACTIONS_STEP_TITLE ||
     text === APPROVE_ACTIONS_STEP_TITLE ||
     text === OWNER_WORK_STEP_TITLE ||
-    text === CHECK_CHANGED_STEP_TITLE
+    text === CHECK_CHANGED_STEP_TITLE ||
+    text === CONFIRM_DRAFTS_STEP_TITLE ||
+    text === CONNECT_WEBSITE_STEP_TITLE ||
+    text === REVIEW_SITE_STEP_TITLE
   );
 }
 
@@ -115,6 +293,20 @@ export function findPlanDraftGoal<
   return goals.find((goal) => goalNeedsPlanDraft(goal, plans)) ?? null;
 }
 
+function activeConfirmedGoalIds<
+  G extends { id: string; status: string; discoveryStatus?: string },
+>(goals: G[]): Set<string> {
+  return new Set(
+    goals
+      .filter((goal) => {
+        if (goal.status !== "active") return false;
+        const discovery = goal.discoveryStatus ?? "confirmed";
+        return discovery !== "inferred" && discovery !== "rejected";
+      })
+      .map((goal) => goal.id),
+  );
+}
+
 export function findDraftPlanToApprove<
   G extends {
     id: string
@@ -130,15 +322,7 @@ export function findDraftPlanToApprove<
     strategySummary: string
   },
 >(goals: G[], plans: P[]): { plan: P; goal: G } | null {
-  const activeIds = new Set(
-    goals
-      .filter((goal) => {
-        if (goal.status !== "active") return false;
-        const discovery = goal.discoveryStatus ?? "confirmed";
-        return discovery !== "inferred" && discovery !== "rejected";
-      })
-      .map((goal) => goal.id),
-  );
+  const activeIds = activeConfirmedGoalIds(goals);
   const drafts = plans
     .filter((plan) => plan.status === "draft" && activeIds.has(plan.goalId))
     .sort((a, b) => b.version - a.version);
@@ -147,6 +331,45 @@ export function findDraftPlanToApprove<
   const goal = goals.find((row) => row.id === plan.goalId);
   if (!goal) return null;
   return { plan, goal };
+}
+
+export function findReadableGrowthPlan<
+  G extends {
+    id: string
+    title: string
+    status: string
+    discoveryStatus?: string
+  },
+  P extends {
+    id: string
+    goalId: string
+    status: string
+    version: number
+    strategySummary: string
+  },
+>(goals: G[], plans: P[]): { plan: P; goal: G } | null {
+  const draft = findDraftPlanToApprove(goals, plans);
+  if (draft) return draft;
+  const activeIds = activeConfirmedGoalIds(goals);
+  const readable = plans
+    .filter(
+      (plan) =>
+        (plan.status === "approved" || plan.status === "active") &&
+        activeIds.has(plan.goalId),
+    )
+    .sort((a, b) => b.version - a.version);
+  const plan = readable[0];
+  if (!plan) return null;
+  const goal = goals.find((row) => row.id === plan.goalId);
+  if (!goal) return null;
+  return { plan, goal };
+}
+
+export function findReadableGoal<
+  G extends { id: string; status: string; discoveryStatus?: string },
+>(goals: G[]): G | null {
+  const activeIds = activeConfirmedGoalIds(goals);
+  return goals.find((goal) => activeIds.has(goal.id)) ?? null;
 }
 
 export function draftPlanExcerpt(summary: string): string {
@@ -163,12 +386,12 @@ export function draftGrowthPlanSummary(facts: PlanDraftFacts): string {
   }
   if (facts.openLeadCount > 0) {
     doNow.push(
-      `Follow up ${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"} in Leads & customers. GroovGro will not email them.`,
+      `Follow up ${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"} on Next step. GroovGro will not email them.`,
     );
   }
   if (!facts.websiteConnected) {
     doNow.push(
-      "Connect the existing website and paste the tracking snippet. Do not move the live site into GroovGro.",
+      "On Next step, connect the existing website and paste the tracking snippet. Do not move the live site into GroovGro.",
     );
   }
   if (doNow.length === 0) {
@@ -190,7 +413,7 @@ export function draftGrowthPlanSummary(facts: PlanDraftFacts): string {
     `Where we are: ${progressLine(goal)}`,
     offers.length > 0
       ? `Confirmed offers this plan can talk about: ${listPhrase(offers)}.`
-      : "No confirmed offers yet. Confirm or reject drafts on Business before promoting anything.",
+      : "No confirmed offers yet. Confirm or reject drafts on Next step before promoting anything.",
     `What we will do now: ${doNow.join(" ")}`,
     `What we will not do: ${leaveLine} This plan does not charge a card or change Stripe checkout.`,
     "How we will know it is working: compare the Goal’s saved progress to the target. If evidence is thin, the right move is to wait.",

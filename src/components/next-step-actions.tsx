@@ -10,6 +10,39 @@ import {
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Button } from "@/components/ui/button";
 
+export function OpenPageNextStepButtons({
+  href,
+  label,
+  canDecide,
+}: {
+  href: string
+  label: string
+  canDecide: boolean
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button asChild>
+        <Link href={href}>{label}</Link>
+      </Button>
+      {canDecide ? <LeaveAloneNextStepButton /> : null}
+    </div>
+  );
+}
+
+export function LeaveAloneNextStepButton() {
+  return (
+    <SaveForm
+      action={saveNextStepResponse}
+      successMessage="GroovGro recorded that nothing should change yet."
+    >
+      <input type="hidden" name="response" value="leave_alone" />
+      <SaveButton variant="outline" pendingLabel="Saving…">
+        Leave this alone
+      </SaveButton>
+    </SaveForm>
+  );
+}
+
 export function NextStepResponseButtons({
   kind,
   href,
@@ -47,9 +80,11 @@ export function NextStepResponseButtons({
           <SaveButton pendingLabel="Saving…">Save “nothing yet”</SaveButton>
         </SaveForm>
       )}
-      <Button asChild variant="outline">
-        <Link href={href}>Open the page</Link>
-      </Button>
+      {href !== "/app/next-step" ? (
+        <Button asChild variant="outline">
+          <Link href={href}>Open the page</Link>
+        </Button>
+      ) : null}
     </div>
   );
 }

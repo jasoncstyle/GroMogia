@@ -1,40 +1,23 @@
 import Link from "next/link";
 
 import {
-  createGoal,
   createGrowthPlan,
-  refreshConnectedGoalProgress,
   updateGoalProgress,
-  updateGrowthSettings,
 } from "@/lib/actions/growth";
-import {
-  ConfirmRejectButtons,
-  InferredBadge,
-  ReviewConnectedDataButton,
-} from "@/components/growth-review";
-import {
-  DraftGrowthPlanButton,
-  GrowthPlanReviewButtons,
-  ProposePlanActionsButton,
-} from "@/components/growth-plan-actions";
-import { WaitingActionButtons } from "@/components/next-step-actions";
-import { OwnerWorkButtons } from "@/components/owner-work-actions";
-import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
+import { InferredBadge } from "@/components/growth-review";
+import { GoalCreateForm } from "@/components/goal-create-form";
+import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import {
   alreadyDraftedNextGoal,
   canActivateDraftGoal,
   canDraftNextGoal,
 } from "@/lib/growth/next-goal";
-import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { hasPermission } from "@/lib/permissions";
 import {
   AUTONOMY_LEVELS,
   GOAL_STATUSES,
-  GOAL_TYPES,
-  REVIEW_FREQUENCIES,
-  WEEKDAYS,
   labelFor,
 } from "@/lib/growth/types";
 import { formatMoney } from "@/lib/money";
@@ -79,9 +62,6 @@ export default async function GoalsPage() {
   );
   const canCreateGoal = hasPermission(session.permissions, "create_goals");
   const canDraftPlan = hasPermission(session.permissions, "modify_goals");
-  const canApprovePlan = hasPermission(session.permissions, "approve_plans");
-  const canApproveAction = hasPermission(session.permissions, "approve_actions");
-  const canUpdateWork = hasPermission(session.permissions, "modify_goals");
   const actions = snapshot?.actions ?? [];
 
   return (
@@ -90,13 +70,14 @@ export default async function GoalsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Goals</h1>
         <p className="text-muted-foreground">
           A Goal is a measurable outcome. A draft stays a draft until you
-          click Make this the active Goal. GroovGro can then draft a plan.
-          Approving that plan does not run marketing. Suggested goals stay
-          drafts until you confirm them.
+          make it the active Goal on Next step. Draft a plan on Next step
+          when GroovGro asks. Approve or reject that plan on Next step.
+          Approving does not run marketing. Approve or reject proposed
+          actions on Next step. Do approved work on Next step or Your
+          work. Confirm or reject suggested goals on Next step. They stay
+          drafts until you do. Review connected data on Next step when
+          GroovGro asks, or on Business if you want to run it again.
         </p>
-        <div className="mt-3">
-          <ReviewConnectedDataButton disabled={!session.organizationId} />
-        </div>
       </div>
 
       <Card>
@@ -118,19 +99,10 @@ export default async function GoalsPage() {
           </p>
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline" size="sm">
-              <Link href="/app">Read the path so far</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/app/next-step">Open next step</Link>
+              <Link href="/app/next-step">Open Next step</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/app/growth-review">Open growth review</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/app/decisions">Open decision history</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/app/intelligence">Open specialists</Link>
             </Button>
           </div>
         </CardContent>
@@ -141,67 +113,16 @@ export default async function GoalsPage() {
           <CardTitle>Growth review schedule</CardTitle>
           <CardDescription>
             This is when routine reviews are presented. It does not force
-            GroovGro to change the business on that day. Open Growth review
-            to read the current weekly and monthly summary.
+            GroovGro to change the business on that day. Choose when you look
+            at this week’s numbers on Next step. Open Growth review to change
+            that day later. Open Next step to read this week’s look.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SaveForm
-            action={updateGrowthSettings}
-            successMessage="Review schedule saved"
-            className="grid gap-4 md:grid-cols-2"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="reviewFrequency">How often</Label>
-              <select
-                id="reviewFrequency"
-                name="reviewFrequency"
-                className={selectClassName}
-                defaultValue={settings?.reviewFrequency ?? "weekly"}
-              >
-                {REVIEW_FREQUENCIES.map((frequency) => (
-                  <option key={frequency} value={frequency}>
-                    {labelFor(frequency)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="reviewDay">Day</Label>
-              <select
-                id="reviewDay"
-                name="reviewDay"
-                className={selectClassName}
-                defaultValue={settings?.reviewDay ?? "monday"}
-              >
-                {WEEKDAYS.map((day) => (
-                  <option key={day} value={day}>
-                    {labelFor(day)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="reviewTime">Time</Label>
-              <Input
-                id="reviewTime"
-                name="reviewTime"
-                type="time"
-                defaultValue={settings?.reviewTime ?? "10:00"}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="timezone">Timezone</Label>
-              <Input
-                id="timezone"
-                name="timezone"
-                defaultValue={settings?.timezone ?? "America/New_York"}
-              />
-            </div>
-            <SaveButton type="submit" disabled={!session.organizationId}>
-              Save schedule
-            </SaveButton>
-          </SaveForm>
+          <p className="text-sm text-muted-foreground">
+            The schedule form is on Next step when GroovGro asks, and on
+            Growth review if you want to change it later.
+          </p>
         </CardContent>
       </Card>
 
@@ -210,101 +131,10 @@ export default async function GoalsPage() {
           <CardTitle>Add a goal</CardTitle>
         </CardHeader>
         <CardContent>
-          <SaveForm
-            action={createGoal}
-            successMessage="Goal saved"
-            resetOnSuccess
-            className="grid gap-4 md:grid-cols-2"
-          >
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="title">What are we trying to accomplish?</Label>
-              <Input id="title" name="title" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="goalType">Type</Label>
-              <select id="goalType" name="goalType" className={selectClassName} defaultValue="custom">
-                {GOAL_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {labelFor(type)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="priority">Priority</Label>
-              <select id="priority" name="priority" className={selectClassName} defaultValue="normal">
-                <option value="low">Low</option>
-                <option value="normal">Normal</option>
-                <option value="high">High</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="targetMetric">Metric</Label>
-              <Input id="targetMetric" name="targetMetric" placeholder="leads, sales, revenue" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="unit">Unit</Label>
-              <Input id="unit" name="unit" placeholder="leads, customers, dollars" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="baselineValue">Starting number</Label>
-              <Input id="baselineValue" name="baselineValue" type="number" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="targetValue">Target number</Label>
-              <Input id="targetValue" name="targetValue" type="number" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="currentValue">Current number</Label>
-              <Input id="currentValue" name="currentValue" type="number" defaultValue="0" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="offerId">Related offer</Label>
-              <select id="offerId" name="offerId" className={selectClassName} defaultValue="">
-                <option value="">None</option>
-                {offers.map((offer) => (
-                  <option key={offer.id} value={offer.id}>
-                    {offer.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="startsOn">Start</Label>
-              <Input id="startsOn" name="startsOn" type="date" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="deadline">Deadline</Label>
-              <Input id="deadline" name="deadline" type="date" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="expectedRevenue">Expected value</Label>
-              <Input id="expectedRevenue" name="expectedRevenue" placeholder="0.00" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="totalBudget">Budget</Label>
-              <Input id="totalBudget" name="totalBudget" placeholder="0.00" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="customerSegment">Customer segment</Label>
-              <Input id="customerSegment" name="customerSegment" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input id="location" name="location" />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="successDefinition">What success looks like</Label>
-              <Textarea id="successDefinition" name="successDefinition" rows={3} />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="description">Notes</Label>
-              <Textarea id="description" name="description" rows={3} />
-            </div>
-            <SaveButton type="submit" disabled={!session.organizationId}>
-              Save goal
-            </SaveButton>
-          </SaveForm>
+          <GoalCreateForm
+            offers={offers}
+            disabled={!canCreateGoal}
+          />
         </CardContent>
       </Card>
 
@@ -313,8 +143,9 @@ export default async function GoalsPage() {
           <CardHeader>
             <CardTitle>Suggested goals waiting for you</CardTitle>
             <CardDescription>
-              GroovGro drafted these from connected data. Confirming makes a
-              Goal active. Rejecting leaves it unused. Nothing else happens.
+              GroovGro drafted these from connected data. Confirm or reject
+              them on Next step. Confirming makes a Goal active. Rejecting
+              leaves it unused. Nothing else happens.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -329,9 +160,10 @@ export default async function GoalsPage() {
                 </p>
                 <p className="text-sm text-muted-foreground">{goal.liveNote}</p>
                 <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
-                <div className="mt-3">
-                  <ConfirmRejectButtons id={goal.id} kind="goal" />
-                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Confirm or reject this on Next step. Confirming makes it
+                  active. GroovGro will not start marketing.
+                </p>
               </div>
             ))}
           </CardContent>
@@ -343,19 +175,13 @@ export default async function GoalsPage() {
           <CardTitle>Active and recent goals</CardTitle>
           <CardDescription>
             Connected goals can save today&apos;s number from leads, bookings,
-            and payments. That stores a history. It does not start marketing.
+            and payments. Save that number here, or on Next step. That stores
+            a history. It does not start marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {goals.some((goal) => goal.liveComputable) ? (
-            <SaveForm
-              action={refreshConnectedGoalProgress}
-              successMessage="Progress saved"
-            >
-              <SaveButton type="submit" disabled={!session.organizationId}>
-                Save progress from connected data
-              </SaveButton>
-            </SaveForm>
+            <SaveConnectedProgressButton disabled={!session.organizationId} />
           ) : null}
           {goals.length === 0 ? (
             <p className="text-sm text-muted-foreground">
@@ -439,14 +265,16 @@ export default async function GoalsPage() {
                   </SaveButton>
                 </SaveForm>
                 {canDraftPlan && canActivateDraftGoal(goal) ? (
-                  <div className="mt-3">
-                    <ActivateGoalButton goalId={goal.id} />
-                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Make this the active Goal on Next step. GroovGro will not
+                    start marketing.
+                  </p>
                 ) : null}
                 {canDraftPlan ? (
-                  <div className="mt-3">
-                    <DraftGrowthPlanButton goalId={goal.id} />
-                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Draft a plan for this Goal on Next step. GroovGro will not
+                    run it.
+                  </p>
                 ) : null}
                 {canCreateGoal &&
                 canDraftNextGoal({
@@ -455,9 +283,10 @@ export default async function GoalsPage() {
                   targetValue: goal.targetValue,
                 }) &&
                 !alreadyDraftedNextGoal(snapshot?.goals ?? [], goal.id) ? (
-                  <div className="mt-3">
-                    <DraftNextGoalButton goalId={goal.id} />
-                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Draft the next Goal on Next step. It stays a draft until
+                    you make it active. GroovGro will not start marketing.
+                  </p>
                 ) : null}
                 {goal.progressHistory.length > 0 ? (
                   <div className="mt-3">
@@ -489,15 +318,15 @@ export default async function GoalsPage() {
           <CardTitle>Growth plans</CardTitle>
           <CardDescription>
             GroovGro can draft a plan from a Goal, confirmed offers, and the
-            current Next step. After you approve a plan, GroovGro can propose
-            the first actions. Approving a plan or an action does not run
-            marketing.
+            current Next step. Approve or reject a draft plan on Next step.
+            Propose the first actions on Next step. Approving a plan or an
+            action does not run marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <FoldableSample
             title="Write a plan yourself"
-            subtitle="Optional. Most owners use Draft a plan for this Goal on a Goal above."
+            subtitle="Optional. Most owners draft a plan on Next step."
           >
           <SaveForm
             action={createGrowthPlan}
@@ -553,8 +382,7 @@ export default async function GoalsPage() {
 
           {plans.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No plans yet. Open a Goal above and click Draft a plan for this
-              Goal.
+              No plans yet. Open Next step when it asks you to draft a plan.
             </p>
           ) : (
             <div className="space-y-4">
@@ -570,16 +398,17 @@ export default async function GoalsPage() {
                     </p>
                   </div>
                   {plan.status === "draft" ? (
-                    <GrowthPlanReviewButtons
-                      planId={plan.id}
-                      canApprove={canApprovePlan}
-                    />
+                    <p className="text-xs text-muted-foreground">
+                      Approve or reject this plan on Next step. Approving does
+                      not run marketing.
+                    </p>
                   ) : null}
                   {plan.status === "approved" || plan.status === "active" ? (
                     <div className="space-y-3">
-                      {canDraftPlan ? (
-                        <ProposePlanActionsButton planId={plan.id} />
-                      ) : null}
+                      <p className="text-xs text-muted-foreground">
+                        Propose the first actions on Next step. GroovGro will
+                        not run them.
+                      </p>
                       {actions
                         .filter((action) => action.planId === plan.id)
                         .map((action) => (
@@ -593,17 +422,16 @@ export default async function GoalsPage() {
                             </p>
                             {action.status === "proposed" ||
                             action.status === "awaiting_approval" ? (
-                              <WaitingActionButtons
-                                actionId={action.id}
-                                canApprove={canApproveAction}
-                              />
+                              <p className="text-xs text-muted-foreground">
+                                Approve or reject this on Next step. Approving
+                                does not run it.
+                              </p>
                             ) : null}
                             {action.status === "approved" ? (
-                              <OwnerWorkButtons
-                                actionId={action.id}
-                                href={hrefForGrowthAction(action)}
-                                canUpdate={canUpdateWork}
-                              />
+                              <p className="text-xs text-muted-foreground">
+                                Do this on Next step or Your work. GroovGro
+                                will not run it.
+                              </p>
                             ) : null}
                           </div>
                         ))}

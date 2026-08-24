@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
+import { ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_OFFER_STEP_TITLE, CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SAVE_PROGRESS_STEP_TITLE, SAVE_REVIEW_SCHEDULE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE, SYNC_STRIPE_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -26,8 +27,24 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     seoFailCount: 0,
     seoWarnCount: 0,
     seoCheckedAt: null,
-    searchConsoleConnected: false,
+    searchConsoleConnected: true,
+    searchConsoleProperty: true,
+    searchConsoleSnapshot: true,
+    searchConsoleSnapshotAt: now,
     openLeadCount: 0,
+    contactCount: 1,
+    recordedVisitCount: 1,
+    brandVoiceSaved: true,
+    brandVoiceExampleSaved: true,
+    brandVoiceDraftSaved: true,
+    brandSettingsSaved: true,
+    businessBrainSaved: true,
+    goalProgressNeedsSave: false,
+    stripeConfigured: true,
+    stripeConnected: true,
+    stripeSynced: true,
+    growthScheduleSaved: true,
+    confirmedOfferCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
     advertisingConnected: false,
@@ -69,8 +86,9 @@ describe("growth specialists", () => {
     assert.equal(seo.relatedGoal?.id, "g-vis");
     assert.equal(seo.recommend.kind, "recommend");
     assert.equal(seo.recommend.classification, "operational");
-    assert.equal(seo.recommend.href, "/app/seo");
+    assert.equal(seo.recommend.href, "/app/next-step");
     assert.equal(seo.executeAllowed, false);
+    assert.equal(seo.recommend.title, RUN_SEO_STEP_TITLE);
     assert.match(seo.recommend.body, /will not edit the website/);
   });
 
@@ -90,11 +108,12 @@ describe("growth specialists", () => {
     );
     assert.ok(seo);
     assert.match(seo.read, /42 out of 100/);
-    assert.equal(seo.recommend.title, "Fix blocking SEO items");
+    assert.equal(seo.recommend.title, FIX_SEO_STEP_TITLE);
+    assert.match(seo.recommend.body, /Draft and approve/);
     assert.match(seo.recommend.body, /will not change the connected website/);
   });
 
-  it("leaves SEO alone when the page is fine and evidence is thin", () => {
+  it("leaves SEO alone when the page is fine, Search Console is connected, and evidence is thin", () => {
     const seo = specialistById(
       buildSpecialistReports(
         facts({
@@ -103,6 +122,7 @@ describe("growth specialists", () => {
           seoCheckedAt: now,
           seoFailCount: 0,
           seoWarnCount: 0,
+          searchConsoleConnected: true,
         }),
       ),
       "seo",
@@ -112,6 +132,104 @@ describe("growth specialists", () => {
     assert.match(seo.recommend.title, /Leave SEO alone/);
   });
 
+  it("asks to connect Search Console after a homepage check when it is not connected", () => {
+    const seo = specialistById(
+      buildSpecialistReports(
+        facts({
+          seoScore: 88,
+          seoSummary: "Looks complete.",
+          seoCheckedAt: now,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          searchConsoleConnected: false,
+          openLeadCount: 0,
+        }),
+      ),
+      "seo",
+    );
+    assert.ok(seo);
+    assert.equal(seo.recommend.kind, "recommend");
+    assert.equal(seo.recommend.classification, "optimization");
+    assert.equal(seo.recommend.title, CONNECT_SEARCH_CONSOLE_STEP_TITLE);
+    assert.match(seo.recommend.body, /will not edit the website/);
+    assert.match(seo.recommend.body, /buy ads/);
+  });
+
+  it("asks to choose the Search Console property when Google is connected but none is saved", () => {
+    const seo = specialistById(
+      buildSpecialistReports(
+        facts({
+          seoScore: 88,
+          seoSummary: "Looks complete.",
+          seoCheckedAt: now,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          searchConsoleConnected: true,
+          searchConsoleProperty: false,
+          openLeadCount: 0,
+        }),
+      ),
+      "seo",
+    );
+    assert.ok(seo);
+    assert.equal(seo.recommend.kind, "recommend");
+    assert.equal(seo.recommend.classification, "optimization");
+    assert.equal(seo.recommend.title, PICK_SEARCH_CONSOLE_STEP_TITLE);
+    assert.match(seo.recommend.body, /Choose the Search Console property here/);
+    assert.match(seo.recommend.body, /will not edit the website/);
+  });
+
+  it("asks to refresh Search Console when a property is saved but no numbers are stored", () => {
+    const seo = specialistById(
+      buildSpecialistReports(
+        facts({
+          seoScore: 88,
+          seoSummary: "Looks complete.",
+          seoCheckedAt: now,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          searchConsoleConnected: true,
+          searchConsoleProperty: true,
+          searchConsoleSnapshot: false,
+          openLeadCount: 0,
+        }),
+      ),
+      "seo",
+    );
+    assert.ok(seo);
+    assert.equal(seo.recommend.kind, "recommend");
+    assert.equal(seo.recommend.classification, "optimization");
+    assert.equal(seo.recommend.title, REFRESH_SEARCH_CONSOLE_STEP_TITLE);
+    assert.match(seo.recommend.body, /Refresh here/);
+    assert.match(seo.recommend.body, /will not edit the website/);
+  });
+
+  it("asks to refresh Search Console when stored numbers are more than a week old", () => {
+    const seo = specialistById(
+      buildSpecialistReports(
+        facts({
+          seoScore: 88,
+          seoSummary: "Looks complete.",
+          seoCheckedAt: now,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          searchConsoleConnected: true,
+          searchConsoleProperty: true,
+          searchConsoleSnapshot: true,
+          searchConsoleSnapshotAt: new Date("2026-08-15T12:00:00.000Z"),
+          openLeadCount: 0,
+        }),
+      ),
+      "seo",
+    );
+    assert.ok(seo);
+    assert.equal(seo.recommend.kind, "recommend");
+    assert.equal(seo.recommend.classification, "optimization");
+    assert.equal(seo.recommend.title, REFRESH_SEARCH_CONSOLE_STEP_TITLE);
+    assert.match(seo.recommend.body, /more than a week old/);
+    assert.match(seo.recommend.body, /will not edit the website/);
+  });
+
   it("asks to connect an existing website and never to move it", () => {
     const website = specialistById(
       buildSpecialistReports(facts({ websiteConnected: false, websiteUrl: "" })),
@@ -119,7 +237,26 @@ describe("growth specialists", () => {
     );
     assert.ok(website);
     assert.match(website.recommend.body, /Do not move the site/);
-    assert.equal(website.recommend.href, "/app/website");
+    assert.equal(website.recommend.href, "/app/next-step");
+  });
+
+  it("asks to paste the tracking snippet when a site is connected but no visits are recorded", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          websiteConnected: true,
+          recordedVisitCount: 0,
+          openLeadCount: 0,
+          searchConsoleConnected: true,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "optimization");
+    assert.equal(website.recommend.title, PASTE_SNIPPET_STEP_TITLE);
+    assert.match(website.recommend.body, /does not replace that site/);
   });
 
   it("follows up open leads without sending email", () => {
@@ -128,8 +265,440 @@ describe("growth specialists", () => {
       "crm",
     );
     assert.ok(crm);
+    assert.equal(crm.recommend.title, FOLLOW_UP_LEADS_STEP_TITLE);
+    assert.match(crm.recommend.body, /Give each open lead a next step here/);
     assert.match(crm.recommend.body, /will not email them/);
-    assert.equal(crm.recommend.href, "/app/crm");
+    assert.equal(crm.recommend.href, "/app/next-step");
+  });
+
+  it("asks to share the public lead form when no person has been captured yet", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 0,
+          websiteConnected: true,
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.equal(crm.recommend.kind, "recommend");
+    assert.equal(crm.recommend.classification, "optimization");
+    assert.equal(crm.recommend.title, SHARE_LEAD_FORM_STEP_TITLE);
+    assert.match(crm.recommend.body, /Copy the public lead form here/);
+    assert.match(crm.recommend.body, /add someone you already know/);
+    assert.match(crm.recommend.body, /will not email anyone/);
+  });
+
+  it("asks to save brand voice when visits are recorded but no profile exists", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, SAVE_BRAND_VOICE_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/next-step");
+    assert.match(website.recommend.body, /will not send email/);
+    assert.match(website.recommend.body, /edit the live website/);
+  });
+
+  it("asks to add a brand voice example after the profile is saved", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceSaved: true,
+          brandVoiceExampleSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/next-step");
+    assert.match(website.recommend.body, /Paste writing you already like here/);
+    assert.match(website.recommend.body, /will not send email/);
+  });
+
+  it("keeps saving the brand voice profile ahead of adding an example", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceSaved: false,
+          brandVoiceExampleSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, SAVE_BRAND_VOICE_STEP_TITLE);
+  });
+
+  it("asks to draft copy after the voice profile and an example are saved", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceSaved: true,
+          brandVoiceExampleSaved: true,
+          brandVoiceDraftSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, DRAFT_BRAND_VOICE_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/next-step");
+    assert.match(website.recommend.body, /Create a draft here/);
+    assert.match(website.recommend.body, /will not send email/);
+  });
+
+  it("keeps adding a brand voice example ahead of drafting copy", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceSaved: true,
+          brandVoiceExampleSaved: false,
+          brandVoiceDraftSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE);
+  });
+
+  it("keeps pasting the tracking snippet ahead of saving brand voice", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 0,
+          brandVoiceSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, PASTE_SNIPPET_STEP_TITLE);
+  });
+
+  it("asks to add an offer when visits are recorded and none are confirmed yet", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          confirmedOfferCount: 0,
+          brandVoiceSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, ADD_OFFER_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/next-step");
+    assert.match(website.recommend.body, /will not start marketing/);
+  });
+
+  it("keeps pasting the tracking snippet ahead of adding an offer", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 0,
+          confirmedOfferCount: 0,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, PASTE_SNIPPET_STEP_TITLE);
+  });
+
+  it("keeps adding an offer ahead of saving brand voice", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          confirmedOfferCount: 0,
+          brandVoiceSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, ADD_OFFER_STEP_TITLE);
+  });
+
+  it("asks to save the brand when visits are recorded but name, work, or audience is missing", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandSettingsSaved: false,
+          confirmedOfferCount: 0,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, SAVE_BRAND_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/next-step");
+    assert.match(website.recommend.body, /will not start marketing/);
+    assert.match(website.recommend.body, /edit the live website/);
+  });
+
+  it("keeps pasting the tracking snippet ahead of saving the brand", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 0,
+          brandSettingsSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, PASTE_SNIPPET_STEP_TITLE);
+  });
+
+  it("keeps saving the brand ahead of adding an offer", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandSettingsSaved: false,
+          confirmedOfferCount: 0,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, SAVE_BRAND_STEP_TITLE);
+  });
+
+  it("asks to save how the business works after the brand is saved", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          businessBrainSaved: false,
+          confirmedOfferCount: 0,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, SAVE_BUSINESS_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/next-step");
+    assert.match(website.recommend.body, /will not start marketing/);
+    assert.match(website.recommend.body, /edit the live website/);
+  });
+
+  it("keeps saving the brand ahead of saving how the business works", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandSettingsSaved: false,
+          businessBrainSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, SAVE_BRAND_STEP_TITLE);
+  });
+
+  it("keeps saving how the business works ahead of adding an offer", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          businessBrainSaved: false,
+          confirmedOfferCount: 0,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, SAVE_BUSINESS_STEP_TITLE);
+  });
+
+  it("asks to save today's Goal number when a connected Goal has no history yet", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          goalProgressNeedsSave: true,
+          brandSettingsSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, SAVE_PROGRESS_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/next-step");
+    assert.match(website.recommend.body, /will not start marketing/);
+  });
+
+  it("keeps pasting the tracking snippet ahead of saving today's Goal number", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 0,
+          goalProgressNeedsSave: true,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, PASTE_SNIPPET_STEP_TITLE);
+  });
+
+  it("keeps saving today's Goal number ahead of saving the brand", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          goalProgressNeedsSave: true,
+          brandSettingsSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, SAVE_PROGRESS_STEP_TITLE);
+  });
+
+  it("asks to connect payments so GroovGro can read a copy", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 1,
+          stripeConfigured: true,
+          stripeConnected: false,
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.equal(crm.recommend.kind, "recommend");
+    assert.equal(crm.recommend.classification, "optimization");
+    assert.equal(crm.recommend.title, CONNECT_STRIPE_STEP_TITLE);
+    assert.equal(crm.recommend.href, "/app/next-step");
+    assert.match(crm.recommend.body, /Connect here/);
+    assert.match(crm.recommend.body, /will not charge a card/);
+    assert.match(crm.recommend.body, /change checkout/);
+  });
+
+  it("asks to sync payments after Stripe is marked connected", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 1,
+          stripeConfigured: true,
+          stripeConnected: true,
+          stripeSynced: false,
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.equal(crm.recommend.kind, "recommend");
+    assert.equal(crm.recommend.classification, "optimization");
+    assert.equal(crm.recommend.title, SYNC_STRIPE_STEP_TITLE);
+    assert.match(crm.recommend.body, /Copy recent payment records here/);
+    assert.match(crm.recommend.body, /will not charge a card/);
+  });
+
+  it("keeps sharing the lead form ahead of connecting payments", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 0,
+          websiteConnected: true,
+          stripeConfigured: true,
+          stripeConnected: false,
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.equal(crm.recommend.title, SHARE_LEAD_FORM_STEP_TITLE);
+  });
+
+  it("does not ask to connect payments when Stripe keys are missing", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 1,
+          stripeConfigured: false,
+          stripeConnected: false,
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.equal(crm.recommend.kind, "no_change_yet");
+  });
+
+  it("asks to choose when you look at growth after the website basics are saved", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          growthScheduleSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, SAVE_REVIEW_SCHEDULE_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/next-step");
+    assert.match(website.recommend.body, /here/);
+    assert.match(website.recommend.body, /will not change the business/);
+  });
+
+  it("keeps drafting copy ahead of choosing when you look at growth", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceDraftSaved: false,
+          growthScheduleSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, DRAFT_BRAND_VOICE_STEP_TITLE);
   });
 
   it("notices a far-behind availability Goal only after enough evidence", () => {
@@ -156,6 +725,7 @@ describe("growth specialists", () => {
       "availability",
     );
     assert.equal(enough?.recommend.classification, "optimization");
+    assert.match(enough?.recommend.body ?? "", /Review upcoming items here/);
     assert.match(enough?.recommend.body ?? "", /will not change ads or the website/);
   });
 
@@ -205,5 +775,19 @@ describe("growth specialists", () => {
       reports.every((row) => row.mode === "read_analyze_recommend" && row.executeAllowed === false),
       true,
     );
+  });
+
+  it("refreshes Next step after a specialist recommendation is saved", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/lib/actions/specialists.ts"),
+      "utf8",
+    );
+    assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
+    assert.match(source, /revalidatePath\("\/app\/work"\)/);
+    const nextStepActions = readFileSync(
+      join(process.cwd(), "src/lib/actions/next-step.ts"),
+      "utf8",
+    );
+    assert.match(nextStepActions, /revalidatePath\("\/app\/work"\)/);
   });
 });

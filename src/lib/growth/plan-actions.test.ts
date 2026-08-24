@@ -10,7 +10,7 @@ describe("growth plan actions", () => {
     const actions = draftActionsFromApprovedPlan({
       goalTitle: "More people get in touch",
       nextStepTitle: "Follow up open leads",
-      nextStepBody: "Open Leads & customers and give each open lead a next step.",
+      nextStepBody: "Give each open lead a next step on Next step.",
       nextStepKind: "recommend",
       websiteConnected: true,
       openLeadCount: 2,
@@ -68,7 +68,7 @@ describe("growth plan actions", () => {
     const actions = draftActionsFromApprovedPlan({
       goalTitle: "Grow the list",
       nextStepTitle: "Confirm or reject drafts",
-      nextStepBody: "Open Business.",
+      nextStepBody: "Confirm or reject them on Next step.",
       nextStepKind: "recommend",
       websiteConnected: false,
       openLeadCount: 4,
@@ -173,6 +173,63 @@ describe("growth plan actions", () => {
     assert.equal(actions.length, 1);
     assert.equal(actions[0]?.actionType, "watch_progress");
     assert.doesNotMatch(actions.map((action) => action.description).join(" "), /Check what changed/);
+  });
+
+  it("does not copy the confirm-drafts next step back into action text", () => {
+    const actions = draftActionsFromApprovedPlan({
+      goalTitle: "More people get in touch",
+      nextStepTitle: "Confirm or reject what GroovGro drafted",
+      nextStepBody: "Confirm or reject them here. GroovGro will not start marketing.",
+      nextStepKind: "recommend",
+      websiteConnected: true,
+      openLeadCount: 0,
+      confirmedOfferCount: 1,
+      inferredOfferCount: 0,
+    });
+    assert.equal(actions.length, 1);
+    assert.equal(actions[0]?.actionType, "watch_progress");
+    assert.doesNotMatch(
+      actions.map((action) => action.description).join(" "),
+      /Confirm or reject what GroovGro drafted/,
+    );
+  });
+
+  it("does not copy the connect-website next step back into action text", () => {
+    const actions = draftActionsFromApprovedPlan({
+      goalTitle: "More people get in touch",
+      nextStepTitle: "Connect the existing website",
+      nextStepBody: "Paste the tracking snippet on the site you already have.",
+      nextStepKind: "recommend",
+      websiteConnected: true,
+      openLeadCount: 0,
+      confirmedOfferCount: 1,
+      inferredOfferCount: 0,
+    });
+    assert.equal(actions.length, 1);
+    assert.equal(actions[0]?.actionType, "watch_progress");
+    assert.doesNotMatch(
+      actions.map((action) => action.description).join(" "),
+      /Paste the tracking snippet on the site you already have/,
+    );
+  });
+
+  it("does not copy the review-website next step back into action text", () => {
+    const actions = draftActionsFromApprovedPlan({
+      goalTitle: "More people get in touch",
+      nextStepTitle: "Review the connected website",
+      nextStepBody: "Find pages, then review here.",
+      nextStepKind: "recommend",
+      websiteConnected: true,
+      openLeadCount: 0,
+      confirmedOfferCount: 1,
+      inferredOfferCount: 0,
+    });
+    assert.equal(actions.length, 1);
+    assert.equal(actions[0]?.actionType, "watch_progress");
+    assert.doesNotMatch(
+      actions.map((action) => action.description).join(" "),
+      /Review the connected website/,
+    );
   });
 
   it("does not bake industry-specific words into action helpers", () => {

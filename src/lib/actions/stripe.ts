@@ -69,6 +69,7 @@ export async function connectStripe(): Promise<ActionResult> {
 
     revalidatePath("/app/integrations");
     revalidatePath("/app/commerce");
+    revalidatePath("/app/next-step");
     revalidatePath("/app");
     return "Stripe connected";
   });
@@ -92,6 +93,7 @@ export async function disconnectStripe(): Promise<ActionResult> {
 
     revalidatePath("/app/integrations");
     revalidatePath("/app/commerce");
+    revalidatePath("/app/next-step");
     return "Stripe disconnected";
   });
 }
@@ -116,6 +118,7 @@ export async function syncStripePayments(): Promise<ActionResult> {
       revalidatePath("/app/commerce");
       revalidatePath("/app/crm");
       revalidatePath("/app/analytics");
+      revalidatePath("/app/next-step");
       revalidatePath("/app");
       return imported
         ? `Imported ${imported} Stripe record${imported === 1 ? "" : "s"}`

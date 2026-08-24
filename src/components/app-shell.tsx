@@ -32,7 +32,7 @@ import {
 
 import type { AppSession } from "@/lib/auth/session";
 import { PRODUCT_NAME } from "@/lib/brand";
-import { navModules, type ModuleId } from "@/lib/modules/catalog";
+import { isModuleEnabled, navModules, type ModuleId } from "@/lib/modules/catalog";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -108,6 +108,8 @@ function AppNav({
   const work = navModules(session.enabledModules, "work");
   const grow = navModules(session.enabledModules, "grow");
   const settings = navModules(session.enabledModules, "settings");
+  const nextStep = grow.find((item) => item.id === "growth_next");
+  const growRest = grow.filter((item) => item.id !== "growth_next");
 
   return (
     <nav className="flex flex-1 flex-col gap-4 overflow-y-auto p-3">
@@ -119,6 +121,15 @@ function AppNav({
           active={pathname === "/app"}
           onNavigate={onNavigate}
         />
+        {nextStep ? (
+          <NavLink
+            href={nextStep.href}
+            label={nextStep.name}
+            icon={ICONS.growth_next ?? ListChecks}
+            active={pathname.startsWith(nextStep.href)}
+            onNavigate={onNavigate}
+          />
+        ) : null}
         {work.map((item) => (
           <NavLink
             key={item.id}
@@ -130,12 +141,12 @@ function AppNav({
           />
         ))}
       </div>
-      {grow.length > 0 ? (
+      {growRest.length > 0 ? (
         <div className="flex flex-col gap-1">
           <p className="px-2.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
             Grow
           </p>
-          {grow.map((item) => (
+          {growRest.map((item) => (
             <NavLink
               key={item.id}
               href={item.href}
@@ -250,6 +261,11 @@ export function AppShell({
               <Menu className="size-5" />
               Menu
             </Button>
+            {isModuleEnabled(session.enabledModules, "growth_next") ? (
+              <Button asChild size="lg" className="h-11 px-4 md:hidden">
+                <Link href="/app/next-step">Next step</Link>
+              </Button>
+            ) : null}
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">
                 {session.name ?? `${PRODUCT_NAME} workspace`}

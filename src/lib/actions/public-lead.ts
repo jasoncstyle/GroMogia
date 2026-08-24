@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
@@ -102,6 +103,10 @@ export async function submitPublicLead(formData: FormData): Promise<{ ok: true }
     targetId: leadId,
     metadata: { source: "public_form" },
   });
+
+  revalidatePath("/app/next-step");
+  revalidatePath("/app/crm");
+  revalidatePath("/app");
 
   return { ok: true };
 }

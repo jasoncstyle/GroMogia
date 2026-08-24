@@ -140,7 +140,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None. Reads existing actions and decision outcomes.
 
-**Current functionality:** Next step priority is (1) confirm drafts, (2) do approved work on Next step, (3) check what changed on Next step, (4) make a drafted next Goal active, (5) draft a plan for an active Goal that has none, (6) approve a draft plan for the active Goal, (7) propose first actions from an approved plan that has none, (8) approve or reject proposed actions, (9) use the latest what-changed outcome, (10) specialist recommend, (11) wait. Ads, email, and social stay left alone. GroovGro does not execute.
+**Current functionality:** Next step priority is (1) confirm drafts, (2) do approved work on Next step, (3) check what changed on Next step, (4) review a connected website that has not been read, (5) make a drafted next Goal active, (6) draft a plan for an active Goal that has none, (7) approve a draft plan for the active Goal, (8) propose first actions from an approved plan that has none, (9) approve or reject proposed actions, (10) use the latest what-changed outcome, (11) specialist recommend, (12) wait. Ads, email, and social stay left alone. GroovGro does not execute.
 
 ### 14. The path so far
 
@@ -150,7 +150,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None.
 
-**Current functionality:** Dashboard and Decisions show The path so far. Each beat links to Goals, Your work, or Next step. GroovGro does not execute, start ads, send email, charge a card, or change the live website.
+**Current functionality:** Dashboard and Decisions show The path so far. Work, what changed, and what should happen next open Next step, where the buttons are. GroovGro does not execute, start ads, send email, charge a card, or change the live website.
 
 ### 15. Draft the next Goal after one is reached
 
@@ -222,7 +222,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If approved actions are ready, Next step lists them in the main recommendation with Open the page, I did this, and Skip for now. Confirming Business drafts still comes first. GroovGro does not execute.
 
-### 22. Check what changed from Next step (this slice)
+### 22. Check what changed from Next step
 
 **Reason:** After the owner marks work done, they still had to open Your work to compare the Goal number. Next step should name that and put Check what changed there. GroovGro must not change the plan or execute.
 
@@ -231,6 +231,1166 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If finished work has no stored what-changed note yet, Next step asks the owner to check what changed in the main recommendation. Doing approved work still comes first. GroovGro does not execute.
+
+### 23. Confirm Business drafts from Next step
+
+**Reason:** Confirming drafts is the first Next step, but Confirm and Reject still lived only on Business. The owner needs those buttons in the main recommendation. Confirming must not start marketing.
+
+**Affected:** `src/lib/growth/next-step.ts`, Next step. Reuses `confirmOffer` / `rejectOffer` / `confirmGoal` / `rejectGoal`. Does not activate marketing.
+
+**Migration risk:** None.
+
+**Current functionality:** If suggested offers or goals are waiting, Next step lists them with Confirm and Reject. Nothing becomes active until the owner confirms. GroovGro does not execute.
+
+### 24. Connect the existing website from Next step
+
+**Reason:** When Next step is connect the existing website, the owner still had to open Website to paste the address. Put Save website on Next step. GroovGro must not overwrite the live site.
+
+**Affected:** Next step. Reuses `saveWebsiteConnection`. Does not crawl or replace the site.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is connect the existing website, the owner can paste the live address and save it there. GroovGro does not change the live site.
+
+### 25. Review the connected website from Next step
+
+**Reason:** After a site address is saved, GroovGro still asked the owner to leave Next step to read pages. Put Review connected data on Next step when the site has not been read.
+
+**Affected:** `src/lib/growth/next-step.ts`, Next step. Reuses `reviewConnectedBusiness`. Does not change the live site.
+
+**Migration risk:** None.
+
+**Current functionality:** If a website is saved but unread, Next step asks the owner to review it there. GroovGro does not change the live site.
+
+### 26. Follow up open leads from Next step
+
+**Reason:** I’ll do this created a second proposed action for work that is already “open Leads & customers.” Put that open button on Next step and do not create a duplicate action.
+
+**Affected:** Next step. Reuses the CRM page. Does not email leads.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is follow up open leads, the owner opens Leads & customers from that page. GroovGro does not email anyone.
+
+### 27. Save this week’s growth review from Next step
+
+**Reason:** When the coordinated next step is wait from the weekly review, the owner still had to open Growth review to save it. Put that save on Next step.
+
+**Affected:** Next step. Reuses `saveGrowthReview`. Does not execute marketing.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is wait from the review, the owner can save this week’s review to Decision History there. After Check what changed, a wait still uses Save nothing yet. GroovGro does not execute.
+
+### 28. Run an SEO check from Next step
+
+**Reason:** When no SEO check has been saved, Next step already names that work. Put Run homepage check there so the owner does not have to open SEO first. GroovGro must not edit the website.
+
+**Affected:** Next step. Reuses `runSeoAudit`. Does not change the connected website.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is run an SEO check, the owner can run the homepage check there. GroovGro does not edit the live site.
+
+### 29. Open SEO or Events from Next step
+
+**Reason:** I’ll do this created a second proposed action for specialist work that is already “open this page.” Put Open SEO or Open Events on Next step instead.
+
+**Affected:** Next step. Reuses the SEO and Events pages. Does not edit the live website or change ads.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is review the schedule, the owner opens Events from Next step. GroovGro does not execute.
+
+### 30. Keep one button on Next step
+
+**Reason:** Draft the next Goal, make it active, draft or approve a plan, and propose actions already had their real buttons on Next step, plus I’ll do this. That created a second proposed action. Hide I’ll do this when the real button is there. Goal follow-up from what changed opens Goals.
+
+**Affected:** Next step. Reuses existing Goal and plan buttons. Does not execute.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step already has Draft the next Goal, Make this the active Goal, Draft a plan, Approve this plan, or Propose the first actions, those are the only buttons. If the signed-in person cannot use that button, Next step shows Leave this alone, not Open Goals. If what changed says to read or add a Goal, those buttons stay on Next step. GroovGro does not execute.
+
+### 31. Draft and approve SEO copy from Next step
+
+**Reason:** When Next step is fix blocking SEO items or improve the page, Draft improvements and Approve still lived only on SEO. Put those buttons on Next step. Approving must not edit the live connected website.
+
+**Affected:** Next step. Reuses `createSeoDrafts` / `decideSeoDraft`. Does not apply drafts to the paused builder from this page. Does not change the connected website.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is fix blocking SEO items or improve the page, the owner can draft, copy, approve, or reject homepage SEO copy there. GroovGro does not paste that copy onto the live site.
+
+### 32. Connect Search Console from Next step
+
+**Reason:** After a homepage check, Search Console still lived only on SEO. Put Connect Search Console on Next step when it is not connected. GroovGro must stay read-only.
+
+**Affected:** Next step. Reuses `/api/google/start`. Does not edit the website, submit a sitemap, or buy ads.
+
+**Migration risk:** None.
+
+**Current functionality:** If a homepage check is saved, blocking items are clear, and Search Console is not connected, Next step asks the owner to connect it there. GroovGro only reads search numbers.
+
+### 33. Paste the tracking snippet from Next step
+
+**Reason:** After a website is connected, the owner still had to open Website to copy the tracking snippet. Put Copy snippet on Next step when no visits are recorded yet. GroovGro must not replace the live site.
+
+**Affected:** Next step. Reuses `TrackingSnippet`. Does not change the connected website.
+
+**Migration risk:** None.
+
+**Current functionality:** If a website is connected and GroovGro has not recorded visits yet, Next step shows the tracking snippet to copy. Open leads still come first. GroovGro does not replace the live site.
+
+### 34. Review the schedule from Next step
+
+**Reason:** When Next step is review the schedule, Add event still lived only on Events. Put the upcoming list and Save event on Next step. GroovGro must not change ads or the website.
+
+**Affected:** Next step. Reuses `createEvent`. Does not change ads or the live website.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is review the schedule, the owner can see upcoming items and add a calendar item there. GroovGro does not change ads or the website.
+
+### 35. Follow up open leads from Next step
+
+**Reason:** Following up open leads still sent the owner to Leads & customers to move a person. Put Move and Mark customer on Next step. GroovGro must not email anyone.
+
+**Affected:** Next step. Reuses `moveLead` / `convertLeadToCustomer`. Does not send email.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is follow up open leads, the owner can move a person or mark them as a customer there, and copy the public lead form. GroovGro does not email anyone.
+
+### 36. Choose the Search Console property from Next step
+
+**Reason:** After Connect Search Console, Google sign-in still landed on SEO to pick the property. Put the property list on Next step and send Google back there. GroovGro must stay read-only.
+
+**Affected:** Next step, Google start/callback. Reuses `selectSearchConsoleProperty`. Does not edit the website, submit a sitemap, or buy ads.
+
+**Migration risk:** None.
+
+**Current functionality:** If Google is connected but no property is saved, Next step asks the owner to choose it there. After Google sign-in, GroovGro returns to Next step. Open leads still come first. GroovGro only reads search numbers.
+
+### 37. Refresh Search Console from Next step
+
+**Reason:** After a Search Console property is saved, Refresh still lived only on SEO. Put Refresh on Next step when no numbers have been stored yet. GroovGro must stay read-only.
+
+**Affected:** Next step. Reuses `syncSearchConsole`. Does not edit the website, submit a sitemap, or buy ads.
+
+**Migration risk:** None.
+
+**Current functionality:** If Search Console is connected and a property is saved, but GroovGro has no stored numbers yet, Next step asks the owner to refresh there. Open leads still come first. GroovGro only reads search numbers.
+
+### 38. Add a Goal from Next step
+
+**Reason:** When Check what changed found work that was not tied to a Goal, Next step only opened Goals. Put Save goal on Next step. GroovGro must not start marketing.
+
+**Affected:** Next step. Reuses `createGoal`. Does not execute, send email, or buy ads.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is add a Goal so GroovGro can compare a number, the owner can save a Goal there. GroovGro does not start marketing.
+
+### 39. Read the Goal from Next step
+
+**Reason:** When Check what changed found the Goal number is lower, Next step only opened Goals. Put the current number on Next step so the owner can read it there. GroovGro must not add spend.
+
+**Affected:** Next step. Reads the Goal number. Does not change the plan, start ads, or edit the website.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is read the Goal before changing course, the owner can see the current number there. GroovGro does not add spend.
+
+### 40. Share the public lead form from Next step
+
+**Reason:** When no person has been captured yet, the public lead form still lived only on Leads & customers. Put Copy link on Next step. GroovGro must not email anyone.
+
+**Affected:** Next step. Reuses `CopyLink`. Does not send email.
+
+**Migration risk:** None.
+
+**Current functionality:** If the website is connected and GroovGro has not captured a person yet, Next step asks the owner to copy the public lead form. Open leads and the tracking snippet still come first. GroovGro does not email anyone.
+
+### 41. Save brand voice from Next step
+
+**Reason:** How the business sounds still lived only on Brand voice. Put Save voice on Next step when visits are recorded and no profile exists yet. GroovGro must not send email, post, or edit the live website.
+
+**Affected:** Next step. Reuses `BrandVoiceProfileForm`. Does not publish.
+
+**Migration risk:** None.
+
+**Current functionality:** If the website is connected, visits are recorded, and no brand voice is saved, Next step asks the owner to save how the business sounds. Open leads, the tracking snippet, and the public lead form still come first. GroovGro does not send email, post to social, or edit the live website.
+
+### 42. Add a brand voice example from Next step
+
+**Reason:** After the voice profile is saved, a “more like this” example still lived only on Brand voice. Put Save example on Next step. GroovGro must not send email, post, or edit the live website.
+
+**Affected:** Next step. Reuses `BrandVoiceExampleForm`. Does not publish.
+
+**Migration risk:** None.
+
+**Current functionality:** If visits are recorded, a brand voice profile is saved, and no example exists yet, Next step asks the owner to paste writing they already like. Saving the profile, open leads, the tracking snippet, and the public lead form still come first. GroovGro does not send email, post to social, or edit the live website.
+
+### 43. Refresh stale Search Console numbers from Next step
+
+**Reason:** Next step already asks to refresh when no Search Console numbers are stored. If the stored numbers are more than a week old, ask again. GroovGro must not edit the live website.
+
+**Affected:** Next step. Reuses `SearchConsolePanel`. Read-only.
+
+**Migration risk:** None.
+
+**Current functionality:** If Search Console is connected, a property is saved, and the stored numbers are more than a week old, Next step asks the owner to refresh. Open leads still come first. GroovGro does not edit the website, submit a sitemap, or buy ads.
+
+### 44. Draft copy in your voice from Next step
+
+**Reason:** After the voice profile and an example are saved, creating a draft still lived only on Brand voice. Put Create draft on Next step. GroovGro must not send, post, or edit the live website.
+
+**Affected:** Next step. Reuses `BrandVoiceDraftForm`. Does not publish.
+
+**Migration risk:** None.
+
+**Current functionality:** If visits are recorded, a brand voice profile and an example are saved, and no draft exists yet, Next step asks the owner to create a draft. Saving the profile, adding an example, open leads, the tracking snippet, and the public lead form still come first. GroovGro keeps the draft in this workspace. It does not send email, post to social, or edit the live website.
+
+### 45. Add an offer from Next step
+
+**Reason:** When no confirmed offer exists, adding one still lived only on Offers. Put Save offer on Next step. GroovGro must not start marketing.
+
+**Affected:** Next step. Reuses `OfferCreateForm`. Does not execute.
+
+**Migration risk:** None.
+
+**Current functionality:** If visits are recorded and no confirmed offer exists, Next step asks the owner to name something the business promotes or wants a customer to do. Open leads, the tracking snippet, the public lead form, saving the brand, and saving how the business works still come first. GroovGro does not start marketing.
+
+### 46. Save the brand from Next step
+
+**Reason:** Name, what the business does, and who it serves still lived only on Brand. Put Save brand on Next step. GroovGro must not start marketing.
+
+**Affected:** Next step. Reuses `BrandSettingsForm`. Does not execute.
+
+**Migration risk:** None.
+
+**Current functionality:** If visits are recorded and the brand is missing what the business does or who it serves, Next step asks the owner to save those. Open leads, the tracking snippet, and the public lead form still come first. GroovGro does not start marketing, send email, or edit the live website.
+
+### 47. Save how the business works from Next step
+
+**Reason:** Industry and how the business creates value still lived only on Business. Put Save business on Next step. GroovGro must not start marketing.
+
+**Affected:** Next step. Reuses `BusinessBrainForm`. Does not execute.
+
+**Migration risk:** None.
+
+**Current functionality:** If visits are recorded, the brand is saved, and how the business works is still empty, Next step asks the owner to save the kind of business and how it creates value. Open leads, the tracking snippet, the public lead form, and saving the brand still come first. GroovGro does not start marketing, send email, or edit the live website.
+
+### 48. Add a person from Next step
+
+**Reason:** When no person has been captured yet, Next step already copies the public form. Adding someone the owner already knows still lived only on Leads. Put Save as new lead on that same Next step. GroovGro must not email anyone.
+
+**Affected:** Next step. Reuses `LeadCreateForm`. Does not email.
+
+**Migration risk:** None.
+
+**Current functionality:** If the website is connected and GroovGro has not captured a person yet, Next step asks the owner to copy the public form or add someone they already know. Open leads and the tracking snippet still come first. GroovGro does not email anyone.
+
+### 49. Find pages from Next step
+
+**Reason:** When a website is saved but unread, Next step already had Review connected data, but Find pages still sent the owner to Website. Put Find pages and the page checklist on Next step. GroovGro must not change the live site.
+
+**Affected:** Next step. Reuses `WebsitePageChecklist`. Does not edit the live site.
+
+**Migration risk:** None.
+
+**Current functionality:** If the website address is saved and pages have not been read yet, Next step asks the owner to find pages, check the important ones, then review. GroovGro does not change the live site.
+
+### 50. Save today's Goal number from Next step
+
+**Reason:** Saving today's Goal number from connected data still lived only on Goals. Put Save progress on Next step when a connected Goal has no history yet. GroovGro must not start marketing.
+
+**Affected:** Next step. Reuses `SaveConnectedProgressButton`. Does not execute.
+
+**Migration risk:** None.
+
+**Current functionality:** If visits are recorded and an active connected Goal has never stored today's number, Next step asks the owner to save it. Open leads, the tracking snippet, and the public lead form still come first. GroovGro does not start marketing.
+
+### 51. Connect payments from Next step
+
+**Reason:** Marking the workspace as connected so GroovGro can read a copy of payments still lived only on Bookings & payments. The Dashboard already asked for it. Put Connect and Sync on Next step. GroovGro must not charge a card or change checkout.
+
+**Affected:** Next step. Reuses `StripeReadCopyPanel`. Does not charge. Does not change checkout.
+
+**Migration risk:** None.
+
+**Current functionality:** If Stripe keys are on the deployment and this workspace is not marked connected, Next step asks the owner to connect so GroovGro can read a copy of payments. If it is connected but has never synced, Next step asks the owner to copy recent payment records. Open leads, the tracking snippet, and the public lead form still come first. GroovGro does not charge a card, create a Stripe account, or change checkout on the connected website.
+
+### 52. Choose when you look at growth from Next step
+
+**Reason:** The day and time for reading this week's numbers still lived only on Goals. Put Save schedule on Next step when that time has never been confirmed. GroovGro must not change the business then.
+
+**Affected:** Next step. Reuses `GrowthSettingsForm`. Does not execute.
+
+**Migration risk:** None.
+
+**Current functionality:** If visits are recorded, the website basics are saved, and the growth review schedule has never been saved, Next step asks the owner to choose the day and time they look at this week's numbers. Open leads, the tracking snippet, the public lead form, and connecting payments still come first. GroovGro does not change the business then.
+
+### 53. Dashboard sends the owner to Next step
+
+**Reason:** The home screen still had a filled Connect website button and copy that sent the owner to Business or Bookings & payments. Next step already has those owner buttons. The home screen should name Next step.
+
+**Affected:** Dashboard.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step is the filled button on the home screen. Connect website is outline. If drafts are waiting, Stripe is not connected, or open leads need a follow-up, the home screen says to open Next step. GroovGro does not start marketing.
+
+### 54. Owner work, specialists, and Intelligence send the owner to Next step
+
+**Reason:** Approved work, specialist recommendations, proposed-action copy, and Intelligence still named module pages (Leads, Website, SEO, Bookings). Those owner buttons already live on Next step. Leave-alone still names the module page. Matching charges to people still names Bookings.
+
+**Affected:** Owner work hrefs, specialist recommend hrefs, proposed-action copy, growth story, Intelligence recommendations.
+
+**Migration risk:** None.
+
+**Current functionality:** Follow up leads, connect website, confirm offers, watch progress, SEO, Search Console, tracking snippet, brand, business, offers, brand voice, growth schedule, payments, and calendar review recommend Next step. Ads, email, and social stay left alone. GroovGro does not execute.
+
+### 55. Next step does not also send the owner to the module page
+
+**Reason:** Next step already has the owner buttons. Extra Open Website, Open SEO, and Open Leads buttons still sent the owner away. Your work should name Next step. Matching charges to people still names Bookings.
+
+**Affected:** Next step, Your work, website-connect success copy.
+
+**Migration risk:** None.
+
+**Current functionality:** When the work is already on Next step, there is no second Open Website, Open SEO, Open Leads, Open Events, or Open Bookings button. Your work says Open Next step. Goal and plan fallbacks still name Goals when the main button is not available. GroovGro does not execute.
+
+### 56. The path so far, specialists, and Intelligence name Next step
+
+**Reason:** The path so far still opened Goals for a missing Goal or plan, and Your work when nothing was ready. Specialists and Intelligence said Open related page even when the href was Next step.
+
+**Affected:** Growth story, Dashboard and Decisions path cards, specialist cards, Intelligence recommendations.
+
+**Migration risk:** None.
+
+**Current functionality:** If there is no Goal yet, The Goal opens Next step. If there is no approved plan yet, The plan opens Next step. The work always opens Next step. When a Goal or approved plan already exists, those cards still open Goals so the owner can read them. Specialists and Intelligence say Open Next step when that is the related page. Leave-alone still names the module page. GroovGro does not execute.
+
+### 57. Growth review can change the schedule here
+
+**Reason:** Growth review still sent the owner to Goals to change the day and time they look at this week's numbers. The schedule form already exists. Put it on Growth review.
+
+**Affected:** Growth review.
+
+**Migration risk:** None.
+
+**Current functionality:** Growth review has Save schedule on that page. It does not send the owner to Goals to change the day and time. GroovGro does not change the business then. Next step still asks to choose the schedule when it has never been saved.
+
+### 58. Your work filled button is Next step
+
+**Reason:** Your work still had a filled Open the approved plan or Draft or approve a plan button that sent the owner to Goals. Draft, approve, propose, and do the work already live on Next step. Reading an approved plan can stay on Goals as outline.
+
+**Affected:** Your work.
+
+**Migration risk:** None.
+
+**Current functionality:** Your work’s filled button is Open Next step. If an approved plan exists, Open the approved plan is outline so the owner can read it on Goals. GroovGro does not execute.
+
+### 59. What changed and next-Goal copy name Next step
+
+**Reason:** After a Goal was reached, what changed still said Open Goals. Drafting the next Goal twice still said Open Goals. SEO still sent Connect website to Website. Those owner buttons already live on Next step.
+
+**Affected:** Work learning copy, next-Goal toast, SEO connect button.
+
+**Migration risk:** None.
+
+**Current functionality:** If a Goal reached its target, what changed says to read the history on Next step. If a next Goal was already drafted, the toast says Open Next step. If SEO has no connected website, Connect website opens Next step. GroovGro does not start marketing.
+
+### 60. Dashboard Connect website opens Next step
+
+**Reason:** The home screen still had an outline Connect website button that opened Website. The website address form already lives on Next step.
+
+**Affected:** Dashboard.
+
+**Migration risk:** None.
+
+**Current functionality:** Connect website on the home screen opens Next step. Next step stays the filled button. GroovGro does not move the live site.
+
+### 61. Owner module pages offer Next step
+
+**Reason:** Website, Leads, Bookings, SEO, Brand voice, Business, Events, and Offers had no way back to Next step if the owner landed there.
+
+**Affected:** Those owner pages.
+
+**Migration risk:** None.
+
+**Current functionality:** Those pages have an outline Open Next step button. GroovGro does not execute.
+
+### 62. Remaining owner pages offer Next step
+
+**Reason:** Growth review, Intelligence, Decisions, Settings, Brand, Team, Media, Integrations, Marketing, Analytics, Notifications, and Audit still had no way back to Next step if the owner landed there. Dashboard, Your work, Goals, and Next step already name Next step. The website builder stays paused.
+
+**Affected:** Those remaining owner pages.
+
+**Migration risk:** None.
+
+**Current functionality:** Those pages have an outline Open Next step button. GroovGro does not execute. The website builder is unchanged.
+
+### 63. Confirm drafts, review site, owner work, and wait stay on Next step
+
+**Reason:** The coordinator still named Business, Website, Your work, or Growth review for loops whose buttons already live on Next step. Intelligence website and Stripe connect observations still opened those module pages.
+
+**Affected:** Next step coordinator, Intelligence observations, Goals label.
+
+**Migration risk:** None.
+
+**Current functionality:** Confirm drafts, review the unread site, do approved work, check what changed, and save a wait all name Next step. Intelligence website and Stripe connect observations open Next step. Matching charges still names Bookings. Goal and plan work still names Goals. GroovGro does not execute.
+
+### 64. Your work Open the page stays on Next step
+
+**Reason:** Approved specialist, SEO, website, and brand-voice work still sent Your work’s Open the page button to those module pages. Saving I’ll do this still said to open the linked page.
+
+**Affected:** Your work links, Next step save copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Your work Open the page opens Next step for those owner loops. Saving I’ll do this no longer names a different page. Matching charges still names Bookings. Leave-alone still names the module page. GroovGro does not execute.
+
+### 65. Next step is first after Dashboard in the nav
+
+**Reason:** Next step sat in the Grow group after Offers, Website, Leads, and Bookings. The owner had to hunt for the one page that already holds the owner-assistance buttons.
+
+**Affected:** Signed-in nav.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step is the first signed-in nav item after Dashboard. Offers, Website, Leads, and Bookings stay below it. GroovGro does not execute.
+
+### 66. Intelligence people observations open Next step when that is the loop
+
+**Reason:** Intelligence still sent People in the workspace to Leads even when follow-up or adding a person already lives on Next step.
+
+**Affected:** Intelligence observations.
+
+**Migration risk:** None.
+
+**Current functionality:** If there are open leads, or no person has been captured yet, People in the workspace opens Next step. If people are already in the workspace and none are open leads, it still opens Leads. Matching charges still names Bookings. GroovGro does not email anyone.
+
+### 67. Phone header offers Next step
+
+**Reason:** On a phone, Next step was only inside Menu. The owner had to open Menu to reach the page that already holds the owner-assistance buttons.
+
+**Affected:** Signed-in phone header.
+
+**Migration risk:** None.
+
+**Current functionality:** Phones show a Next step button next to Menu. Desktop still uses the left nav. GroovGro does not execute.
+
+### 68. Saving a specialist recommendation refreshes Next step
+
+**Reason:** Saving a specialist recommendation created a waiting action, but Next step and Your work were not refreshed, so the owner could still see the old ask.
+
+**Affected:** Specialist save, Next step approve/reject refresh.
+
+**Migration risk:** None.
+
+**Current functionality:** After a specialist recommendation is saved, Next step and Your work refresh. Approving or rejecting from Next step also refreshes Your work. GroovGro does not execute.
+
+### 69. A public lead form submission refreshes Next step
+
+**Reason:** When someone submitted the public lead form, Next step could still ask to share the form instead of follow up.
+
+**Affected:** Public lead form save.
+
+**Migration risk:** None.
+
+**Current functionality:** After a public form submission, Next step and Leads refresh so follow-up can appear. GroovGro does not email anyone.
+
+### 70. A first recorded website visit refreshes Next step
+
+**Reason:** After the tracking snippet records its first visit, Next step could still ask to paste the snippet until the cached page expired.
+
+**Affected:** Website tracking endpoint.
+
+**Migration risk:** None.
+
+**Current functionality:** The first recorded visit refreshes Next step, the path so far, Analytics, and Website so the snippet ask can clear. Later visits do not keep refreshing those pages. GroovGro does not replace the live site.
+
+### 71. A new Stripe payment copy refreshes Next step
+
+**Reason:** When GroovGro records a new Stripe charge copy, Next step could still list a lead that is now a customer, or show a stale Goal number, until the cached page expired.
+
+**Affected:** GroovGro Stripe read-copy webhook.
+
+**Migration risk:** None.
+
+**Current functionality:** After a new payment row is stored, Next step, Leads, Bookings, and the path so far refresh. Duplicate events do not keep refreshing. GroovGro still does not charge a card or change checkout. Live checkout and stripe-osa are unchanged.
+
+### 72. Read Goal and Intelligence wait stay on Next step
+
+**Reason:** When the Goal number was lower, Next step still offered Open Goals. When Intelligence had nothing else to recommend, it sent the owner to Marketing.
+
+**Affected:** Next step Read Goal, Intelligence keep-recording recommendation.
+
+**Migration risk:** None.
+
+**Current functionality:** Read the Goal number stays on Next step. Intelligence wait opens Next step. Matching charges still names Bookings. UTM naming still names Marketing. Goal and plan coordinator loops still name Goals.
+
+### 73. Add a Goal and Dashboard empty lists stay on Next step
+
+**Reason:** Adding a Goal already had a form on Next step, but the coordinator still named Goals. Empty lead and calendar lists on the Dashboard still sent the owner to Leads or Events.
+
+**Affected:** Next step Add a Goal href, Dashboard empty lists.
+
+**Migration risk:** None.
+
+**Current functionality:** Add a Goal stays on Next step. Empty lead and calendar lists on the Dashboard name Next step. Matching charges still names Bookings. Goal and plan coordinator loops still name Goals.
+
+### 74. Unread website status alerts open Next step
+
+**Reason:** When the website address was saved but pages were unread, the amber alert told the owner to find pages and review, but it did not open Next step.
+
+**Affected:** Status alerts on Dashboard and Website.
+
+**Migration risk:** None.
+
+**Current functionality:** The unread-website alert has Open Next step. GroovGro does not change the live site.
+
+### 75. Website review copy opens Next step
+
+**Reason:** After saving a website address, Website still told the owner to open Business to review.
+
+**Affected:** Website and Business copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Website says to open Next step to find pages and review. Business says to save the address on Next step first. GroovGro does not change the live site.
+
+### 76. Empty Goal copy stays on Next step
+
+**Reason:** Dashboard and the path so far still named Goals as a second place to write the first Goal or draft a plan, even though those buttons are on Next step.
+
+**Affected:** Dashboard, path-so-far copy, Growth Plan text, and Growth review schedule copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Empty Goal and no-plan copy name Next step. A Growth Plan names Next step for open leads and draft offers. Growth review asks to set a look day on Next step. Reading an existing Goal or approved plan still opens Goals. GroovGro does not start marketing.
+
+### 77. Growth review copy names Next step
+
+**Reason:** Growth review still told the owner to confirm drafts or add a Goal without naming Next step, where those buttons already live.
+
+**Affected:** Growth review copy and the When to look buttons.
+
+**Migration risk:** None.
+
+**Current functionality:** Confirm drafts, add a Goal, and a reached Goal name Next step. Growth review’s When to look row also has Open Next step. GroovGro does not start marketing.
+
+### 78. Growth Plan and far-behind review name Next step
+
+**Reason:** A drafted Growth Plan still told the owner to connect the website without naming Next step. Growth review still told the owner a Goal was far behind without naming Next step.
+
+**Affected:** Growth Plan text and Growth review copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Connecting the website from a plan names Next step. A far-behind Goal names Next step. GroovGro does not start marketing or change the live site.
+
+### 79. Next step does not send the owner to Your work
+
+**Reason:** Next step still had Open Your work. Your work then says to open Next step, so the owner bounced between the two pages.
+
+**Affected:** Next step footer.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step does not send the owner to Your work. GroovGro does not execute.
+
+### 80. Next step shows the Growth Plan write-up
+
+**Reason:** Next step still sent the owner to Goals to read the plan. Your work and the path so far did the same. The write-up can stay on Next step.
+
+**Affected:** Next step, the path so far, and Your work.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows the current Growth Plan. The path so far opens Next step to read an approved plan. Your work no longer sends the owner to Goals to read it. GroovGro does not execute.
+
+### 81. Next step shows the Goal number
+
+**Reason:** The path so far still sent the owner to Goals to read the current Goal. The number can stay on Next step.
+
+**Affected:** Next step and the path so far.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows the current Goal. The path so far opens Next step to read it. GroovGro does not start marketing.
+
+### 82. Next step footer and Dashboard wait stay on Next step
+
+**Reason:** Next step still had a Goals footer button after the Goal and plan were already on that page. Dashboard wait copy still sent the owner to Growth review.
+
+**Affected:** Next step footer and Dashboard copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step does not send the owner to Goals from the footer. Dashboard wait names Next step. GroovGro does not start marketing.
+
+### 83. Goal and plan loops stay on Next step
+
+**Reason:** Goal and plan recommendations still named Goals, and Next step still showed Open Goals when the signed-in person could not use the dedicated button. The Goal and plan are already on Next step.
+
+**Affected:** Next step coordinator hrefs and the Open Goals fallback.
+
+**Migration risk:** None.
+
+**Current functionality:** Activate, draft, approve, propose, waiting actions, and a reached Goal name Next step. If the signed-in person cannot use the dedicated button, they stay here. GroovGro does not execute.
+
+### 84. Next step shows this week’s look
+
+**Reason:** Next step still sent the owner to Growth review to read this week’s look. The weekly write-up can stay on Next step.
+
+**Affected:** Next step.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows this week’s look. It does not send the owner to Growth review from the footer. GroovGro does not change the business from that look.
+
+### 85. Business Active goals and Goals weekly copy stay on Next step
+
+**Reason:** Business still sent Active goals to Goals. Goals still told the owner to open Growth review to read this week’s look. Both already live on Next step.
+
+**Affected:** Business Active goals and Goals schedule copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Business Active goals opens Next step. Goals schedule copy names Next step for this week’s look. GroovGro does not start marketing.
+
+### 86. Decisions copy names Next step for this week’s look
+
+**Reason:** Decisions still told the owner to save weekly and monthly reviews from Growth review. This week’s look already lives on Next step.
+
+**Affected:** Decisions copy and top buttons.
+
+**Migration risk:** None.
+
+**Current functionality:** Decisions names Next step to save this week’s look. Growth review stays for the monthly write-up. GroovGro does not start marketing.
+
+### 87. Next step shows specialist reports
+
+**Reason:** Next step still sent the owner to Intelligence to read specialists. The owner can read each specialist and save the recommendation here.
+
+**Affected:** Next step.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows specialist reports and Save to Decision History. It does not send the owner to Intelligence from the footer. Leave-alone still names the module page. GroovGro does not execute.
+
+### 88. Next step shows Decision History
+
+**Reason:** Next step still sent the owner to Decisions to read the history. Recent decisions can stay on Next step.
+
+**Affected:** Next step and Decisions copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows recent Decision History. It does not send the owner to Decisions from the footer. GroovGro does not run those decisions.
+
+### 89. Next step shows The path so far
+
+**Reason:** Next step still sent the owner to the Dashboard to read The path so far. Goal, plan, work, what changed, and the next step can stay on Next step.
+
+**Affected:** Next step.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows The path so far. It does not send the owner to the Dashboard from the footer. GroovGro does not run marketing.
+
+### 90. Goals, Growth review, and Your work stay on Next step for that content
+
+**Reason:** Those pages still sent the owner to Intelligence, Decisions, or the Dashboard for specialists, Decision History, and The path so far. That content already lives on Next step.
+
+**Affected:** Goals, Growth review, and Your work buttons.
+
+**Migration risk:** None.
+
+**Current functionality:** Goals keeps Open Next step and Open growth review for the monthly write-up. Growth review and Your work keep Open Next step. GroovGro does not execute.
+
+### 91. Dashboard and Intelligence name Next step for specialists
+
+**Reason:** The Dashboard still labeled Intelligence as specialists. Empty Goals plan copy did not name Next step. Specialists and drafting a plan already live on Next step.
+
+**Affected:** Dashboard Intelligence button, Intelligence copy, and Goals empty-plan copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Dashboard Intelligence is Intelligence. Intelligence names Next step for specialists. Empty Goals plans name Next step. GroovGro does not execute.
+
+### 92. Save this week’s look from Next step
+
+**Reason:** Next step showed this week’s look but still sent the owner to Growth review to save it when something else was the primary. Growth review intro still described itself as the weekly look.
+
+**Affected:** Next step this week’s look and Growth review copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save this week’s look to Decision History. Growth review names Next step for the weekly look. The monthly write-up stays on Growth review. GroovGro does not change the business from that look.
+
+### 93. Keep the weekly write-up on Next step
+
+**Reason:** Next step still showed a short weekly look. The owner had to open Growth review to read the rest of that write-up. The weekly sections already exist.
+
+**Affected:** Next step this week’s look and Growth review.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows the full weekly write-up. Growth review is the monthly look. GroovGro does not change the business from that look.
+
+### 94. Keep specialists on Next step
+
+**Reason:** Intelligence still showed the specialist cards after Next step already had them. The owner could save specialists from Intelligence instead of staying on Next step.
+
+**Affected:** Intelligence specialist cards.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows specialists and Save to Decision History. Intelligence is the briefing from connected data. Leave-alone still names the module page. GroovGro does not execute.
+
+### 95. Keep The path so far on Next step
+
+**Reason:** Dashboard and Decisions still showed The path so far after Next step already had it. The owner could read that story from those pages instead of staying on Next step.
+
+**Affected:** Dashboard and Decisions story cards.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows The path so far. Dashboard and Decisions name Next step for that story. GroovGro does not run marketing.
+
+### 96. Keep proposed-action approval on Next step
+
+**Reason:** Decisions still showed Approve and Reject on proposed actions after Next step already had those buttons. The owner could approve from Decisions instead of staying on Next step.
+
+**Affected:** Decisions proposed actions.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can approve or reject proposed actions. Decisions lists them and names Next step. Approving does not run them. GroovGro does not execute.
+
+### 97. Keep Your work approval on Next step
+
+**Reason:** Your work still showed Approve and Reject on waiting actions after Next step already had those buttons. The owner could approve from Your work instead of staying on Next step.
+
+**Affected:** Your work waiting list.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can approve or reject proposed actions. Your work lists waiting actions and names Next step. I did this stays on Your work. GroovGro does not execute.
+
+### 98. Keep Goals approval on Next step
+
+**Reason:** Goals still showed Approve and Reject on proposed plan actions after Next step already had those buttons. The owner could approve from Goals instead of staying on Next step.
+
+**Affected:** Goals plan actions.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can approve or reject proposed actions. Goals lists them and names Next step. Draft and approve a plan still stay on Goals. GroovGro does not execute.
+
+### 99. Keep Goals owner work on Next step
+
+**Reason:** Goals still showed I did this on approved plan actions after Next step and Your work already had those buttons. The owner could mark work done from Goals instead of staying on Next step.
+
+**Affected:** Goals plan actions.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step and Your work can mark approved work done. Goals lists it and names Next step. GroovGro does not execute.
+
+### 100. Keep Goals confirm drafts on Next step
+
+**Reason:** Goals still showed Confirm and Reject on suggested goals after Next step already had those buttons. The owner could confirm a draft from Goals instead of staying on Next step.
+
+**Affected:** Goals suggested goals.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can confirm or reject suggested goals. Goals lists them and names Next step. Add a Goal, draft a plan, and approve a plan still stay on Goals. GroovGro does not execute.
+
+### 101. Keep Offers confirm drafts on Next step
+
+**Reason:** Offers still showed Confirm and Reject on suggested offers after Next step already had those buttons. The owner could confirm a draft from Offers instead of staying on Next step.
+
+**Affected:** Offers suggested offers.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can confirm or reject suggested offers. Offers lists them and names Next step. Add an offer still stays on Offers. GroovGro does not execute.
+
+### 102. Keep Business confirm drafts on Next step
+
+**Reason:** Business still showed Confirm and Reject on suggested offers and goals after Next step already had those buttons. The owner could confirm a draft from Business instead of staying on Next step.
+
+**Affected:** Business suggested drafts.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can confirm or reject suggested offers and goals. Business lists them so the owner can read them, and names Next step. Review connected data still stays on Business. GroovGro does not execute.
+
+### 103. Keep dedicated Next step buttons from creating duplicate actions
+
+**Reason:** Confirm drafts, connect website, review site, approve actions, owner work, and check what changed already have dedicated buttons on Next step. I’ll do this on those loops could still save a duplicate proposed action.
+
+**Affected:** Next step I’ll do this.
+
+**Migration risk:** None.
+
+**Current functionality:** I’ll do this on those dedicated loops does not also save a duplicate proposed action. GroovGro does not execute.
+
+### 104. Keep find-pages on Next step
+
+**Reason:** Business still showed the Find pages checklist after Next step and Website already had that loop. The owner could finish an unread-site review from Business instead of staying on Next step.
+
+**Affected:** Business review card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step and Website can find pages and check the important ones. Business keeps Review connected data and names Next step to find pages. GroovGro does not change the live site.
+
+### 105. Keep the review schedule on Next step
+
+**Reason:** Goals still showed the day-and-time form after Next step and Growth review already had it. The owner could change the schedule from Goals instead of staying on Next step.
+
+**Affected:** Goals schedule card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save when you look at this week’s numbers. Growth review can change that day later. Goals names Next step. GroovGro does not change the business from that schedule.
+
+### 106. Keep Website find-pages on Next step
+
+**Reason:** Website still showed the Find pages checklist after Next step already had that loop, and after Website copy already named Next step. The owner could finish an unread-site review from Website instead of staying on Next step.
+
+**Affected:** Website pages card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can find pages and check the important ones. Website keeps the address and tracking snippet, and names Next step to find pages. GroovGro does not change the live site.
+
+### 107. Keep Review connected data on Next step
+
+**Reason:** Dashboard, Goals, and Offers still ran Review connected data after Next step already had that loop for an unread site. The owner could skip Find pages and review from those screens instead of staying on Next step.
+
+**Affected:** Dashboard, Goals, and Offers review buttons.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can find pages, check the important ones, then Review connected data when the site is unread. Business keeps Review connected data to run it again. Dashboard, Goals, and Offers name Next step. GroovGro does not change the live site.
+
+### 108. Keep plan approve and propose on Next step
+
+**Reason:** Goals still showed Approve and Reject on a draft plan, and Propose the first actions on an approved plan, after Next step already had those buttons. The owner could finish those loops from Goals instead of staying on Next step.
+
+**Affected:** Goals plan list.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can approve or reject a draft plan, and propose the first actions. Goals lists plans and names Next step. Write a plan yourself still stays on Goals. GroovGro does not execute.
+
+### 109. Keep Activate Goal and Draft next Goal on Next step
+
+**Reason:** Goals still showed Make this the active Goal and Draft the next Goal after Next step already had those buttons. The owner could activate a draft or draft the next Goal from Goals instead of staying on Next step.
+
+**Affected:** Goals goal list.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can make a draft the active Goal, and draft the next Goal when one is reached. Goals lists those goals and names Next step. GroovGro does not execute.
+
+### 110. Keep Draft a plan on Next step
+
+**Reason:** Goals still showed Draft a plan for this Goal after Next step already had that button. The owner could draft a plan from Goals instead of staying on Next step.
+
+**Affected:** Goals goal list.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can draft a plan for the active Goal. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. GroovGro does not execute.
+
+### 111. Keep Goal history on Next step
+
+**Reason:** After Check what changed, a reached Goal told the owner to read the history on Next step, but the stored numbers only appeared on Goals. The owner had to leave Next step to see what changed.
+
+**Affected:** Next step Goal readout.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows the saved Goal numbers with the current Goal. Goals still lists the full history and the Current box. GroovGro does not execute.
+
+### 112. Keep website review click-by-click on Next step
+
+**Reason:** Phase 2 setup still told the owner to find pages, then open Business to review. Find pages and Review connected data already live on Next step. Following that guide sent the owner away.
+
+**Affected:** `docs/phase-2/USER_SETUP.md`.
+
+**Migration risk:** None.
+
+**Current functionality:** Setup click-by-click finds pages and reviews on Next step. Website still saves the address and shows the tracking snippet. Business still has Review to run it again. GroovGro does not change the live site.
+
+### 113. Keep saving today's Goal number on Next step
+
+**Reason:** After the first save, Next step stopped showing Save progress from connected data. Later saves only lived on Goals, so the owner had to leave Next step to store today's number.
+
+**Affected:** Next step Goal card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save today's Goal number with the current Goal after the first save. Goals still has that button and the Current box. GroovGro does not start marketing.
+
+### 114. Keep Check what changed on Next step when it is not the main ask
+
+**Reason:** When drafts or approved work outranked Check what changed, that button only lived on Your work. The path so far still said to check on Next step. The owner had to leave Next step to compare the Goal number.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can check what changed even when that is not the main ask. Your work still has that button. GroovGro does not change the plan.
+
+### 115. Keep I did this on Next step when it is not the main ask
+
+**Reason:** When drafts outranked approved work, I did this only lived on Your work. The path so far still said those actions were ready on Next step. The owner had to leave Next step to mark them done.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can mark approved work done even when that is not the main ask. Your work still has those buttons. GroovGro does not execute.
+
+### 116. Keep website review on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, or Check what changed outranked an unread website, Find pages and Review only lived in the main recommendation. Website no longer lists pages. Business still has Review to run it again. The owner had to leave Next step to do the first review.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can find pages, check the important ones, then review even when that is not the main ask. Business still has Review to run it again. GroovGro does not change the live site.
+
+### 117. Keep Activate Goal on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, or an unread website outranked a draft Goal, Make this the active Goal only lived in the main recommendation. Goals no longer has that button. The owner had to finish the other ask first, or leave Next step with no way to activate.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can make a draft the active Goal even when that is not the main ask. Goals lists that draft and names Next step. GroovGro does not start marketing.
+
+### 118. Keep Draft a plan on Next step when it is not the main ask
+
+**Reason:** When activate, drafts, approved work, Check what changed, or an unread website outranked a missing plan, Draft a plan only lived in the main recommendation. Goals no longer has that button. Write a plan yourself still stays on Goals. The owner had to finish the other ask first, or leave Next step with no way to draft a plan.
+
+**Affected:** Next step plan card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can draft a plan for the active Goal even when that is not the main ask. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. GroovGro does not execute.
+
+### 119. Keep Approve a plan on Next step when it is not the main ask
+
+**Reason:** When a missing plan, activate, drafts, approved work, Check what changed, or an unread website outranked a draft plan, Approve and Reject only lived in the main recommendation. Goals no longer has those buttons. The owner had to finish the other ask first, or leave Next step with no way to approve the draft.
+
+**Affected:** Next step plan card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can approve or reject a draft plan even when that is not the main ask. Goals lists draft plans and names Next step. GroovGro does not execute.
+
+### 120. Keep Propose first actions on Next step when it is not the main ask
+
+**Reason:** When a draft plan, a missing plan, activate, drafts, approved work, Check what changed, or an unread website outranked proposing first actions, that button only lived in the main recommendation. Goals no longer has it. The owner had to finish the other ask first, or leave Next step with no way to propose actions.
+
+**Affected:** Next step plan card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can propose the first actions even when that is not the main ask. Goals lists approved plans and names Next step. GroovGro does not execute.
+
+### 121. Keep Draft the next Goal on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a plan loop outranked a reached Goal, Draft the next Goal only lived in the main recommendation. Goals no longer has that button. The owner had to finish the other ask first, or leave Next step with no way to draft the next Goal.
+
+**Affected:** Next step Goal card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can draft the next Goal even when that is not the main ask. If a next Goal is already drafted, Make this the active Goal stays instead. Goals lists a reached Goal and names Next step. GroovGro does not start marketing.
+
+### 122. Keep Add a Goal on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked work that was not tied to a Goal, Add a Goal only lived in the main recommendation. Goals still has that form. The owner had to leave Next step to save a Goal.
+
+**Affected:** Next step Goal card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can add a Goal even when that is not the main ask. Goals still has Add a Goal. GroovGro does not start marketing.
+
+### 123. Keep Connect website on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, or a Goal/plan loop outranked a missing website, the address form only lived in the main recommendation. Website still has that field. The owner had to leave Next step to save the address.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save the existing website address even when that is not the main ask. Website still has the address field and tracking snippet. GroovGro does not move the live site.
+
+### 124. Keep tracking snippet on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a connected site with no recorded visits, the tracking snippet only lived in the main recommendation. Website still has that snippet. The owner had to leave Next step to copy it.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can copy the tracking snippet even when that is not the main ask. Website still has the snippet. GroovGro does not replace the live site.
+
+### 125. Keep Follow up open leads on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked open leads, follow-up only lived in the main recommendation. Leads & customers still has Move and Mark customer. The owner had to leave Next step to give a person a next step.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can move or mark open leads even when that is not the main ask. Leads & customers still has Move and Mark customer. GroovGro does not email anyone.
+
+### 126. Keep Share the public lead form on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a workspace with no captured person, the public form and Add a person only lived in the main recommendation. Leads & customers still has those. The owner had to leave Next step to share the form or add someone.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can copy the public lead form or add a person even when that is not the main ask. Leads & customers still has the form and Add a person. GroovGro does not email anyone.
+
+### 127. Keep Connect payments on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked connecting or syncing a payment copy, Connect Stripe and Sync only lived in the main recommendation. Bookings still has that panel. The owner had to leave Next step to mark the workspace connected or copy recent payments.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can connect so GroovGro can read a copy of payments, or sync recent payment records, even when that is not the main ask. Bookings still has Connect Stripe and Sync. GroovGro does not charge a card or change checkout.
+
+### 128. Keep Save your brand on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked an incomplete brand, the brand form only lived in the main recommendation. Brand still has that form. The owner had to leave Next step to save the business name, what it does, and who it serves.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save the brand even when that is not the main ask. Brand still has that form. GroovGro does not start marketing, send email, or edit the live website.
+
+### 129. Keep Save how this business works on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing Business Brain, that form only lived in the main recommendation. Business still has that form. The owner had to leave Next step to save the kind of business this is and how it creates value.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save how this business works even when that is not the main ask. Business still has that form. GroovGro does not start marketing, send email, or edit the live website.
+
+### 130. Keep Add an offer on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a workspace with no confirmed offer, Add an offer only lived in the main recommendation. Offers still has that form. The owner had to leave Next step to name something the business promotes.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can add an offer even when that is not the main ask. Offers still has that form. GroovGro does not start marketing.
+
+### 131. Keep Save your brand voice on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing brand voice, that form only lived in the main recommendation. Brand voice still has that form. The owner had to leave Next step to save how this business sounds.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save the brand voice even when that is not the main ask. Brand voice still has that form. GroovGro does not send email, post to social, or edit the live website.
+
+### 132. Keep Add a brand voice example on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing voice example, that form only lived in the main recommendation. Brand voice still has that form. The owner had to leave Next step to paste writing they already like.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can add a brand voice example even when that is not the main ask. Brand voice still has that form. GroovGro does not send email, post to social, or edit the live website.
+
+### 133. Keep Draft copy in your voice on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing voice draft, that form only lived in the main recommendation. Brand voice still has that form. The owner had to leave Next step to create a draft from the voice they saved.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can draft copy in the saved voice even when that is not the main ask. Brand voice still has that form. GroovGro keeps the draft in this workspace. It does not send email, post to social, or edit the live website.
+
+### 134. Keep Choose when you look at growth on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing look schedule, that form only lived in the main recommendation. Growth review still has that form. The owner had to leave Next step to save the day and time they look at this week's numbers.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save when to look at this week's numbers even when that is not the main ask. Growth review still has that form. GroovGro does not change the business then.
+
+### 135. Keep Run an SEO check on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing homepage SEO check, that button only lived in the main recommendation. SEO still has that check. The owner had to leave Next step to run it.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can run a homepage SEO check even when that is not the main ask. SEO still has that check. GroovGro does not edit the website.
+
+### 136. Keep SEO drafts on Next step when they are not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked blocking or improve-when-you-have-time SEO items, those draft and approve buttons only lived in the main recommendation. SEO still has those checks. The owner had to leave Next step to draft and approve the copy.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can draft and approve homepage SEO copy even when that is not the main ask. SEO still has those checks. GroovGro does not change the connected website or start ads.
+
+### 137. Keep Search Console on Next step when it is not the main ask
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked connecting Search Console, choosing the property, or refreshing numbers, that panel only lived in the main recommendation. SEO still has that panel. The owner had to leave Next step to connect, pick, or refresh.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask. SEO still has that panel. GroovGro does not edit the website, submit a sitemap, or buy ads.
+
+### 138. Keep Add a calendar item on Next step when it is not the main ask (this slice)
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a schedule that is well short of its target, Add a calendar item only lived in the main recommendation. Events still has that form. The owner had to leave Next step to add an item.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. GroovGro does not change ads or the website.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -248,7 +1408,120 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Propose first actions from Next step is parked.** Ask the owner to propose the first actions from an approved plan. Do not execute.
 - **Approve proposed actions from Next step is parked.** Ask the owner to approve or reject proposed actions. Do not execute.
 - **Do owner work from Next step is parked.** Ask the owner to do approved work on Next step. Do not execute.
-- **Check what changed from Next step (this slice).** Ask the owner to compare the Goal number after work. Do not execute. Do not start ads.
+- **Check what changed from Next step is parked.** Ask the owner to compare the Goal number after work. Do not execute.
+- **Confirm Business drafts from Next step is parked.** Ask the owner to confirm or reject suggested offers and goals. Do not execute. Do not start ads.
+- **Save this week’s growth review from Next step is parked.** Ask the owner to save the weekly wait to Decision History. Do not execute.
+- **Run an SEO check from Next step is parked.** Ask the owner to run the homepage check. Do not edit the live site.
+- **Open SEO or Events from Next step is parked.** Ask the owner to open the named page. Do not execute.
+- **Keep one button on Next step is parked.** Do not show I’ll do this next to the real button. Do not execute.
+- **Draft and approve SEO copy from Next step is parked.** Ask the owner to draft and approve homepage SEO copy. Do not edit the live site.
+- **Connect Search Console from Next step is parked.** Ask the owner to connect Search Console read-only. Do not edit the live site.
+- **Paste the tracking snippet from Next step is parked.** Ask the owner to copy the snippet. Do not replace the live site.
+- **Review the schedule from Next step is parked.** Ask the owner to add a calendar item. Do not change ads or the website.
+- **Follow up open leads from Next step is parked.** Ask the owner to move a person or mark them as a customer. Do not email anyone.
+- **Choose the Search Console property from Next step is parked.** Ask the owner to pick the property after Google sign-in. Do not edit the live site.
+- **Refresh Search Console from Next step is parked.** Ask the owner to refresh Search Console numbers. Do not edit the live site.
+- **Add a Goal from Next step is parked.** Ask the owner to save a Goal when work was not tied to one. Do not start marketing.
+- **Read the Goal from Next step is parked.** Ask the owner to read the Goal number when it is lower. Do not add spend.
+- **Share the public lead form from Next step is parked.** Ask the owner to copy the public form when no person has been captured yet. Do not email anyone.
+- **Save brand voice from Next step is parked.** Ask the owner to save how the business sounds when visits are recorded and no profile exists yet. Do not send email, post, or edit the live website.
+- **Add a brand voice example from Next step is parked.** Ask the owner to paste writing they already like after the profile is saved. Do not send email, post, or edit the live website.
+- **Refresh stale Search Console numbers from Next step is parked.** Ask the owner to refresh when stored numbers are more than a week old. Do not edit the live site.
+- **Draft copy in your voice from Next step is parked.** Ask the owner to create a draft after the profile and an example are saved. Do not send email, post, or edit the live website.
+- **Add an offer from Next step is parked.** Ask the owner to name what the business promotes when no confirmed offer exists. Do not start marketing.
+- **Save the brand from Next step is parked.** Ask the owner to save the business name, what it does, and who it serves when that is still empty. Do not start marketing.
+- **Save how the business works from Next step is parked.** Ask the owner to save the kind of business and how it creates value when that is still empty. Do not start marketing.
+- **Add a person from Next step is parked.** Ask the owner to copy the public form or add someone they already know when no person has been captured yet. Do not email anyone.
+- **Find pages from Next step is parked.** Ask the owner to find pages, check the important ones, and review when the website is saved but unread. Do not change the live site.
+- **Save today's Goal number from Next step is parked.** Ask the owner to save today's Goal number when a connected Goal has no history yet. Do not start marketing.
+- **Connect payments from Next step is parked.** Ask the owner to connect so GroovGro can read a copy of payments, or sync recent payment records when the workspace is connected but has never synced. Do not charge a card or change checkout.
+- **Choose when you look at growth from Next step is parked.** Ask the owner to save the day and time they look at this week's numbers when that schedule has never been saved. Do not change the business then.
+- **Dashboard sends the owner to Next step is parked.** Next step is the filled home-screen button. Drafts, Stripe, and open leads say to open Next step. Do not start marketing.
+- **Owner work, specialists, and Intelligence send the owner to Next step is parked.** Recommend Next step for owner loops that already have buttons there. Leave-alone still names the module page. Do not execute.
+- **Next step does not also send the owner to the module page is parked.** Do not show a second Open Website or Open SEO button. Your work names Next step. Do not execute.
+- **The path so far, specialists, and Intelligence name Next step is parked.** Missing Goal or plan, and the work beat, open Next step. Specialists and Intelligence say Open Next step when that is the related page. Do not execute.
+- **Growth review can change the schedule here is parked.** Save the day and time on Growth review. Do not send the owner to Goals. Do not change the business then.
+- **Your work filled button is Next step is parked.** Open Next step is the filled button. Open the approved plan stays outline so the owner can read it. Do not execute.
+- **What changed and next-Goal copy name Next step is parked.** Read the history and review a drafted next Goal on Next step. SEO Connect website opens Next step. Do not start marketing.
+- **Dashboard Connect website opens Next step is parked.** The outline Connect website button opens Next step. Do not move the live site.
+- **Owner module pages offer Next step is parked.** Website, Leads, Bookings, SEO, Brand voice, Business, Events, and Offers have Open Next step. Do not execute.
+- **Remaining owner pages offer Next step is parked.** Growth review, Intelligence, Decisions, Settings, Brand, Team, Media, Integrations, Marketing, Analytics, Notifications, and Audit have Open Next step. Do not execute.
+- **Confirm drafts, review site, owner work, and wait stay on Next step is parked.** Those coordinator loops name Next step. Intelligence website and Stripe connect observations open Next step. Matching charges still names Bookings. Do not execute.
+- **Your work Open the page stays on Next step is parked.** Approved specialist, SEO, website, and brand-voice work open Next step. Saving I’ll do this does not name a different page. Leave-alone still names the module page. Do not execute.
+- **Next step is first after Dashboard in the nav is parked.** Next step sits under Dashboard. Offers, Website, Leads, and Bookings stay below it. Do not execute.
+- **Intelligence people observations open Next step when that is the loop is parked.** Open leads or no person captured yet open Next step. A filled pipeline with no open leads still opens Leads. Matching charges still names Bookings. Do not email anyone.
+- **Phone header offers Next step is parked.** Phones show Next step next to Menu. Do not execute.
+- **Saving a specialist recommendation refreshes Next step is parked.** After save, Next step and Your work refresh. Approving from Next step also refreshes Your work. Do not execute.
+- **A public lead form submission refreshes Next step is parked.** After someone submits the public form, Next step and Leads refresh so follow-up can appear. Do not email anyone.
+- **A first recorded website visit refreshes Next step is parked.** After the snippet records its first visit, Next step refreshes so it can stop asking to paste the snippet. Do not replace the live site.
+- **A new Stripe payment copy refreshes Next step is parked.** After GroovGro stores a new payment row, Next step refreshes so follow-up and Goal numbers can update. Do not charge a card or change checkout.
+- **Read Goal and Intelligence wait stay on Next step is parked.** Read the Goal number stays on Next step. Intelligence wait opens Next step. Matching charges still names Bookings. Do not start ads.
+- **Add a Goal and Dashboard empty lists stay on Next step is parked.** Add a Goal stays on Next step. Empty lead and calendar lists on the Dashboard name Next step. Do not email anyone.
+- **Unread website status alerts open Next step is parked.** The amber unread-website alert has Open Next step. Do not change the live site.
+- **Website review copy opens Next step is parked.** After saving a website address, Website names Next step instead of Business. Do not change the live site.
+- **Empty Goal copy stays on Next step is parked.** Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. Do not start marketing.
+- **Growth review copy names Next step is parked.** Confirm drafts, add a Goal, and a reached Goal name Next step. Do not start marketing.
+- **Growth Plan and far-behind review name Next step is parked.** Connecting the website from a plan, and a far-behind Goal, name Next step. Do not start marketing or change the live site.
+- **Next step does not send the owner to Your work is parked.** Next step does not send the owner to Your work. Do not execute.
+- **Next step shows the Growth Plan write-up is parked.** Next step shows the current Growth Plan. The path so far opens Next step to read an approved plan. Your work no longer sends the owner to Goals to read it. Do not execute.
+- **Next step shows the Goal number is parked.** Next step shows the current Goal. The path so far opens Next step to read it. Do not start marketing.
+- **Next step footer and Dashboard wait stay on Next step is parked.** Next step does not send the owner to Goals from the footer. Dashboard wait names Next step. Do not start marketing.
+- **Goal and plan loops stay on Next step is parked.** Activate, draft, approve, propose, waiting actions, and a reached Goal name Next step. Do not execute.
+- **Next step shows this week’s look is parked.** Next step shows this week’s look. It does not send the owner to Growth review from the footer. Do not change the business from that look.
+- **Business Active goals and Goals weekly copy stay on Next step is parked.** Business Active goals opens Next step. Goals schedule copy names Next step for this week’s look. Do not start marketing.
+- **Decisions copy names Next step for this week’s look is parked.** Decisions names Next step to save this week’s look. Growth review stays for the monthly write-up. Do not start marketing.
+- **Next step shows specialist reports is parked.** Next step shows specialist reports and Save to Decision History. It does not send the owner to Intelligence from the footer. Leave-alone still names the module page. Do not execute.
+- **Next step shows Decision History is parked.** Next step shows recent Decision History. It does not send the owner to Decisions from the footer. Do not run those decisions.
+- **Next step shows The path so far is parked.** Next step shows The path so far. It does not send the owner to the Dashboard from the footer. Do not run marketing.
+- **Goals, Growth review, and Your work stay on Next step for that content is parked.** Goals keeps Open Next step and Open growth review for the monthly write-up. Growth review and Your work keep Open Next step. Do not execute.
+- **Dashboard and Intelligence name Next step for specialists is parked.** Dashboard Intelligence is Intelligence. Intelligence names Next step for specialists. Empty Goals plans name Next step. Do not execute.
+- **Save this week’s look from Next step is parked.** Next step can save this week’s look to Decision History. Growth review names Next step for the weekly look. The monthly write-up stays on Growth review. Do not change the business from that look.
+- **Keep the weekly write-up on Next step is parked.** Next step shows the full weekly write-up. Growth review is the monthly look. Do not change the business from that look.
+- **Keep specialists on Next step is parked.** Next step shows specialists and Save to Decision History. Intelligence is the briefing from connected data. Leave-alone still names the module page. Do not execute.
+- **Keep The path so far on Next step is parked.** Next step shows The path so far. Dashboard and Decisions name Next step for that story. Do not run marketing.
+- **Keep proposed-action approval on Next step is parked.** Next step can approve or reject proposed actions. Decisions lists them and names Next step. Do not execute.
+- **Keep Your work approval on Next step is parked.** Next step can approve or reject proposed actions. Your work lists waiting actions and names Next step. Do not execute.
+- **Keep Goals approval on Next step is parked.** Next step can approve or reject proposed actions. Goals lists them and names Next step. Do not execute.
+- **Keep Goals owner work on Next step is parked.** Next step and Your work can mark approved work done. Goals lists it and names Next step. Do not execute.
+- **Keep Goals confirm drafts on Next step is parked.** Next step can confirm or reject suggested goals. Goals lists them and names Next step. Do not execute.
+- **Keep Offers confirm drafts on Next step is parked.** Next step can confirm or reject suggested offers. Offers lists them and names Next step. Do not execute.
+- **Keep Business confirm drafts on Next step is parked.** Next step can confirm or reject suggested offers and goals. Business lists them and names Next step. Do not execute.
+- **Keep dedicated Next step buttons from creating duplicate actions is parked.** I’ll do this on confirm drafts, connect website, review site, approve actions, owner work, and check what changed does not also save a duplicate proposed action. Do not execute.
+- **Keep find-pages on Next step is parked.** Next step and Website can find pages. Business keeps Review connected data and names Next step to find pages. Do not change the live site.
+- **Keep the review schedule on Next step is parked.** Next step can save when you look at this week’s numbers. Growth review can change that day later. Goals names Next step. Do not change the business from that schedule.
+- **Keep Website find-pages on Next step is parked.** Next step can find pages. Website keeps the address and tracking snippet, and names Next step to find pages. Do not change the live site.
+- **Keep Review connected data on Next step is parked.** Next step can find pages, check the important ones, then review. Business keeps Review connected data to run it again. Dashboard, Goals, and Offers name Next step. Do not change the live site.
+- **Keep plan approve and propose on Next step is parked.** Next step can approve or reject a draft plan, and propose the first actions. Goals lists plans and names Next step. Write a plan yourself still stays on Goals. Do not execute.
+- **Keep Activate Goal and Draft next Goal on Next step is parked.** Next step can make a draft the active Goal, and draft the next Goal when one is reached. Goals lists those goals and names Next step. Do not execute.
+- **Keep Draft a plan on Next step is parked.** Next step can draft a plan for the active Goal. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Do not execute.
+- **Keep Goal history on Next step is parked.** Next step shows the saved Goal numbers with the current Goal. Goals still lists the full history and the Current box. Do not execute.
+- **Keep website review click-by-click on Next step is parked.** Setup click-by-click finds pages and reviews on Next step. Website still saves the address and shows the tracking snippet. Business still has Review to run it again. Do not change the live site.
+- **Keep saving today's Goal number on Next step is parked.** Next step can save today's Goal number with the current Goal after the first save. Goals still has that button and the Current box. Do not start marketing.
+- **Keep Check what changed on Next step when it is not the main ask is parked.** Next step can check what changed even when that is not the main ask. Your work still has that button. Do not change the plan.
+- **Keep I did this on Next step when it is not the main ask is parked.** Next step can mark approved work done even when that is not the main ask. Your work still has those buttons. Do not execute.
+- **Keep website review on Next step when it is not the main ask is parked.** Next step can find pages, check the important ones, then review even when that is not the main ask. Business still has Review to run it again. Do not change the live site.
+- **Keep Activate Goal on Next step when it is not the main ask is parked.** Next step can make a draft the active Goal even when that is not the main ask. Goals lists that draft and names Next step. Do not start marketing.
+- **Keep Draft a plan on Next step when it is not the main ask is parked.** Next step can draft a plan for the active Goal even when that is not the main ask. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Do not execute.
+- **Keep Approve a plan on Next step when it is not the main ask is parked.** Next step can approve or reject a draft plan even when that is not the main ask. Goals lists draft plans and names Next step. Do not execute.
+- **Keep Propose first actions on Next step when it is not the main ask is parked.** Next step can propose the first actions even when that is not the main ask. Goals lists approved plans and names Next step. Do not execute.
+- **Keep Draft the next Goal on Next step when it is not the main ask is parked.** Next step can draft the next Goal even when that is not the main ask. If a next Goal is already drafted, Make this the active Goal stays instead. Goals lists a reached Goal and names Next step. Do not start marketing.
+- **Keep Add a Goal on Next step when it is not the main ask is parked.** Next step can add a Goal even when that is not the main ask. Goals still has Add a Goal. Do not start marketing.
+- **Keep Connect website on Next step when it is not the main ask is parked.** Next step can save the existing website address even when that is not the main ask. Website still has the address field and tracking snippet. Do not move the live site.
+- **Keep tracking snippet on Next step when it is not the main ask is parked.** Next step can copy the tracking snippet even when that is not the main ask. Website still has the snippet. Do not replace the live site.
+- **Keep Follow up open leads on Next step when it is not the main ask is parked.** Next step can move or mark open leads even when that is not the main ask. Leads & customers still has Move and Mark customer. Do not email anyone.
+- **Keep Share the public lead form on Next step when it is not the main ask is parked.** Next step can copy the public lead form or add a person even when that is not the main ask. Leads & customers still has the form and Add a person. Do not email anyone.
+- **Keep Connect payments on Next step when it is not the main ask is parked.** Next step can connect so GroovGro can read a copy of payments, or sync recent payment records, even when that is not the main ask. Bookings still has Connect Stripe and Sync. Do not charge a card or change checkout.
+- **Keep Save your brand on Next step when it is not the main ask is parked.** Next step can save the brand even when that is not the main ask. Brand still has that form. Do not start marketing, send email, or edit the live website.
+- **Keep Save how this business works on Next step when it is not the main ask is parked.** Next step can save how this business works even when that is not the main ask. Business still has that form. Do not start marketing, send email, or edit the live website.
+- **Keep Add an offer on Next step when it is not the main ask is parked.** Next step can add an offer even when that is not the main ask. Offers still has that form. Do not start marketing.
+- **Keep Save your brand voice on Next step when it is not the main ask is parked.** Next step can save the brand voice even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
+- **Keep Add a brand voice example on Next step when it is not the main ask is parked.** Next step can add a brand voice example even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
+- **Keep Draft copy in your voice on Next step when it is not the main ask is parked.** Next step can draft copy in the saved voice even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
+- **Keep Choose when you look at growth on Next step when it is not the main ask is parked.** Next step can save when to look at this week's numbers even when that is not the main ask. Growth review still has that form. Do not change the business then.
+- **Keep Run an SEO check on Next step when it is not the main ask is parked.** Next step can run a homepage SEO check even when that is not the main ask. SEO still has that check. Do not edit the website.
+- **Keep SEO drafts on Next step when they are not the main ask is parked.** Next step can draft and approve homepage SEO copy even when that is not the main ask. SEO still has those checks. Do not change the connected website or start ads.
+- **Keep Search Console on Next step when it is not the main ask is parked.** Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask. SEO still has that panel. Do not edit the website, submit a sitemap, or buy ads.
+- **Keep Add a calendar item on Next step when it is not the main ask (this slice).** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. Do not change ads or the website.
 
 ## DESIGN FOR LATER
 
@@ -346,7 +1619,120 @@ Organization
 17. **Propose first actions from Next step** — ask the owner to propose the first actions. Done.
 18. **Approve proposed actions from Next step** — ask the owner to approve or reject proposed actions. Done.
 19. **Do owner work from Next step** — ask the owner to do approved work on Next step. Done.
-20. **Check what changed from Next step** — ask the owner to compare the Goal number after work. This slice.
-21. **Guarded automation** — only after the above is trusted.
+20. **Check what changed from Next step** — ask the owner to compare the Goal number after work. Done.
+21. **Confirm Business drafts from Next step** — ask the owner to confirm or reject suggested offers and goals. Done.
+22. **Connect, review, follow up, and save wait from Next step** — keep those owner buttons on Next step. Done.
+23. **Run an SEO check from Next step** — run the homepage check on Next step. Done.
+24. **Open SEO or Events from Next step** — open the named page instead of I’ll do this. Done.
+25. **Keep one button on Next step** — do not show I’ll do this next to the real button. Done.
+26. **Draft and approve SEO copy from Next step** — draft and approve homepage SEO copy on Next step. Done.
+27. **Connect Search Console from Next step** — connect Search Console read-only from Next step. Done.
+28. **Paste the tracking snippet from Next step** — copy the snippet on Next step when visits are not recorded yet. Done.
+29. **Review the schedule from Next step** — add a calendar item on Next step. Done.
+30. **Follow up open leads from Next step** — move a person or mark them as a customer on Next step. Done.
+31. **Choose the Search Console property from Next step** — pick the property after Google sign-in on Next step. Done.
+32. **Refresh Search Console from Next step** — refresh Search Console numbers on Next step when none are stored yet. Done.
+33. **Add a Goal from Next step** — save a Goal on Next step when work was not tied to one. Done.
+34. **Read the Goal from Next step** — read the Goal number on Next step when it is lower. Done.
+35. **Share the public lead form from Next step** — copy the public form on Next step when no person has been captured yet. Done.
+36. **Save brand voice from Next step** — save how the business sounds on Next step when visits are recorded and no profile exists yet. Done.
+37. **Add a brand voice example from Next step** — paste writing the owner already likes on Next step after the profile is saved. Done.
+38. **Refresh stale Search Console numbers from Next step** — refresh Search Console numbers on Next step when they are more than a week old. Done.
+39. **Draft copy in your voice from Next step** — create a draft on Next step after the profile and an example are saved. Done.
+40. **Add an offer from Next step** — save an offer on Next step when none are confirmed yet. Done.
+41. **Save the brand from Next step** — save name, what the business does, and who it serves on Next step when that is still empty. Done.
+42. **Save how the business works from Next step** — save the kind of business and how it creates value on Next step when that is still empty. Done.
+43. **Add a person from Next step** — copy the public form or add someone the owner already knows on Next step when no person has been captured yet. Done.
+44. **Find pages from Next step** — find pages, check the important ones, and review on Next step when the website is saved but unread. Done.
+45. **Save today's Goal number from Next step** — save today's Goal number on Next step when a connected Goal has no history yet. Done.
+46. **Connect payments from Next step** — connect so GroovGro can read a copy of payments, or sync recent payment records, on Next step. Done. GroovGro does not charge a card or change checkout.
+47. **Choose when you look at growth from Next step** — save the day and time to read this week's numbers on Next step when that schedule has never been saved. Done. GroovGro does not change the business then.
+48. **Dashboard sends the owner to Next step** — Next step is the filled home-screen button; drafts, Stripe, and open leads say to open Next step. Done.
+49. **Owner work, specialists, and Intelligence send the owner to Next step** — recommend Next step for owner loops that already have buttons there. Done.
+50. **Next step does not also send the owner to the module page** — no second Open Website or Open SEO button when the work is already here. Done.
+51. **The path so far, specialists, and Intelligence name Next step** — missing Goal or plan, and the work beat, open Next step. Done.
+52. **Growth review can change the schedule here** — save the day and time on Growth review instead of sending the owner to Goals. Done.
+53. **Your work filled button is Next step** — Open Next step is the filled button; Open the approved plan stays outline so the owner can read it. Done.
+54. **What changed and next-Goal copy name Next step** — read the history and review a drafted next Goal on Next step; SEO Connect website opens Next step. Done.
+55. **Dashboard Connect website opens Next step** — the outline Connect website button opens Next step. Done.
+56. **Owner module pages offer Next step** — Website, Leads, Bookings, SEO, Brand voice, Business, Events, and Offers have Open Next step. Done.
+57. **Remaining owner pages offer Next step** — Growth review, Intelligence, Decisions, Settings, Brand, Team, Media, Integrations, Marketing, Analytics, Notifications, and Audit have Open Next step. Done.
+58. **Confirm drafts, review site, owner work, and wait stay on Next step** — those coordinator loops name Next step; Intelligence website and Stripe connect observations open Next step. Done.
+59. **Your work Open the page stays on Next step** — approved specialist, SEO, website, and brand-voice work open Next step. Done.
+60. **Next step is first after Dashboard in the nav** — Next step sits under Dashboard; Offers, Website, Leads, and Bookings stay below it. Done.
+61. **Intelligence people observations open Next step when that is the loop** — open leads or no person captured yet open Next step. Done.
+62. **Phone header offers Next step** — phones show Next step next to Menu. Done.
+63. **Saving a specialist recommendation refreshes Next step** — Next step and Your work refresh after save. Done.
+64. **A public lead form submission refreshes Next step** — Next step and Leads refresh after a public form submission. Done.
+65. **A first recorded website visit refreshes Next step** — Next step refreshes after the snippet records its first visit. Done.
+66. **A new Stripe payment copy refreshes Next step** — Next step refreshes after GroovGro stores a new payment row. Done. GroovGro does not charge a card or change checkout.
+67. **Read Goal and Intelligence wait stay on Next step** — Read the Goal number stays on Next step; Intelligence wait opens Next step. Done.
+68. **Add a Goal and Dashboard empty lists stay on Next step** — Add a Goal stays on Next step; empty lead and calendar lists on the Dashboard name Next step. Done.
+69. **Unread website status alerts open Next step** — the unread-website alert has Open Next step. Done.
+70. **Website review copy opens Next step** — after saving a website address, Website names Next step instead of Business. Done.
+71. **Empty Goal copy stays on Next step** — Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. Done.
+72. **Growth review copy names Next step** — confirm drafts, add a Goal, and a reached Goal name Next step. Done.
+73. **Growth Plan and far-behind review name Next step** — connecting the website from a plan, and a far-behind Goal, name Next step. Done.
+74. **Next step does not send the owner to Your work** — Next step does not send the owner to Your work. Done.
+75. **Next step shows the Growth Plan write-up** — Next step shows the current Growth Plan; the path so far opens Next step to read an approved plan; Your work no longer sends the owner to Goals to read it. Done.
+76. **Next step shows the Goal number** — Next step shows the current Goal; the path so far opens Next step to read it. Done.
+77. **Next step footer and Dashboard wait stay on Next step** — Next step does not send the owner to Goals from the footer; Dashboard wait names Next step. Done.
+78. **Goal and plan loops stay on Next step** — activate, draft, approve, propose, waiting actions, and a reached Goal name Next step. Done.
+79. **Next step shows this week’s look** — Next step shows this week’s look; it does not send the owner to Growth review from the footer. Done.
+80. **Business Active goals and Goals weekly copy stay on Next step** — Business Active goals opens Next step; Goals schedule copy names Next step for this week’s look. Done.
+81. **Decisions copy names Next step for this week’s look** — Decisions names Next step to save this week’s look; Growth review stays for the monthly write-up. Done.
+82. **Next step shows specialist reports** — Next step shows specialist reports and Save to Decision History. Done.
+83. **Next step shows Decision History** — Next step shows recent Decision History. Done.
+84. **Next step shows The path so far** — Next step shows The path so far. Done.
+85. **Goals, Growth review, and Your work stay on Next step for that content** — Goals keeps Open Next step and Open growth review for the monthly write-up. Done.
+86. **Dashboard and Intelligence name Next step for specialists** — Dashboard Intelligence is Intelligence; Intelligence names Next step for specialists. Done.
+87. **Save this week’s look from Next step** — Next step can save this week’s look to Decision History. Done.
+88. **Keep the weekly write-up on Next step** — Next step shows the full weekly write-up; Growth review is the monthly look. Done.
+89. **Keep specialists on Next step** — Next step shows specialists and Save to Decision History; Intelligence is the briefing from connected data. Done.
+90. **Keep The path so far on Next step** — Next step shows The path so far; Dashboard and Decisions name Next step for that story. Done.
+91. **Keep proposed-action approval on Next step** — Next step can approve or reject proposed actions; Decisions lists them and names Next step. Done.
+92. **Keep Your work approval on Next step** — Next step can approve or reject proposed actions; Your work lists waiting actions and names Next step. Done.
+93. **Keep Goals approval on Next step** — Next step can approve or reject proposed actions; Goals lists them and names Next step. Done.
+94. **Keep Goals owner work on Next step** — Next step and Your work can mark approved work done; Goals lists it and names Next step. Done.
+95. **Keep Goals confirm drafts on Next step** — Next step can confirm or reject suggested goals; Goals lists them and names Next step. Done.
+96. **Keep Offers confirm drafts on Next step** — Next step can confirm or reject suggested offers; Offers lists them and names Next step. Done.
+97. **Keep Business confirm drafts on Next step** — Next step can confirm or reject suggested offers and goals; Business lists them and names Next step. Done.
+98. **Keep dedicated Next step buttons from creating duplicate actions** — I’ll do this on dedicated loops does not also save a duplicate proposed action. Done.
+99. **Keep find-pages on Next step** — Next step and Website can find pages; Business keeps Review connected data and names Next step. Done.
+100. **Keep the review schedule on Next step** — Next step can save when you look at this week’s numbers; Growth review can change that day later; Goals names Next step. Done.
+101. **Keep Website find-pages on Next step** — Next step can find pages; Website keeps the address and snippet, and names Next step. Done.
+102. **Keep Review connected data on Next step** — Next step can find pages, check the important ones, then review; Business keeps Review connected data to run it again; Dashboard, Goals, and Offers name Next step. Done.
+103. **Keep plan approve and propose on Next step** — Next step can approve or reject a draft plan, and propose the first actions; Goals lists plans and names Next step. Done.
+104. **Keep Activate Goal and Draft next Goal on Next step** — Next step can make a draft the active Goal, and draft the next Goal when one is reached; Goals lists those goals and names Next step. Done.
+105. **Keep Draft a plan on Next step** — Next step can draft a plan for the active Goal; Goals lists goals and names Next step. Done.
+106. **Keep Goal history on Next step** — Next step shows the saved Goal numbers with the current Goal; Goals still lists the full history and the Current box. Done.
+107. **Keep website review click-by-click on Next step** — setup click-by-click finds pages and reviews on Next step; Business still has Review to run it again. Done.
+108. **Keep saving today's Goal number on Next step** — Next step can save today's Goal number with the current Goal after the first save; Goals still has that button and the Current box. Done.
+109. **Keep Check what changed on Next step when it is not the main ask** — Next step can check what changed even when that is not the main ask; Your work still has that button. Done.
+110. **Keep I did this on Next step when it is not the main ask** — Next step can mark approved work done even when that is not the main ask; Your work still has those buttons. Done.
+111. **Keep website review on Next step when it is not the main ask** — Next step can find pages, check the important ones, then review even when that is not the main ask; Business still has Review to run it again. Done.
+112. **Keep Activate Goal on Next step when it is not the main ask** — Next step can make a draft the active Goal even when that is not the main ask; Goals lists that draft and names Next step. Done.
+113. **Keep Draft a plan on Next step when it is not the main ask** — Next step can draft a plan for the active Goal even when that is not the main ask; Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Done.
+114. **Keep Approve a plan on Next step when it is not the main ask** — Next step can approve or reject a draft plan even when that is not the main ask; Goals lists draft plans and names Next step. Done.
+115. **Keep Propose first actions on Next step when it is not the main ask** — Next step can propose the first actions even when that is not the main ask; Goals lists approved plans and names Next step. Done.
+116. **Keep Draft the next Goal on Next step when it is not the main ask** — Next step can draft the next Goal even when that is not the main ask; Goals lists a reached Goal and names Next step. Done.
+117. **Keep Add a Goal on Next step when it is not the main ask** — Next step can add a Goal even when that is not the main ask; Goals still has Add a Goal. Done.
+118. **Keep Connect website on Next step when it is not the main ask** — Next step can save the existing website address even when that is not the main ask; Website still has the address field and tracking snippet. Done.
+119. **Keep tracking snippet on Next step when it is not the main ask** — Next step can copy the tracking snippet even when that is not the main ask; Website still has the snippet. Done.
+120. **Keep Follow up open leads on Next step when it is not the main ask** — Next step can move or mark open leads even when that is not the main ask; Leads & customers still has Move and Mark customer. Done.
+121. **Keep Share the public lead form on Next step when it is not the main ask** — Next step can copy the public lead form or add a person even when that is not the main ask; Leads & customers still has the form and Add a person. Done.
+122. **Keep Connect payments on Next step when it is not the main ask** — Next step can connect so GroovGro can read a copy of payments, or sync recent payment records, even when that is not the main ask; Bookings still has Connect Stripe and Sync. Done.
+123. **Keep Save your brand on Next step when it is not the main ask** — Next step can save the brand even when that is not the main ask; Brand still has that form. Done.
+124. **Keep Save how this business works on Next step when it is not the main ask** — Next step can save how this business works even when that is not the main ask; Business still has that form. Done.
+125. **Keep Add an offer on Next step when it is not the main ask** — Next step can add an offer even when that is not the main ask; Offers still has that form. Done.
+126. **Keep Save your brand voice on Next step when it is not the main ask** — Next step can save the brand voice even when that is not the main ask; Brand voice still has that form. Done.
+127. **Keep Add a brand voice example on Next step when it is not the main ask** — Next step can add a brand voice example even when that is not the main ask; Brand voice still has that form. Done.
+128. **Keep Draft copy in your voice on Next step when it is not the main ask** — Next step can draft copy in the saved voice even when that is not the main ask; Brand voice still has that form. Done.
+129. **Keep Choose when you look at growth on Next step when it is not the main ask** — Next step can save when to look at this week's numbers even when that is not the main ask; Growth review still has that form. Done.
+130. **Keep Run an SEO check on Next step when it is not the main ask** — Next step can run a homepage SEO check even when that is not the main ask; SEO still has that check. Done.
+131. **Keep SEO drafts on Next step when they are not the main ask** — Next step can draft and approve homepage SEO copy even when that is not the main ask; SEO still has those checks. Done.
+132. **Keep Search Console on Next step when it is not the main ask** — Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask; SEO still has that panel. Done.
+133. **Keep Add a calendar item on Next step when it is not the main ask** — Next step can review upcoming items and add a calendar item even when that is not the main ask; Events still has that form. This slice.
+134. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

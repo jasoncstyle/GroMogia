@@ -19,6 +19,34 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+export function SaveGrowthReviewButton({
+  kind,
+  canSave,
+  nothingYet = false,
+  variant = "default",
+}: {
+  kind: "weekly" | "monthly"
+  canSave: boolean
+  nothingYet?: boolean
+  variant?: "default" | "outline"
+}) {
+  return (
+    <SaveForm
+      action={saveGrowthReview}
+      successMessage={
+        nothingYet
+          ? "Review saved. GroovGro recorded that nothing should change yet."
+          : "Review saved to Decision History. GroovGro will not execute it."
+      }
+    >
+      <input type="hidden" name="kind" value={kind} />
+      <SaveButton type="submit" disabled={!canSave} pendingLabel="Saving…" variant={variant}>
+        Save this review to Decision History
+      </SaveButton>
+    </SaveForm>
+  );
+}
+
 export function ReviewConnectedDataButton({ disabled }: { disabled?: boolean }) {
   return (
     <SaveForm
@@ -94,7 +122,7 @@ export function InferredOfferDraft({
   return (
     <FoldableSample
       title={offer.name}
-      subtitle="Open to read this draft, then confirm or reject."
+      subtitle="Open to read this draft. Confirm or reject it on Next step."
     >
       <div className="space-y-3">
         <p className="text-sm whitespace-pre-wrap">
@@ -123,7 +151,10 @@ export function InferredOfferDraft({
           </p>
         ) : null}
         <InferredBadge source={offer.inferredFrom} confidence={offer.confidence} />
-        <ConfirmRejectButtons id={offer.id} kind="offer" />
+        <p className="text-xs text-muted-foreground">
+          Confirm or reject this on Next step. Confirming makes it
+          active. GroovGro will not start marketing.
+        </p>
       </div>
     </FoldableSample>
   );
@@ -145,7 +176,7 @@ export function InferredGoalDraft({
   return (
     <FoldableSample
       title={goal.title}
-      subtitle="Open to read this draft, then confirm or reject."
+      subtitle="Open to read this draft. Confirm or reject it on Next step."
     >
       <div className="space-y-3">
         <p className="text-sm whitespace-pre-wrap">
@@ -163,7 +194,10 @@ export function InferredGoalDraft({
           </p>
         ) : null}
         <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
-        <ConfirmRejectButtons id={goal.id} kind="goal" />
+        <p className="text-xs text-muted-foreground">
+          Confirm or reject this on Next step. Confirming makes it
+          active. GroovGro will not start marketing.
+        </p>
       </div>
     </FoldableSample>
   );
@@ -172,6 +206,79 @@ export function InferredGoalDraft({
 function classificationLabel(value: string) {
   if (value === "no_change_yet") return "Leave this alone";
   return labelFor(value);
+}
+
+export type ReadableGrowthReviewLook = {
+  headline: string
+  summary: string
+  whatChanged: string
+  howWeAreDoing: string
+  whatNeedsAttention: string
+  whatShouldHappenNext: string
+  whatIsLeftAlone: string
+  strategyNote: string
+  recommendations: {
+    title: string
+    kind: string
+    classification: string
+    confidence: number
+    recommendation: string
+    rationale: string
+    evidence: string
+  }[]
+  evidenceChecks: {
+    channel: string
+    verdict: string
+    reason: string
+  }[]
+};
+
+export function GrowthReviewBody({ review }: { review: ReadableGrowthReviewLook }) {
+  return (
+    <div className="space-y-4 text-sm">
+      <div>
+        <p className="font-medium">{review.headline}</p>
+        <p className="mt-1 text-muted-foreground">{review.summary}</p>
+      </div>
+      <ReviewSection title="What changed" body={review.whatChanged} />
+      <ReviewSection title="How we are doing" body={review.howWeAreDoing} />
+      <ReviewSection title="What needs attention" body={review.whatNeedsAttention} />
+      <ReviewSection title="What should happen next" body={review.whatShouldHappenNext} />
+      <ReviewSection title="What GroovGro is leaving alone" body={review.whatIsLeftAlone} />
+      <ReviewSection title="Strategy" body={review.strategyNote} />
+
+      <div className="space-y-3">
+        <p className="font-medium">Recommendations</p>
+        {review.recommendations.map((item) => (
+          <div key={item.title} className="rounded-lg border p-3">
+            <p className="font-medium">{item.title}</p>
+            <p className="text-xs text-muted-foreground">
+              {item.kind === "no_change_yet"
+                ? "Leave this alone"
+                : classificationLabel(item.classification)}
+              {item.confidence ? ` · confidence ${item.confidence}` : ""}
+            </p>
+            <p className="mt-1">{item.recommendation}</p>
+            <p className="mt-1 text-muted-foreground">{item.rationale}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{item.evidence}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-2">
+        <p className="font-medium">Evidence windows</p>
+        {review.evidenceChecks.map((check) => (
+          <p key={check.channel} className="text-muted-foreground">
+            <span className="font-medium text-foreground">
+              {labelFor(check.channel)}:{" "}
+            </span>
+            {check.verdict === "no_change_yet" ? "No change yet. " : "Threshold met. "}
+            {check.reason}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function GrowthReviewCard({
@@ -189,62 +296,14 @@ export function GrowthReviewCard({
         </CardTitle>
         <CardDescription>{review.periodLabel}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4 text-sm">
-        <div>
-          <p className="font-medium">{review.headline}</p>
-          <p className="mt-1 text-muted-foreground">{review.summary}</p>
-        </div>
-        <ReviewSection title="What changed" body={review.whatChanged} />
-        <ReviewSection title="How we are doing" body={review.howWeAreDoing} />
-        <ReviewSection title="What needs attention" body={review.whatNeedsAttention} />
-        <ReviewSection title="What should happen next" body={review.whatShouldHappenNext} />
-        <ReviewSection title="What GroovGro is leaving alone" body={review.whatIsLeftAlone} />
-        <ReviewSection title="Strategy" body={review.strategyNote} />
-
-        <div className="space-y-3">
-          <p className="font-medium">Recommendations</p>
-          {review.recommendations.map((item) => (
-            <div key={item.title} className="rounded-lg border p-3">
-              <p className="font-medium">{item.title}</p>
-              <p className="text-xs text-muted-foreground">
-                {item.kind === "no_change_yet"
-                  ? "Leave this alone"
-                  : classificationLabel(item.classification)}
-                {item.confidence ? ` · confidence ${item.confidence}` : ""}
-              </p>
-              <p className="mt-1">{item.recommendation}</p>
-              <p className="mt-1 text-muted-foreground">{item.rationale}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{item.evidence}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="space-y-2">
-          <p className="font-medium">Evidence windows</p>
-          {review.evidenceChecks.map((check) => (
-            <p key={check.channel} className="text-muted-foreground">
-              <span className="font-medium text-foreground">
-                {labelFor(check.channel)}:{" "}
-              </span>
-              {check.verdict === "no_change_yet" ? "No change yet. " : "Threshold met. "}
-              {check.reason}
-            </p>
-          ))}
-        </div>
-
-        <SaveForm
-          action={saveGrowthReview}
-          successMessage={
-            review.primary.kind === "no_change_yet"
-              ? "Review saved. GroovGro recorded that nothing should change yet."
-              : "Review saved to Decision History. GroovGro will not execute it."
-          }
-        >
-          <input type="hidden" name="kind" value={review.kind} />
-          <SaveButton type="submit" disabled={!canSave} variant="outline">
-            Save this review to Decision History
-          </SaveButton>
-        </SaveForm>
+      <CardContent className="space-y-4">
+        <GrowthReviewBody review={review} />
+        <SaveGrowthReviewButton
+          kind={review.kind}
+          canSave={canSave}
+          nothingYet={review.primary.kind === "no_change_yet"}
+          variant="outline"
+        />
       </CardContent>
     </Card>
   );

@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { saveWebsiteConnection } from "@/lib/actions/website";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
-import { websiteDiscoveredPages, websites } from "@/lib/db/schema";
+import { websites } from "@/lib/db/schema";
 import { appUrl, missingFoundationServices } from "@/lib/env";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import {
@@ -15,8 +15,8 @@ import { CopyLink } from "@/components/copy-link";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { StatusAlertList } from "@/components/status-alert";
 import { TrackingSnippet } from "@/components/tracking-snippet";
-import { WebsitePageChecklist } from "@/components/website-page-checklist";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import {
   Card,
   CardContent,
@@ -30,19 +30,13 @@ import { Label } from "@/components/ui/label";
 export default async function WebsitePage() {
   const session = await getAppSession();
   const db = getDb();
-  const [websiteRows, discoveredRows, growth, slug] = await Promise.all([
+  const [websiteRows, growth, slug] = await Promise.all([
     db && session.organizationId
       ? db
           .select()
           .from(websites)
           .where(eq(websites.organizationId, session.organizationId))
           .limit(1)
-      : Promise.resolve([]),
-    db && session.organizationId
-      ? db
-          .select()
-          .from(websiteDiscoveredPages)
-          .where(eq(websiteDiscoveredPages.organizationId, session.organizationId))
       : Promise.resolve([]),
     session.organizationId
       ? getGrowthSnapshot(session.organizationId)
@@ -116,8 +110,9 @@ export default async function WebsitePage() {
           <CardTitle>Existing website</CardTitle>
           <CardDescription>
             Paste the public address of the site customers already use. Saving
-            it does not read the pages. After you save, find pages, check the
-            important ones, then open Business and click Review connected data.
+            it does not read the pages. After you save, open Next step to find
+            pages, check the important ones, then review. GroovGro does not
+            change the live site.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -143,16 +138,10 @@ export default async function WebsitePage() {
           <CardHeader>
             <CardTitle>Pages GroovGro should read</CardTitle>
             <CardDescription>
-              Find pages first. Check Home, program, calendar, and event pages.
-              Leave About, login, and legal unchecked unless you want them read.
+              Find pages and check the important ones on Next step, then
+              review. GroovGro does not change the live site.
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <WebsitePageChecklist
-              pages={discoveredRows}
-              disabled={!session.organizationId}
-            />
-          </CardContent>
         </Card>
       ) : null}
 
@@ -170,6 +159,8 @@ export default async function WebsitePage() {
           </CardContent>
         </Card>
       ) : null}
+
+      <OpenNextStepLink />
     </div>
   );
 }

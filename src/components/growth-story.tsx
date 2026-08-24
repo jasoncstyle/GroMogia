@@ -12,8 +12,10 @@ import {
 
 export function GrowthStoryCard({
   beats,
+  hideNextStepLink = false,
 }: {
   beats: GrowthStoryBeat[]
+  hideNextStepLink?: boolean
 }) {
   return (
     <Card>
@@ -29,9 +31,13 @@ export function GrowthStoryCard({
           <div key={beat.title} className="space-y-2 rounded-lg border p-4">
             <p className="font-medium">{beat.title}</p>
             <p className="text-sm text-muted-foreground">{beat.body}</p>
-            <Button asChild variant="outline" size="sm">
-              <Link href={beat.href}>Open</Link>
-            </Button>
+            {hideNextStepLink && beat.href === "/app/next-step" ? null : (
+              <Button asChild variant="outline" size="sm">
+                <Link href={beat.href}>
+                  {beat.href === "/app/next-step" ? "Open Next step" : "Open"}
+                </Link>
+              </Button>
+            )}
           </div>
         ))}
       </CardContent>

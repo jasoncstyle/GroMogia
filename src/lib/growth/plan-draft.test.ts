@@ -4,11 +4,64 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
+  ACTIVATE_GOAL_STEP_TITLE,
+  ADD_GOAL_STEP_TITLE,
+  ADD_OFFER_STEP_TITLE,
+  SAVE_BRAND_STEP_TITLE,
+  SAVE_BUSINESS_STEP_TITLE,
+  SAVE_PROGRESS_STEP_TITLE,
+  SAVE_REVIEW_SCHEDULE_STEP_TITLE,
+  CONNECT_SEARCH_CONSOLE_STEP_TITLE,
+  CONNECT_STRIPE_STEP_TITLE,
+  CONNECT_WEBSITE_STEP_TITLE,
+  CONFIRM_DRAFTS_STEP_TITLE,
+  APPROVE_ACTIONS_STEP_TITLE,
+  OWNER_WORK_STEP_TITLE,
+  CHECK_CHANGED_STEP_TITLE,
+  REVIEW_SITE_STEP_TITLE,
+  PASTE_SNIPPET_STEP_TITLE,
+  PICK_SEARCH_CONSOLE_STEP_TITLE,
+  REFRESH_SEARCH_CONSOLE_STEP_TITLE,
   draftGrowthPlanSummary,
   draftPlanExcerpt,
   findDraftPlanToApprove,
   findPlanDraftGoal,
+  findReadableGoal,
+  findReadableGrowthPlan,
+  FIX_SEO_STEP_TITLE,
+  FOLLOW_UP_LEADS_STEP_TITLE,
+  SHARE_LEAD_FORM_STEP_TITLE,
+  SAVE_BRAND_VOICE_STEP_TITLE,
+  ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE,
+  DRAFT_BRAND_VOICE_STEP_TITLE,
+  GOAL_REACHED_STEP_TITLE,
   goalNeedsPlanDraft,
+  hasDedicatedNextStepControls,
+  IMPROVE_SEO_STEP_TITLE,
+  isAddGoalNextStep,
+  isAddOfferNextStep,
+  isSaveBrandNextStep,
+  isSaveBusinessNextStep,
+  isSaveProgressNextStep,
+  isSaveReviewScheduleNextStep,
+  isStripeReadCopyNextStep,
+  isFollowUpLeadsNextStep,
+  isPasteSnippetNextStep,
+  isReadGoalNextStep,
+  isReviewScheduleNextStep,
+  isSearchConsoleNextStep,
+  isSeoDraftNextStep,
+  isShareLeadFormNextStep,
+  isSaveBrandVoiceNextStep,
+  isAddBrandVoiceExampleNextStep,
+  isDraftBrandVoiceNextStep,
+  openPageLabelForNextStep,
+  READ_GOAL_STEP_TITLE,
+  REVIEW_SCHEDULE_STEP_TITLE,
+  RUN_SEO_STEP_TITLE,
+  SYNC_STRIPE_STEP_TITLE,
+  showsDedicatedNextStepControl,
+  skipsDuplicateNextStepAction,
 } from "./plan-draft";
 
 describe("growth plan draft", () => {
@@ -29,7 +82,7 @@ describe("growth plan draft", () => {
       },
       offers: [{ name: "Weekend Workshop", description: "A two-day starter session." }],
       nextStepTitle: "Follow up open leads",
-      nextStepBody: "Open Leads & customers and give each open lead a next step.",
+      nextStepBody: "Give each open lead a next step here. GroovGro will not email them.",
       nextStepKind: "recommend",
       leftAlone: ["Do not start ads.", "Leave email alone."],
       websiteConnected: true,
@@ -40,7 +93,9 @@ describe("growth plan draft", () => {
     assert.match(summary, /Harbor Workshops/);
     assert.match(summary, /Weekend Workshop/);
     assert.match(summary, /Follow up open leads/);
+    assert.match(summary, /on Next step/);
     assert.match(summary, /will not email/);
+    assert.doesNotMatch(summary, /Leads & customers/);
     assert.match(summary, /Do not start ads/);
     assert.match(summary, /Stripe/);
     assert.doesNotMatch(summary, /your own words|TODO|lorem/i);
@@ -71,6 +126,8 @@ describe("growth plan draft", () => {
     });
     assert.match(summary, /wait|Keep collecting/i);
     assert.match(summary, /No confirmed offers/);
+    assert.match(summary, /on Next step before promoting/);
+    assert.doesNotMatch(summary, /on Business before promoting/);
   });
 
   it("asks to connect the existing website instead of building a new one", () => {
@@ -96,7 +153,7 @@ describe("growth plan draft", () => {
       websiteConnected: false,
       openLeadCount: 0,
     });
-    assert.match(summary, /Connect the existing website/);
+    assert.match(summary, /On Next step, connect the existing website/);
     assert.doesNotMatch(summary, /overwrite|clone|WordPress/i);
   });
 
@@ -174,6 +231,90 @@ describe("growth plan draft", () => {
       null,
     );
     assert.match(draftPlanExcerpt("Keep collecting evidence. GroovGro will not run this."), /will not run this/);
+  });
+
+  it("lets the owner read the current Growth Plan without leaving Next step", () => {
+    const approved = findReadableGrowthPlan(
+      [
+        { id: "goal-1", title: "Old Goal", status: "achieved" },
+        { id: "goal-2", title: "More people get in touch", status: "active" },
+      ],
+      [
+        {
+          id: "plan-old",
+          goalId: "goal-1",
+          status: "approved",
+          version: 4,
+          strategySummary: "Old write-up.",
+        },
+        {
+          id: "plan-1",
+          goalId: "goal-2",
+          status: "approved",
+          version: 1,
+          strategySummary: "Follow up open leads. GroovGro will not run this.",
+        },
+        {
+          id: "plan-2",
+          goalId: "goal-2",
+          status: "approved",
+          version: 2,
+          strategySummary: "Keep collecting evidence. GroovGro will not start marketing.",
+        },
+      ],
+    );
+    assert.equal(approved?.plan.id, "plan-2");
+    assert.equal(approved?.goal.id, "goal-2");
+    const draftFirst = findReadableGrowthPlan(
+      [{ id: "goal-2", title: "More people get in touch", status: "active" }],
+      [
+        {
+          id: "plan-approved",
+          goalId: "goal-2",
+          status: "approved",
+          version: 1,
+          strategySummary: "Approved write-up.",
+        },
+        {
+          id: "plan-draft",
+          goalId: "goal-2",
+          status: "draft",
+          version: 2,
+          strategySummary: "Draft write-up. GroovGro will not run this.",
+        },
+      ],
+    );
+    assert.equal(draftFirst?.plan.id, "plan-draft");
+    assert.equal(
+      findReadableGrowthPlan(
+        [{ id: "goal-2", title: "More people get in touch", status: "active", discoveryStatus: "inferred" }],
+        [{ id: "plan-1", goalId: "goal-2", status: "approved", version: 1, strategySummary: "Nope." }],
+      ),
+      null,
+    );
+  });
+
+  it("lets the owner read the active Goal without leaving Next step", () => {
+    const picked = findReadableGoal([
+      { id: "goal-1", title: "Old Goal", status: "achieved" },
+      {
+        id: "goal-2",
+        title: "More people get in touch",
+        status: "active",
+      },
+    ]);
+    assert.equal(picked?.id, "goal-2");
+    assert.equal(
+      findReadableGoal([
+        {
+          id: "goal-2",
+          title: "More people get in touch",
+          status: "active",
+          discoveryStatus: "inferred",
+        },
+      ]),
+      null,
+    );
   });
 
   it("does not copy the draft-plan next step back into the plan text", () => {
@@ -336,6 +477,177 @@ describe("growth plan draft", () => {
     });
     assert.doesNotMatch(summary, /Check what changed/);
     assert.match(summary, /Keep collecting/);
+  });
+
+  it("does not copy the confirm-drafts next step back into the plan text", () => {
+    const summary = draftGrowthPlanSummary({
+      businessName: "North Desk",
+      description: "",
+      targetCustomers: "",
+      goal: {
+        title: "More people get in touch",
+        goalType: "lead_generation",
+        status: "active",
+        liveCurrentValue: 2,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "",
+        progressPercent: 20,
+      },
+      offers: [],
+      nextStepTitle: "Confirm or reject what GroovGro drafted",
+      nextStepBody: "Confirm or reject them here. GroovGro will not start marketing.",
+      nextStepKind: "recommend",
+      leftAlone: [],
+      websiteConnected: true,
+      openLeadCount: 0,
+    });
+    assert.doesNotMatch(summary, /Confirm or reject what GroovGro drafted/);
+    assert.match(summary, /Keep collecting/);
+  });
+
+  it("does not copy the connect-website next step back into the plan text", () => {
+    const summary = draftGrowthPlanSummary({
+      businessName: "North Desk",
+      description: "",
+      targetCustomers: "",
+      goal: {
+        title: "More people get in touch",
+        goalType: "lead_generation",
+        status: "active",
+        liveCurrentValue: 2,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "",
+        progressPercent: 20,
+      },
+      offers: [],
+      nextStepTitle: "Connect the existing website",
+      nextStepBody: "Paste the tracking snippet on the site you already have.",
+      nextStepKind: "recommend",
+      leftAlone: [],
+      websiteConnected: true,
+      openLeadCount: 0,
+    });
+    assert.doesNotMatch(summary, /Paste the tracking snippet on the site you already have/);
+    assert.match(summary, /Keep collecting/);
+  });
+
+  it("does not copy the review-website next step back into the plan text", () => {
+    const summary = draftGrowthPlanSummary({
+      businessName: "North Desk",
+      description: "",
+      targetCustomers: "",
+      goal: {
+        title: "More people get in touch",
+        goalType: "lead_generation",
+        status: "active",
+        liveCurrentValue: 2,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "",
+        progressPercent: 20,
+      },
+      offers: [],
+      nextStepTitle: "Review the connected website",
+      nextStepBody: "Find pages, then review here.",
+      nextStepKind: "recommend",
+      leftAlone: [],
+      websiteConnected: true,
+      openLeadCount: 0,
+    });
+    assert.doesNotMatch(summary, /Review the connected website/);
+    assert.match(summary, /Keep collecting/);
+  });
+
+  it("names the Open button for specialist work that already lives on another page", () => {
+    assert.equal(openPageLabelForNextStep(FOLLOW_UP_LEADS_STEP_TITLE), null);
+    assert.equal(isFollowUpLeadsNextStep(FOLLOW_UP_LEADS_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(SHARE_LEAD_FORM_STEP_TITLE), null);
+    assert.equal(isShareLeadFormNextStep(SHARE_LEAD_FORM_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(SAVE_BRAND_VOICE_STEP_TITLE), null);
+    assert.equal(isSaveBrandVoiceNextStep(SAVE_BRAND_VOICE_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE), null);
+    assert.equal(isAddBrandVoiceExampleNextStep(ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(DRAFT_BRAND_VOICE_STEP_TITLE), null);
+    assert.equal(isDraftBrandVoiceNextStep(DRAFT_BRAND_VOICE_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(FIX_SEO_STEP_TITLE), null);
+    assert.equal(openPageLabelForNextStep(IMPROVE_SEO_STEP_TITLE), null);
+    assert.equal(isSeoDraftNextStep(FIX_SEO_STEP_TITLE), true);
+    assert.equal(isSeoDraftNextStep(IMPROVE_SEO_STEP_TITLE), true);
+    assert.equal(isSearchConsoleNextStep(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);
+    assert.equal(isSearchConsoleNextStep(PICK_SEARCH_CONSOLE_STEP_TITLE), true);
+    assert.equal(isSearchConsoleNextStep(REFRESH_SEARCH_CONSOLE_STEP_TITLE), true);
+    assert.equal(isSearchConsoleNextStep(FIX_SEO_STEP_TITLE), false);
+    assert.equal(isPasteSnippetNextStep(PASTE_SNIPPET_STEP_TITLE), true);
+    assert.equal(isPasteSnippetNextStep(CONNECT_WEBSITE_STEP_TITLE), false);
+    assert.equal(openPageLabelForNextStep(REVIEW_SCHEDULE_STEP_TITLE), null);
+    assert.equal(isReviewScheduleNextStep(REVIEW_SCHEDULE_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(READ_GOAL_STEP_TITLE), null);
+    assert.equal(isReadGoalNextStep(READ_GOAL_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(ADD_GOAL_STEP_TITLE), null);
+    assert.equal(isAddGoalNextStep(ADD_GOAL_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(ADD_OFFER_STEP_TITLE), null);
+    assert.equal(isAddOfferNextStep(ADD_OFFER_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(SAVE_BRAND_STEP_TITLE), null);
+    assert.equal(isSaveBrandNextStep(SAVE_BRAND_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(SAVE_BUSINESS_STEP_TITLE), null);
+    assert.equal(isSaveBusinessNextStep(SAVE_BUSINESS_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(SAVE_PROGRESS_STEP_TITLE), null);
+    assert.equal(isSaveProgressNextStep(SAVE_PROGRESS_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(CONNECT_STRIPE_STEP_TITLE), null);
+    assert.equal(isStripeReadCopyNextStep(CONNECT_STRIPE_STEP_TITLE), true);
+    assert.equal(isStripeReadCopyNextStep(SYNC_STRIPE_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(SAVE_REVIEW_SCHEDULE_STEP_TITLE), null);
+    assert.equal(isSaveReviewScheduleNextStep(SAVE_REVIEW_SCHEDULE_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(RUN_SEO_STEP_TITLE), null);
+    assert.equal(hasDedicatedNextStepControls(GOAL_REACHED_STEP_TITLE), true);
+    assert.equal(hasDedicatedNextStepControls(ACTIVATE_GOAL_STEP_TITLE), true);
+    assert.equal(hasDedicatedNextStepControls(FOLLOW_UP_LEADS_STEP_TITLE), false);
+    assert.equal(
+      showsDedicatedNextStepControl(GOAL_REACHED_STEP_TITLE, {
+        canCreateGoal: true,
+        canActivateGoal: false,
+        canDraftPlan: false,
+        goalId: "goal-1",
+      }),
+      true,
+    );
+    assert.equal(
+      showsDedicatedNextStepControl(GOAL_REACHED_STEP_TITLE, {
+        canCreateGoal: false,
+        canActivateGoal: false,
+        canDraftPlan: false,
+        goalId: "goal-1",
+      }),
+      false,
+    );
+    assert.equal(skipsDuplicateNextStepAction(FOLLOW_UP_LEADS_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(SHARE_LEAD_FORM_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(SAVE_BRAND_VOICE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(DRAFT_BRAND_VOICE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(ADD_OFFER_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(SAVE_BRAND_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(SAVE_BUSINESS_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(SAVE_PROGRESS_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(CONNECT_STRIPE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(SYNC_STRIPE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(SAVE_REVIEW_SCHEDULE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(RUN_SEO_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(FIX_SEO_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(PICK_SEARCH_CONSOLE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(REFRESH_SEARCH_CONSOLE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(PASTE_SNIPPET_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(GOAL_REACHED_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(CONFIRM_DRAFTS_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(CONNECT_WEBSITE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(REVIEW_SITE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(APPROVE_ACTIONS_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(OWNER_WORK_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(CHECK_CHANGED_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction("Nothing should change yet"), false);
   });
 
   it("does not bake industry-specific words into plan helpers", () => {

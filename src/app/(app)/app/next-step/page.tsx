@@ -1,9 +1,32 @@
 import Link from "next/link";
 
+import { ConfirmRejectButtons, GrowthReviewBody, InferredBadge, ReviewConnectedDataButton, SaveGrowthReviewButton } from "@/components/growth-review";
 import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
-import { NextStepResponseButtons, WaitingActionButtons } from "@/components/next-step-actions";
+import { NextStepResponseButtons, OpenPageNextStepButtons, LeaveAloneNextStepButton, WaitingActionButtons } from "@/components/next-step-actions";
 import { OwnerWorkButtons, CheckWhatChangedButton } from "@/components/owner-work-actions";
+import { DraftSeoImprovementsButton, RunHomepageSeoButton, SeoDraftDecisionButtons } from "@/components/seo-actions";
+import { FoldableSample } from "@/components/foldable-sample";
+import { EventCreateForm } from "@/components/event-create-form";
+import { BrandVoiceDraftForm } from "@/components/brand-voice-draft-form";
+import { BrandVoiceExampleForm } from "@/components/brand-voice-example-form";
+import { BrandVoiceProfileForm } from "@/components/brand-voice-profile-form";
+import { BrandSettingsForm } from "@/components/brand-settings-form";
+import { BusinessBrainForm } from "@/components/business-brain-form";
+import { OfferCreateForm } from "@/components/offer-create-form";
+import { GoalCreateForm } from "@/components/goal-create-form";
+import { LeadCreateForm } from "@/components/lead-create-form";
+import { LeadFollowUpButtons } from "@/components/lead-follow-up";
+import { CopyLink } from "@/components/copy-link";
+import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
+import { TrackingSnippet } from "@/components/tracking-snippet";
+import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
+import { StripeReadCopyPanel } from "@/components/stripe-read-copy-panel";
+import { GrowthSettingsForm } from "@/components/growth-settings-form";
+import { GrowthStoryCard } from "@/components/growth-story";
+import { SpecialistReports } from "@/components/specialist-reports";
+import { WebsiteConnectForm } from "@/components/website-connect-form";
+import { WebsitePageChecklist } from "@/components/website-page-checklist";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,17 +36,32 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
-import { getCoordinatedNextStep } from "@/lib/growth/queries";
+import { appUrl } from "@/lib/env";
+import { getBrandSettingsForm, getBusinessBrainForm, getCoordinatedNextStep, getDiscoveredWebsitePages, getGrowthLinkOptions, getGrowthSettingsForm } from "@/lib/growth/queries";
+import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { resolveOrganizationSlug } from "@/lib/org";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, FIX_SEO_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSaveBusinessNextStep, isSaveProgressNextStep, isSaveReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, isStripeReadCopyNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
+import { buildGrowthStory, storyFactsFromWorkspace } from "@/lib/growth/story";
 import { hasPermission } from "@/lib/permissions";
+import { getDashboardSnapshot } from "@/lib/phase2/queries";
 
-export default async function NextStepPage() {
+export default async function NextStepPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ gsc?: string; error?: string }>
+}) {
+  const params = await searchParams;
   const session = await getAppSession();
-  const step = session.organizationId
-    ? await getCoordinatedNextStep(session.organizationId)
-    : null;
+  const [step, dashboard, links, slug] = session.organizationId
+    ? await Promise.all([
+        getCoordinatedNextStep(session.organizationId),
+        getDashboardSnapshot(session.organizationId),
+        getGrowthLinkOptions(session.organizationId),
+        resolveOrganizationSlug(session.organizationId, session.organizationSlug),
+      ])
+    : [null, null, { offers: [], goals: [] }, ""];
   const canDecide = hasPermission(session.permissions, "view_decision_history");
   const canCheck = canDecide;
   const canApprove = hasPermission(session.permissions, "approve_actions");
@@ -32,6 +70,84 @@ export default async function NextStepPage() {
   const canDraftPlan = hasPermission(session.permissions, "modify_goals");
   const canUpdateWork = canDraftPlan;
   const canApprovePlan = hasPermission(session.permissions, "approve_plans");
+  const canManageWebsite = hasPermission(session.permissions, "manage_website");
+  const canManageEvents = hasPermission(session.permissions, "manage_events");
+  const canManageLeads = hasPermission(session.permissions, "manage_leads");
+  const canManageCustomers = hasPermission(session.permissions, "manage_customers");
+  const canManageBrand = hasPermission(session.permissions, "manage_brand");
+  const canManageSettings = hasPermission(session.permissions, "manage_settings");
+  const canManageOffers = hasPermission(session.permissions, "manage_offers");
+  const canManageSeo = hasPermission(session.permissions, "manage_seo");
+  const canConnectSearchConsole =
+    canManageSeo || hasPermission(session.permissions, "manage_integrations");
+  const canManageIntegrations = hasPermission(session.permissions, "manage_integrations");
+  const openPageLabel = step ? openPageLabelForNextStep(step.primary.title) : null;
+  const dedicatedVisible = step
+    ? showsDedicatedNextStepControl(step.primary.title, {
+        canCreateGoal,
+        canActivateGoal,
+        canDraftPlan,
+        goalId: step.primary.goalId,
+        planId: step.primary.planId,
+      })
+    : false;
+  const snippet = dashboard?.website?.trackingId
+    ? `<script src="${appUrl()}/t.js" data-groovgro-id="${dashboard.website.trackingId}" data-gromogia-id="${dashboard.website.trackingId}" async></script>`
+    : "";
+  const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
+  const gscNotice = searchConsoleNotice(params.gsc, params.error);
+  const searchConsole =
+    session.organizationId &&
+    step &&
+    (isSearchConsoleNextStep(step.primary.title) || step.needsSearchConsole)
+      ? (await getSeoPageData(session.organizationId)).searchConsole
+      : null;
+  const brand =
+    session.organizationId &&
+    step &&
+    (isSaveBrandNextStep(step.primary.title) || step.needsSaveBrand)
+      ? await getBrandSettingsForm(session.organizationId)
+      : null;
+  const brain =
+    session.organizationId &&
+    step &&
+    (isSaveBusinessNextStep(step.primary.title) || step.needsSaveBusiness)
+      ? await getBusinessBrainForm(session.organizationId)
+      : null;
+  const growthSettings =
+    session.organizationId &&
+    step &&
+    (isSaveReviewScheduleNextStep(step.primary.title) ||
+      step.needsSaveReviewSchedule)
+      ? await getGrowthSettingsForm(session.organizationId)
+      : null;
+  const discoveredPages =
+    session.organizationId && step?.needsWebsiteReview
+      ? await getDiscoveredWebsitePages(session.organizationId)
+      : [];
+  const approvedStoryPlan =
+    step?.readablePlan &&
+    (step.readablePlan.status === "approved" ||
+      step.readablePlan.status === "active")
+      ? { version: step.readablePlan.version }
+      : null;
+  const storyBeats = step
+    ? buildGrowthStory(
+        storyFactsFromWorkspace({
+          businessName: session.organizationName ?? "",
+          goal: step.readableGoal,
+          plan: approvedStoryPlan,
+          openWorkCount: step.openWork.length,
+          finishedWorkCount: step.finishedWorkCount,
+          latestLearning: step.latestLearning,
+          nextStep: {
+            title: step.primary.title,
+            body: step.primary.body,
+            href: step.primary.href,
+          },
+        }),
+      )
+    : [];
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -56,12 +172,33 @@ export default async function NextStepPage() {
               <CardDescription>
                 {step.primary.kind === "no_change_yet"
                   ? "No change is the recommendation."
-                  : `${labelFor(step.primary.classification)} · from ${step.primary.source === "drafts" ? "Business drafts" : step.primary.source === "specialist" ? "a specialist" : step.primary.source === "owner_work" ? "Your work" : step.primary.source === "learning" ? "what changed" : step.primary.source === "goals" ? "Goals" : "the growth review"}`}
+                  : `${labelFor(step.primary.classification)} · from ${step.primary.source === "drafts" ? "Business drafts" : step.primary.source === "specialist" ? "a specialist" : step.primary.source === "owner_work" ? "Your work" : step.primary.source === "learning" ? "what changed" : step.primary.source === "goals" ? "Goals" : step.primary.source === "website" ? "the connected website" : "the growth review"}`}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm">{step.primary.body}</p>
-              {step.primary.title === APPROVE_ACTIONS_STEP_TITLE ? (
+              {gscNotice && !isSearchConsoleNextStep(step.primary.title) ? (
+                <p className="text-sm text-muted-foreground">{gscNotice}</p>
+              ) : null}
+              {step.primary.title === CONFIRM_DRAFTS_STEP_TITLE ? (
+                step.inferredDrafts.map((draft) => (
+                  <div key={draft.id} className="space-y-2 rounded-lg border p-4 text-sm">
+                    <p className="font-medium">{draft.title}</p>
+                    {draft.description ? (
+                      <p className="text-muted-foreground">
+                        {draft.description.length > 280
+                          ? `${draft.description.slice(0, 279).trimEnd()}…`
+                          : draft.description}
+                      </p>
+                    ) : null}
+                    <InferredBadge
+                      source={draft.inferredFrom}
+                      confidence={draft.confidence}
+                    />
+                    <ConfirmRejectButtons id={draft.id} kind={draft.kind} />
+                  </div>
+                ))
+              ) : step.primary.title === APPROVE_ACTIONS_STEP_TITLE ? (
                 step.waitingActions.map((action) => (
                   <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
                     <p className="font-medium">{action.description}</p>
@@ -87,6 +224,7 @@ export default async function NextStepPage() {
                       actionId={action.id}
                       href={hrefForGrowthAction(action)}
                       canUpdate={canUpdateWork}
+                      showOpenPage={false}
                     />
                   </div>
                 ))
@@ -100,23 +238,261 @@ export default async function NextStepPage() {
                     />
                   </div>
                 ))
+              ) : step.primary.title === CONNECT_WEBSITE_STEP_TITLE ? (
+                <>
+                  <WebsiteConnectForm
+                    defaultUrl={dashboard?.website?.publicUrl ?? ""}
+                    canSave={canManageWebsite}
+                  />
+                </>
+              ) : step.primary.title === REVIEW_SITE_STEP_TITLE ? (
+                <>
+                  <WebsitePageChecklist
+                    pages={discoveredPages}
+                    disabled={!canManageWebsite && !canManageOffers}
+                  />
+                  <ReviewConnectedDataButton disabled={!session.organizationId} />
+                </>
+              ) : isPasteSnippetNextStep(step.primary.title) ? (
+                <>
+                  {snippet ? (
+                    <TrackingSnippet snippet={snippet} />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Save the website address first, then copy the snippet.
+                      GroovGro does not replace the live site.
+                    </p>
+                  )}
+                </>
+              ) : step.primary.title === RUN_SEO_STEP_TITLE ? (
+                <RunHomepageSeoButton disabled={!canManageSeo} />
+              ) : isSearchConsoleNextStep(step.primary.title) ? (
+                <>
+                  {searchConsole ? (
+                    <SearchConsolePanel
+                      searchConsole={searchConsole}
+                      notice={gscNotice}
+                      embedded
+                      canManage={canConnectSearchConsole}
+                    />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Search Console is not ready on this page yet. GroovGro
+                      will not edit the website.
+                    </p>
+                  )}
+                </>
+              ) : isSeoDraftNextStep(step.primary.title) ? (
+                <>
+                  {step.seoDrafts.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      Draft the title and description changes here, then
+                      approve them. GroovGro does not paste them onto the live
+                      site.
+                    </p>
+                  ) : null}
+                  {step.seoDrafts.map((draft) => (
+                    <FoldableSample key={draft.id} title={draft.title} subtitle="Waiting">
+                      <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+                        {draft.proposedChange}
+                      </pre>
+                      {draft.howToApply ? (
+                        <p className="text-sm text-muted-foreground">{draft.howToApply}</p>
+                      ) : null}
+                      <SeoDraftDecisionButtons
+                        draftId={draft.id}
+                        proposedChange={draft.proposedChange}
+                        disabled={!canManageSeo}
+                      />
+                    </FoldableSample>
+                  ))}
+                  <DraftSeoImprovementsButton disabled={!canManageSeo} />
+                </>
+              ) : isReviewScheduleNextStep(step.primary.title) ? (
+                <>
+                  {dashboard?.upcomingEvents.length ? (
+                    <ul className="space-y-2 text-sm">
+                      {dashboard.upcomingEvents.map((event) => (
+                        <li key={event.id}>
+                          <span className="font-medium">{event.title}</span>
+                          <span className="text-muted-foreground">
+                            {event.startsAt
+                              ? ` · ${event.startsAt.toLocaleString()}`
+                              : " · Date not set"}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No upcoming calendar items yet. Add one here if that is
+                      how this business sells.
+                    </p>
+                  )}
+                  <EventCreateForm
+                    offers={links.offers}
+                    goals={links.goals}
+                    disabled={!canManageEvents}
+                  />
+                </>
+              ) : isFollowUpLeadsNextStep(step.primary.title) ? (
+                <>
+                  {leadFormUrl ? <CopyLink url={leadFormUrl} /> : null}
+                  {step.openLeads.map((lead) => (
+                    <div key={lead.id} className="space-y-2 rounded-lg border p-4 text-sm">
+                      <p className="font-medium">
+                        {lead.name || lead.email || "Unnamed person"}
+                      </p>
+                      <p className="text-muted-foreground">
+                        {lead.stageName}
+                        {lead.email ? ` · ${lead.email}` : ""}
+                        {lead.source ? ` · ${lead.source}` : ""}
+                      </p>
+                      <LeadFollowUpButtons
+                        leadId={lead.id}
+                        stageId={lead.stageId}
+                        stages={step.leadStages}
+                        canMove={canManageLeads}
+                        canConvert={canManageCustomers}
+                        isWon={lead.isWon}
+                      />
+                    </div>
+                  ))}
+                </>
+              ) : isShareLeadFormNextStep(step.primary.title) ? (
+                <>
+                  {leadFormUrl ? (
+                    <CopyLink url={leadFormUrl} />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      The public lead form is not ready on this page yet.
+                      GroovGro will not email anyone.
+                    </p>
+                  )}
+                  <p className="text-sm font-medium">
+                    Or add someone you already know
+                  </p>
+                  <LeadCreateForm
+                    offers={links.offers}
+                    goals={links.goals}
+                    disabled={!canManageLeads}
+                  />
+                </>
+              ) : isSaveBrandNextStep(step.primary.title) ? (
+                <>
+                  <BrandSettingsForm
+                    brand={brand}
+                    organizationName={session.organizationName}
+                    disabled={!canManageBrand}
+                  />
+                </>
+              ) : isSaveBusinessNextStep(step.primary.title) ? (
+                <>
+                  <BusinessBrainForm
+                    brain={brain}
+                    disabled={!canManageSettings}
+                  />
+                </>
+              ) : isSaveProgressNextStep(step.primary.title) ? (
+                <>
+                  <SaveConnectedProgressButton disabled={!canDraftPlan} />
+                </>
+              ) : isStripeReadCopyNextStep(step.primary.title) ? (
+                <>
+                  <StripeReadCopyPanel
+                    configured={dashboard?.stripeConfigured ?? false}
+                    connected={dashboard?.stripeConnected ?? false}
+                    lastError={dashboard?.stripeLastError}
+                    canManage={canManageIntegrations}
+                    mode={
+                      step.primary.title === CONNECT_STRIPE_STEP_TITLE
+                        ? "connect"
+                        : "sync"
+                    }
+                  />
+                </>
+              ) : isSaveReviewScheduleNextStep(step.primary.title) ? (
+                <>
+                  <GrowthSettingsForm
+                    settings={growthSettings}
+                    disabled={!canManageSettings}
+                  />
+                </>
+              ) : isSaveBrandVoiceNextStep(step.primary.title) ? (
+                <>
+                  <BrandVoiceProfileForm disabled={!canManageBrand} />
+                </>
+              ) : isAddBrandVoiceExampleNextStep(step.primary.title) ? (
+                <>
+                  <BrandVoiceExampleForm disabled={!canManageBrand} />
+                </>
+              ) : isDraftBrandVoiceNextStep(step.primary.title) ? (
+                <>
+                  <BrandVoiceDraftForm disabled={!canManageBrand} />
+                </>
+              ) : isAddOfferNextStep(step.primary.title) ? (
+                <>
+                  <OfferCreateForm disabled={!canManageOffers} />
+                </>
+              ) : isAddGoalNextStep(step.primary.title) ? (
+                <>
+                  <GoalCreateForm
+                    offers={links.offers}
+                    disabled={!canCreateGoal}
+                  />
+                </>
+              ) : isReadGoalNextStep(step.primary.title) ? (
+                <>
+                  {step.learningGoal ? (
+                    <GoalReadout goal={step.learningGoal} />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      The Goal number is not stored yet. Stay here. GroovGro
+                      will not add spend.
+                    </p>
+                  )}
+                </>
+              ) : openPageLabel ? (
+                <OpenPageNextStepButtons
+                  href={step.primary.href}
+                  label={openPageLabel}
+                  canDecide={canDecide}
+                />
+              ) : step.primary.source === "review" &&
+                step.primary.kind === "no_change_yet" ? (
+                <div className="flex flex-wrap gap-2">
+                  <SaveGrowthReviewButton
+                    kind="weekly"
+                    canSave={canDecide}
+                    nothingYet
+                  />
+                </div>
+              ) : dedicatedVisible ? null : hasDedicatedNextStepControls(step.primary.title) ? (
+                canDecide ? (
+                  <LeaveAloneNextStepButton />
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    You can read the Goal and plan here. An owner or admin can
+                    use the buttons. GroovGro will not run them.
+                  </p>
+                )
               ) : canDecide ? (
                 <NextStepResponseButtons
                   kind={step.primary.kind}
                   href={step.primary.href}
                 />
-              ) : (
+              ) : step.primary.href !== "/app/next-step" ? (
                 <Button asChild variant="outline">
                   <Link href={step.primary.href}>Open the page</Link>
                 </Button>
-              )}
+              ) : null}
               {canCreateGoal &&
-              step.primary.title === "This Goal is reached" &&
+              step.primary.title === GOAL_REACHED_STEP_TITLE &&
               step.primary.goalId ? (
                 <DraftNextGoalButton goalId={step.primary.goalId} />
               ) : null}
               {canActivateGoal &&
-              step.primary.title === "Make this the active Goal" &&
+              step.primary.title === ACTIVATE_GOAL_STEP_TITLE &&
               step.primary.goalId ? (
                 <ActivateGoalButton goalId={step.primary.goalId} />
               ) : null}
@@ -167,26 +543,563 @@ export default async function NextStepPage() {
             </Card>
           ) : null}
 
+          {step.openWork.length > 0 &&
+          step.primary.title !== OWNER_WORK_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Ready for you</CardTitle>
+                <CardDescription>
+                  These are actions you approved. You do them here. GroovGro
+                  will not run them.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {step.openWork.map((action) => (
+                  <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
+                    <p className="font-medium">{action.description}</p>
+                    <p className="text-muted-foreground">
+                      {labelFor(action.risk)}
+                      {action.module ? ` · ${labelFor(action.module)}` : ""}
+                    </p>
+                    <OwnerWorkButtons
+                      actionId={action.id}
+                      href={hrefForGrowthAction(action)}
+                      canUpdate={canUpdateWork}
+                      showOpenPage={false}
+                    />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.uncheckedWork.length > 0 &&
+          step.primary.title !== CHECK_CHANGED_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Check what changed</CardTitle>
+                <CardDescription>
+                  Compare the Goal number from when you finished to now.
+                  GroovGro will not change the plan.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {step.uncheckedWork.map((action) => (
+                  <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
+                    <p className="font-medium">{action.description}</p>
+                    <CheckWhatChangedButton
+                      actionId={action.id}
+                      canCheck={canCheck}
+                    />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsConnectWebsite &&
+          step.primary.title !== CONNECT_WEBSITE_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Connect the existing website</CardTitle>
+                <CardDescription>
+                  Paste the address of the site you already have. GroovGro
+                  will not move the live site.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <WebsiteConnectForm
+                  defaultUrl={dashboard?.website?.publicUrl ?? ""}
+                  canSave={canManageWebsite}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsWebsiteReview &&
+          step.primary.title !== REVIEW_SITE_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Review the connected website</CardTitle>
+                <CardDescription>
+                  The website address is saved, but GroovGro has not read
+                  the pages yet. Find pages here, check the important ones,
+                  then review. GroovGro will not change the live site.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <WebsitePageChecklist
+                  pages={discoveredPages}
+                  disabled={!canManageWebsite && !canManageOffers}
+                />
+                <ReviewConnectedDataButton disabled={!session.organizationId} />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsPasteSnippet &&
+          !isPasteSnippetNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Paste the tracking snippet</CardTitle>
+                <CardDescription>
+                  Copy the tracking snippet here and paste it on the site
+                  you already have. GroovGro does not replace that site.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {snippet ? (
+                  <TrackingSnippet snippet={snippet} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Save the website address first, then copy the snippet.
+                    GroovGro does not replace the live site.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.openLeads.length > 0 &&
+          !isFollowUpLeadsNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Follow up open leads</CardTitle>
+                <CardDescription>
+                  Give each open lead a next step here. GroovGro will not
+                  email them.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {leadFormUrl ? <CopyLink url={leadFormUrl} /> : null}
+                {step.openLeads.map((lead) => (
+                  <div key={lead.id} className="space-y-2 rounded-lg border p-4 text-sm">
+                    <p className="font-medium">
+                      {lead.name || lead.email || "Unnamed person"}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {lead.stageName}
+                      {lead.email ? ` · ${lead.email}` : ""}
+                      {lead.source ? ` · ${lead.source}` : ""}
+                    </p>
+                    <LeadFollowUpButtons
+                      leadId={lead.id}
+                      stageId={lead.stageId}
+                      stages={step.leadStages}
+                      canMove={canManageLeads}
+                      canConvert={canManageCustomers}
+                      isWon={lead.isWon}
+                    />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsShareLeadForm &&
+          !isShareLeadFormNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Share the public lead form</CardTitle>
+                <CardDescription>
+                  Copy the public lead form here, or add someone you already
+                  know. GroovGro will not email anyone.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {leadFormUrl ? (
+                  <CopyLink url={leadFormUrl} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    The public lead form is not ready on this page yet.
+                    GroovGro will not email anyone.
+                  </p>
+                )}
+                <p className="text-sm font-medium">
+                  Or add someone you already know
+                </p>
+                <LeadCreateForm
+                  offers={links.offers}
+                  goals={links.goals}
+                  disabled={!canManageLeads}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsStripeReadCopy &&
+          !isStripeReadCopyNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {step.reports.some(
+                    (report) => report.recommend.title === CONNECT_STRIPE_STEP_TITLE,
+                  )
+                    ? "Connect payments"
+                    : "Sync recent payments"}
+                </CardTitle>
+                <CardDescription>
+                  {step.reports.some(
+                    (report) => report.recommend.title === CONNECT_STRIPE_STEP_TITLE,
+                  )
+                    ? "Mark this workspace as connected so GroovGro can read a copy of payments. GroovGro will not charge a card, create a Stripe account, or change checkout on the connected website."
+                    : "Copy recent payment records here. GroovGro will not charge a card or change checkout on the connected website."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <StripeReadCopyPanel
+                  configured={dashboard?.stripeConfigured ?? false}
+                  connected={dashboard?.stripeConnected ?? false}
+                  lastError={dashboard?.stripeLastError}
+                  canManage={canManageIntegrations}
+                  mode={
+                    step.reports.some(
+                      (report) => report.recommend.title === CONNECT_STRIPE_STEP_TITLE,
+                    )
+                      ? "connect"
+                      : "sync"
+                  }
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSaveBrand &&
+          !isSaveBrandNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Save your brand</CardTitle>
+                <CardDescription>
+                  Save the business name, what it does, and who it serves
+                  here. GroovGro will not start marketing, send email, or
+                  edit the live website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BrandSettingsForm
+                  brand={brand}
+                  organizationName={session.organizationName}
+                  disabled={!canManageBrand}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSaveBusiness &&
+          !isSaveBusinessNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Save how this business works</CardTitle>
+                <CardDescription>
+                  Save the kind of business this is and how it creates
+                  value. GroovGro will not start marketing, send email, or
+                  edit the live website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BusinessBrainForm
+                  brain={brain}
+                  disabled={!canManageSettings}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsAddOffer &&
+          !isAddOfferNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Add an offer</CardTitle>
+                <CardDescription>
+                  Name something this business promotes or wants a customer
+                  to do. GroovGro will not start marketing.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <OfferCreateForm disabled={!canManageOffers} />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSaveBrandVoice &&
+          !isSaveBrandVoiceNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Save your brand voice</CardTitle>
+                <CardDescription>
+                  Save how this business sounds here. GroovGro uses this
+                  for drafts. It will not send email, post to social, or
+                  edit the live website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BrandVoiceProfileForm disabled={!canManageBrand} />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsAddBrandVoiceExample &&
+          !isAddBrandVoiceExampleNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Add a brand voice example</CardTitle>
+                <CardDescription>
+                  Paste writing you already like here. GroovGro uses this
+                  for drafts. It will not send email, post to social, or
+                  edit the live website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BrandVoiceExampleForm disabled={!canManageBrand} />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsDraftBrandVoice &&
+          !isDraftBrandVoiceNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Draft copy in your voice</CardTitle>
+                <CardDescription>
+                  Create a draft here from the voice you saved. GroovGro
+                  keeps it in this workspace. It will not send email, post
+                  to social, or edit the live website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BrandVoiceDraftForm disabled={!canManageBrand} />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSaveReviewSchedule &&
+          !isSaveReviewScheduleNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Choose when you look at growth</CardTitle>
+                <CardDescription>
+                  Save the day and time you want to read this week&apos;s
+                  numbers here. GroovGro will not change the business then.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <GrowthSettingsForm
+                  settings={growthSettings}
+                  disabled={!canManageSettings}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsRunSeo &&
+          step.primary.title !== RUN_SEO_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Run an SEO check</CardTitle>
+                <CardDescription>
+                  Check the connected homepage here. GroovGro will not edit
+                  the website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RunHomepageSeoButton disabled={!canManageSeo} />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSeoDraft &&
+          !isSeoDraftNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {step.reports.some(
+                    (report) => report.recommend.title === FIX_SEO_STEP_TITLE,
+                  )
+                    ? "Fix blocking SEO items"
+                    : "Improve the page when you have time"}
+                </CardTitle>
+                <CardDescription>
+                  {step.reports.some(
+                    (report) => report.recommend.title === FIX_SEO_STEP_TITLE,
+                  )
+                    ? "Draft and approve the blocking items here. GroovGro will not change the connected website."
+                    : "The waiting threshold is met and the page has items to make clearer. Draft and approve that copy here. GroovGro will not change the connected website or start ads."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {step.seoDrafts.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    Draft the title and description changes here, then
+                    approve them. GroovGro does not paste them onto the live
+                    site.
+                  </p>
+                ) : null}
+                {step.seoDrafts.map((draft) => (
+                  <FoldableSample
+                    key={draft.id}
+                    title={draft.title}
+                    subtitle="Waiting"
+                  >
+                    <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+                      {draft.proposedChange}
+                    </pre>
+                    {draft.howToApply ? (
+                      <p className="text-sm text-muted-foreground">
+                        {draft.howToApply}
+                      </p>
+                    ) : null}
+                    <SeoDraftDecisionButtons
+                      draftId={draft.id}
+                      proposedChange={draft.proposedChange}
+                      disabled={!canManageSeo}
+                    />
+                  </FoldableSample>
+                ))}
+                <DraftSeoImprovementsButton disabled={!canManageSeo} />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSearchConsole &&
+          !isSearchConsoleNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {step.reports.find((report) =>
+                    isSearchConsoleNextStep(report.recommend.title),
+                  )?.recommend.title ?? "Connect Search Console"}
+                </CardTitle>
+                <CardDescription>
+                  {step.reports.find((report) =>
+                    isSearchConsoleNextStep(report.recommend.title),
+                  )?.recommend.body ??
+                    "Connect Search Console here so GroovGro can read search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {searchConsole ? (
+                  <SearchConsolePanel
+                    searchConsole={searchConsole}
+                    notice={gscNotice}
+                    embedded
+                    canManage={canConnectSearchConsole}
+                  />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Search Console is not ready on this page yet. GroovGro
+                    will not edit the website.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsReviewSchedule &&
+          !isReviewScheduleNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Review the schedule or how people find it</CardTitle>
+                <CardDescription>
+                  Review upcoming items here. Add a calendar item if that is
+                  how this business sells. GroovGro will not change ads or
+                  the website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {dashboard?.upcomingEvents.length ? (
+                  <ul className="space-y-2 text-sm">
+                    {dashboard.upcomingEvents.map((event) => (
+                      <li key={event.id}>
+                        <span className="font-medium">{event.title}</span>
+                        <span className="text-muted-foreground">
+                          {event.startsAt
+                            ? ` · ${event.startsAt.toLocaleString()}`
+                            : " · Date not set"}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No upcoming calendar items yet. Add one here if that is
+                    how this business sells.
+                  </p>
+                )}
+                <EventCreateForm
+                  offers={links.offers}
+                  goals={links.goals}
+                  disabled={!canManageEvents}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.activateGoalId &&
+          step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Make this the active Goal</CardTitle>
+                <CardDescription>
+                  “{step.activateGoalTitle || "the next Goal"}” is a draft.
+                  Make it the active Goal when you want GroovGro to follow
+                  it. GroovGro will not start marketing.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ActivateGoalButton
+                  goalId={step.activateGoalId}
+                  disabled={!canActivateGoal}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.reports.length > 0 ? (
+            <SpecialistReports
+              reports={step.reports}
+              canSave={canDecide}
+              hideNextStepLink
+            />
+          ) : null}
+
           <Card>
             <CardHeader>
-              <CardTitle>What GroovGro is leaving alone</CardTitle>
+              <CardTitle>The Goal</CardTitle>
               <CardDescription>
-                Ads, email, and social stay off. Thin evidence stays as wait.
+                Next step is one thing to do now. The Goal is the number
+                GroovGro compares. Read the number and saved history here.
+                GroovGro will not change it by itself.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              {step.leftAlone.length === 0 ? (
-                <p className="text-muted-foreground">
-                  Nothing extra is being left alone this period.
-                </p>
+            <CardContent className="space-y-4">
+              {step.readableGoal ? (
+                <>
+                  <GoalReadout goal={step.readableGoal} />
+                  {step.readableGoal.liveComputable &&
+                  !isSaveProgressNextStep(step.primary.title) ? (
+                    <SaveConnectedProgressButton disabled={!canDraftPlan} />
+                  ) : null}
+                </>
               ) : (
-                step.leftAlone.map((item) => (
-                  <div key={`${item.specialistId ?? item.title}`}>
-                    <p className="font-medium">{item.title}</p>
-                    <p className="text-muted-foreground">{item.body}</p>
-                  </div>
-                ))
+                <p className="text-sm text-muted-foreground">
+                  No active Goal yet. Use the buttons above when Next step asks
+                  you to add one. GroovGro will not start marketing.
+                </p>
               )}
+              {step.reachedGoalId &&
+              step.primary.title !== GOAL_REACHED_STEP_TITLE ? (
+                <DraftNextGoalButton
+                  goalId={step.reachedGoalId}
+                  disabled={!canCreateGoal}
+                />
+              ) : null}
+              {step.needsAddGoal &&
+              !isAddGoalNextStep(step.primary.title) ? (
+                <GoalCreateForm
+                  offers={links.offers}
+                  disabled={!canCreateGoal}
+                />
+              ) : null}
             </CardContent>
           </Card>
 
@@ -194,44 +1107,196 @@ export default async function NextStepPage() {
             <CardHeader>
               <CardTitle>Write it as a plan</CardTitle>
               <CardDescription>
-                Next step is one thing to do now. If GroovGro asks you to draft
-                a plan, approve it, propose the first actions, approve those
-                actions, do work you already approved, or check what changed,
-                use the buttons above. A Growth Plan is a versioned write-up
-                for a Goal. After you approve a plan, GroovGro can propose the
-                first actions. Nothing runs until you say so, and even then
-                GroovGro does not execute.
+                Next step is one thing to do now. Use the buttons above. A
+                Growth Plan is a versioned write-up for a Goal. Read it here.
+                After you approve a plan, GroovGro can propose the first
+                actions. Nothing runs until you say so, and even then GroovGro
+                does not execute.
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-wrap gap-2">
-              <Button asChild>
-                <Link href="/app/goals">Open Goals</Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/app/work">Open Your work</Link>
-              </Button>
+            <CardContent className="space-y-3">
+              {step.readablePlan ? (
+                <div className="space-y-2 rounded-lg border p-4">
+                  <p className="font-medium">
+                    {step.readablePlan.goalTitle} · v{step.readablePlan.version}{" "}
+                    · {labelFor(step.readablePlan.status)}
+                  </p>
+                  <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+                    {step.readablePlan.strategySummary}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No plan is written yet. Draft one here when the active Goal
+                  has no plan. GroovGro will not run it.
+                </p>
+              )}
+              {step.planGoalId &&
+              step.primary.title !== DRAFT_PLAN_STEP_TITLE ? (
+                <DraftGrowthPlanButton
+                  goalId={step.planGoalId}
+                  disabled={!canDraftPlan}
+                />
+              ) : null}
+              {step.approvePlanId &&
+              step.primary.title !== APPROVE_PLAN_STEP_TITLE ? (
+                <GrowthPlanReviewButtons
+                  planId={step.approvePlanId}
+                  canApprove={canApprovePlan}
+                />
+              ) : null}
+              {step.proposePlanId &&
+              step.primary.title !== PROPOSE_ACTIONS_STEP_TITLE ? (
+                <ProposePlanActionsButton
+                  planId={step.proposePlanId}
+                  disabled={!canDraftPlan}
+                />
+              ) : null}
             </CardContent>
           </Card>
 
-          <div className="flex flex-wrap gap-2">
-            <Button asChild variant="outline">
-              <Link href="/app">The path so far</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/app/goals">Goals</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/app/growth-review">Growth review</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/app/intelligence">Specialists</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/app/decisions">Decisions</Link>
-            </Button>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>This week’s look</CardTitle>
+              <CardDescription>
+                {step.weeklyLook
+                  ? `${step.weeklyLook.periodLabel}. Read it here. GroovGro does not change the business from this look.`
+                  : "A weekly look at progress. Read it here. GroovGro does not change the business from this look."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              {step.weeklyLook ? (
+                <>
+                  <GrowthReviewBody review={step.weeklyLook} />
+                  {canDecide &&
+                  !(
+                    step.primary.source === "review" &&
+                    step.primary.kind === "no_change_yet"
+                  ) ? (
+                    <SaveGrowthReviewButton kind="weekly" canSave={canDecide} />
+                  ) : null}
+                </>
+              ) : (
+                <p className="text-muted-foreground">
+                  No weekly look is ready yet. Stay here. GroovGro will not
+                  start marketing.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Decision History</CardTitle>
+              <CardDescription>
+                Next step is one thing to do now. Decisions record why a
+                change was recommended or left alone. Read the latest here.
+                GroovGro will not run them.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {step.readableDecisions.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No decisions saved yet. Use the buttons above. GroovGro will
+                  not run them.
+                </p>
+              ) : (
+                step.readableDecisions.map((decision) => (
+                  <div key={decision.id} className="rounded-lg border p-4 text-sm">
+                    <p className="font-medium">
+                      {decision.decisionType === "no_change"
+                        ? "No change yet"
+                        : labelFor(decision.decisionType)}
+                    </p>
+                    <p>{decision.recommendation}</p>
+                    {decision.rationale ? (
+                      <p className="text-muted-foreground">{decision.rationale}</p>
+                    ) : null}
+                    {decision.outcome ? (
+                      <p className="text-muted-foreground">{decision.outcome}</p>
+                    ) : null}
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {decision.createdAtLabel}
+                      {decision.evidenceWindow
+                        ? ` · ${decision.evidenceWindow}`
+                        : ""}
+                      {decision.confidence
+                        ? ` · confidence ${decision.confidence}`
+                        : ""}
+                    </p>
+                  </div>
+                ))
+              )}
+            </CardContent>
+          </Card>
+
+          <GrowthStoryCard beats={storyBeats} hideNextStepLink />
         </>
       )}
+    </div>
+  );
+}
+
+function GoalReadout({
+  goal,
+}: {
+  goal: {
+    title: string
+    liveCurrentValue: number
+    targetValue: number | null
+    unit: string
+    liveNote: string
+    progressPercent: number | null
+    progressHistory?: {
+      id: string
+      recordedAtLabel: string
+      value: number
+      source: string
+      note: string
+    }[]
+  }
+}) {
+  const history = goal.progressHistory ?? [];
+  return (
+    <div className="space-y-3 rounded-lg border p-4 text-sm">
+      <div className="space-y-1">
+        <p className="font-medium">{goal.title}</p>
+        <p>
+          {goal.unit
+            ? `${goal.liveCurrentValue} ${goal.unit}`
+            : String(goal.liveCurrentValue)}
+          {goal.targetValue != null
+            ? ` of ${
+                goal.unit
+                  ? `${goal.targetValue} ${goal.unit}`
+                  : String(goal.targetValue)
+              }`
+            : ""}
+          {goal.progressPercent != null
+            ? ` · ${goal.progressPercent}% of the target`
+            : ""}
+        </p>
+        {goal.liveNote ? (
+          <p className="text-muted-foreground">{goal.liveNote}</p>
+        ) : null}
+      </div>
+      {history.length > 0 ? (
+        <FoldableSample
+          title="Saved progress"
+          subtitle={`${history.length} stored number${history.length === 1 ? "" : "s"}. Open to read the history.`}
+        >
+          {history.map((row) => (
+            <p key={row.id} className="text-sm text-muted-foreground">
+              {row.recordedAtLabel}: {row.value}
+              {goal.unit ? ` ${goal.unit}` : ""}
+              {row.source === "manual"
+                ? " · saved by hand"
+                : " · from connected data"}
+              {row.note ? ` · ${row.note}` : ""}
+            </p>
+          ))}
+        </FoldableSample>
+      ) : null}
     </div>
   );
 }

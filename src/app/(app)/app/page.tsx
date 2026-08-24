@@ -11,10 +11,7 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl, missingFoundationServices } from "@/lib/env";
-import { GrowthStoryCard } from "@/components/growth-story";
-import { partitionOwnerWork } from "@/lib/growth/owner-work";
 import { getCoordinatedNextStep, getGrowthSnapshot } from "@/lib/growth/queries";
-import { buildGrowthStory, storyFactsFromWorkspace } from "@/lib/growth/story";
 import {
   buildStatusAlerts,
   websiteWasRead,
@@ -23,7 +20,6 @@ import { formatMoney } from "@/lib/money";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { isModuleEnabled } from "@/lib/modules/catalog";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
-import { ReviewConnectedDataButton } from "@/components/growth-review";
 import { StatusAlertList } from "@/components/status-alert";
 
 export default async function DashboardPage() {
@@ -60,45 +56,24 @@ export default async function DashboardPage() {
   const attention = missing.length
     ? `Connect ${missing.join(" and ")} so people can sign in and organizations can be stored.`
     : inferredCount > 0
-      ? `${inferredCount} suggested offer${inferredCount === 1 ? "" : "s or goals"} waiting for you to confirm or reject.`
+      ? `${inferredCount} suggested offer${inferredCount === 1 ? "" : "s or goals"} waiting. Open Next step to confirm or reject.`
     : snapshot && !snapshot.stripeConnected
       ? snapshot.stripeConfigured
-        ? "Stripe keys are on Vercel, but this organization has not been marked as connected. Open Bookings & payments and connect Stripe."
-        : "Stripe is not connected yet. Add test keys in Vercel, then connect Stripe so bookings become customers."
+        ? "Stripe keys are on Vercel, but this organization has not been marked as connected. Open Next step to connect so GroovGro can read a copy of payments."
+        : "Stripe is not connected yet. Open Next step after test keys are on Vercel so GroovGro can read a copy of payments."
       : snapshot && snapshot.openLeadCount > 0
-        ? `${snapshot.openLeadCount} lead${snapshot.openLeadCount === 1 ? "" : "s"} still need a next step.`
+        ? `${snapshot.openLeadCount} lead${snapshot.openLeadCount === 1 ? "" : "s"} still need a next step. Open Next step to follow up.`
         : "Brand, website, and Stripe are in a good starting place. Add an event or a lead to see the dashboard fill in.";
 
-  const ownerWork = partitionOwnerWork(growth?.actions ?? []);
   const latestWorkLearning = growth?.decisions.find((row) => row.outcome)?.outcome;
-  const approvedPlan = growth?.plans.find(
-    (plan) => plan.status === "approved" || plan.status === "active",
-  );
-  const storyBeats = buildGrowthStory(
-    storyFactsFromWorkspace({
-      businessName: session.organizationName ?? "",
-      goal: growth?.activeGoals[0] ?? null,
-      plan: approvedPlan ?? null,
-      openWorkCount: ownerWork.open.length,
-      finishedWorkCount: ownerWork.finished.length,
-      latestLearning: latestWorkLearning ?? "",
-      nextStep: nextStep
-        ? {
-            title: nextStep.primary.title,
-            body: nextStep.primary.body,
-            href: nextStep.primary.href,
-          }
-        : null,
-    }),
-  );
 
   const nextStepText = inferredCount > 0
-    ? "Open Business to confirm or reject what GroovGro drafted. Nothing becomes active until you confirm."
+    ? "Open Next step to confirm or reject what GroovGro drafted. Nothing becomes active until you confirm."
     : !snapshot?.website?.publicUrl
-    ? "Connect the existing website and paste the tracking snippet."
+    ? "Open Next step to connect the existing website and paste the tracking snippet."
     : !snapshot.stripeConnected
-      ? "Connect Stripe and sync recent test payments."
-      : "Review connected data on Business if you have not yet, then keep the public lead form in use.";
+      ? "Open Next step to connect so GroovGro can read a copy of payments."
+      : "Open Next step if GroovGro names something to do. GroovGro will not start marketing.";
 
   const statusAlerts = buildStatusAlerts({
     signedIn: Boolean(session.email),
@@ -118,7 +93,8 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
           What is this business trying to accomplish, how is it doing, and
-          what should happen next — only when there is enough evidence.
+          what should happen next — only when there is enough evidence. Read
+          the path so far on Next step.
         </p>
       </div>
 
@@ -156,8 +132,6 @@ export default async function DashboardPage() {
         </Card>
       )}
 
-      {session.organizationId ? <GrowthStoryCard beats={storyBeats} /> : null}
-
       {snapshot ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Stat label="Open leads" value={String(snapshot.openLeadCount)} />
@@ -186,12 +160,12 @@ export default async function DashboardPage() {
                   growth.plans.find(
                     (plan) => plan.status === "approved" || plan.status === "active",
                   )
-                    ? "An approved Growth Plan is on Goals. Propose the first actions there. GroovGro will not run them."
+                    ? "An approved Growth Plan is ready. Propose the first actions on Next step. GroovGro will not run them."
                     : null,
                 ]
                   .filter(Boolean)
                   .join(" ")
-              : "No active Growth Goal yet. Open Goals and write the first measurable outcome."
+              : "No active Growth Goal yet. Open Next step to write the first measurable outcome."
           }
         />
         <QuestionCard title="How are we doing?" body={happening} />
@@ -207,7 +181,7 @@ export default async function DashboardPage() {
           title="What should happen next?"
           body={
             nextStep
-              ? `${nextStep.primary.title}. ${nextStep.waitingActions.length > 0 ? `${nextStep.waitingActions.length} proposed action${nextStep.waitingActions.length === 1 ? "" : "s"} still need your say. ` : ""}GroovGro will not execute this.`
+              ? `${nextStep.primary.title}. ${nextStep.waitingActions.length > 0 ? `${nextStep.waitingActions.length} proposed action${nextStep.waitingActions.length === 1 ? "" : "s"} still need your say. ` : ""}Open Next step to do it. GroovGro will not execute this.`
               : growth?.awaitingApproval.length
                 ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
                 : (growth?.weeklyReview.whatShouldHappenNext ?? nextStepText)
@@ -219,7 +193,7 @@ export default async function DashboardPage() {
             growth?.weeklyReview.whatIsLeftAlone ??
             (growth?.latestNoChange
               ? growth.latestNoChange.recommendation
-              : "Nothing recorded yet. If evidence is thin, the right recommendation is to wait. Open Growth review to see this week’s recommendation.")
+              : "Nothing recorded yet. If evidence is thin, the right recommendation is to wait. Open Next step to see this week’s recommendation.")
           }
         />
       </div>
@@ -233,7 +207,8 @@ export default async function DashboardPage() {
             <CardContent className="space-y-2 text-sm">
               {snapshot.recentLeads.length === 0 ? (
                 <p className="text-muted-foreground">
-                  No leads yet. Use Leads & customers or the public form.
+                  No leads yet. Open Next step to copy the public form or add a
+                  person. GroovGro will not email anyone.
                 </p>
               ) : (
                 snapshot.recentLeads.map((lead) => (
@@ -252,7 +227,8 @@ export default async function DashboardPage() {
             <CardContent className="space-y-2 text-sm">
               {snapshot.upcomingEvents.length === 0 ? (
                 <p className="text-muted-foreground">
-                  No events yet. Add a class, workshop, or appointment.
+                  No events yet. Open Next step to add a calendar item if that
+                  is how this business sells.
                 </p>
               ) : (
                 snapshot.upcomingEvents.map((event) => (
@@ -271,8 +247,8 @@ export default async function DashboardPage() {
 
       <div className="flex flex-wrap gap-2">
         {isModuleEnabled(session.enabledModules, "website_connect") ? (
-          <Button asChild>
-            <Link href="/app/website">Connect website</Link>
+          <Button asChild variant="outline">
+            <Link href="/app/next-step">Connect website</Link>
           </Button>
         ) : null}
         {leadFormUrl ? (
@@ -282,17 +258,14 @@ export default async function DashboardPage() {
             </a>
           </Button>
         ) : null}
-        {isModuleEnabled(session.enabledModules, "business_brain") ? (
-          <ReviewConnectedDataButton disabled={!session.organizationId} />
+        {isModuleEnabled(session.enabledModules, "growth_next") ? (
+          <Button asChild>
+            <Link href="/app/next-step">Next step</Link>
+          </Button>
         ) : null}
         {isModuleEnabled(session.enabledModules, "growth_goals") ? (
           <Button asChild variant="outline">
             <Link href="/app/goals">Goals</Link>
-          </Button>
-        ) : null}
-        {isModuleEnabled(session.enabledModules, "growth_next") ? (
-          <Button asChild variant="outline">
-            <Link href="/app/next-step">Next step</Link>
           </Button>
         ) : null}
         {isModuleEnabled(session.enabledModules, "growth_work") ? (
@@ -318,7 +291,7 @@ export default async function DashboardPage() {
         </Button>
         {isModuleEnabled(session.enabledModules, "intelligence") ? (
           <Button asChild variant="outline">
-            <Link href="/app/intelligence">Intelligence and specialists</Link>
+            <Link href="/app/intelligence">Intelligence</Link>
           </Button>
         ) : null}
       </div>

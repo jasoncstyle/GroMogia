@@ -1,4 +1,5 @@
 import { and, eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 import { getDb } from "@/lib/db";
 import { attributionTouches, websites } from "@/lib/db/schema";
@@ -61,6 +62,13 @@ export async function POST(request: Request) {
     }
   }
 
+  const alreadyRecorded = await db
+    .select({ id: attributionTouches.id })
+    .from(attributionTouches)
+    .where(eq(attributionTouches.organizationId, website.organizationId))
+    .limit(1);
+  const firstVisit = alreadyRecorded.length === 0;
+
   await db.insert(attributionTouches).values({
     organizationId: website.organizationId,
     sessionId: typeof body.sessionId === "string" ? body.sessionId : null,
@@ -74,6 +82,13 @@ export async function POST(request: Request) {
       utm_campaign: typeof body.utm_campaign === "string" ? body.utm_campaign : null,
     },
   });
+
+  if (firstVisit) {
+    revalidatePath("/app/next-step");
+    revalidatePath("/app");
+    revalidatePath("/app/analytics");
+    revalidatePath("/app/website");
+  }
 
   return json({ ok: true });
 }

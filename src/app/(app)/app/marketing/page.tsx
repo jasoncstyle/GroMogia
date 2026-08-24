@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import {
   Table,
   TableBody,
@@ -94,6 +95,8 @@ export default async function MarketingPage() {
           </CardContent>
         </Card>
       )}
+
+      <OpenNextStepLink />
     </div>
   );
 }

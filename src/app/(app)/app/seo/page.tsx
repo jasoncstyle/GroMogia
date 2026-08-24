@@ -18,6 +18,7 @@ import { FoldableSample } from "@/components/foldable-sample";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -140,7 +141,7 @@ export default async function SeoPage({
                 </>
               ) : (
                 <Button asChild>
-                  <Link href="/app/website">Connect website</Link>
+                  <Link href="/app/next-step">Connect website</Link>
                 </Button>
               )}
             </CardContent>
@@ -430,6 +431,8 @@ export default async function SeoPage({
           ) : null}
         </>
       )}
+
+      <OpenNextStepLink />
     </div>
   );
 }

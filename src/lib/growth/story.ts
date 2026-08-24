@@ -39,7 +39,7 @@ function withUnit(value: number, unit: string): string {
 function goalLine(facts: GrowthStoryFacts): string {
   const title = clean(facts.goalTitle);
   if (!title) {
-    return "No active Goal yet. Open Goals and write the first measurable outcome. GroovGro will not start marketing.";
+    return "No active Goal yet. Open Next step and write the first measurable outcome. GroovGro will not start marketing.";
   }
   const parts = [`The current Goal is “${title}.”`];
   if (facts.goalCurrent != null) {
@@ -53,19 +53,19 @@ function goalLine(facts: GrowthStoryFacts): string {
       parts.push(`The current number is ${current}.`);
     }
   }
-  parts.push("GroovGro will not change that Goal by itself.");
+  parts.push("Read it on Next step. GroovGro will not change that Goal by itself.");
   return parts.join(" ");
 }
 
 function planLine(facts: GrowthStoryFacts): string {
   if (facts.hasApprovedPlan) {
     const version = facts.planVersion != null ? ` v${facts.planVersion}` : "";
-    return `An approved Growth Plan${version} is the current write-up. Approving it did not run marketing.`;
+    return `An approved Growth Plan${version} is the current write-up. Read it on Next step. Approving it did not run marketing.`;
   }
   if (clean(facts.goalTitle)) {
-    return "There is a Goal, but no approved plan yet. Draft or approve a plan on Next step or Goals. GroovGro will not run it.";
+    return "There is a Goal, but no approved plan yet. Draft or approve a plan on Next step. GroovGro will not run it.";
   }
-  return "A plan comes after a Goal. Open Goals first.";
+  return "A plan comes after a Goal. Open Next step first.";
 }
 
 function workLine(facts: GrowthStoryFacts): string {
@@ -132,22 +132,22 @@ export function buildGrowthStory(facts: GrowthStoryFacts): GrowthStoryBeat[] {
     {
       title: "The Goal",
       body: clip(`${name}. ${goalLine(facts)}`, 500),
-      href: "/app/goals",
+      href: "/app/next-step",
     },
     {
       title: "The plan",
       body: clip(planLine(facts), 500),
-      href: "/app/goals",
+      href: "/app/next-step",
     },
     {
       title: "The work",
       body: clip(workLine(facts), 500),
-      href: "/app/work",
+      href: "/app/next-step",
     },
     {
       title: "What changed",
       body: clip(learningLine(facts), 500),
-      href: "/app/work",
+      href: "/app/next-step",
     },
     {
       title: "What should happen next",
@@ -155,7 +155,7 @@ export function buildGrowthStory(facts: GrowthStoryFacts): GrowthStoryBeat[] {
         `${nextLine(facts)} Ads, email, and social stay left alone.`,
         500,
       ),
-      href: clean(facts.nextStepHref) || "/app/next-step",
+      href: "/app/next-step",
     },
   ];
 }
