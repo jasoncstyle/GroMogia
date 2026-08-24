@@ -549,6 +549,40 @@ describe("coordinated next step", () => {
     assert.match(step.primary.body, /will not start a new campaign/);
   });
 
+  it("keeps Draft the next Goal on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 1 })),
+      waitingActions: [],
+      latestLearningKind: "target_reached",
+      latestLearningOutcome: "The Goal reached its target. GroovGro will not start a new campaign.",
+      latestLearningGoalId: "goal-1",
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.reachedGoalId, "goal-1");
+    assert.match(page, /reachedGoalId/);
+    assert.match(page, /primary\.title !== GOAL_REACHED_STEP_TITLE/);
+    assert.doesNotMatch(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/goals/page.tsx"), "utf8"),
+      /DraftNextGoalButton/,
+    );
+    const alreadyDrafted = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 1 })),
+      waitingActions: [],
+      latestLearningKind: "target_reached",
+      latestLearningOutcome: "The Goal reached its target. GroovGro will not start a new campaign.",
+      latestLearningGoalId: "goal-1",
+      activateGoalId: "goal-2",
+      activateGoalTitle: "Next: More people get in touch",
+    });
+    assert.equal(alreadyDrafted.reachedGoalId, null);
+  });
+
   it("puts Add a Goal on Next step when work was not tied to a Goal", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),

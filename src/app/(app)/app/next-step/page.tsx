@@ -661,6 +661,13 @@ export default async function NextStepPage({
                   you to add one. GroovGro will not start marketing.
                 </p>
               )}
+              {step.reachedGoalId &&
+              step.primary.title !== GOAL_REACHED_STEP_TITLE ? (
+                <DraftNextGoalButton
+                  goalId={step.reachedGoalId}
+                  disabled={!canCreateGoal}
+                />
+              ) : null}
             </CardContent>
           </Card>
 

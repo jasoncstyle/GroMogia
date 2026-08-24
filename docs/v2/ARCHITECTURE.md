@@ -1202,7 +1202,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can approve or reject a draft plan even when that is not the main ask. Goals lists draft plans and names Next step. GroovGro does not execute.
 
-### 120. Keep Propose first actions on Next step when it is not the main ask (this slice)
+### 120. Keep Propose first actions on Next step when it is not the main ask
 
 **Reason:** When a draft plan, a missing plan, activate, drafts, approved work, Check what changed, or an unread website outranked proposing first actions, that button only lived in the main recommendation. Goals no longer has it. The owner had to finish the other ask first, or leave Next step with no way to propose actions.
 
@@ -1211,6 +1211,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can propose the first actions even when that is not the main ask. Goals lists approved plans and names Next step. GroovGro does not execute.
+
+### 121. Keep Draft the next Goal on Next step when it is not the main ask (this slice)
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a plan loop outranked a reached Goal, Draft the next Goal only lived in the main recommendation. Goals no longer has that button. The owner had to finish the other ask first, or leave Next step with no way to draft the next Goal.
+
+**Affected:** Next step Goal card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can draft the next Goal even when that is not the main ask. If a next Goal is already drafted, Make this the active Goal stays instead. Goals lists a reached Goal and names Next step. GroovGro does not start marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1323,7 +1333,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Activate Goal on Next step when it is not the main ask is parked.** Next step can make a draft the active Goal even when that is not the main ask. Goals lists that draft and names Next step. Do not start marketing.
 - **Keep Draft a plan on Next step when it is not the main ask is parked.** Next step can draft a plan for the active Goal even when that is not the main ask. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Do not execute.
 - **Keep Approve a plan on Next step when it is not the main ask is parked.** Next step can approve or reject a draft plan even when that is not the main ask. Goals lists draft plans and names Next step. Do not execute.
-- **Keep Propose first actions on Next step when it is not the main ask (this slice).** Next step can propose the first actions even when that is not the main ask. Goals lists approved plans and names Next step. Do not execute.
+- **Keep Propose first actions on Next step when it is not the main ask is parked.** Next step can propose the first actions even when that is not the main ask. Goals lists approved plans and names Next step. Do not execute.
+- **Keep Draft the next Goal on Next step when it is not the main ask (this slice).** Next step can draft the next Goal even when that is not the main ask. If a next Goal is already drafted, Make this the active Goal stays instead. Goals lists a reached Goal and names Next step. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -1516,7 +1527,8 @@ Organization
 112. **Keep Activate Goal on Next step when it is not the main ask** — Next step can make a draft the active Goal even when that is not the main ask; Goals lists that draft and names Next step. Done.
 113. **Keep Draft a plan on Next step when it is not the main ask** — Next step can draft a plan for the active Goal even when that is not the main ask; Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Done.
 114. **Keep Approve a plan on Next step when it is not the main ask** — Next step can approve or reject a draft plan even when that is not the main ask; Goals lists draft plans and names Next step. Done.
-115. **Keep Propose first actions on Next step when it is not the main ask** — Next step can propose the first actions even when that is not the main ask; Goals lists approved plans and names Next step. This slice.
-116. **Guarded automation** — only after the above is trusted.
+115. **Keep Propose first actions on Next step when it is not the main ask** — Next step can propose the first actions even when that is not the main ask; Goals lists approved plans and names Next step. Done.
+116. **Keep Draft the next Goal on Next step when it is not the main ask** — Next step can draft the next Goal even when that is not the main ask; Goals lists a reached Goal and names Next step. This slice.
+117. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
