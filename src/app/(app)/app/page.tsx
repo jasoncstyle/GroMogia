@@ -272,7 +272,7 @@ export default async function DashboardPage() {
       <div className="flex flex-wrap gap-2">
         {isModuleEnabled(session.enabledModules, "website_connect") ? (
           <Button asChild variant="outline">
-            <Link href="/app/website">Connect website</Link>
+            <Link href="/app/next-step">Connect website</Link>
           </Button>
         ) : null}
         {leadFormUrl ? (

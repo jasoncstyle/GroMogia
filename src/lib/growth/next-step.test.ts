@@ -1583,7 +1583,7 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(source, /Open Business to confirm or reject/);
     assert.match(
       source,
-      /website_connect[\s\S]*?<Button asChild variant="outline">\s*<Link href="\/app\/website">Connect website<\/Link>/,
+      /website_connect[\s\S]*?<Button asChild variant="outline">\s*<Link href="\/app\/next-step">Connect website<\/Link>/,
     );
     assert.match(
       source,
