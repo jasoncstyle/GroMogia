@@ -151,6 +151,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Goal history on Next step: Next step shows the saved Goal numbers with the current Goal. Goals still lists the full history and the Current box. Nothing runs.
 - Website review click-by-click on Next step: setup finds pages and reviews on Next step. Website still saves the address and shows the tracking snippet. Business still has Review to run it again. GroovGro does not change the live site.
 - Save today’s Goal number on Next step after the first save: Next step can save today’s number with the current Goal. Goals still has that button and the Current box. Nothing starts marketing.
+- Check what changed on Next step when it is not the main ask: Next step can compare the Goal number even when drafts or approved work come first. Your work still has that button. GroovGro does not change the plan.
 - Confirm drafts from Next step: when suggested offers or goals are waiting, Next step lists them with Confirm and Reject. Goals lists suggested goals and names Next step. Offers lists suggested offers and names Next step. Business lists suggested drafts and names Next step. I’ll do this on that loop does not also save a duplicate proposed action. Nothing becomes active until the owner confirms.
 - Connect the existing website from Next step: when that is the recommendation, Next step has the website address field. GroovGro does not move the live site.
 - Growth Plan: GroovGro can draft a versioned plan from a Goal. Approve or reject. Approving does not execute.

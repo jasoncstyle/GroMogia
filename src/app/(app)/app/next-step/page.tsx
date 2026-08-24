@@ -534,6 +534,30 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.uncheckedWork.length > 0 &&
+          step.primary.title !== CHECK_CHANGED_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Check what changed</CardTitle>
+                <CardDescription>
+                  Compare the Goal number from when you finished to now.
+                  GroovGro will not change the plan.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {step.uncheckedWork.map((action) => (
+                  <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
+                    <p className="font-medium">{action.description}</p>
+                    <CheckWhatChangedButton
+                      actionId={action.id}
+                      canCheck={canCheck}
+                    />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.reports.length > 0 ? (
             <SpecialistReports
               reports={step.reports}

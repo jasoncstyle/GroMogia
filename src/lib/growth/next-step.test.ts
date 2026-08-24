@@ -532,6 +532,39 @@ describe("coordinated next step", () => {
     );
     assert.match(source, /CheckWhatChangedButton/);
     assert.match(source, /CHECK_CHANGED_STEP_TITLE/);
+    assert.match(source, /uncheckedWork\.length > 0/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/work/page.tsx"), "utf8"),
+      /CheckWhatChangedButton/,
+    );
+  });
+
+  it("keeps Check what changed on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      openWorkCount: 1,
+      uncheckedWork: [
+        {
+          id: "w1",
+          description: "Follow up open leads.",
+          status: "completed_by_owner",
+        },
+      ],
+    });
+    assert.equal(step.primary.title, "Do the work you already approved");
+    assert.equal(step.uncheckedWork.length, 1);
+    assert.match(page, /uncheckedWork\.length > 0/);
+    assert.match(page, /primary\.title !== CHECK_CHANGED_STEP_TITLE/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/work/page.tsx"), "utf8"),
+      /CheckWhatChangedButton/,
+    );
   });
 
   it("puts Confirm and Reject on Next step for Business drafts", () => {
