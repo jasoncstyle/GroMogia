@@ -3,6 +3,7 @@
 import {
   approveGrowthPlan,
   draftGrowthPlanForGoal,
+  proposeActionsForApprovedPlan,
   rejectGrowthPlan,
 } from "@/lib/actions/growth-plan";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -61,5 +62,25 @@ export function GrowthPlanReviewButtons({
         </SaveButton>
       </SaveForm>
     </div>
+  );
+}
+
+export function ProposePlanActionsButton({
+  planId,
+  disabled,
+}: {
+  planId: string
+  disabled?: boolean
+}) {
+  return (
+    <SaveForm
+      action={proposeActionsForApprovedPlan}
+      successMessage="Actions proposed. GroovGro will not run them."
+    >
+      <input type="hidden" name="planId" value={planId} />
+      <SaveButton disabled={disabled} pendingLabel="Proposing…">
+        Propose the first actions (do not run)
+      </SaveButton>
+    </SaveForm>
   );
 }

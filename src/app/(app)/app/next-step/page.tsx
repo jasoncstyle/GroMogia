@@ -117,12 +117,14 @@ export default async function NextStepPage() {
               <CardTitle>Write it as a plan</CardTitle>
               <CardDescription>
                 Next step is one thing to do now. A Growth Plan is a versioned
-                write-up for a Goal. Approving it still does not run marketing.
+                write-up for a Goal. After you approve a plan, GroovGro can
+                propose the first actions. Nothing runs until you say so, and
+                even then GroovGro does not execute.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <Button asChild>
-                <Link href="/app/goals">Draft a plan on Goals</Link>
+                <Link href="/app/goals">Open Goals</Link>
               </Button>
             </CardContent>
           </Card>
