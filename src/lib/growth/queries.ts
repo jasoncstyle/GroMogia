@@ -33,7 +33,7 @@ import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress"
 import { findActivateCandidate } from "@/lib/growth/next-goal";
 import { findPlanNeedingActions } from "@/lib/growth/plan-actions";
 import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal, findReadableGoal, findReadableGrowthPlan } from "@/lib/growth/plan-draft";
-import { coordinateNextStep } from "@/lib/growth/next-step";
+import { coordinateNextStep, type LearningGoal } from "@/lib/growth/next-step";
 import { isFinishedOwnerWork, isOpenOwnerWork, needsWhatChangedCheck } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
 import { generateGrowthReview } from "@/lib/growth/review";
@@ -702,16 +702,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
     learningGoal: learned?.goalId
       ? (() => {
           const goal = snapshot.goals.find((row) => row.id === learned.goalId);
-          if (!goal) return null;
-          return {
-            id: goal.id,
-            title: goal.title,
-            liveCurrentValue: goal.liveCurrentValue,
-            targetValue: goal.targetValue,
-            unit: goal.unit,
-            liveNote: goal.liveNote,
-            progressPercent: goal.progressPercent,
-          };
+          return goal ? toReadableGoal(goal) : null;
         })()
       : null,
     readablePlan: readable
@@ -724,17 +715,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
           strategySummary: readable.plan.strategySummary,
         }
       : null,
-    readableGoal: readableGoal
-      ? {
-          id: readableGoal.id,
-          title: readableGoal.title,
-          liveCurrentValue: readableGoal.liveCurrentValue,
-          targetValue: readableGoal.targetValue,
-          unit: readableGoal.unit,
-          liveNote: readableGoal.liveNote,
-          progressPercent: readableGoal.progressPercent,
-        }
-      : null,
+    readableGoal: readableGoal ? toReadableGoal(readableGoal) : null,
     weeklyLook: {
       periodLabel: snapshot.weeklyReview.periodLabel,
       headline: snapshot.weeklyReview.headline,
@@ -775,4 +756,38 @@ export async function getCoordinatedNextStep(organizationId: string) {
     ).length,
     latestLearning: learned?.outcome ?? "",
   });
+}
+
+function toReadableGoal(goal: {
+  id: string
+  title: string
+  liveCurrentValue: number
+  targetValue: number | null
+  unit: string
+  liveNote: string
+  progressPercent: number | null
+  progressHistory?: {
+    id: string
+    recordedAt: Date
+    value: number
+    source: string
+    note: string
+  }[]
+}): LearningGoal {
+  return {
+    id: goal.id,
+    title: goal.title,
+    liveCurrentValue: goal.liveCurrentValue,
+    targetValue: goal.targetValue,
+    unit: goal.unit,
+    liveNote: goal.liveNote,
+    progressPercent: goal.progressPercent,
+    progressHistory: (goal.progressHistory ?? []).map((row) => ({
+      id: row.id,
+      recordedAtLabel: row.recordedAt.toLocaleDateString(),
+      value: row.value,
+      source: row.source,
+      note: row.note,
+    })),
+  };
 }

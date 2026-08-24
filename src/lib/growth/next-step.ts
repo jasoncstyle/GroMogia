@@ -73,6 +73,14 @@ export type LeadStageOption = {
   name: string
 };
 
+export type GoalProgressRow = {
+  id: string
+  recordedAtLabel: string
+  value: number
+  source: string
+  note: string
+};
+
 export type LearningGoal = {
   id: string
   title: string
@@ -81,6 +89,7 @@ export type LearningGoal = {
   unit: string
   liveNote: string
   progressPercent: number | null
+  progressHistory?: GoalProgressRow[]
 };
 
 export type NextStepInput = {
@@ -429,6 +438,14 @@ function learningCandidate(input: NextStepInput): NextStepCandidate | null {
   };
 }
 
+function withGoalHistory(goal: LearningGoal | null | undefined): LearningGoal | null {
+  if (!goal) return null;
+  return {
+    ...goal,
+    progressHistory: goal.progressHistory ?? [],
+  };
+}
+
 function nothingYet(): NextStepCandidate {
   return {
     kind: "no_change_yet",
@@ -488,9 +505,9 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     seoDrafts,
     openLeads,
     leadStages,
-    learningGoal: input.learningGoal ?? null,
+    learningGoal: withGoalHistory(input.learningGoal),
     readablePlan: input.readablePlan ?? null,
-    readableGoal: input.readableGoal ?? null,
+    readableGoal: withGoalHistory(input.readableGoal),
     weeklyLook: input.weeklyLook ?? null,
     readableDecisions: input.readableDecisions ?? [],
     reports: input.reports,

@@ -435,27 +435,7 @@ export default async function NextStepPage({
               ) : isReadGoalNextStep(step.primary.title) ? (
                 <>
                   {step.learningGoal ? (
-                    <div className="space-y-1 rounded-lg border p-4 text-sm">
-                      <p className="font-medium">{step.learningGoal.title}</p>
-                      <p>
-                        {step.learningGoal.unit
-                          ? `${step.learningGoal.liveCurrentValue} ${step.learningGoal.unit}`
-                          : String(step.learningGoal.liveCurrentValue)}
-                        {step.learningGoal.targetValue != null
-                          ? ` of ${
-                              step.learningGoal.unit
-                                ? `${step.learningGoal.targetValue} ${step.learningGoal.unit}`
-                                : String(step.learningGoal.targetValue)
-                            }`
-                          : ""}
-                        {step.learningGoal.progressPercent != null
-                          ? ` · ${step.learningGoal.progressPercent}% of the target`
-                          : ""}
-                      </p>
-                      {step.learningGoal.liveNote ? (
-                        <p className="text-muted-foreground">{step.learningGoal.liveNote}</p>
-                      ) : null}
-                    </div>
+                    <GoalReadout goal={step.learningGoal} />
                   ) : (
                     <p className="text-sm text-muted-foreground">
                       The Goal number is not stored yet. Stay here. GroovGro
@@ -567,33 +547,13 @@ export default async function NextStepPage({
               <CardTitle>The Goal</CardTitle>
               <CardDescription>
                 Next step is one thing to do now. The Goal is the number
-                GroovGro compares. Read it here. GroovGro will not change it
-                by itself.
+                GroovGro compares. Read the number and saved history here.
+                GroovGro will not change it by itself.
               </CardDescription>
             </CardHeader>
             <CardContent>
               {step.readableGoal ? (
-                <div className="space-y-1 rounded-lg border p-4 text-sm">
-                  <p className="font-medium">{step.readableGoal.title}</p>
-                  <p>
-                    {step.readableGoal.unit
-                      ? `${step.readableGoal.liveCurrentValue} ${step.readableGoal.unit}`
-                      : String(step.readableGoal.liveCurrentValue)}
-                    {step.readableGoal.targetValue != null
-                      ? ` of ${
-                          step.readableGoal.unit
-                            ? `${step.readableGoal.targetValue} ${step.readableGoal.unit}`
-                            : String(step.readableGoal.targetValue)
-                        }`
-                      : ""}
-                    {step.readableGoal.progressPercent != null
-                      ? ` · ${step.readableGoal.progressPercent}% of the target`
-                      : ""}
-                  </p>
-                  {step.readableGoal.liveNote ? (
-                    <p className="text-muted-foreground">{step.readableGoal.liveNote}</p>
-                  ) : null}
-                </div>
+                <GoalReadout goal={step.readableGoal} />
               ) : (
                 <p className="text-sm text-muted-foreground">
                   No active Goal yet. Use the buttons above when Next step asks
@@ -712,6 +672,70 @@ export default async function NextStepPage({
           <GrowthStoryCard beats={storyBeats} hideNextStepLink />
         </>
       )}
+    </div>
+  );
+}
+
+function GoalReadout({
+  goal,
+}: {
+  goal: {
+    title: string
+    liveCurrentValue: number
+    targetValue: number | null
+    unit: string
+    liveNote: string
+    progressPercent: number | null
+    progressHistory?: {
+      id: string
+      recordedAtLabel: string
+      value: number
+      source: string
+      note: string
+    }[]
+  }
+}) {
+  const history = goal.progressHistory ?? [];
+  return (
+    <div className="space-y-3 rounded-lg border p-4 text-sm">
+      <div className="space-y-1">
+        <p className="font-medium">{goal.title}</p>
+        <p>
+          {goal.unit
+            ? `${goal.liveCurrentValue} ${goal.unit}`
+            : String(goal.liveCurrentValue)}
+          {goal.targetValue != null
+            ? ` of ${
+                goal.unit
+                  ? `${goal.targetValue} ${goal.unit}`
+                  : String(goal.targetValue)
+              }`
+            : ""}
+          {goal.progressPercent != null
+            ? ` · ${goal.progressPercent}% of the target`
+            : ""}
+        </p>
+        {goal.liveNote ? (
+          <p className="text-muted-foreground">{goal.liveNote}</p>
+        ) : null}
+      </div>
+      {history.length > 0 ? (
+        <FoldableSample
+          title="Saved progress"
+          subtitle={`${history.length} stored number${history.length === 1 ? "" : "s"}. Open to read the history.`}
+        >
+          {history.map((row) => (
+            <p key={row.id} className="text-sm text-muted-foreground">
+              {row.recordedAtLabel}: {row.value}
+              {goal.unit ? ` ${goal.unit}` : ""}
+              {row.source === "manual"
+                ? " · saved by hand"
+                : " · from connected data"}
+              {row.note ? ` · ${row.note}` : ""}
+            </p>
+          ))}
+        </FoldableSample>
+      ) : null}
     </div>
   );
 }

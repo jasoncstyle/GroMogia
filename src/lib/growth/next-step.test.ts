@@ -498,9 +498,12 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.learningGoal?.id, "goal-1");
     assert.equal(step.learningGoal?.liveCurrentValue, 2);
+    assert.deepEqual(step.learningGoal?.progressHistory, []);
     assert.match(step.primary.body, /Read the Goal number here/);
     assert.match(page, /isReadGoalNextStep/);
     assert.match(page, /learningGoal/);
+    assert.match(page, /GoalReadout/);
+    assert.match(page, /Saved progress/);
     assert.doesNotMatch(page, /The Goal number is on Goals/);
   });
 
@@ -1922,18 +1925,43 @@ describe("coordinated next step", () => {
         unit: "leads",
         liveNote: "2 open leads from the public form.",
         progressPercent: 20,
+        progressHistory: [
+          {
+            id: "snap-1",
+            recordedAtLabel: "8/17/2026",
+            value: 2,
+            source: "connected",
+            note: "from the public form",
+          },
+        ],
       },
     });
     assert.equal(step.readableGoal?.id, "goal-2");
     assert.equal(step.readableGoal?.title, "More people get in touch");
     assert.equal(step.readableGoal?.liveCurrentValue, 2);
+    assert.equal(step.readableGoal?.progressHistory?.[0]?.value, 2);
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
       "utf8",
     );
+    const goals = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/goals/page.tsx"),
+      "utf8",
+    );
+    const queries = readFileSync(
+      join(process.cwd(), "src/lib/growth/queries.ts"),
+      "utf8",
+    );
     assert.match(page, /step\.readableGoal/);
     assert.match(page, /<CardTitle>The Goal<\/CardTitle>/);
+    assert.match(page, /GoalReadout/);
+    assert.match(page, /Saved progress/);
+    assert.match(page, /progressHistory/);
+    assert.match(page, /Read the number and saved history here/);
     assert.doesNotMatch(page, /href="\/app\/goals">Open Goals/);
+    assert.match(goals, /Saved progress/);
+    assert.match(queries, /toReadableGoal/);
+    assert.match(queries, /progressHistory/);
   });
 
   it("lets the owner read this week’s look on Next step", () => {
