@@ -1588,6 +1588,8 @@ describe("coordinated next step", () => {
     assert.match(source, /Open Next step to confirm or reject what GroovGro drafted/);
     assert.match(source, /Open Next step to copy the public form or add a/);
     assert.match(source, /Open Next step to add a calendar item/);
+    assert.match(source, /Open Next step to see this week/);
+    assert.doesNotMatch(source, /Open Growth review to see this week/);
     assert.doesNotMatch(source, /Use Leads & customers or the public form/);
     assert.doesNotMatch(source, /Add a class, workshop, or appointment/);
     assert.doesNotMatch(source, /Open Bookings & payments and connect Stripe/);
@@ -1711,6 +1713,7 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.doesNotMatch(page, /href="\/app\/goals">Open Goals/);
+    assert.doesNotMatch(page, /href="\/app\/goals">Goals/);
     assert.doesNotMatch(page, /href="\/app\/work"/);
     assert.doesNotMatch(page, /Open Your work/);
   });

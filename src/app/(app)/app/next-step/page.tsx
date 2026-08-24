@@ -625,9 +625,6 @@ export default async function NextStepPage({
               <Link href="/app">The path so far</Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href="/app/goals">Goals</Link>
-            </Button>
-            <Button asChild variant="outline">
               <Link href="/app/growth-review">Growth review</Link>
             </Button>
             <Button asChild variant="outline">

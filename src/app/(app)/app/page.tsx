@@ -219,7 +219,7 @@ export default async function DashboardPage() {
             growth?.weeklyReview.whatIsLeftAlone ??
             (growth?.latestNoChange
               ? growth.latestNoChange.recommendation
-              : "Nothing recorded yet. If evidence is thin, the right recommendation is to wait. Open Growth review to see this week’s recommendation.")
+              : "Nothing recorded yet. If evidence is thin, the right recommendation is to wait. Open Next step to see this week’s recommendation.")
           }
         />
       </div>

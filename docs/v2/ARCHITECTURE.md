@@ -812,7 +812,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step shows the current Growth Plan. The path so far opens Next step to read an approved plan. Your work no longer sends the owner to Goals to read it. GroovGro does not execute.
 
-### 81. Next step shows the Goal number (this slice)
+### 81. Next step shows the Goal number
 
 **Reason:** The path so far still sent the owner to Goals to read the current Goal. The number can stay on Next step.
 
@@ -821,6 +821,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step shows the current Goal. The path so far opens Next step to read it. GroovGro does not start marketing.
+
+### 82. Next step footer and Dashboard wait stay on Next step (this slice)
+
+**Reason:** Next step still had a Goals footer button after the Goal and plan were already on that page. Dashboard wait copy still sent the owner to Growth review.
+
+**Affected:** Next step footer and Dashboard copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step does not send the owner to Goals from the footer. Dashboard wait names Next step. GroovGro does not start marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -894,7 +904,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Growth Plan and far-behind review name Next step is parked.** Connecting the website from a plan, and a far-behind Goal, name Next step. Do not start marketing or change the live site.
 - **Next step does not send the owner to Your work is parked.** Next step does not send the owner to Your work. Do not execute.
 - **Next step shows the Growth Plan write-up is parked.** Next step shows the current Growth Plan. The path so far opens Next step to read an approved plan. Your work no longer sends the owner to Goals to read it. Do not execute.
-- **Next step shows the Goal number (this slice).** Next step shows the current Goal. The path so far opens Next step to read it. Do not start marketing.
+- **Next step shows the Goal number is parked.** Next step shows the current Goal. The path so far opens Next step to read it. Do not start marketing.
+- **Next step footer and Dashboard wait stay on Next step (this slice).** Next step does not send the owner to Goals from the footer. Dashboard wait names Next step. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -1048,7 +1059,8 @@ Organization
 73. **Growth Plan and far-behind review name Next step** — connecting the website from a plan, and a far-behind Goal, name Next step. Done.
 74. **Next step does not send the owner to Your work** — Next step does not send the owner to Your work. Done.
 75. **Next step shows the Growth Plan write-up** — Next step shows the current Growth Plan; the path so far opens Next step to read an approved plan; Your work no longer sends the owner to Goals to read it. Done.
-76. **Next step shows the Goal number** — Next step shows the current Goal; the path so far opens Next step to read it. This slice.
-77. **Guarded automation** — only after the above is trusted.
+76. **Next step shows the Goal number** — Next step shows the current Goal; the path so far opens Next step to read it. Done.
+77. **Next step footer and Dashboard wait stay on Next step** — Next step does not send the owner to Goals from the footer; Dashboard wait names Next step. This slice.
+78. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
