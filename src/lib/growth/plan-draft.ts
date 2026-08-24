@@ -340,7 +340,7 @@ export function draftGrowthPlanSummary(facts: PlanDraftFacts): string {
   }
   if (!facts.websiteConnected) {
     doNow.push(
-      "Connect the existing website and paste the tracking snippet. Do not move the live site into GroovGro.",
+      "On Next step, connect the existing website and paste the tracking snippet. Do not move the live site into GroovGro.",
     );
   }
   if (doNow.length === 0) {

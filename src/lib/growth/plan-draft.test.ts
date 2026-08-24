@@ -146,7 +146,7 @@ describe("growth plan draft", () => {
       websiteConnected: false,
       openLeadCount: 0,
     });
-    assert.match(summary, /Connect the existing website/);
+    assert.match(summary, /On Next step, connect the existing website/);
     assert.doesNotMatch(summary, /overwrite|clone|WordPress/i);
   });
 

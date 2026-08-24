@@ -381,7 +381,7 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
       kind: "recommend",
       classification: "optimization",
       title: "A Goal is far behind",
-      recommendation: `${goal.title} is well short of its target. Review the offer, the schedule, or how people find it. GroovGro will not change ads, email, or the website.`,
+      recommendation: `${goal.title} is well short of its target. Open Next step to review the offer, the schedule, or how people find it. GroovGro will not change ads, email, or the website.`,
       rationale:
         "There is enough connected evidence to notice the gap. Noticing is not the same as executing a marketing change.",
       evidence: goal.liveNote || `${goal.liveCurrentValue} toward ${goal.targetValue}`,
@@ -450,7 +450,7 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
           .join(" ")
       : inferredGoals.length > 0
         ? "Suggested Goals are waiting. Open Next step to confirm them. None are active yet."
-        : "No active Goal, so this review can only describe activity, not progress.";
+        : "No active Goal yet. Open Next step to add one, so this review can describe progress.";
 
   const attentionParts: string[] = [];
   if (draftCount > 0) {
@@ -460,7 +460,7 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
     attentionParts.push("There is no active Goal. Open Next step to add one.");
   }
   if (behind.length > 0) {
-    attentionParts.push(`${behind[0].title} is far behind its target.`);
+    attentionParts.push(`${behind[0].title} is far behind its target. Open Next step to review the schedule.`);
   }
   if (achieved.length > 0 && input.kind === "monthly") {
     attentionParts.push(`${achieved[0].title} looks reached.`);

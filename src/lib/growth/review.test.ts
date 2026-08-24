@@ -213,7 +213,9 @@ describe("growth review", () => {
       }),
     );
     assert.equal(enough.primary.classification, "optimization");
+    assert.match(enough.primary.recommendation, /Open Next step/);
     assert.match(enough.primary.recommendation, /will not change ads, email, or the website/);
+    assert.match(enough.whatNeedsAttention, /Open Next step to review the schedule/);
   });
 
   it("counts connected evidence without treating refunds as conversions", () => {
@@ -235,6 +237,7 @@ describe("growth review", () => {
     const weekly = generateGrowthReview(baseInput({ goals: [], offers: [] }));
     assert.match(weekly.primary.recommendation, /Open Next step to add a measurable Goal/);
     assert.match(weekly.whatNeedsAttention, /Open Next step to add one/);
+    assert.match(weekly.howWeAreDoing, /Open Next step to add one/);
     const monthly = generateGrowthReview(
       baseInput({ kind: "monthly", goals: [], offers: [] }),
     );
