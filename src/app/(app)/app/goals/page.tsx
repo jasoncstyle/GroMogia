@@ -18,6 +18,8 @@ import {
   ProposePlanActionsButton,
 } from "@/components/growth-plan-actions";
 import { WaitingActionButtons } from "@/components/next-step-actions";
+import { OwnerWorkButtons } from "@/components/owner-work-actions";
+import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { hasPermission } from "@/lib/permissions";
@@ -72,6 +74,7 @@ export default async function GoalsPage() {
   const canDraftPlan = hasPermission(session.permissions, "modify_goals");
   const canApprovePlan = hasPermission(session.permissions, "approve_plans");
   const canApproveAction = hasPermission(session.permissions, "approve_actions");
+  const canUpdateWork = hasPermission(session.permissions, "modify_goals");
   const actions = snapshot?.actions ?? [];
 
   return (
@@ -566,6 +569,13 @@ export default async function GoalsPage() {
                               <WaitingActionButtons
                                 actionId={action.id}
                                 canApprove={canApproveAction}
+                              />
+                            ) : null}
+                            {action.status === "approved" ? (
+                              <OwnerWorkButtons
+                                actionId={action.id}
+                                href={hrefForGrowthAction(action)}
+                                canUpdate={canUpdateWork}
                               />
                             ) : null}
                           </div>
