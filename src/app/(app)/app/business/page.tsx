@@ -97,8 +97,8 @@ export default async function BusinessBrainPage() {
             />
           ) : (
             <p className="text-sm text-muted-foreground">
-              Save a website address on Website first. Then you can find pages
-              here.
+              Save a website address on Next step first. Then you can find
+              pages here.
             </p>
           )}
           {brain?.inferredSummary ? (

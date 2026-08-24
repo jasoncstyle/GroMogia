@@ -742,7 +742,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Add a Goal stays on Next step. Empty lead and calendar lists on the Dashboard name Next step. Matching charges still names Bookings. Goal and plan coordinator loops still name Goals.
 
-### 74. Unread website status alerts open Next step (this slice)
+### 74. Unread website status alerts open Next step
 
 **Reason:** When the website address was saved but pages were unread, the amber alert told the owner to find pages and review, but it did not open Next step.
 
@@ -751,6 +751,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** The unread-website alert has Open Next step. GroovGro does not change the live site.
+
+### 75. Website review copy opens Next step (this slice)
+
+**Reason:** After saving a website address, Website still told the owner to open Business to review.
+
+**Affected:** Website and Business copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Website says to open Next step to find pages and review. Business says to save the address on Next step first. GroovGro does not change the live site.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -817,7 +827,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **A new Stripe payment copy refreshes Next step is parked.** After GroovGro stores a new payment row, Next step refreshes so follow-up and Goal numbers can update. Do not charge a card or change checkout.
 - **Read Goal and Intelligence wait stay on Next step is parked.** Read the Goal number stays on Next step. Intelligence wait opens Next step. Matching charges still names Bookings. Do not start ads.
 - **Add a Goal and Dashboard empty lists stay on Next step is parked.** Add a Goal stays on Next step. Empty lead and calendar lists on the Dashboard name Next step. Do not email anyone.
-- **Unread website status alerts open Next step (this slice).** The amber unread-website alert has Open Next step. Do not change the live site.
+- **Unread website status alerts open Next step is parked.** The amber unread-website alert has Open Next step. Do not change the live site.
+- **Website review copy opens Next step (this slice).** After saving a website address, Website names Next step instead of Business. Do not change the live site.
 
 ## DESIGN FOR LATER
 
@@ -964,7 +975,8 @@ Organization
 66. **A new Stripe payment copy refreshes Next step** — Next step refreshes after GroovGro stores a new payment row. Done. GroovGro does not charge a card or change checkout.
 67. **Read Goal and Intelligence wait stay on Next step** — Read the Goal number stays on Next step; Intelligence wait opens Next step. Done.
 68. **Add a Goal and Dashboard empty lists stay on Next step** — Add a Goal stays on Next step; empty lead and calendar lists on the Dashboard name Next step. Done.
-69. **Unread website status alerts open Next step** — the unread-website alert has Open Next step. This slice.
-70. **Guarded automation** — only after the above is trusted.
+69. **Unread website status alerts open Next step** — the unread-website alert has Open Next step. Done.
+70. **Website review copy opens Next step** — after saving a website address, Website names Next step instead of Business. This slice.
+71. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

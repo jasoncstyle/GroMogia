@@ -1672,6 +1672,18 @@ describe("coordinated next step", () => {
       const page = readFileSync(join(process.cwd(), file), "utf8");
       assert.match(page, /OpenNextStepLink/, file);
     }
+    const website = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/website/page.tsx"),
+      "utf8",
+    );
+    assert.match(website, /open Next step to find\s+pages/);
+    assert.doesNotMatch(website, /open Business and click Review/);
+    const business = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/business/page.tsx"),
+      "utf8",
+    );
+    assert.match(business, /Save a website address on Next step first/);
+    assert.doesNotMatch(business, /on Website first/);
   });
 
   it("keeps confirm drafts, review site, owner work, and wait on Next step", () => {

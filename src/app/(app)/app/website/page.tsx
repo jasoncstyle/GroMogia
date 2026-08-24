@@ -117,8 +117,9 @@ export default async function WebsitePage() {
           <CardTitle>Existing website</CardTitle>
           <CardDescription>
             Paste the public address of the site customers already use. Saving
-            it does not read the pages. After you save, find pages, check the
-            important ones, then open Business and click Review connected data.
+            it does not read the pages. After you save, open Next step to find
+            pages, check the important ones, then review. GroovGro does not
+            change the live site.
           </CardDescription>
         </CardHeader>
         <CardContent>
