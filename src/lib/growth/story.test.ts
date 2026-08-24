@@ -156,7 +156,7 @@ describe("growth story", () => {
     assert.match(specialists, /Open Next step/);
     assert.match(intelligence, /Open Next step/);
     assert.match(specialists, /Open related page/);
-    assert.match(intelligence, /Open related page/);
+    assert.doesNotMatch(intelligence, /SpecialistReports/);
   });
 
   it("does not bake industry-specific words into the story helper", () => {

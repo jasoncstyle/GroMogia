@@ -1689,6 +1689,8 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.match(intelligence, /Read specialists and save them on Next/);
+    assert.match(intelligence, /This page is the briefing from connected/);
+    assert.doesNotMatch(intelligence, /SpecialistReports/);
     assert.doesNotMatch(intelligence, /now including specialists linked to/);
     assert.match(goals, /Open Next step when it asks you to draft a plan/);
   });
@@ -1915,10 +1917,15 @@ describe("coordinated next step", () => {
       join(process.cwd(), "src/components/specialist-reports.tsx"),
       "utf8",
     );
+    const intelligence = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/intelligence/page.tsx"),
+      "utf8",
+    );
     assert.match(page, /SpecialistReports/);
     assert.match(page, /hideNextStepLink/);
     assert.match(page, /step\.reports/);
     assert.doesNotMatch(page, /href="\/app\/intelligence"/);
+    assert.doesNotMatch(intelligence, /SpecialistReports/);
     assert.match(specialists, /Save to Decision History/);
     assert.match(specialists, /hideNextStepLink/);
     assert.match(specialists, /Open related page/);
