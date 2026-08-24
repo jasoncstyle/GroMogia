@@ -115,7 +115,7 @@ export const MODULE_CATALOG: ModuleDefinition[] = [
   {
     id: "growth_next",
     name: "Next step",
-    description: "One coordinated next step. Approve or leave alone. GroovGro does not execute.",
+    description: "One coordinated next step. Do it on that page. GroovGro does not execute.",
     phase: 1,
     href: "/app/next-step",
     navGroup: "grow",

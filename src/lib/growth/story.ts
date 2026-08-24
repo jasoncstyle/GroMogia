@@ -142,12 +142,12 @@ export function buildGrowthStory(facts: GrowthStoryFacts): GrowthStoryBeat[] {
     {
       title: "The work",
       body: clip(workLine(facts), 500),
-      href: "/app/work",
+      href: facts.openWorkCount > 0 || facts.finishedWorkCount > 0 ? "/app/next-step" : "/app/work",
     },
     {
       title: "What changed",
       body: clip(learningLine(facts), 500),
-      href: "/app/work",
+      href: "/app/next-step",
     },
     {
       title: "What should happen next",
@@ -155,7 +155,7 @@ export function buildGrowthStory(facts: GrowthStoryFacts): GrowthStoryBeat[] {
         `${nextLine(facts)} Ads, email, and social stay left alone.`,
         500,
       ),
-      href: clean(facts.nextStepHref) || "/app/next-step",
+      href: "/app/next-step",
     },
   ];
 }

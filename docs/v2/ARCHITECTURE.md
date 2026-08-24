@@ -150,7 +150,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None.
 
-**Current functionality:** Dashboard and Decisions show The path so far. Each beat links to Goals, Your work, or Next step. GroovGro does not execute, start ads, send email, charge a card, or change the live website.
+**Current functionality:** Dashboard and Decisions show The path so far. Work, what changed, and what should happen next open Next step, where the buttons are. GroovGro does not execute, start ads, send email, charge a card, or change the live website.
 
 ### 15. Draft the next Goal after one is reached
 

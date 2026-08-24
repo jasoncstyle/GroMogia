@@ -31,7 +31,9 @@ describe("growth story", () => {
     assert.match(beats[1]?.body ?? "", /v2/);
     assert.match(beats[2]?.body ?? "", /will not run/);
     assert.match(beats[2]?.body ?? "", /Next step/);
-    assert.equal(beats[2]?.href, "/app/work");
+    assert.equal(beats[2]?.href, "/app/next-step");
+    assert.equal(beats[3]?.href, "/app/next-step");
+    assert.equal(beats[4]?.href, "/app/next-step");
     assert.match(beats[4]?.body ?? "", /left alone/);
     assert.doesNotMatch(beats.map((beat) => beat.body).join(" "), /buy ads|TODO|lorem/i);
   });
@@ -77,7 +79,30 @@ describe("growth story", () => {
     });
     assert.match(beats[2]?.body ?? "", /marked 2 actions/);
     assert.match(beats[2]?.body ?? "", /Next step/);
+    assert.equal(beats[2]?.href, "/app/next-step");
+    assert.equal(beats[3]?.href, "/app/next-step");
     assert.match(beats[3]?.body ?? "", /Wait before changing course/);
+  });
+
+  it("sends the owner to Next step instead of skipping to another page", () => {
+    const beats = buildGrowthStory({
+      businessName: "Harbor Workshops",
+      goalTitle: "More people get in touch",
+      goalCurrent: 2,
+      goalTarget: 10,
+      goalUnit: "leads",
+      goalProgressPercent: 20,
+      hasApprovedPlan: true,
+      planVersion: 1,
+      openWorkCount: 0,
+      finishedWorkCount: 0,
+      latestLearning: "",
+      nextStepTitle: "Follow up open leads",
+      nextStepBody: "Open Leads & customers. GroovGro will not email them.",
+      nextStepHref: "/app/crm",
+    });
+    assert.equal(beats[4]?.href, "/app/next-step");
+    assert.match(beats[4]?.body ?? "", /Follow up open leads/);
   });
 
   it("does not bake industry-specific words into the story helper", () => {

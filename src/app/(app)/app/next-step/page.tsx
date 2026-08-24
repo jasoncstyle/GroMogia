@@ -279,16 +279,11 @@ export default async function NextStepPage() {
             <CardHeader>
               <CardTitle>Write it as a plan</CardTitle>
               <CardDescription>
-                Next step is one thing to do now. If GroovGro asks you to
-                confirm drafts, connect the existing website, review the
-                connected website, follow up open leads, run an SEO check, open SEO or Events,
-                save this week&apos;s
-                review, draft a plan, approve it, propose the first
-                actions, approve those actions, do work you already approved,
-                or check what changed, use the buttons above. A Growth Plan is a versioned write-up for a
-                Goal. After you approve a plan, GroovGro can propose the first
-                actions. Nothing runs until you say so, and even then GroovGro
-                does not execute.
+                Next step is one thing to do now. Use the buttons above. A
+                Growth Plan is a versioned write-up for a Goal. After you
+                approve a plan, GroovGro can propose the first actions.
+                Nothing runs until you say so, and even then GroovGro does
+                not execute.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
