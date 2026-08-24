@@ -285,14 +285,14 @@ export default async function DashboardPage() {
         {isModuleEnabled(session.enabledModules, "business_brain") ? (
           <ReviewConnectedDataButton disabled={!session.organizationId} />
         ) : null}
+        {isModuleEnabled(session.enabledModules, "growth_next") ? (
+          <Button asChild>
+            <Link href="/app/next-step">Next step</Link>
+          </Button>
+        ) : null}
         {isModuleEnabled(session.enabledModules, "growth_goals") ? (
           <Button asChild variant="outline">
             <Link href="/app/goals">Goals</Link>
-          </Button>
-        ) : null}
-        {isModuleEnabled(session.enabledModules, "growth_next") ? (
-          <Button asChild variant="outline">
-            <Link href="/app/next-step">Next step</Link>
           </Button>
         ) : null}
         {isModuleEnabled(session.enabledModules, "growth_work") ? (
