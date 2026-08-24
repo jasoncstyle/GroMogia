@@ -11,6 +11,7 @@ import { EventCreateForm } from "@/components/event-create-form";
 import { BrandVoiceDraftForm } from "@/components/brand-voice-draft-form";
 import { BrandVoiceExampleForm } from "@/components/brand-voice-example-form";
 import { BrandVoiceProfileForm } from "@/components/brand-voice-profile-form";
+import { BrandSettingsForm } from "@/components/brand-settings-form";
 import { OfferCreateForm } from "@/components/offer-create-form";
 import { GoalCreateForm } from "@/components/goal-create-form";
 import { LeadFollowUpButtons } from "@/components/lead-follow-up";
@@ -28,11 +29,11 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
-import { getCoordinatedNextStep, getGrowthLinkOptions } from "@/lib/growth/queries";
+import { getBrandSettingsForm, getCoordinatedNextStep, getGrowthLinkOptions } from "@/lib/growth/queries";
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandVoiceNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -87,6 +88,10 @@ export default async function NextStepPage({
   const searchConsole =
     session.organizationId && step && isSearchConsoleNextStep(step.primary.title)
       ? (await getSeoPageData(session.organizationId)).searchConsole
+      : null;
+  const brand =
+    session.organizationId && step && isSaveBrandNextStep(step.primary.title)
+      ? await getBrandSettingsForm(session.organizationId)
       : null;
 
   return (
@@ -334,6 +339,17 @@ export default async function NextStepPage({
                   )}
                   <Button asChild variant="outline">
                     <Link href="/app/crm">Open Leads & customers</Link>
+                  </Button>
+                </>
+              ) : isSaveBrandNextStep(step.primary.title) ? (
+                <>
+                  <BrandSettingsForm
+                    brand={brand}
+                    organizationName={session.organizationName}
+                    disabled={!canManageBrand}
+                  />
+                  <Button asChild variant="outline">
+                    <Link href="/app/settings/brand">Open Brand</Link>
                   </Button>
                 </>
               ) : isSaveBrandVoiceNextStep(step.primary.title) ? (

@@ -69,6 +69,8 @@ export async function updateBrandSettings(formData: FormData): Promise<ActionRes
 
   revalidatePath("/app/settings/brand");
   revalidatePath("/app");
+  revalidatePath("/app/next-step");
+  revalidatePath("/app/business");
     return "Brand saved";
   });
 }

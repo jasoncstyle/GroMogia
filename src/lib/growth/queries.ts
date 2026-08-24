@@ -409,6 +409,27 @@ async function getLatestSeoSummary(organizationId: string) {
   };
 }
 
+export async function getBrandSettingsForm(organizationId: string) {
+  const db = getDb();
+  if (!db) return null;
+  const rows = await db
+    .select({
+      businessName: brandSettings.businessName,
+      description: brandSettings.description,
+      targetCustomers: brandSettings.targetCustomers,
+    })
+    .from(brandSettings)
+    .where(eq(brandSettings.organizationId, organizationId))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+function brandSettingsAreSaved(
+  brand: { description?: string | null; targetCustomers?: string | null } | null,
+): boolean {
+  return Boolean(brand?.description?.trim() && brand?.targetCustomers?.trim());
+}
+
 async function getBrandVoiceFacts(organizationId: string) {
   const db = getDb();
   if (!db) {
@@ -485,6 +506,7 @@ export async function getSpecialistReports(organizationId: string) {
     brandVoiceSaved: brandVoice.brandVoiceSaved,
     brandVoiceExampleSaved: brandVoice.brandVoiceExampleSaved,
     brandVoiceDraftSaved: brandVoice.brandVoiceDraftSaved,
+    brandSettingsSaved: brandSettingsAreSaved(snapshot.brand),
     confirmedOfferCount: snapshot.offers.filter(
       (offer) => (offer.discoveryStatus ?? "confirmed") === "confirmed",
     ).length,

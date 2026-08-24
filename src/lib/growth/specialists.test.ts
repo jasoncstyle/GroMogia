@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_OFFER_STEP_TITLE, CONNECT_SEARCH_CONSOLE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "./plan-draft";
+import { ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_OFFER_STEP_TITLE, CONNECT_SEARCH_CONSOLE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -37,6 +37,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     brandVoiceSaved: true,
     brandVoiceExampleSaved: true,
     brandVoiceDraftSaved: true,
+    brandSettingsSaved: true,
     confirmedOfferCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
@@ -434,6 +435,55 @@ describe("growth specialists", () => {
     );
     assert.ok(website);
     assert.equal(website.recommend.title, ADD_OFFER_STEP_TITLE);
+  });
+
+  it("asks to save the brand when visits are recorded but name, work, or audience is missing", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandSettingsSaved: false,
+          confirmedOfferCount: 0,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, SAVE_BRAND_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/settings/brand");
+    assert.match(website.recommend.body, /will not start marketing/);
+    assert.match(website.recommend.body, /edit the live website/);
+  });
+
+  it("keeps pasting the tracking snippet ahead of saving the brand", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 0,
+          brandSettingsSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, PASTE_SNIPPET_STEP_TITLE);
+  });
+
+  it("keeps saving the brand ahead of adding an offer", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandSettingsSaved: false,
+          confirmedOfferCount: 0,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, SAVE_BRAND_STEP_TITLE);
   });
 
   it("notices a far-behind availability Goal only after enough evidence", () => {

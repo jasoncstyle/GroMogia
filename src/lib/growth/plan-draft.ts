@@ -83,6 +83,7 @@ export const ACTIVATE_GOAL_STEP_TITLE = "Make this the active Goal";
 export const READ_GOAL_STEP_TITLE = "Read the Goal before changing course";
 export const ADD_GOAL_STEP_TITLE = "Add a Goal so GroovGro can compare a number";
 export const ADD_OFFER_STEP_TITLE = "Add an offer";
+export const SAVE_BRAND_STEP_TITLE = "Save your brand";
 
 export function skipsDuplicateNextStepAction(title: string): boolean {
   const text = clean(title);
@@ -107,7 +108,8 @@ export function skipsDuplicateNextStepAction(title: string): boolean {
     text === PROPOSE_ACTIONS_STEP_TITLE ||
     text === READ_GOAL_STEP_TITLE ||
     text === ADD_GOAL_STEP_TITLE ||
-    text === ADD_OFFER_STEP_TITLE
+    text === ADD_OFFER_STEP_TITLE ||
+    text === SAVE_BRAND_STEP_TITLE
   );
 }
 
@@ -193,6 +195,10 @@ export function isAddGoalNextStep(title: string): boolean {
 
 export function isAddOfferNextStep(title: string): boolean {
   return clean(title) === ADD_OFFER_STEP_TITLE;
+}
+
+export function isSaveBrandNextStep(title: string): boolean {
+  return clean(title) === SAVE_BRAND_STEP_TITLE;
 }
 
 export function isReadGoalNextStep(title: string): boolean {
