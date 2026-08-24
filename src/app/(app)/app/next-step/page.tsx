@@ -122,9 +122,12 @@ export default async function NextStepPage() {
                 even then GroovGro does not execute.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex flex-wrap gap-2">
               <Button asChild>
                 <Link href="/app/goals">Open Goals</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/app/work">Open Your work</Link>
               </Button>
             </CardContent>
           </Card>

@@ -92,6 +92,20 @@ describe("module catalog", () => {
     );
   });
 
+  it("shows Your work in grow nav independently of the website builder", () => {
+    const enabled = ["growth_work", "growth_goals"];
+    assert.equal(isModuleEnabled(enabled, "growth_work"), true);
+    assert.equal(isModuleEnabled(enabled, "website_builder"), false);
+    assert.equal(
+      navModules(enabled, "grow").some((item) => item.id === "growth_work"),
+      true,
+    );
+    assert.equal(
+      MODULE_CATALOG.find((module) => module.id === "growth_work")?.href,
+      "/app/work",
+    );
+  });
+
   it("keeps Growth review independent of reputation Reviews and the builder", () => {
     const enabled = ["growth_reviews", "growth_goals"];
     assert.equal(isModuleEnabled(enabled, "growth_reviews"), true);

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl, missingFoundationServices } from "@/lib/env";
+import { partitionOwnerWork } from "@/lib/growth/owner-work";
 import { getCoordinatedNextStep, getGrowthSnapshot } from "@/lib/growth/queries";
 import {
   buildStatusAlerts,
@@ -65,6 +66,8 @@ export default async function DashboardPage() {
       : snapshot && snapshot.openLeadCount > 0
         ? `${snapshot.openLeadCount} lead${snapshot.openLeadCount === 1 ? "" : "s"} still need a next step.`
         : "Brand, website, and Stripe are in a good starting place. Add an event or a lead to see the dashboard fill in.";
+
+  const ownerWork = partitionOwnerWork(growth?.actions ?? []);
 
   const nextStepText = inferredCount > 0
     ? "Open Business to confirm or reject what GroovGro drafted. Nothing becomes active until you confirm."
@@ -178,11 +181,13 @@ export default async function DashboardPage() {
         <QuestionCard
           title="What should happen next?"
           body={
-            nextStep
-              ? `${nextStep.primary.title}. ${nextStep.waitingActions.length > 0 ? `${nextStep.waitingActions.length} proposed action${nextStep.waitingActions.length === 1 ? "" : "s"} still need your say. ` : ""}GroovGro will not execute this.`
-              : growth?.awaitingApproval.length
-                ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
-                : (growth?.weeklyReview.whatShouldHappenNext ?? nextStepText)
+            ownerWork.open.length > 0
+              ? `${ownerWork.open.length} approved action${ownerWork.open.length === 1 ? "" : "s"} ready on Your work. You do ${ownerWork.open.length === 1 ? "it" : "them"}. GroovGro will not execute.`
+              : nextStep
+                ? `${nextStep.primary.title}. ${nextStep.waitingActions.length > 0 ? `${nextStep.waitingActions.length} proposed action${nextStep.waitingActions.length === 1 ? "" : "s"} still need your say. ` : ""}GroovGro will not execute this.`
+                : growth?.awaitingApproval.length
+                  ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
+                  : (growth?.weeklyReview.whatShouldHappenNext ?? nextStepText)
           }
         />
         <QuestionCard
@@ -265,6 +270,11 @@ export default async function DashboardPage() {
         {isModuleEnabled(session.enabledModules, "growth_next") ? (
           <Button asChild variant="outline">
             <Link href="/app/next-step">Next step</Link>
+          </Button>
+        ) : null}
+        {isModuleEnabled(session.enabledModules, "growth_work") ? (
+          <Button asChild variant="outline">
+            <Link href="/app/work">Your work</Link>
           </Button>
         ) : null}
         {isModuleEnabled(session.enabledModules, "growth_reviews") ? (

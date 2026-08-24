@@ -5,6 +5,7 @@ export type ModuleId =
   | "growth_goals"
   | "growth_reviews"
   | "growth_next"
+  | "growth_work"
   | "integrations"
   | "media"
   | "website_connect"
@@ -37,6 +38,7 @@ export const PHASE_1_MODULES: ModuleId[] = [
   "growth_goals",
   "growth_reviews",
   "growth_next",
+  "growth_work",
   "integrations",
   "media",
 ];
@@ -116,6 +118,14 @@ export const MODULE_CATALOG: ModuleDefinition[] = [
     description: "One coordinated next step. Approve or leave alone. GroovGro does not execute.",
     phase: 1,
     href: "/app/next-step",
+    navGroup: "grow",
+  },
+  {
+    id: "growth_work",
+    name: "Your work",
+    description: "Approved actions you do yourself. GroovGro does not execute.",
+    phase: 1,
+    href: "/app/work",
     navGroup: "grow",
   },
   {
