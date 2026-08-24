@@ -1,4 +1,5 @@
 import { isWaitingActionStatus } from "@/lib/growth/next-step";
+import { workLearningFromResult } from "@/lib/growth/work-learning";
 
 const LEFT_ALONE_MODULES = new Set(["advertising", "email", "social"]);
 
@@ -51,6 +52,16 @@ export function isOpenOwnerWork(status: string): boolean {
 
 export function isFinishedOwnerWork(status: string): boolean {
   return status === OWNER_DONE_STATUS || status === OWNER_SKIPPED_STATUS;
+}
+
+export function needsWhatChangedCheck(action: {
+  status: string
+  result?: string
+}): boolean {
+  return (
+    action.status === OWNER_DONE_STATUS &&
+    !workLearningFromResult(action.result ?? "")
+  );
 }
 
 export function partitionOwnerWork<T extends OwnerWorkAction>(actions: T[]) {

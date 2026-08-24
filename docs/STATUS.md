@@ -6,7 +6,7 @@ Last updated: 24 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-next-step-owner-work-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-next-step-check-changed-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** The website builder is paused. Approving proposed actions from Next step is in the previous slice. This branch asks the owner to do approved work on Next step. GroovGro does not execute. Do not start ads, execution, or autonomy.
+**V2 growth foundation is on `main`.** The website builder is paused. Doing approved work from Next step is in the previous slice. This branch asks the owner to check what changed on Next step. GroovGro does not execute. Do not start ads, execution, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
@@ -104,7 +104,11 @@ When the active Goal has an approved plan with no actions yet, Next step asks th
 
 When proposed actions are waiting, Next step asks the owner to approve or reject them in the main recommendation. Approving does not execute.
 
-**First build slice (this branch):** When approved actions are ready, Next step lists them with Open the page, I did this, and Skip for now. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
+**Parked: Do owner work from Next step (24 August 2026)**
+
+When approved actions are ready, Next step lists them with Open the page, I did this, and Skip for now. GroovGro does not execute.
+
+**First build slice (this branch):** When the owner has marked work done, Next step asks them to check what changed and compare the Goal number there. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
 
 ## Stripe (do not mix, do not replace)
 
@@ -139,10 +143,11 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Propose first actions from Next step: when the approved plan has no actions yet, Next step asks the owner to propose them. Nothing runs.
 - Approve proposed actions from Next step: when actions are waiting, Next step asks the owner to approve or reject them in the main recommendation. Approving does not run them.
 - Do owner work from Next step: when approved actions are ready, Next step lists them with Open the page, I did this, and Skip for now. GroovGro does not run them.
+- Check what changed from Next step: when work is marked done, Next step asks the owner to compare the Goal number. GroovGro does not change the plan.
 - Growth Plan: GroovGro can draft a versioned plan from a Goal. Approve or reject. Approving does not execute.
 - Growth Actions from an approved plan: GroovGro can propose the first actions. Approve or reject. Nothing runs. Ads, email, and social stay left alone.
 - Your work: approved actions the owner does here or on Next step. I did this or Skip for now. GroovGro records it and does not execute.
-- What changed: after work is marked done, GroovGro can compare the Goal number and write what it learned. It does not change course or execute.
+- What changed: after work is marked done, GroovGro can compare the Goal number on Next step or Your work and write what it learned. It does not change course or execute.
 
 ## Still later
 
