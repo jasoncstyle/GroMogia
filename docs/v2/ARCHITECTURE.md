@@ -1002,7 +1002,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step and Your work can mark approved work done. Goals lists it and names Next step. GroovGro does not execute.
 
-### 100. Keep Goals confirm drafts on Next step (this slice)
+### 100. Keep Goals confirm drafts on Next step
 
 **Reason:** Goals still showed Confirm and Reject on suggested goals after Next step already had those buttons. The owner could confirm a draft from Goals instead of staying on Next step.
 
@@ -1011,6 +1011,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can confirm or reject suggested goals. Goals lists them and names Next step. Add a Goal, draft a plan, and approve a plan still stay on Goals. GroovGro does not execute.
+
+### 101. Keep Offers confirm drafts on Next step (this slice)
+
+**Reason:** Offers still showed Confirm and Reject on suggested offers after Next step already had those buttons. The owner could confirm a draft from Offers instead of staying on Next step.
+
+**Affected:** Offers suggested offers.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can confirm or reject suggested offers. Offers lists them and names Next step. Add an offer still stays on Offers. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1103,7 +1113,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Your work approval on Next step is parked.** Next step can approve or reject proposed actions. Your work lists waiting actions and names Next step. Do not execute.
 - **Keep Goals approval on Next step is parked.** Next step can approve or reject proposed actions. Goals lists them and names Next step. Do not execute.
 - **Keep Goals owner work on Next step is parked.** Next step and Your work can mark approved work done. Goals lists it and names Next step. Do not execute.
-- **Keep Goals confirm drafts on Next step (this slice).** Next step can confirm or reject suggested goals. Goals lists them and names Next step. Do not execute.
+- **Keep Goals confirm drafts on Next step is parked.** Next step can confirm or reject suggested goals. Goals lists them and names Next step. Do not execute.
+- **Keep Offers confirm drafts on Next step (this slice).** Next step can confirm or reject suggested offers. Offers lists them and names Next step. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -1276,7 +1287,8 @@ Organization
 92. **Keep Your work approval on Next step** — Next step can approve or reject proposed actions; Your work lists waiting actions and names Next step. Done.
 93. **Keep Goals approval on Next step** — Next step can approve or reject proposed actions; Goals lists them and names Next step. Done.
 94. **Keep Goals owner work on Next step** — Next step and Your work can mark approved work done; Goals lists it and names Next step. Done.
-95. **Keep Goals confirm drafts on Next step** — Next step can confirm or reject suggested goals; Goals lists them and names Next step. This slice.
-96. **Guarded automation** — only after the above is trusted.
+95. **Keep Goals confirm drafts on Next step** — Next step can confirm or reject suggested goals; Goals lists them and names Next step. Done.
+96. **Keep Offers confirm drafts on Next step** — Next step can confirm or reject suggested offers; Offers lists them and names Next step. This slice.
+97. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

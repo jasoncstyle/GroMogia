@@ -1,6 +1,5 @@
 import { createConstraint } from "@/lib/actions/growth";
 import {
-  ConfirmRejectButtons,
   InferredBadge,
   ReviewConnectedDataButton,
 } from "@/components/growth-review";
@@ -47,6 +46,8 @@ export default async function OffersPage() {
         <p className="text-muted-foreground">
           An Offer is anything this business promotes, sells, or wants a
           customer to do. It is not assumed to be a physical product.
+          Confirm or reject suggested offers on Next step. They stay
+          drafts until you do.
         </p>
         <div className="mt-3">
           <ReviewConnectedDataButton disabled={!session.organizationId} />
@@ -69,6 +70,10 @@ export default async function OffersPage() {
       <Card>
         <CardHeader>
           <CardTitle>Offers</CardTitle>
+          <CardDescription>
+            Confirm or reject suggested offers on Next step. Adding an
+            offer here still stays on this page.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {offerRows.length === 0 ? (
@@ -101,9 +106,10 @@ export default async function OffersPage() {
                         />
                       ) : null}
                       {offer.discoveryStatus === "inferred" ? (
-                        <div className="mt-2">
-                          <ConfirmRejectButtons id={offer.id} kind="offer" />
-                        </div>
+                        <p className="mt-2 text-xs text-muted-foreground">
+                          Confirm or reject this on Next step. Confirming
+                          makes it active. GroovGro will not start marketing.
+                        </p>
                       ) : null}
                     </TableCell>
                     <TableCell>{labelFor(offer.availabilityModel)}</TableCell>

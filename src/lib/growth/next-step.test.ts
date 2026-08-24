@@ -1677,6 +1677,13 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(goals, /WaitingActionButtons/);
     assert.doesNotMatch(goals, /OwnerWorkButtons/);
     assert.doesNotMatch(goals, /ConfirmRejectButtons/);
+    const offers = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/offers/page.tsx"),
+      "utf8",
+    );
+    assert.match(offers, /Confirm or reject suggested offers on Next step/);
+    assert.match(offers, /Confirm or reject this on Next step/);
+    assert.doesNotMatch(offers, /ConfirmRejectButtons/);
     assert.doesNotMatch(goals, /href="\/app\/intelligence"/);
     assert.doesNotMatch(goals, /href="\/app\/decisions"/);
     assert.doesNotMatch(goals, /Read the path so far/);
