@@ -31,7 +31,7 @@ describe("intelligence observe", () => {
     );
     assert.match(brief.headline, /Leads are in the workspace/);
     assert.equal(
-      brief.recommendations.some((item) => item.href === "/app/crm"),
+      brief.recommendations.some((item) => item.href === "/app/next-step"),
       true,
     );
     assert.equal(
@@ -114,7 +114,7 @@ describe("intelligence observe", () => {
     assert.equal(text.includes("google ads"), false);
     assert.match(text, /must not replace live checkout/);
     assert.equal(
-      brief.recommendations.some((item) => item.href === "/app/website"),
+      brief.recommendations.some((item) => item.href === "/app/next-step"),
       true,
     );
   });

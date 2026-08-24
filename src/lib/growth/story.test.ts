@@ -56,7 +56,7 @@ describe("growth story", () => {
       nextStepHref: "",
     });
     assert.match(beats[0]?.body ?? "", /No active Goal/);
-    assert.match(beats[1]?.body ?? "", /Open Goals first/);
+    assert.match(beats[1]?.body ?? "", /Open Next step or Goals first/);
     assert.equal(beats[4]?.href, "/app/next-step");
   });
 

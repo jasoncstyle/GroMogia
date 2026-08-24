@@ -98,7 +98,7 @@ export function draftActionsFromApprovedPlan(
       module: "crm",
       risk: "operational",
       description: clip(
-        `Open Leads & customers and give each of the ${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"} a next step. GroovGro will not email them.`,
+        `On Next step, give each of the ${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"} a next step. GroovGro will not email them.`,
         2000,
       ),
     });
@@ -110,7 +110,7 @@ export function draftActionsFromApprovedPlan(
       module: "website",
       risk: "operational",
       description: clip(
-        "Connect the existing website and paste the tracking snippet. Do not move the live site into GroovGro.",
+        "On Next step, connect the existing website and paste the tracking snippet. Do not move the live site into GroovGro.",
         2000,
       ),
     });
@@ -122,7 +122,7 @@ export function draftActionsFromApprovedPlan(
       module: "offers",
       risk: "operational",
       description: clip(
-        "Open Business and confirm or reject the draft offers. Do not promote anything that is still a draft.",
+        "On Next step, confirm or reject the draft offers. Do not promote anything that is still a draft.",
         2000,
       ),
     });

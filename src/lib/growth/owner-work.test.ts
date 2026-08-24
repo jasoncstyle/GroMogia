@@ -15,19 +15,19 @@ describe("owner work", () => {
   it("sends the owner to the page they can do themselves", () => {
     assert.equal(
       hrefForGrowthAction({ actionType: "follow_up_leads", module: "crm" }),
-      "/app/crm",
+      "/app/next-step",
     );
     assert.equal(
       hrefForGrowthAction({ actionType: "connect_website", module: "website" }),
-      "/app/website",
+      "/app/next-step",
     );
     assert.equal(
       hrefForGrowthAction({ actionType: "confirm_offers", module: "offers" }),
-      "/app/business",
+      "/app/next-step",
     );
     assert.equal(
       hrefForGrowthAction({ actionType: "watch_progress", module: "growth_goals" }),
-      "/app/goals",
+      "/app/next-step",
     );
   });
 

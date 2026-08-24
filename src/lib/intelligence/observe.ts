@@ -137,9 +137,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: FOLLOW_UP_LEADS_STEP_TITLE,
-      body: "Open Leads & customers and give each open lead a next step. GroovGro will not email them for you.",
+      body: "Give each open lead a next step on Next step. GroovGro will not email them.",
       evidence: ["open lead_records"],
-      href: "/app/crm",
+      href: "/app/next-step",
     });
   }
 
@@ -167,9 +167,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Connect the existing website",
-      body: "Paste the tracking snippet on the site you already have. Do not move the site into GroovGro.",
+      body: "Open Next step to connect the site you already have. Do not move the site into GroovGro.",
       evidence: ["websites missing"],
-      href: "/app/website",
+      href: "/app/next-step",
     });
   }
 
@@ -177,9 +177,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Connect Stripe in this workspace",
-      body: "Use the existing Stripe account. GroovGro only listens for events. It must not replace live checkout.",
+      body: "Open Next step to connect so GroovGro can read a copy of payments. Use the existing Stripe account. It must not replace live checkout.",
       evidence: ["stripe not connected"],
-      href: "/app/commerce",
+      href: "/app/next-step",
     });
   }
 

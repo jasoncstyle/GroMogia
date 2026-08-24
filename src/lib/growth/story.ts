@@ -39,7 +39,7 @@ function withUnit(value: number, unit: string): string {
 function goalLine(facts: GrowthStoryFacts): string {
   const title = clean(facts.goalTitle);
   if (!title) {
-    return "No active Goal yet. Open Goals and write the first measurable outcome. GroovGro will not start marketing.";
+    return "No active Goal yet. Open Next step or Goals and write the first measurable outcome. GroovGro will not start marketing.";
   }
   const parts = [`The current Goal is “${title}.”`];
   if (facts.goalCurrent != null) {
@@ -65,7 +65,7 @@ function planLine(facts: GrowthStoryFacts): string {
   if (clean(facts.goalTitle)) {
     return "There is a Goal, but no approved plan yet. Draft or approve a plan on Next step or Goals. GroovGro will not run it.";
   }
-  return "A plan comes after a Goal. Open Goals first.";
+  return "A plan comes after a Goal. Open Next step or Goals first.";
 }
 
 function workLine(facts: GrowthStoryFacts): string {

@@ -4,11 +4,11 @@ import { workLearningFromResult } from "@/lib/growth/work-learning";
 const LEFT_ALONE_MODULES = new Set(["advertising", "email", "social"]);
 
 const HREF_BY_TYPE: Record<string, string> = {
-  follow_up_leads: "/app/crm",
-  connect_website: "/app/website",
-  confirm_offers: "/app/business",
+  follow_up_leads: "/app/next-step",
+  connect_website: "/app/next-step",
+  confirm_offers: "/app/next-step",
   do_next_step: "/app/next-step",
-  watch_progress: "/app/goals",
+  watch_progress: "/app/next-step",
   next_step: "/app/next-step",
 };
 

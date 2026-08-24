@@ -107,7 +107,7 @@ describe("coordinated next step", () => {
       ],
       leadStages: [{ id: "stage-new", name: "New" }],
     });
-    assert.equal(step.primary.href, "/app/crm");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.primary.title, "Follow up open leads");
     assert.match(step.primary.body, /Give each open lead a next step here/);
     assert.equal(step.openLeads.length, 1);
@@ -686,7 +686,7 @@ describe("coordinated next step", () => {
       waitingActions: [],
     });
     assert.equal(step.primary.title, "Run an SEO check");
-    assert.equal(step.primary.href, "/app/seo");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.match(page, /RUN_SEO_STEP_TITLE/);
     assert.match(page, /RunHomepageSeoButton/);
   });
@@ -1388,7 +1388,7 @@ describe("coordinated next step", () => {
     });
     assert.equal(step.primary.title, "Connect payments");
     assert.equal(step.primary.classification, "optimization");
-    assert.equal(step.primary.href, "/app/commerce");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.match(step.primary.body, /Connect here/);
     assert.match(step.primary.body, /will not charge a card/);
     assert.match(step.primary.body, /change checkout/);
@@ -1497,7 +1497,7 @@ describe("coordinated next step", () => {
     });
     assert.equal(step.primary.title, "Choose when you look at growth");
     assert.equal(step.primary.classification, "strategic");
-    assert.equal(step.primary.href, "/app/goals");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.match(step.primary.body, /here/);
     assert.match(step.primary.body, /will not change the business/);
     assert.match(page, /isSaveReviewScheduleNextStep/);

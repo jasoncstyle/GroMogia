@@ -86,7 +86,7 @@ describe("growth specialists", () => {
     assert.equal(seo.relatedGoal?.id, "g-vis");
     assert.equal(seo.recommend.kind, "recommend");
     assert.equal(seo.recommend.classification, "operational");
-    assert.equal(seo.recommend.href, "/app/seo");
+    assert.equal(seo.recommend.href, "/app/next-step");
     assert.equal(seo.executeAllowed, false);
     assert.equal(seo.recommend.title, RUN_SEO_STEP_TITLE);
     assert.match(seo.recommend.body, /will not edit the website/);
@@ -237,7 +237,7 @@ describe("growth specialists", () => {
     );
     assert.ok(website);
     assert.match(website.recommend.body, /Do not move the site/);
-    assert.equal(website.recommend.href, "/app/website");
+    assert.equal(website.recommend.href, "/app/next-step");
   });
 
   it("asks to paste the tracking snippet when a site is connected but no visits are recorded", () => {
@@ -268,7 +268,7 @@ describe("growth specialists", () => {
     assert.equal(crm.recommend.title, FOLLOW_UP_LEADS_STEP_TITLE);
     assert.match(crm.recommend.body, /Give each open lead a next step here/);
     assert.match(crm.recommend.body, /will not email them/);
-    assert.equal(crm.recommend.href, "/app/crm");
+    assert.equal(crm.recommend.href, "/app/next-step");
   });
 
   it("asks to share the public lead form when no person has been captured yet", () => {
@@ -305,7 +305,7 @@ describe("growth specialists", () => {
     assert.equal(website.recommend.kind, "recommend");
     assert.equal(website.recommend.classification, "strategic");
     assert.equal(website.recommend.title, SAVE_BRAND_VOICE_STEP_TITLE);
-    assert.equal(website.recommend.href, "/app/brand-voice");
+    assert.equal(website.recommend.href, "/app/next-step");
     assert.match(website.recommend.body, /will not send email/);
     assert.match(website.recommend.body, /edit the live website/);
   });
@@ -325,7 +325,7 @@ describe("growth specialists", () => {
     assert.equal(website.recommend.kind, "recommend");
     assert.equal(website.recommend.classification, "strategic");
     assert.equal(website.recommend.title, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE);
-    assert.equal(website.recommend.href, "/app/brand-voice");
+    assert.equal(website.recommend.href, "/app/next-step");
     assert.match(website.recommend.body, /Paste writing you already like here/);
     assert.match(website.recommend.body, /will not send email/);
   });
@@ -361,7 +361,7 @@ describe("growth specialists", () => {
     assert.equal(website.recommend.kind, "recommend");
     assert.equal(website.recommend.classification, "strategic");
     assert.equal(website.recommend.title, DRAFT_BRAND_VOICE_STEP_TITLE);
-    assert.equal(website.recommend.href, "/app/brand-voice");
+    assert.equal(website.recommend.href, "/app/next-step");
     assert.match(website.recommend.body, /Create a draft here/);
     assert.match(website.recommend.body, /will not send email/);
   });
@@ -411,7 +411,7 @@ describe("growth specialists", () => {
     assert.equal(website.recommend.kind, "recommend");
     assert.equal(website.recommend.classification, "strategic");
     assert.equal(website.recommend.title, ADD_OFFER_STEP_TITLE);
-    assert.equal(website.recommend.href, "/app/offers");
+    assert.equal(website.recommend.href, "/app/next-step");
     assert.match(website.recommend.body, /will not start marketing/);
   });
 
@@ -459,7 +459,7 @@ describe("growth specialists", () => {
     assert.equal(website.recommend.kind, "recommend");
     assert.equal(website.recommend.classification, "strategic");
     assert.equal(website.recommend.title, SAVE_BRAND_STEP_TITLE);
-    assert.equal(website.recommend.href, "/app/settings/brand");
+    assert.equal(website.recommend.href, "/app/next-step");
     assert.match(website.recommend.body, /will not start marketing/);
     assert.match(website.recommend.body, /edit the live website/);
   });
@@ -508,7 +508,7 @@ describe("growth specialists", () => {
     assert.equal(website.recommend.kind, "recommend");
     assert.equal(website.recommend.classification, "strategic");
     assert.equal(website.recommend.title, SAVE_BUSINESS_STEP_TITLE);
-    assert.equal(website.recommend.href, "/app/business");
+    assert.equal(website.recommend.href, "/app/next-step");
     assert.match(website.recommend.body, /will not start marketing/);
     assert.match(website.recommend.body, /edit the live website/);
   });
@@ -558,7 +558,7 @@ describe("growth specialists", () => {
     assert.equal(website.recommend.kind, "recommend");
     assert.equal(website.recommend.classification, "strategic");
     assert.equal(website.recommend.title, SAVE_PROGRESS_STEP_TITLE);
-    assert.equal(website.recommend.href, "/app/goals");
+    assert.equal(website.recommend.href, "/app/next-step");
     assert.match(website.recommend.body, /will not start marketing/);
   });
 
@@ -607,7 +607,7 @@ describe("growth specialists", () => {
     assert.equal(crm.recommend.kind, "recommend");
     assert.equal(crm.recommend.classification, "optimization");
     assert.equal(crm.recommend.title, CONNECT_STRIPE_STEP_TITLE);
-    assert.equal(crm.recommend.href, "/app/commerce");
+    assert.equal(crm.recommend.href, "/app/next-step");
     assert.match(crm.recommend.body, /Connect here/);
     assert.match(crm.recommend.body, /will not charge a card/);
     assert.match(crm.recommend.body, /change checkout/);
@@ -681,7 +681,7 @@ describe("growth specialists", () => {
     assert.equal(website.recommend.kind, "recommend");
     assert.equal(website.recommend.classification, "strategic");
     assert.equal(website.recommend.title, SAVE_REVIEW_SCHEDULE_STEP_TITLE);
-    assert.equal(website.recommend.href, "/app/goals");
+    assert.equal(website.recommend.href, "/app/next-step");
     assert.match(website.recommend.body, /here/);
     assert.match(website.recommend.body, /will not change the business/);
   });

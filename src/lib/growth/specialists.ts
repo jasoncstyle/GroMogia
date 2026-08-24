@@ -203,7 +203,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       classification: "operational",
       title: RUN_SEO_STEP_TITLE,
       body: "Check the connected homepage here. GroovGro will not edit the website.",
-      href: "/app/seo",
+      href: "/app/next-step",
     };
   } else if (facts.seoFailCount > 0) {
     recommend = {
@@ -211,7 +211,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       classification: "operational",
       title: FIX_SEO_STEP_TITLE,
       body: "Draft and approve the blocking items here. GroovGro will not change the connected website.",
-      href: "/app/seo",
+      href: "/app/next-step",
     };
   } else if (verdict === "change_allowed" && facts.seoWarnCount > 0) {
     recommend = {
@@ -219,7 +219,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       classification: "optimization",
       title: IMPROVE_SEO_STEP_TITLE,
       body: "The waiting threshold is met and the page has items to make clearer. Draft and approve that copy here. GroovGro will not change the connected website or start ads.",
-      href: "/app/seo",
+      href: "/app/next-step",
     };
   } else if (
     facts.websiteConnected &&
@@ -230,7 +230,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       classification: "optimization",
       title: CONNECT_SEARCH_CONSOLE_STEP_TITLE,
       body: "Connect Search Console here so GroovGro can read search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
-      href: "/app/seo",
+      href: "/app/next-step",
     };
   } else if (facts.searchConsoleConnected && !facts.searchConsoleProperty) {
     recommend = {
@@ -238,7 +238,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       classification: "optimization",
       title: PICK_SEARCH_CONSOLE_STEP_TITLE,
       body: "Google is connected. Choose the Search Console property here so GroovGro can read search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
-      href: "/app/seo",
+      href: "/app/next-step",
     };
   } else if (searchConsoleNeedsRefresh(facts)) {
     recommend = {
@@ -248,7 +248,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       body: facts.searchConsoleSnapshot
         ? "The stored Search Console numbers are more than a week old. Refresh here so GroovGro can read the latest search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads."
         : "The Search Console property is saved. Refresh here so GroovGro can read the latest search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
-      href: "/app/seo",
+      href: "/app/next-step",
     };
   } else {
     recommend = leaveAlone(
@@ -278,7 +278,7 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
       classification: "optimization",
       title: PASTE_SNIPPET_STEP_TITLE,
       body: "Copy the tracking snippet here and paste it on the site you already have. GroovGro does not replace that site.",
-      href: "/app/website",
+      href: "/app/next-step",
     };
   }
   if (facts.goalProgressNeedsSave) {
@@ -287,7 +287,7 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
       classification: "strategic",
       title: SAVE_PROGRESS_STEP_TITLE,
       body: "Save today's Goal number from connected leads, bookings, and payments. That stores a history. GroovGro will not start marketing.",
-      href: "/app/goals",
+      href: "/app/next-step",
     };
   }
   if (!facts.brandSettingsSaved) {
@@ -296,7 +296,7 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
       classification: "strategic",
       title: SAVE_BRAND_STEP_TITLE,
       body: "Save the business name, what it does, and who it serves here. GroovGro will not start marketing, send email, or edit the live website.",
-      href: "/app/settings/brand",
+      href: "/app/next-step",
     };
   }
   if (!facts.businessBrainSaved) {
@@ -305,7 +305,7 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
       classification: "strategic",
       title: SAVE_BUSINESS_STEP_TITLE,
       body: "Save the kind of business this is and how it creates value. GroovGro will not start marketing, send email, or edit the live website.",
-      href: "/app/business",
+      href: "/app/next-step",
     };
   }
   if (facts.confirmedOfferCount === 0) {
@@ -314,7 +314,7 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
       classification: "strategic",
       title: ADD_OFFER_STEP_TITLE,
       body: "Name something this business promotes or wants a customer to do. GroovGro will not start marketing.",
-      href: "/app/offers",
+      href: "/app/next-step",
     };
   }
   if (!facts.brandVoiceSaved) {
@@ -323,7 +323,7 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
       classification: "strategic",
       title: SAVE_BRAND_VOICE_STEP_TITLE,
       body: "Save how this business sounds here. GroovGro uses this for drafts. It will not send email, post to social, or edit the live website.",
-      href: "/app/brand-voice",
+      href: "/app/next-step",
     };
   }
   if (!facts.brandVoiceExampleSaved) {
@@ -332,7 +332,7 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
       classification: "strategic",
       title: ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE,
       body: "Paste writing you already like here. GroovGro uses this for drafts. It will not send email, post to social, or edit the live website.",
-      href: "/app/brand-voice",
+      href: "/app/next-step",
     };
   }
   if (!facts.brandVoiceDraftSaved) {
@@ -341,7 +341,7 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
       classification: "strategic",
       title: DRAFT_BRAND_VOICE_STEP_TITLE,
       body: "Create a draft here from the voice you saved. GroovGro keeps it in this workspace. It will not send email, post to social, or edit the live website.",
-      href: "/app/brand-voice",
+      href: "/app/next-step",
     };
   }
   if (!facts.growthScheduleSaved) {
@@ -350,7 +350,7 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
       classification: "strategic",
       title: SAVE_REVIEW_SCHEDULE_STEP_TITLE,
       body: "Save the day and time you want to read this week's numbers here. GroovGro will not change the business then.",
-      href: "/app/goals",
+      href: "/app/next-step",
     };
   }
   return leaveAlone(
@@ -381,7 +381,7 @@ function websiteReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Spe
         classification: "operational",
         title: CONNECT_WEBSITE_STEP_TITLE,
         body: "Paste the tracking snippet on the site you already have. Do not move the site into GroovGro.",
-        href: "/app/website",
+        href: "/app/next-step",
       },
       executeAllowed: false,
     };
@@ -430,7 +430,7 @@ function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
             classification: "operational",
             title: FOLLOW_UP_LEADS_STEP_TITLE,
             body: "Give each open lead a next step here. GroovGro will not email them.",
-            href: "/app/crm",
+            href: "/app/next-step",
           }
         : facts.contactCount === 0 && facts.websiteConnected
           ? {
@@ -438,7 +438,7 @@ function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
               classification: "optimization",
               title: SHARE_LEAD_FORM_STEP_TITLE,
               body: "Copy the public lead form here, or add someone you already know. GroovGro will not email anyone.",
-              href: "/app/crm",
+              href: "/app/next-step",
             }
           : facts.stripeConfigured && !facts.stripeConnected
             ? {
@@ -446,7 +446,7 @@ function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
                 classification: "optimization",
                 title: CONNECT_STRIPE_STEP_TITLE,
                 body: "Mark this workspace as connected so GroovGro can read a copy of payments. Connect here. GroovGro will not charge a card, create a Stripe account, or change checkout on the connected website.",
-                href: "/app/commerce",
+                href: "/app/next-step",
               }
             : facts.stripeConfigured && facts.stripeConnected && !facts.stripeSynced
               ? {
@@ -454,7 +454,7 @@ function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
                   classification: "optimization",
                   title: SYNC_STRIPE_STEP_TITLE,
                   body: "Copy recent payment records here. GroovGro will not charge a card or change checkout on the connected website.",
-                  href: "/app/commerce",
+                  href: "/app/next-step",
                 }
               : leaveAlone(
                   "/app/crm",
@@ -493,7 +493,7 @@ function availabilityReport(
       classification: "optimization",
       title: REVIEW_SCHEDULE_STEP_TITLE,
       body: `${goal?.title ?? "The Goal"} is well short of its target. Review upcoming items here. Add a calendar item if that is how this business sells. GroovGro will not change ads or the website.`,
-      href: "/app/events",
+      href: "/app/next-step",
     };
   } else {
     recommend = leaveAlone(

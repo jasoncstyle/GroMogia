@@ -10,7 +10,7 @@ describe("growth plan actions", () => {
     const actions = draftActionsFromApprovedPlan({
       goalTitle: "More people get in touch",
       nextStepTitle: "Follow up open leads",
-      nextStepBody: "Open Leads & customers and give each open lead a next step.",
+      nextStepBody: "Give each open lead a next step on Next step.",
       nextStepKind: "recommend",
       websiteConnected: true,
       openLeadCount: 2,
@@ -68,7 +68,7 @@ describe("growth plan actions", () => {
     const actions = draftActionsFromApprovedPlan({
       goalTitle: "Grow the list",
       nextStepTitle: "Confirm or reject drafts",
-      nextStepBody: "Open Business.",
+      nextStepBody: "Confirm or reject them on Next step.",
       nextStepKind: "recommend",
       websiteConnected: false,
       openLeadCount: 4,
