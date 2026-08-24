@@ -1692,4 +1692,14 @@ describe("coordinated next step", () => {
     assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
     assert.match(source, /revalidatePath\("\/app\/crm"\)/);
   });
+
+  it("refreshes Next step after the first recorded website visit", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/api/track/route.ts"),
+      "utf8",
+    );
+    assert.match(source, /firstVisit/);
+    assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
+    assert.match(source, /revalidatePath\("\/app"\)/);
+  });
 });

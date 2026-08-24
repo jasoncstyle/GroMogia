@@ -692,7 +692,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** After a specialist recommendation is saved, Next step and Your work refresh. Approving or rejecting from Next step also refreshes Your work. GroovGro does not execute.
 
-### 69. A public lead form submission refreshes Next step (this slice)
+### 69. A public lead form submission refreshes Next step
 
 **Reason:** When someone submitted the public lead form, Next step could still ask to share the form instead of follow up.
 
@@ -701,6 +701,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** After a public form submission, Next step and Leads refresh so follow-up can appear. GroovGro does not email anyone.
+
+### 70. A first recorded website visit refreshes Next step (this slice)
+
+**Reason:** After the tracking snippet records its first visit, Next step could still ask to paste the snippet until the cached page expired.
+
+**Affected:** Website tracking endpoint.
+
+**Migration risk:** None.
+
+**Current functionality:** The first recorded visit refreshes Next step, the path so far, Analytics, and Website so the snippet ask can clear. Later visits do not keep refreshing those pages. GroovGro does not replace the live site.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -762,7 +772,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Intelligence people observations open Next step when that is the loop is parked.** Open leads or no person captured yet open Next step. A filled pipeline with no open leads still opens Leads. Matching charges still names Bookings. Do not email anyone.
 - **Phone header offers Next step is parked.** Phones show Next step next to Menu. Do not execute.
 - **Saving a specialist recommendation refreshes Next step is parked.** After save, Next step and Your work refresh. Approving from Next step also refreshes Your work. Do not execute.
-- **A public lead form submission refreshes Next step (this slice).** After someone submits the public form, Next step and Leads refresh so follow-up can appear. Do not email anyone.
+- **A public lead form submission refreshes Next step is parked.** After someone submits the public form, Next step and Leads refresh so follow-up can appear. Do not email anyone.
+- **A first recorded website visit refreshes Next step (this slice).** After the snippet records its first visit, Next step refreshes so it can stop asking to paste the snippet. Do not replace the live site.
 
 ## DESIGN FOR LATER
 
@@ -904,7 +915,8 @@ Organization
 61. **Intelligence people observations open Next step when that is the loop** — open leads or no person captured yet open Next step. Done.
 62. **Phone header offers Next step** — phones show Next step next to Menu. Done.
 63. **Saving a specialist recommendation refreshes Next step** — Next step and Your work refresh after save. Done.
-64. **A public lead form submission refreshes Next step** — Next step and Leads refresh after a public form submission. This slice.
-65. **Guarded automation** — only after the above is trusted.
+64. **A public lead form submission refreshes Next step** — Next step and Leads refresh after a public form submission. Done.
+65. **A first recorded website visit refreshes Next step** — Next step refreshes after the snippet records its first visit. This slice.
+66. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
