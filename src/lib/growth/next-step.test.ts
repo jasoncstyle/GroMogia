@@ -464,7 +464,7 @@ describe("coordinated next step", () => {
         "This work is not tied to a Goal number, so GroovGro cannot compare progress. Add a Goal here so GroovGro can compare a number.",
     });
     assert.equal(step.primary.title, "Add a Goal so GroovGro can compare a number");
-    assert.equal(step.primary.href, "/app/goals");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.match(step.primary.body, /Add a Goal here/);
     assert.match(page, /isAddGoalNextStep/);
     assert.match(page, /GoalCreateForm/);
@@ -1584,6 +1584,10 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(source, /Propose the first actions there/);
     assert.match(source, /Open Next step to connect so GroovGro can read a copy of payments/);
     assert.match(source, /Open Next step to confirm or reject what GroovGro drafted/);
+    assert.match(source, /Open Next step to copy the public form or add a/);
+    assert.match(source, /Open Next step to add a calendar item/);
+    assert.doesNotMatch(source, /Use Leads & customers or the public form/);
+    assert.doesNotMatch(source, /Add a class, workshop, or appointment/);
     assert.doesNotMatch(source, /Open Bookings & payments and connect Stripe/);
     assert.doesNotMatch(source, /Open Business to confirm or reject/);
     assert.match(

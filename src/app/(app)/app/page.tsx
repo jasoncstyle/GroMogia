@@ -233,7 +233,8 @@ export default async function DashboardPage() {
             <CardContent className="space-y-2 text-sm">
               {snapshot.recentLeads.length === 0 ? (
                 <p className="text-muted-foreground">
-                  No leads yet. Use Leads & customers or the public form.
+                  No leads yet. Open Next step to copy the public form or add a
+                  person. GroovGro will not email anyone.
                 </p>
               ) : (
                 snapshot.recentLeads.map((lead) => (
@@ -252,7 +253,8 @@ export default async function DashboardPage() {
             <CardContent className="space-y-2 text-sm">
               {snapshot.upcomingEvents.length === 0 ? (
                 <p className="text-muted-foreground">
-                  No events yet. Add a class, workshop, or appointment.
+                  No events yet. Open Next step to add a calendar item if that
+                  is how this business sells.
                 </p>
               ) : (
                 snapshot.upcomingEvents.map((event) => (

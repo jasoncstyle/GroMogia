@@ -349,7 +349,7 @@ function learningCandidate(input: NextStepInput): NextStepCandidate | null {
       body:
         outcome ||
         `That work was not tied to a Goal. Add a Goal here so GroovGro can compare a number.${leaveAlone}`,
-      href: "/app/goals",
+      href: "/app/next-step",
       source: "learning",
       specialistId: null,
       goalId,
