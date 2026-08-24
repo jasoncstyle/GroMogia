@@ -97,7 +97,9 @@ export default async function NextStepPage({
   const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
   const gscNotice = searchConsoleNotice(params.gsc, params.error);
   const searchConsole =
-    session.organizationId && step && isSearchConsoleNextStep(step.primary.title)
+    session.organizationId &&
+    step &&
+    (isSearchConsoleNextStep(step.primary.title) || step.needsSearchConsole)
       ? (await getSeoPageData(session.organizationId)).searchConsole
       : null;
   const brand =
@@ -954,6 +956,40 @@ export default async function NextStepPage({
                   </FoldableSample>
                 ))}
                 <DraftSeoImprovementsButton disabled={!canManageSeo} />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSearchConsole &&
+          !isSearchConsoleNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {step.reports.find((report) =>
+                    isSearchConsoleNextStep(report.recommend.title),
+                  )?.recommend.title ?? "Connect Search Console"}
+                </CardTitle>
+                <CardDescription>
+                  {step.reports.find((report) =>
+                    isSearchConsoleNextStep(report.recommend.title),
+                  )?.recommend.body ??
+                    "Connect Search Console here so GroovGro can read search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {searchConsole ? (
+                  <SearchConsolePanel
+                    searchConsole={searchConsole}
+                    notice={gscNotice}
+                    embedded
+                    canManage={canConnectSearchConsole}
+                  />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Search Console is not ready on this page yet. GroovGro
+                    will not edit the website.
+                  </p>
+                )}
               </CardContent>
             </Card>
           ) : null}

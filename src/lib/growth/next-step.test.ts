@@ -1108,6 +1108,36 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("keeps Search Console on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          searchConsoleConnected: false,
+          seoScore: 88,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          seoCheckedAt: now,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsSearchConsole, true);
+    assert.match(page, /needsSearchConsole &&\s+!isSearchConsoleNextStep/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/seo/page.tsx"), "utf8"),
+      /SearchConsolePanel/,
+    );
+  });
+
   it("puts Connect Search Console on Next step after a homepage check", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
