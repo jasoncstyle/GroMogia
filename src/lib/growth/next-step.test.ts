@@ -1696,6 +1696,13 @@ describe("coordinated next step", () => {
     );
     assert.match(goalsPage, /Open Next step to\s+read this week/);
     assert.doesNotMatch(goalsPage, /Open Growth review\s+to read the current weekly/);
+    const decisions = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/decisions/page.tsx"),
+      "utf8",
+    );
+    assert.match(decisions, /Save this week/);
+    assert.match(decisions, /from Next step/);
+    assert.doesNotMatch(decisions, /saved\s+here from Growth review/);
   });
 
   it("keeps confirm drafts, review site, owner work, and wait on Next step", () => {
