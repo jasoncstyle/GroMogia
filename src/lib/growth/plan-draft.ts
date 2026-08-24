@@ -126,10 +126,14 @@ export function showsDedicatedNextStepControl(
 export function openPageLabelForNextStep(title: string): string | null {
   const text = clean(title);
   if (text === FOLLOW_UP_LEADS_STEP_TITLE) return "Open Leads & customers";
-  if (text === FIX_SEO_STEP_TITLE || text === IMPROVE_SEO_STEP_TITLE) return "Open SEO";
   if (text === REVIEW_SCHEDULE_STEP_TITLE) return "Open Events";
   if (text === READ_GOAL_STEP_TITLE || text === ADD_GOAL_STEP_TITLE) return "Open Goals";
   return null;
+}
+
+export function isSeoDraftNextStep(title: string): boolean {
+  const text = clean(title);
+  return text === FIX_SEO_STEP_TITLE || text === IMPROVE_SEO_STEP_TITLE;
 }
 
 function isPlanLoopNextStep(title: string): boolean {

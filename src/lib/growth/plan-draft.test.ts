@@ -16,6 +16,7 @@ import {
   goalNeedsPlanDraft,
   hasDedicatedNextStepControls,
   IMPROVE_SEO_STEP_TITLE,
+  isSeoDraftNextStep,
   openPageLabelForNextStep,
   READ_GOAL_STEP_TITLE,
   REVIEW_SCHEDULE_STEP_TITLE,
@@ -434,8 +435,10 @@ describe("growth plan draft", () => {
 
   it("names the Open button for specialist work that already lives on another page", () => {
     assert.equal(openPageLabelForNextStep(FOLLOW_UP_LEADS_STEP_TITLE), "Open Leads & customers");
-    assert.equal(openPageLabelForNextStep(FIX_SEO_STEP_TITLE), "Open SEO");
-    assert.equal(openPageLabelForNextStep(IMPROVE_SEO_STEP_TITLE), "Open SEO");
+    assert.equal(openPageLabelForNextStep(FIX_SEO_STEP_TITLE), null);
+    assert.equal(openPageLabelForNextStep(IMPROVE_SEO_STEP_TITLE), null);
+    assert.equal(isSeoDraftNextStep(FIX_SEO_STEP_TITLE), true);
+    assert.equal(isSeoDraftNextStep(IMPROVE_SEO_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(REVIEW_SCHEDULE_STEP_TITLE), "Open Events");
     assert.equal(openPageLabelForNextStep(READ_GOAL_STEP_TITLE), "Open Goals");
     assert.equal(openPageLabelForNextStep(ADD_GOAL_STEP_TITLE), "Open Goals");

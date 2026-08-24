@@ -51,6 +51,13 @@ export type InferredDraft = {
   confidence: number
 };
 
+export type SeoDraftItem = {
+  id: string
+  title: string
+  proposedChange: string
+  howToApply: string
+};
+
 export type NextStepInput = {
   inferredDraftCount: number
   reports: SpecialistReport[]
@@ -60,6 +67,7 @@ export type NextStepInput = {
   uncheckedWork?: UncheckedWork[]
   uncheckedWorkCount?: number
   inferredDrafts?: InferredDraft[]
+  seoDrafts?: SeoDraftItem[]
   websiteConnected?: boolean
   websiteRead?: boolean
   latestLearningKind?: WorkLearningKind | ""
@@ -88,6 +96,7 @@ export type CoordinatedNextStep = {
   openWork: OpenOwnerWork[]
   uncheckedWork: UncheckedWork[]
   inferredDrafts: InferredDraft[]
+  seoDrafts: SeoDraftItem[]
   executeAllowed: false
 };
 
@@ -354,6 +363,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   const openWork = input.openWork ?? [];
   const uncheckedWork = input.uncheckedWork ?? [];
   const inferredDrafts = input.inferredDrafts ?? [];
+  const seoDrafts = input.seoDrafts ?? [];
   const drafts = draftsCandidate(inferredDrafts.length || input.inferredDraftCount);
   const ownerWork = ownerWorkCandidate(input.openWorkCount ?? openWork.length);
   const checkChanged = checkChangedCandidate(
@@ -383,6 +393,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     openWork,
     uncheckedWork,
     inferredDrafts,
+    seoDrafts,
     executeAllowed: false,
   };
 }

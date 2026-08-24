@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import {
@@ -19,6 +19,7 @@ import {
   offers,
   payments,
   seoAudits,
+  seoDrafts,
 } from "@/lib/db/schema";
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
@@ -255,6 +256,27 @@ export async function getGrowthLinkOptions(organizationId: string) {
   };
 }
 
+async function getOpenSeoDrafts(organizationId: string) {
+  const db = getDb();
+  if (!db) return [];
+  return db
+    .select({
+      id: seoDrafts.id,
+      title: seoDrafts.title,
+      proposedChange: seoDrafts.proposedChange,
+      howToApply: seoDrafts.howToApply,
+    })
+    .from(seoDrafts)
+    .where(
+      and(
+        eq(seoDrafts.organizationId, organizationId),
+        eq(seoDrafts.status, "draft"),
+        isNull(seoDrafts.builderSiteId),
+      ),
+    )
+    .orderBy(desc(seoDrafts.createdAt));
+}
+
 async function getLatestSeoSummary(organizationId: string) {
   const db = getDb();
   if (!db) {
@@ -345,10 +367,11 @@ export async function getSpecialistReports(organizationId: string) {
 }
 
 export async function getCoordinatedNextStep(organizationId: string) {
-  const [snapshot, reports, dashboard] = await Promise.all([
+  const [snapshot, reports, dashboard, openSeoDrafts] = await Promise.all([
     getGrowthSnapshot(organizationId),
     getSpecialistReports(organizationId),
     getDashboardSnapshot(organizationId),
+    getOpenSeoDrafts(organizationId),
   ]);
   if (!snapshot) return null;
 
@@ -433,5 +456,6 @@ export async function getCoordinatedNextStep(organizationId: string) {
     activeGoalIds: snapshot.activeGoals.map((goal) => goal.id),
     websiteConnected: Boolean(dashboard.website?.publicUrl),
     websiteRead: websiteWasRead(snapshot.brain?.inferredSummary),
+    seoDrafts: openSeoDrafts,
   });
 }

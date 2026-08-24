@@ -93,6 +93,7 @@ describe("growth specialists", () => {
     assert.ok(seo);
     assert.match(seo.read, /42 out of 100/);
     assert.equal(seo.recommend.title, FIX_SEO_STEP_TITLE);
+    assert.match(seo.recommend.body, /Draft and approve/);
     assert.match(seo.recommend.body, /will not change the connected website/);
   });
 

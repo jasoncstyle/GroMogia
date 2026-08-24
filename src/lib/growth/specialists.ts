@@ -164,7 +164,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       kind: "recommend",
       classification: "operational",
       title: RUN_SEO_STEP_TITLE,
-      body: "Open SEO and check the connected homepage. GroovGro will not edit the website.",
+      body: "Check the connected homepage here. GroovGro will not edit the website.",
       href: "/app/seo",
     };
   } else if (facts.seoFailCount > 0) {
@@ -172,7 +172,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       kind: "recommend",
       classification: "operational",
       title: FIX_SEO_STEP_TITLE,
-      body: "Open SEO and work through the blocking items. Approve drafts there. GroovGro will not change the connected website from this page.",
+      body: "Draft and approve the blocking items here. GroovGro will not change the connected website.",
       href: "/app/seo",
     };
   } else if (verdict === "change_allowed" && facts.seoWarnCount > 0) {
@@ -180,7 +180,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       kind: "recommend",
       classification: "optimization",
       title: IMPROVE_SEO_STEP_TITLE,
-      body: "The waiting threshold is met and the page has items to make clearer. Review them on SEO. Do not start ads from this recommendation.",
+      body: "The waiting threshold is met and the page has items to make clearer. Draft and approve that copy here. GroovGro will not change the connected website or start ads.",
       href: "/app/seo",
     };
   } else {

@@ -5,7 +5,8 @@ import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButto
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { NextStepResponseButtons, OpenPageNextStepButtons, WaitingActionButtons } from "@/components/next-step-actions";
 import { OwnerWorkButtons, CheckWhatChangedButton } from "@/components/owner-work-actions";
-import { RunHomepageSeoButton } from "@/components/seo-actions";
+import { DraftSeoImprovementsButton, RunHomepageSeoButton, SeoDraftDecisionButtons } from "@/components/seo-actions";
+import { FoldableSample } from "@/components/foldable-sample";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +19,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isSeoDraftNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -161,6 +162,37 @@ export default async function NextStepPage() {
                     <Link href="/app/seo">Open SEO</Link>
                   </Button>
                 </div>
+              ) : isSeoDraftNextStep(step.primary.title) ? (
+                <>
+                  {step.seoDrafts.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      Draft the title and description changes here, then
+                      approve them. GroovGro does not paste them onto the live
+                      site.
+                    </p>
+                  ) : null}
+                  {step.seoDrafts.map((draft) => (
+                    <FoldableSample key={draft.id} title={draft.title} subtitle="Waiting">
+                      <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+                        {draft.proposedChange}
+                      </pre>
+                      {draft.howToApply ? (
+                        <p className="text-sm text-muted-foreground">{draft.howToApply}</p>
+                      ) : null}
+                      <SeoDraftDecisionButtons
+                        draftId={draft.id}
+                        proposedChange={draft.proposedChange}
+                        disabled={!canManageSeo}
+                      />
+                    </FoldableSample>
+                  ))}
+                  <div className="flex flex-wrap gap-2">
+                    <DraftSeoImprovementsButton disabled={!canManageSeo} />
+                    <Button asChild variant="outline">
+                      <Link href="/app/seo">Open SEO</Link>
+                    </Button>
+                  </div>
+                </>
               ) : openPageLabel ? (
                 <OpenPageNextStepButtons
                   href={step.primary.href}

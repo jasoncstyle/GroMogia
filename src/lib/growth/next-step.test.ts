@@ -531,7 +531,53 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.source, "learning");
   });
 
-  it("puts Run homepage check on Next step when SEO has not been checked", () => {
+  it("puts Draft improvements on Next step when SEO items need a review", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      seoDrafts: [
+        {
+          id: "d1",
+          title: "Add a page title",
+          proposedChange: "Harbor Workshops | Hands-on classes",
+          howToApply: "Paste into the title tag.",
+        },
+      ],
+    });
+    assert.equal(step.seoDrafts.length, 1);
+    assert.equal(step.seoDrafts[0]?.id, "d1");
+    assert.match(page, /isSeoDraftNextStep/);
+    assert.match(page, /DraftSeoImprovementsButton/);
+    assert.match(page, /SeoDraftDecisionButtons/);
+    const queries = readFileSync(
+      join(process.cwd(), "src/lib/growth/queries.ts"),
+      "utf8",
+    );
+    assert.match(queries, /getOpenSeoDrafts/);
+    assert.match(queries, /isNull\(seoDrafts\.builderSiteId\)/);
+    const blocking = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          seoScore: 42,
+          seoSummary: "Missing title and description.",
+          seoFailCount: 2,
+          seoWarnCount: 1,
+          seoCheckedAt: now,
+          openLeadCount: 0,
+        }),
+      ),
+      waitingActions: [],
+    });
+    assert.equal(blocking.primary.title, "Fix blocking SEO items");
+  });
+
+  it("puts Run homepage check on Next step when no SEO check is saved", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
       "utf8",
