@@ -140,7 +140,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None. Reads existing actions and decision outcomes.
 
-**Current functionality:** Next step priority is (1) confirm drafts, (2) do approved work on Your work, (3) make a drafted next Goal active, (4) draft a plan for an active Goal that has none, (5) approve a draft plan for the active Goal, (6) propose first actions from an approved plan that has none, (7) use the latest what-changed outcome, (8) specialist recommend, (9) wait. Ads, email, and social stay left alone. GroovGro does not execute.
+**Current functionality:** Next step priority is (1) confirm drafts, (2) do approved work on Your work, (3) make a drafted next Goal active, (4) draft a plan for an active Goal that has none, (5) approve a draft plan for the active Goal, (6) propose first actions from an approved plan that has none, (7) approve or reject proposed actions, (8) use the latest what-changed outcome, (9) specialist recommend, (10) wait. Ads, email, and social stay left alone. GroovGro does not execute.
 
 ### 14. The path so far
 
@@ -192,7 +192,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If the active Goal has a draft plan, Next step asks the owner to approve or reject it. The same buttons are on Next step. Drafting a missing plan still comes first. GroovGro does not execute.
 
-### 19. Propose first actions from Next step (this slice)
+### 19. Propose first actions from Next step
 
 **Reason:** After a plan is approved, the owner still had to open Goals to propose the first actions. Next step should name that and put the button there. Proposing must not execute.
 
@@ -201,6 +201,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If the active Goal has an approved plan with no actions yet, Next step asks the owner to propose the first actions. The same button is on Next step. Approving a draft plan still comes first. GroovGro does not execute.
+
+### 20. Approve proposed actions from Next step (this slice)
+
+**Reason:** After actions are proposed, they sat in a second card while Next step named something else. The owner needs one main ask: approve or reject those actions. Approving must not execute.
+
+**Affected:** `src/lib/growth/next-step.ts`, Next step. Reuses `approveGrowthAction` / `rejectGrowthAction`. Does not run the actions.
+
+**Migration risk:** None.
+
+**Current functionality:** If proposed actions are waiting, Next step asks the owner to approve or reject them in the main recommendation. The buttons are there. Proposing missing actions still comes first. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -215,7 +225,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Activate Goal is parked.** Make a reviewed draft the active Goal. Do not execute.
 - **Draft a plan from Next step is parked.** Ask the owner to draft a plan for the active Goal. Do not execute.
 - **Approve a plan from Next step is parked.** Ask the owner to approve or reject the draft plan. Do not execute.
-- **Propose first actions from Next step (this slice).** Ask the owner to propose the first actions from an approved plan. Do not execute. Do not start ads.
+- **Propose first actions from Next step is parked.** Ask the owner to propose the first actions from an approved plan. Do not execute.
+- **Approve proposed actions from Next step (this slice).** Ask the owner to approve or reject proposed actions. Do not execute. Do not start ads.
 
 ## DESIGN FOR LATER
 
@@ -310,7 +321,8 @@ Organization
 14. **Activate Goal** — make a reviewed draft the active Goal. Done.
 15. **Draft a plan from Next step** — ask the owner to draft a plan for the active Goal. Done.
 16. **Approve a plan from Next step** — ask the owner to approve or reject the draft plan. Done.
-17. **Propose first actions from Next step** — ask the owner to propose the first actions. This slice.
-18. **Guarded automation** — only after the above is trusted.
+17. **Propose first actions from Next step** — ask the owner to propose the first actions. Done.
+18. **Approve proposed actions from Next step** — ask the owner to approve or reject proposed actions. This slice.
+19. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

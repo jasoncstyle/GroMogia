@@ -87,6 +87,8 @@ describe("coordinated next step", () => {
       ],
     });
     assert.equal(step.waitingActions.length, 1);
+    assert.equal(step.primary.title, "Approve or reject these actions");
+    assert.match(step.primary.body, /will not start marketing/);
     assert.equal(step.executeAllowed, false);
   });
 
@@ -257,6 +259,46 @@ describe("coordinated next step", () => {
       proposePlanGoalTitle: "Next: More people get in touch",
     });
     assert.equal(step.primary.title, "Approve this plan");
+  });
+
+  it("asks the owner to approve proposed actions before specialist follow-up", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts({ openLeadCount: 3 })),
+      waitingActions: [
+        {
+          id: "a1",
+          description: "Follow up open leads.",
+          module: "crm",
+          status: "proposed",
+          risk: "operational",
+        },
+      ],
+    });
+    assert.equal(step.primary.title, "Approve or reject these actions");
+    assert.equal(step.waitingActions.length, 1);
+    assert.match(step.primary.body, /does not run/);
+    assert.equal(step.executeAllowed, false);
+  });
+
+  it("keeps proposing missing actions ahead of approving leftover proposals", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [
+        {
+          id: "a1",
+          description: "Follow up open leads.",
+          module: "crm",
+          status: "proposed",
+          risk: "operational",
+        },
+      ],
+      proposePlanId: "plan-2",
+      proposePlanGoalId: "goal-2",
+      proposePlanGoalTitle: "Next: More people get in touch",
+    });
+    assert.equal(step.primary.title, "Propose the first actions");
   });
 
   it("points at Goals when learning says the target was reached", () => {

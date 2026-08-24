@@ -1,6 +1,6 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
-import { APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -169,6 +169,20 @@ function proposeActionsCandidate(input: NextStepInput): NextStepCandidate | null
   };
 }
 
+function waitingActionsCandidate(count: number): NextStepCandidate | null {
+  if (count <= 0) return null;
+  return {
+    kind: "recommend",
+    classification: "operational",
+    title: APPROVE_ACTIONS_STEP_TITLE,
+    body: `${count} proposed action${count === 1 ? "" : "s"} ${count === 1 ? "needs" : "need"} your say. Approve or reject ${count === 1 ? "it" : "them"} here. Approving does not run ${count === 1 ? "it" : "them"}. GroovGro will not start marketing.`,
+    href: "/app/goals",
+    source: "goals",
+    specialistId: null,
+    goalId: null,
+  };
+}
+
 function ownerWorkCandidate(count: number): NextStepCandidate | null {
   if (count <= 0) return null;
   return {
@@ -280,6 +294,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   const draftPlan = draftPlanCandidate(input.planGoalId, input.planGoalTitle);
   const approvePlan = approvePlanCandidate(input);
   const proposeActions = proposeActionsCandidate(input);
+  const waitingApprove = waitingActionsCandidate(waitingActions.length);
   const learning = learningCandidate(input);
   const usable = input.reports.filter((report) => !DISCONNECTED_CHANNELS.has(report.id));
   const leftAlone = [
@@ -292,7 +307,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   ].sort((a, b) => score(b) - score(a));
 
   return {
-    primary: drafts ?? ownerWork ?? activate ?? draftPlan ?? approvePlan ?? proposeActions ?? learning ?? ranked[0] ?? nothingYet(),
+    primary: drafts ?? ownerWork ?? activate ?? draftPlan ?? approvePlan ?? proposeActions ?? waitingApprove ?? learning ?? ranked[0] ?? nothingYet(),
     leftAlone,
     waitingActions,
     executeAllowed: false,
