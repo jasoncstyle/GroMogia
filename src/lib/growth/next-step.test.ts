@@ -2356,6 +2356,46 @@ describe("coordinated next step", () => {
     assert.match(eventsPage, /EventCreateForm/);
   });
 
+  it("keeps Add a calendar item on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          goals: [
+            {
+              id: "g-util",
+              title: "Fill upcoming scheduled spots",
+              status: "active",
+              goalType: "utilization",
+              liveCurrentValue: 0,
+              targetValue: 12,
+              progressPercent: 0,
+              liveNote: "0 of 12 upcoming spots are filled.",
+            },
+          ],
+          upcomingEventCount: 2,
+          evidenceSample: { elapsedDays: 30, observations: 40, conversions: 12 },
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsReviewSchedule, true);
+    assert.match(page, /needsReviewSchedule &&/);
+    assert.match(page, /needsReviewSchedule &&\s+!isReviewScheduleNextStep/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/events/page.tsx"), "utf8"),
+      /EventCreateForm/,
+    );
+  });
+
   it("asks the Dashboard to propose first actions on Next step", () => {
     const source = readFileSync(
       join(process.cwd(), "src/app/(app)/app/page.tsx"),

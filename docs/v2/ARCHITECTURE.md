@@ -1372,7 +1372,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can draft and approve homepage SEO copy even when that is not the main ask. SEO still has those checks. GroovGro does not change the connected website or start ads.
 
-### 137. Keep Search Console on Next step when it is not the main ask (this slice)
+### 137. Keep Search Console on Next step when it is not the main ask
 
 **Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked connecting Search Console, choosing the property, or refreshing numbers, that panel only lived in the main recommendation. SEO still has that panel. The owner had to leave Next step to connect, pick, or refresh.
 
@@ -1381,6 +1381,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask. SEO still has that panel. GroovGro does not edit the website, submit a sitemap, or buy ads.
+
+### 138. Keep Add a calendar item on Next step when it is not the main ask (this slice)
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a schedule that is well short of its target, Add a calendar item only lived in the main recommendation. Events still has that form. The owner had to leave Next step to add an item.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. GroovGro does not change ads or the website.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1510,7 +1520,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Choose when you look at growth on Next step when it is not the main ask is parked.** Next step can save when to look at this week's numbers even when that is not the main ask. Growth review still has that form. Do not change the business then.
 - **Keep Run an SEO check on Next step when it is not the main ask is parked.** Next step can run a homepage SEO check even when that is not the main ask. SEO still has that check. Do not edit the website.
 - **Keep SEO drafts on Next step when they are not the main ask is parked.** Next step can draft and approve homepage SEO copy even when that is not the main ask. SEO still has those checks. Do not change the connected website or start ads.
-- **Keep Search Console on Next step when it is not the main ask (this slice).** Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask. SEO still has that panel. Do not edit the website, submit a sitemap, or buy ads.
+- **Keep Search Console on Next step when it is not the main ask is parked.** Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask. SEO still has that panel. Do not edit the website, submit a sitemap, or buy ads.
+- **Keep Add a calendar item on Next step when it is not the main ask (this slice).** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. Do not change ads or the website.
 
 ## DESIGN FOR LATER
 
@@ -1720,7 +1731,8 @@ Organization
 129. **Keep Choose when you look at growth on Next step when it is not the main ask** — Next step can save when to look at this week's numbers even when that is not the main ask; Growth review still has that form. Done.
 130. **Keep Run an SEO check on Next step when it is not the main ask** — Next step can run a homepage SEO check even when that is not the main ask; SEO still has that check. Done.
 131. **Keep SEO drafts on Next step when they are not the main ask** — Next step can draft and approve homepage SEO copy even when that is not the main ask; SEO still has those checks. Done.
-132. **Keep Search Console on Next step when it is not the main ask** — Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask; SEO still has that panel. This slice.
-133. **Guarded automation** — only after the above is trusted.
+132. **Keep Search Console on Next step when it is not the main ask** — Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask; SEO still has that panel. Done.
+133. **Keep Add a calendar item on Next step when it is not the main ask** — Next step can review upcoming items and add a calendar item even when that is not the main ask; Events still has that form. This slice.
+134. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

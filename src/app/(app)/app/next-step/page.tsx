@@ -994,6 +994,46 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.needsReviewSchedule &&
+          !isReviewScheduleNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Review the schedule or how people find it</CardTitle>
+                <CardDescription>
+                  Review upcoming items here. Add a calendar item if that is
+                  how this business sells. GroovGro will not change ads or
+                  the website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {dashboard?.upcomingEvents.length ? (
+                  <ul className="space-y-2 text-sm">
+                    {dashboard.upcomingEvents.map((event) => (
+                      <li key={event.id}>
+                        <span className="font-medium">{event.title}</span>
+                        <span className="text-muted-foreground">
+                          {event.startsAt
+                            ? ` · ${event.startsAt.toLocaleString()}`
+                            : " · Date not set"}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    No upcoming calendar items yet. Add one here if that is
+                    how this business sells.
+                  </p>
+                )}
+                <EventCreateForm
+                  offers={links.offers}
+                  goals={links.goals}
+                  disabled={!canManageEvents}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.activateGoalId &&
           step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
             <Card>
