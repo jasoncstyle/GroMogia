@@ -175,7 +175,8 @@ export default async function GoalsPage() {
           <CardTitle>Active and recent goals</CardTitle>
           <CardDescription>
             Connected goals can save today&apos;s number from leads, bookings,
-            and payments. That stores a history. It does not start marketing.
+            and payments. Save that number here, or on Next step. That stores
+            a history. It does not start marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

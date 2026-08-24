@@ -1122,7 +1122,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step shows the saved Goal numbers with the current Goal. Goals still lists the full history and the Current box. GroovGro does not execute.
 
-### 112. Keep website review click-by-click on Next step (this slice)
+### 112. Keep website review click-by-click on Next step
 
 **Reason:** Phase 2 setup still told the owner to find pages, then open Business to review. Find pages and Review connected data already live on Next step. Following that guide sent the owner away.
 
@@ -1131,6 +1131,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Setup click-by-click finds pages and reviews on Next step. Website still saves the address and shows the tracking snippet. Business still has Review to run it again. GroovGro does not change the live site.
+
+### 113. Keep saving today's Goal number on Next step (this slice)
+
+**Reason:** After the first save, Next step stopped showing Save progress from connected data. Later saves only lived on Goals, so the owner had to leave Next step to store today's number.
+
+**Affected:** Next step Goal card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save today's Goal number with the current Goal after the first save. Goals still has that button and the Current box. GroovGro does not start marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1235,7 +1245,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Activate Goal and Draft next Goal on Next step is parked.** Next step can make a draft the active Goal, and draft the next Goal when one is reached. Goals lists those goals and names Next step. Do not execute.
 - **Keep Draft a plan on Next step is parked.** Next step can draft a plan for the active Goal. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Do not execute.
 - **Keep Goal history on Next step is parked.** Next step shows the saved Goal numbers with the current Goal. Goals still lists the full history and the Current box. Do not execute.
-- **Keep website review click-by-click on Next step (this slice).** Setup click-by-click finds pages and reviews on Next step. Website still saves the address and shows the tracking snippet. Business still has Review to run it again. Do not change the live site.
+- **Keep website review click-by-click on Next step is parked.** Setup click-by-click finds pages and reviews on Next step. Website still saves the address and shows the tracking snippet. Business still has Review to run it again. Do not change the live site.
+- **Keep saving today's Goal number on Next step (this slice).** Next step can save today's Goal number with the current Goal after the first save. Goals still has that button and the Current box. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -1420,7 +1431,8 @@ Organization
 104. **Keep Activate Goal and Draft next Goal on Next step** — Next step can make a draft the active Goal, and draft the next Goal when one is reached; Goals lists those goals and names Next step. Done.
 105. **Keep Draft a plan on Next step** — Next step can draft a plan for the active Goal; Goals lists goals and names Next step. Done.
 106. **Keep Goal history on Next step** — Next step shows the saved Goal numbers with the current Goal; Goals still lists the full history and the Current box. Done.
-107. **Keep website review click-by-click on Next step** — setup click-by-click finds pages and reviews on Next step; Business still has Review to run it again. This slice.
-108. **Guarded automation** — only after the above is trusted.
+107. **Keep website review click-by-click on Next step** — setup click-by-click finds pages and reviews on Next step; Business still has Review to run it again. Done.
+108. **Keep saving today's Goal number on Next step** — Next step can save today's Goal number with the current Goal after the first save; Goals still has that button and the Current box. This slice.
+109. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

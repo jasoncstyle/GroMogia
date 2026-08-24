@@ -551,9 +551,15 @@ export default async function NextStepPage({
                 GroovGro will not change it by itself.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               {step.readableGoal ? (
-                <GoalReadout goal={step.readableGoal} />
+                <>
+                  <GoalReadout goal={step.readableGoal} />
+                  {step.readableGoal.liveComputable &&
+                  !isSaveProgressNextStep(step.primary.title) ? (
+                    <SaveConnectedProgressButton disabled={!canDraftPlan} />
+                  ) : null}
+                </>
               ) : (
                 <p className="text-sm text-muted-foreground">
                   No active Goal yet. Use the buttons above when Next step asks

@@ -89,6 +89,7 @@ export type LearningGoal = {
   unit: string
   liveNote: string
   progressPercent: number | null
+  liveComputable?: boolean
   progressHistory?: GoalProgressRow[]
 };
 

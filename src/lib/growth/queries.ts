@@ -766,6 +766,7 @@ function toReadableGoal(goal: {
   unit: string
   liveNote: string
   progressPercent: number | null
+  liveComputable?: boolean
   progressHistory?: {
     id: string
     recordedAt: Date
@@ -782,6 +783,7 @@ function toReadableGoal(goal: {
     unit: goal.unit,
     liveNote: goal.liveNote,
     progressPercent: goal.progressPercent,
+    liveComputable: Boolean(goal.liveComputable),
     progressHistory: (goal.progressHistory ?? []).map((row) => ({
       id: row.id,
       recordedAtLabel: row.recordedAt.toLocaleDateString(),

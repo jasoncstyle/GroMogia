@@ -1387,6 +1387,43 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("lets the owner save today's Goal number on Next step after the first save", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const goals = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/goals/page.tsx"),
+      "utf8",
+    );
+    const queries = readFileSync(
+      join(process.cwd(), "src/lib/growth/queries.ts"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      readableGoal: {
+        id: "goal-2",
+        title: "More people get in touch",
+        liveCurrentValue: 2,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "2 open leads from the public form.",
+        progressPercent: 20,
+        liveComputable: true,
+      },
+    });
+    assert.equal(step.readableGoal?.liveComputable, true);
+    assert.match(page, /liveComputable/);
+    assert.match(page, /!isSaveProgressNextStep\(step\.primary\.title\)/);
+    assert.match(page, /The Goal[\s\S]*SaveConnectedProgressButton/);
+    assert.match(goals, /SaveConnectedProgressButton/);
+    assert.match(goals, /or on Next step/);
+    assert.match(queries, /liveComputable: Boolean/);
+  });
+
   it("keeps sharing the lead form ahead of saving today's Goal number", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,
@@ -1938,6 +1975,7 @@ describe("coordinated next step", () => {
         unit: "leads",
         liveNote: "2 open leads from the public form.",
         progressPercent: 20,
+        liveComputable: true,
         progressHistory: [
           {
             id: "snap-1",
@@ -1952,6 +1990,7 @@ describe("coordinated next step", () => {
     assert.equal(step.readableGoal?.id, "goal-2");
     assert.equal(step.readableGoal?.title, "More people get in touch");
     assert.equal(step.readableGoal?.liveCurrentValue, 2);
+    assert.equal(step.readableGoal?.liveComputable, true);
     assert.equal(step.readableGoal?.progressHistory?.[0]?.value, 2);
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
