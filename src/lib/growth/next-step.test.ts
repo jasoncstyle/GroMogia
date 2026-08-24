@@ -549,6 +549,7 @@ describe("coordinated next step", () => {
     });
     assert.equal(step.primary.title, "Review the connected website");
     assert.equal(step.primary.source, "website");
+    assert.match(step.primary.body, /Find pages here/);
     assert.match(step.primary.body, /will not change the live site/);
     assert.equal(step.executeAllowed, false);
   });
@@ -570,6 +571,7 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.match(source, /ReviewConnectedDataButton/);
+    assert.match(source, /WebsitePageChecklist/);
     assert.match(source, /REVIEW_SITE_STEP_TITLE/);
   });
 

@@ -161,7 +161,7 @@ function reviewSiteCandidate(
     kind: "recommend",
     classification: "operational",
     title: REVIEW_SITE_STEP_TITLE,
-    body: "The website address is saved, but GroovGro has not read the pages yet. Find pages on Website, check the important ones, then review here. GroovGro will not change the live site.",
+    body: "The website address is saved, but GroovGro has not read the pages yet. Find pages here, check the important ones, then review. GroovGro will not change the live site.",
     href: "/app/website",
     source: "website",
     specialistId: null,

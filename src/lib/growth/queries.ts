@@ -27,6 +27,7 @@ import {
   seoAudits,
   seoDrafts,
   searchConsoleSnapshots,
+  websiteDiscoveredPages,
 } from "@/lib/db/schema";
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
@@ -407,6 +408,21 @@ async function getLatestSeoSummary(organizationId: string) {
     searchConsoleSnapshot: snapshotRows.length > 0,
     searchConsoleSnapshotAt: snapshotRows[0]?.createdAt ?? null,
   };
+}
+
+export async function getDiscoveredWebsitePages(organizationId: string) {
+  const db = getDb();
+  if (!db) return [];
+  return db
+    .select({
+      id: websiteDiscoveredPages.id,
+      url: websiteDiscoveredPages.url,
+      label: websiteDiscoveredPages.label,
+      pageGroup: websiteDiscoveredPages.pageGroup,
+      important: websiteDiscoveredPages.important,
+    })
+    .from(websiteDiscoveredPages)
+    .where(eq(websiteDiscoveredPages.organizationId, organizationId));
 }
 
 export async function getBrandSettingsForm(organizationId: string) {

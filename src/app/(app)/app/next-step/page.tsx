@@ -21,6 +21,7 @@ import { CopyLink } from "@/components/copy-link";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { TrackingSnippet } from "@/components/tracking-snippet";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
+import { WebsitePageChecklist } from "@/components/website-page-checklist";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,7 +32,7 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
-import { getBrandSettingsForm, getBusinessBrainForm, getCoordinatedNextStep, getGrowthLinkOptions } from "@/lib/growth/queries";
+import { getBrandSettingsForm, getBusinessBrainForm, getCoordinatedNextStep, getDiscoveredWebsitePages, getGrowthLinkOptions } from "@/lib/growth/queries";
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
@@ -100,6 +101,10 @@ export default async function NextStepPage({
     session.organizationId && step && isSaveBusinessNextStep(step.primary.title)
       ? await getBusinessBrainForm(session.organizationId)
       : null;
+  const discoveredPages =
+    session.organizationId && step?.primary.title === REVIEW_SITE_STEP_TITLE
+      ? await getDiscoveredWebsitePages(session.organizationId)
+      : [];
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -201,9 +206,13 @@ export default async function NextStepPage({
                 </>
               ) : step.primary.title === REVIEW_SITE_STEP_TITLE ? (
                 <>
+                  <WebsitePageChecklist
+                    pages={discoveredPages}
+                    disabled={!canManageWebsite && !canManageOffers}
+                  />
                   <ReviewConnectedDataButton disabled={!session.organizationId} />
                   <Button asChild variant="outline">
-                    <Link href="/app/website">Find pages on Website</Link>
+                    <Link href="/app/website">Open Website</Link>
                   </Button>
                 </>
               ) : isPasteSnippetNextStep(step.primary.title) ? (
