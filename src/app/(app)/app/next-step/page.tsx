@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { NextStepResponseButtons, WaitingActionButtons } from "@/components/next-step-actions";
+import { OwnerWorkButtons } from "@/components/owner-work-actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,7 +14,8 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { hrefForGrowthAction } from "@/lib/growth/owner-work";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 
@@ -27,6 +29,7 @@ export default async function NextStepPage() {
   const canCreateGoal = hasPermission(session.permissions, "create_goals");
   const canActivateGoal = hasPermission(session.permissions, "modify_goals");
   const canDraftPlan = hasPermission(session.permissions, "modify_goals");
+  const canUpdateWork = canDraftPlan;
   const canApprovePlan = hasPermission(session.permissions, "approve_plans");
 
   return (
@@ -68,6 +71,21 @@ export default async function NextStepPage() {
                     <WaitingActionButtons
                       actionId={action.id}
                       canApprove={canApprove}
+                    />
+                  </div>
+                ))
+              ) : step.primary.title === OWNER_WORK_STEP_TITLE ? (
+                step.openWork.map((action) => (
+                  <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
+                    <p className="font-medium">{action.description}</p>
+                    <p className="text-muted-foreground">
+                      {labelFor(action.risk)}
+                      {action.module ? ` · ${labelFor(action.module)}` : ""}
+                    </p>
+                    <OwnerWorkButtons
+                      actionId={action.id}
+                      href={hrefForGrowthAction(action)}
+                      canUpdate={canUpdateWork}
                     />
                   </div>
                 ))
@@ -166,11 +184,12 @@ export default async function NextStepPage() {
               <CardTitle>Write it as a plan</CardTitle>
               <CardDescription>
                 Next step is one thing to do now. If GroovGro asks you to draft
-                a plan, approve it, propose the first actions, or approve those
-                actions, use the buttons above. A Growth Plan is a versioned
-                write-up for a Goal. After you approve a plan, GroovGro can
-                propose the first actions. Nothing runs until you say so, and
-                even then GroovGro does not execute.
+                a plan, approve it, propose the first actions, approve those
+                actions, or do work you already approved, use the buttons
+                above. A Growth Plan is a versioned write-up for a Goal. After
+                you approve a plan, GroovGro can propose the first actions.
+                Nothing runs until you say so, and even then GroovGro does not
+                execute.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">

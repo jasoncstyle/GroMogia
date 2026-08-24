@@ -101,8 +101,31 @@ describe("coordinated next step", () => {
     });
     assert.equal(step.primary.href, "/app/work");
     assert.equal(step.primary.source, "owner_work");
+    assert.equal(step.primary.title, "Do the work you already approved");
     assert.match(step.primary.body, /will not run/);
+    assert.match(step.primary.body, /here/);
     assert.equal(step.executeAllowed, false);
+  });
+
+  it("keeps approved work on the next step so the owner can mark it there", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      openWork: [
+        {
+          id: "w1",
+          description: "Follow up open leads.",
+          module: "crm",
+          actionType: "follow_up_leads",
+          risk: "operational",
+        },
+      ],
+    });
+    assert.equal(step.primary.title, "Do the work you already approved");
+    assert.equal(step.openWork.length, 1);
+    assert.equal(step.openWork[0]?.id, "w1");
+    assert.match(step.primary.body, /here/);
   });
 
   it("keeps draft confirm ahead of approved work", () => {
@@ -320,5 +343,15 @@ describe("coordinated next step", () => {
     for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk", "electrician"]) {
       assert.equal(source.toLowerCase().includes(banned), false, banned);
     }
+  });
+
+  it("puts Open the page, I did this, and Skip on Next step for approved work", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(source, /OwnerWorkButtons/);
+    assert.match(source, /OWNER_WORK_STEP_TITLE/);
+    assert.match(source, /hrefForGrowthAction/);
   });
 });

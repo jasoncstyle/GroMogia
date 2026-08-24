@@ -42,8 +42,9 @@ export default async function OwnerWorkPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Your work</h1>
         <p className="text-muted-foreground">
-          These are actions you approved. You do them. GroovGro does not run
-          marketing, send email, change ads, or edit the live website.
+          These are actions you approved. You do them here or on Next step.
+          GroovGro does not run marketing, send email, change ads, or edit
+          the live website.
         </p>
       </div>
 
@@ -58,8 +59,8 @@ export default async function OwnerWorkPage() {
         <CardContent className="space-y-4">
           {work.open.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Nothing is ready yet. Approve a proposed action on Goals, or
-              propose the first actions from an approved plan.
+              Nothing is ready yet. Approve a proposed action on Next step
+              or Goals, or propose the first actions from an approved plan.
             </p>
           ) : (
             work.open.map((action) => (

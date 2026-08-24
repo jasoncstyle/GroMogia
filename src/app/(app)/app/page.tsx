@@ -206,13 +206,11 @@ export default async function DashboardPage() {
         <QuestionCard
           title="What should happen next?"
           body={
-            ownerWork.open.length > 0
-              ? `${ownerWork.open.length} approved action${ownerWork.open.length === 1 ? "" : "s"} ready on Your work. You do ${ownerWork.open.length === 1 ? "it" : "them"}. GroovGro will not execute.`
-              : nextStep
-                ? `${nextStep.primary.title}. ${nextStep.waitingActions.length > 0 ? `${nextStep.waitingActions.length} proposed action${nextStep.waitingActions.length === 1 ? "" : "s"} still need your say. ` : ""}GroovGro will not execute this.`
-                : growth?.awaitingApproval.length
-                  ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
-                  : (growth?.weeklyReview.whatShouldHappenNext ?? nextStepText)
+            nextStep
+              ? `${nextStep.primary.title}. ${nextStep.waitingActions.length > 0 ? `${nextStep.waitingActions.length} proposed action${nextStep.waitingActions.length === 1 ? "" : "s"} still need your say. ` : ""}GroovGro will not execute this.`
+              : growth?.awaitingApproval.length
+                ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
+                : (growth?.weeklyReview.whatShouldHappenNext ?? nextStepText)
           }
         />
         <QuestionCard

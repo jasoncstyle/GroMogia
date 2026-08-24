@@ -1,4 +1,4 @@
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export type PlanActionRisk = "operational" | "optimization" | "strategic";
 
@@ -38,7 +38,8 @@ function isLoopingNextStep(title: string): boolean {
     text === DRAFT_PLAN_STEP_TITLE ||
     text === APPROVE_PLAN_STEP_TITLE ||
     text === PROPOSE_ACTIONS_STEP_TITLE ||
-    text === APPROVE_ACTIONS_STEP_TITLE
+    text === APPROVE_ACTIONS_STEP_TITLE ||
+    text === OWNER_WORK_STEP_TITLE
   );
 }
 

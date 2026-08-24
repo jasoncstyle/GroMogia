@@ -60,6 +60,7 @@ export const DRAFT_PLAN_STEP_TITLE = "Draft a plan for this Goal";
 export const APPROVE_PLAN_STEP_TITLE = "Approve this plan";
 export const PROPOSE_ACTIONS_STEP_TITLE = "Propose the first actions";
 export const APPROVE_ACTIONS_STEP_TITLE = "Approve or reject these actions";
+export const OWNER_WORK_STEP_TITLE = "Do the work you already approved";
 
 function isPlanLoopNextStep(title: string): boolean {
   const text = clean(title);
@@ -67,7 +68,8 @@ function isPlanLoopNextStep(title: string): boolean {
     text === DRAFT_PLAN_STEP_TITLE ||
     text === APPROVE_PLAN_STEP_TITLE ||
     text === PROPOSE_ACTIONS_STEP_TITLE ||
-    text === APPROVE_ACTIONS_STEP_TITLE
+    text === APPROVE_ACTIONS_STEP_TITLE ||
+    text === OWNER_WORK_STEP_TITLE
   );
 }
 

@@ -1,6 +1,6 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -28,10 +28,19 @@ export type WaitingAction = {
   risk: string
 };
 
+export type OpenOwnerWork = {
+  id: string
+  description: string
+  module: string
+  actionType: string
+  risk: string
+};
+
 export type NextStepInput = {
   inferredDraftCount: number
   reports: SpecialistReport[]
   waitingActions: WaitingAction[]
+  openWork?: OpenOwnerWork[]
   openWorkCount?: number
   latestLearningKind?: WorkLearningKind | ""
   latestLearningOutcome?: string
@@ -56,6 +65,7 @@ export type CoordinatedNextStep = {
   primary: NextStepCandidate
   leftAlone: NextStepCandidate[]
   waitingActions: WaitingAction[]
+  openWork: OpenOwnerWork[]
   executeAllowed: false
 };
 
@@ -188,8 +198,8 @@ function ownerWorkCandidate(count: number): NextStepCandidate | null {
   return {
     kind: "recommend",
     classification: "operational",
-    title: "Do the work you already approved",
-    body: `${count} approved action${count === 1 ? "" : "s"} ${count === 1 ? "is" : "are"} ready on Your work. You do ${count === 1 ? "it" : "them"}. GroovGro will not run ${count === 1 ? "it" : "them"}.`,
+    title: OWNER_WORK_STEP_TITLE,
+    body: `${count} approved action${count === 1 ? "" : "s"} ${count === 1 ? "is" : "are"} ready. Do ${count === 1 ? "it" : "them"} here. GroovGro will not run ${count === 1 ? "it" : "them"}.`,
     href: "/app/work",
     source: "owner_work",
     specialistId: null,
@@ -288,8 +298,9 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   const waitingActions = input.waitingActions.filter((action) =>
     isWaitingActionStatus(action.status),
   );
+  const openWork = input.openWork ?? [];
   const drafts = draftsCandidate(input.inferredDraftCount);
-  const ownerWork = ownerWorkCandidate(input.openWorkCount ?? 0);
+  const ownerWork = ownerWorkCandidate(input.openWorkCount ?? openWork.length);
   const activate = activateGoalCandidate(input.activateGoalId, input.activateGoalTitle);
   const draftPlan = draftPlanCandidate(input.planGoalId, input.planGoalTitle);
   const approvePlan = approvePlanCandidate(input);
@@ -310,6 +321,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     primary: drafts ?? ownerWork ?? activate ?? draftPlan ?? approvePlan ?? proposeActions ?? waitingApprove ?? learning ?? ranked[0] ?? nothingYet(),
     leftAlone,
     waitingActions,
+    openWork,
     executeAllowed: false,
   };
 }

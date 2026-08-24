@@ -6,7 +6,7 @@ Last updated: 24 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-next-step-approve-actions-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-next-step-owner-work-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** The website builder is paused. Proposing first actions from Next step is in the previous slice. This branch asks the owner to approve or reject those proposed actions as the Next step. GroovGro does not execute. Do not start ads, execution, or autonomy.
+**V2 growth foundation is on `main`.** The website builder is paused. Approving proposed actions from Next step is in the previous slice. This branch asks the owner to do approved work on Next step. GroovGro does not execute. Do not start ads, execution, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
@@ -100,7 +100,11 @@ When the active Goal has a draft plan, Next step asks the owner to approve or re
 
 When the active Goal has an approved plan with no actions yet, Next step asks the owner to propose them. GroovGro does not execute.
 
-**First build slice (this branch):** When proposed actions are waiting, Next step asks the owner to approve or reject them in the main recommendation. Approving does not start marketing, send email, buy ads, charge a card, or change the live website.
+**Parked: Approve proposed actions from Next step (24 August 2026)**
+
+When proposed actions are waiting, Next step asks the owner to approve or reject them in the main recommendation. Approving does not execute.
+
+**First build slice (this branch):** When approved actions are ready, Next step lists them with Open the page, I did this, and Skip for now. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
 
 ## Stripe (do not mix, do not replace)
 
@@ -126,7 +130,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Review connected data walks more of the connected website: program pages, calendar/booking pages, and event detail pages, and it tries a public booking embed on another site when one is linked. It does not copy the site or change it. Homepage slogans are not treated as offers when real inner pages exist.
 - Website page checklist: Find pages lists what GroovGro can see. Home, program, calendar, event, and public booking pages start checked. About, login, and legal stay unchecked. You can add a missing URL. Review connected data then reads only the checked pages. Event detail URLs sit under Calendar so they are not 40 separate boxes.
 - Phones get a Menu button that opens the same app navigation as the desktop sidebar.
-- Next step: one coordinated recommendation from drafts, Your work, what changed, specialists, and connected data. The owner accepts it or leaves it alone. Proposed actions can be approved or rejected. Nothing runs. Ads, email, and social stay left alone.
+- Next step: one coordinated recommendation from drafts, Your work, what changed, specialists, and connected data. The owner accepts it or leaves it alone. Proposed actions can be approved or rejected. Approved work can be done there. Nothing runs. Ads, email, and social stay left alone.
 - The path so far: Dashboard and Decisions show Goal, plan, work, what changed, and the next step in one place. GroovGro does not execute.
 - Next Goal: when a Goal is reached, GroovGro can draft the next one. It stays a draft until the owner makes it active. Nothing runs.
 - Make this the active Goal: one button on a reviewed draft. If it came from a reached Goal, that older Goal is marked achieved. Other active Goals are paused. Nothing runs.
@@ -134,9 +138,10 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Approve a plan from Next step: when the active Goal has a draft plan, Next step asks the owner to approve or reject it. Approving does not run marketing.
 - Propose first actions from Next step: when the approved plan has no actions yet, Next step asks the owner to propose them. Nothing runs.
 - Approve proposed actions from Next step: when actions are waiting, Next step asks the owner to approve or reject them in the main recommendation. Approving does not run them.
+- Do owner work from Next step: when approved actions are ready, Next step lists them with Open the page, I did this, and Skip for now. GroovGro does not run them.
 - Growth Plan: GroovGro can draft a versioned plan from a Goal. Approve or reject. Approving does not execute.
 - Growth Actions from an approved plan: GroovGro can propose the first actions. Approve or reject. Nothing runs. Ads, email, and social stay left alone.
-- Your work: approved actions the owner does. I did this or Skip for now. GroovGro records it and does not execute.
+- Your work: approved actions the owner does here or on Next step. I did this or Skip for now. GroovGro records it and does not execute.
 - What changed: after work is marked done, GroovGro can compare the Goal number and write what it learned. It does not change course or execute.
 
 ## Still later
