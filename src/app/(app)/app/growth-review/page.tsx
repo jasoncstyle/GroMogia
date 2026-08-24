@@ -33,10 +33,10 @@ export default async function GrowthReviewPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Growth review</h1>
         <p className="text-muted-foreground">
-          A weekly look at progress, and a monthly look at whether the plan is
-          still right. &quot;No change yet&quot; is a successful review.
-          GroovGro does not run ads, send email, or change the website from
-          this page.
+          Read this week’s look on Next step. This page is the monthly look
+          at whether the plan is still right. &quot;No change yet&quot; is a
+          successful review. GroovGro does not run ads, send email, or change
+          the website from this page.
         </p>
       </div>
 

@@ -1643,8 +1643,11 @@ describe("coordinated next step", () => {
     );
     assert.match(page, /GrowthSettingsForm/);
     assert.match(page, /href="\/app\/next-step">Open Next step/);
+    assert.match(page, /Read this week/);
+    assert.match(page, /on Next step/);
     assert.doesNotMatch(page, /Change the schedule/);
     assert.doesNotMatch(page, /href="\/app\/goals"/);
+    assert.doesNotMatch(page, /A weekly look at progress, and a monthly look/);
   });
 
   it("keeps Goals, Growth review, and Your work from sending the owner away for Next step content", () => {
@@ -1857,6 +1860,7 @@ describe("coordinated next step", () => {
     );
     assert.match(page, /step\.weeklyLook/);
     assert.match(page, /This week/);
+    assert.match(page, /This week[\s\S]*SaveGrowthReviewButton/);
     assert.doesNotMatch(page, /href="\/app\/growth-review"/);
   });
 

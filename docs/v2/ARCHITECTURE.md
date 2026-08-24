@@ -912,7 +912,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Goals keeps Open Next step and Open growth review for the monthly write-up. Growth review and Your work keep Open Next step. GroovGro does not execute.
 
-### 91. Dashboard and Intelligence name Next step for specialists (this slice)
+### 91. Dashboard and Intelligence name Next step for specialists
 
 **Reason:** The Dashboard still labeled Intelligence as specialists. Empty Goals plan copy did not name Next step. Specialists and drafting a plan already live on Next step.
 
@@ -921,6 +921,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Dashboard Intelligence is Intelligence. Intelligence names Next step for specialists. Empty Goals plans name Next step. GroovGro does not execute.
+
+### 92. Save this week’s look from Next step (this slice)
+
+**Reason:** Next step showed this week’s look but still sent the owner to Growth review to save it when something else was the primary. Growth review intro still described itself as the weekly look.
+
+**Affected:** Next step this week’s look and Growth review copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save this week’s look to Decision History. Growth review names Next step for the weekly look. The monthly write-up stays on Growth review. GroovGro does not change the business from that look.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1004,7 +1014,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Next step shows Decision History is parked.** Next step shows recent Decision History. It does not send the owner to Decisions from the footer. Do not run those decisions.
 - **Next step shows The path so far is parked.** Next step shows The path so far. It does not send the owner to the Dashboard from the footer. Do not run marketing.
 - **Goals, Growth review, and Your work stay on Next step for that content is parked.** Goals keeps Open Next step and Open growth review for the monthly write-up. Growth review and Your work keep Open Next step. Do not execute.
-- **Dashboard and Intelligence name Next step for specialists (this slice).** Dashboard Intelligence is Intelligence. Intelligence names Next step for specialists. Empty Goals plans name Next step. Do not execute.
+- **Dashboard and Intelligence name Next step for specialists is parked.** Dashboard Intelligence is Intelligence. Intelligence names Next step for specialists. Empty Goals plans name Next step. Do not execute.
+- **Save this week’s look from Next step (this slice).** Next step can save this week’s look to Decision History. Growth review names Next step for the weekly look. The monthly write-up stays on Growth review. Do not change the business from that look.
 
 ## DESIGN FOR LATER
 

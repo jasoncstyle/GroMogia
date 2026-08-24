@@ -653,6 +653,13 @@ export default async function NextStepPage({
                   <p className="text-muted-foreground">
                     {step.weeklyLook.whatNeedsAttention}
                   </p>
+                  {canDecide &&
+                  !(
+                    step.primary.source === "review" &&
+                    step.primary.kind === "no_change_yet"
+                  ) ? (
+                    <SaveGrowthReviewButton kind="weekly" canSave={canDecide} />
+                  ) : null}
                 </>
               ) : (
                 <p className="text-muted-foreground">
