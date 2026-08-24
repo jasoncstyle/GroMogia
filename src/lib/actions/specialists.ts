@@ -85,6 +85,8 @@ export async function saveSpecialistRecommendation(
 
     revalidatePath("/app/intelligence");
     revalidatePath("/app/decisions");
+    revalidatePath("/app/next-step");
+    revalidatePath("/app/work");
     revalidatePath("/app");
     return report.recommend.kind === "no_change_yet"
       ? `${report.name} recommendation saved: leave this alone. GroovGro will not execute it.`

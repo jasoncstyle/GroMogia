@@ -19,6 +19,7 @@ function revalidateNextStep() {
   revalidatePath("/app/decisions");
   revalidatePath("/app/intelligence");
   revalidatePath("/app/growth-review");
+  revalidatePath("/app/work");
 }
 
 async function requireActionEditor() {

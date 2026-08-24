@@ -776,4 +776,18 @@ describe("growth specialists", () => {
       true,
     );
   });
+
+  it("refreshes Next step after a specialist recommendation is saved", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/lib/actions/specialists.ts"),
+      "utf8",
+    );
+    assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
+    assert.match(source, /revalidatePath\("\/app\/work"\)/);
+    const nextStepActions = readFileSync(
+      join(process.cwd(), "src/lib/actions/next-step.ts"),
+      "utf8",
+    );
+    assert.match(nextStepActions, /revalidatePath\("\/app\/work"\)/);
+  });
 });
