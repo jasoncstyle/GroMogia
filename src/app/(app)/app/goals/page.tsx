@@ -5,7 +5,6 @@ import {
   updateGoalProgress,
 } from "@/lib/actions/growth";
 import { InferredBadge } from "@/components/growth-review";
-import { DraftGrowthPlanButton } from "@/components/growth-plan-actions";
 import { GoalCreateForm } from "@/components/goal-create-form";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import {
@@ -71,13 +70,13 @@ export default async function GoalsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Goals</h1>
         <p className="text-muted-foreground">
           A Goal is a measurable outcome. A draft stays a draft until you
-          make it the active Goal on Next step. GroovGro can then draft a
-          plan. Approve or reject that plan on Next step. Approving does
-          not run marketing. Approve or reject proposed actions on Next
-          step. Do approved work on Next step or Your work. Confirm or
-          reject suggested goals on Next step. They stay drafts until you
-          do. Review connected data on Next step when GroovGro asks, or
-          on Business if you want to run it again.
+          make it the active Goal on Next step. Draft a plan on Next step
+          when GroovGro asks. Approve or reject that plan on Next step.
+          Approving does not run marketing. Approve or reject proposed
+          actions on Next step. Do approved work on Next step or Your
+          work. Confirm or reject suggested goals on Next step. They stay
+          drafts until you do. Review connected data on Next step when
+          GroovGro asks, or on Business if you want to run it again.
         </p>
       </div>
 
@@ -271,9 +270,10 @@ export default async function GoalsPage() {
                   </p>
                 ) : null}
                 {canDraftPlan ? (
-                  <div className="mt-3">
-                    <DraftGrowthPlanButton goalId={goal.id} />
-                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Draft a plan for this Goal on Next step. GroovGro will not
+                    run it.
+                  </p>
                 ) : null}
                 {canCreateGoal &&
                 canDraftNextGoal({
@@ -325,7 +325,7 @@ export default async function GoalsPage() {
         <CardContent className="space-y-6">
           <FoldableSample
             title="Write a plan yourself"
-            subtitle="Optional. Most owners use Draft a plan for this Goal on a Goal above."
+            subtitle="Optional. Most owners draft a plan on Next step."
           >
           <SaveForm
             action={createGrowthPlan}
@@ -381,8 +381,7 @@ export default async function GoalsPage() {
 
           {plans.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No plans yet. Open Next step when it asks you to draft a plan,
-              or open a Goal above and click Draft a plan for this Goal.
+              No plans yet. Open Next step when it asks you to draft a plan.
             </p>
           ) : (
             <div className="space-y-4">

@@ -1092,7 +1092,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can approve or reject a draft plan, and propose the first actions. Goals lists plans and names Next step. Draft a plan still stays on Goals. GroovGro does not execute.
 
-### 109. Keep Activate Goal and Draft next Goal on Next step (this slice)
+### 109. Keep Activate Goal and Draft next Goal on Next step
 
 **Reason:** Goals still showed Make this the active Goal and Draft the next Goal after Next step already had those buttons. The owner could activate a draft or draft the next Goal from Goals instead of staying on Next step.
 
@@ -1100,7 +1100,17 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None.
 
-**Current functionality:** Next step can make a draft the active Goal, and draft the next Goal when one is reached. Goals lists those goals and names Next step. Draft a plan still stays on Goals. GroovGro does not execute.
+**Current functionality:** Next step can make a draft the active Goal, and draft the next Goal when one is reached. Goals lists those goals and names Next step. GroovGro does not execute.
+
+### 110. Keep Draft a plan on Next step (this slice)
+
+**Reason:** Goals still showed Draft a plan for this Goal after Next step already had that button. The owner could draft a plan from Goals instead of staying on Next step.
+
+**Affected:** Goals goal list.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can draft a plan for the active Goal. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1202,7 +1212,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Website find-pages on Next step is parked.** Next step can find pages. Website keeps the address and tracking snippet, and names Next step to find pages. Do not change the live site.
 - **Keep Review connected data on Next step is parked.** Next step can find pages, check the important ones, then review. Business keeps Review connected data to run it again. Dashboard, Goals, and Offers name Next step. Do not change the live site.
 - **Keep plan approve and propose on Next step is parked.** Next step can approve or reject a draft plan, and propose the first actions. Goals lists plans and names Next step. Draft a plan still stays on Goals. Do not execute.
-- **Keep Activate Goal and Draft next Goal on Next step (this slice).** Next step can make a draft the active Goal, and draft the next Goal when one is reached. Goals lists those goals and names Next step. Draft a plan still stays on Goals. Do not execute.
+- **Keep Activate Goal and Draft next Goal on Next step is parked.** Next step can make a draft the active Goal, and draft the next Goal when one is reached. Goals lists those goals and names Next step. Do not execute.
+- **Keep Draft a plan on Next step (this slice).** Next step can draft a plan for the active Goal. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -1384,7 +1395,8 @@ Organization
 101. **Keep Website find-pages on Next step** — Next step can find pages; Website keeps the address and snippet, and names Next step. Done.
 102. **Keep Review connected data on Next step** — Next step can find pages, check the important ones, then review; Business keeps Review connected data to run it again; Dashboard, Goals, and Offers name Next step. Done.
 103. **Keep plan approve and propose on Next step** — Next step can approve or reject a draft plan, and propose the first actions; Goals lists plans and names Next step. Done.
-104. **Keep Activate Goal and Draft next Goal on Next step** — Next step can make a draft the active Goal, and draft the next Goal when one is reached; Goals lists those goals and names Next step. This slice.
-105. **Guarded automation** — only after the above is trusted.
+104. **Keep Activate Goal and Draft next Goal on Next step** — Next step can make a draft the active Goal, and draft the next Goal when one is reached; Goals lists those goals and names Next step. Done.
+105. **Keep Draft a plan on Next step** — Next step can draft a plan for the active Goal; Goals lists goals and names Next step. This slice.
+106. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -1704,11 +1704,13 @@ describe("coordinated next step", () => {
     assert.match(goals, /make it the active Goal on Next step/);
     assert.match(goals, /Make this the active Goal on Next step/);
     assert.match(goals, /Draft the next Goal on Next step/);
-    assert.match(goals, /Approve or reject\s+proposed actions on Next\s+step/);
+    assert.match(goals, /Draft a plan on Next step/);
+    assert.match(goals, /Draft a plan for this Goal on Next step/);
+    assert.match(goals, /Approve or reject\s+proposed\s+actions on Next\s+step/);
     assert.match(goals, /Approve or reject that plan on Next step/);
     assert.match(goals, /Approve or reject this plan on Next step/);
     assert.match(goals, /Propose the first actions on Next step/);
-    assert.match(goals, /Do\s+approved work on Next step or\s+Your work/);
+    assert.match(goals, /Do\s+approved work on Next step or\s+Your\s+work/);
     assert.match(goals, /Confirm or\s+reject\s+suggested goals on Next step/);
     assert.match(goals, /Confirm or reject this on Next step/);
     assert.match(goals, /Review connected data on Next step/);
@@ -1721,6 +1723,9 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(goals, /ProposePlanActionsButton/);
     assert.doesNotMatch(goals, /ActivateGoalButton/);
     assert.doesNotMatch(goals, /DraftNextGoalButton/);
+    assert.doesNotMatch(goals, /DraftGrowthPlanButton/);
+    assert.doesNotMatch(goals, /click Draft a plan for this Goal/);
+    assert.doesNotMatch(goals, /on a Goal above/);
     const offers = readFileSync(
       join(process.cwd(), "src/app/(app)/app/offers/page.tsx"),
       "utf8",
