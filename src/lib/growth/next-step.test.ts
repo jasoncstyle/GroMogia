@@ -548,4 +548,14 @@ describe("coordinated next step", () => {
     assert.match(page, /RUN_SEO_STEP_TITLE/);
     assert.match(page, /RunHomepageSeoButton/);
   });
+
+  it("asks the Dashboard to propose first actions on Next step", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      "utf8",
+    );
+    assert.match(source, /Propose the first actions on Next step/);
+    assert.match(source, /Open Next step to do it/);
+    assert.doesNotMatch(source, /Propose the first actions there/);
+  });
 });

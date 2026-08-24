@@ -186,7 +186,7 @@ export default async function DashboardPage() {
                   growth.plans.find(
                     (plan) => plan.status === "approved" || plan.status === "active",
                   )
-                    ? "An approved Growth Plan is on Goals. Propose the first actions there. GroovGro will not run them."
+                    ? "An approved Growth Plan is ready. Propose the first actions on Next step. GroovGro will not run them."
                     : null,
                 ]
                   .filter(Boolean)
@@ -207,7 +207,7 @@ export default async function DashboardPage() {
           title="What should happen next?"
           body={
             nextStep
-              ? `${nextStep.primary.title}. ${nextStep.waitingActions.length > 0 ? `${nextStep.waitingActions.length} proposed action${nextStep.waitingActions.length === 1 ? "" : "s"} still need your say. ` : ""}GroovGro will not execute this.`
+              ? `${nextStep.primary.title}. ${nextStep.waitingActions.length > 0 ? `${nextStep.waitingActions.length} proposed action${nextStep.waitingActions.length === 1 ? "" : "s"} still need your say. ` : ""}Open Next step to do it. GroovGro will not execute this.`
               : growth?.awaitingApproval.length
                 ? `${growth.awaitingApproval.length} proposed action${growth.awaitingApproval.length === 1 ? "" : "s"} waiting. GroovGro will not execute them.`
                 : (growth?.weeklyReview.whatShouldHappenNext ?? nextStepText)
