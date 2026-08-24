@@ -282,6 +282,7 @@ describe("growth specialists", () => {
     assert.equal(crm.recommend.classification, "optimization");
     assert.equal(crm.recommend.title, SHARE_LEAD_FORM_STEP_TITLE);
     assert.match(crm.recommend.body, /Copy the public lead form here/);
+    assert.match(crm.recommend.body, /add someone you already know/);
     assert.match(crm.recommend.body, /will not email anyone/);
   });
 

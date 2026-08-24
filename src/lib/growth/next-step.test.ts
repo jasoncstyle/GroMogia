@@ -938,6 +938,11 @@ describe("coordinated next step", () => {
     assert.match(step.primary.body, /will not email anyone/);
     assert.match(page, /isShareLeadFormNextStep/);
     assert.match(page, /CopyLink/);
+    assert.match(page, /LeadCreateForm/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/crm/page.tsx"), "utf8"),
+      /LeadCreateForm/,
+    );
   });
 
   it("keeps pasting the tracking snippet ahead of sharing the lead form", () => {

@@ -414,7 +414,7 @@ function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
               kind: "recommend",
               classification: "optimization",
               title: SHARE_LEAD_FORM_STEP_TITLE,
-              body: "Copy the public lead form here and share it. GroovGro will not email anyone.",
+              body: "Copy the public lead form here, or add someone you already know. GroovGro will not email anyone.",
               href: "/app/crm",
             }
           : leaveAlone(

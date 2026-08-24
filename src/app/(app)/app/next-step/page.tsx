@@ -15,6 +15,7 @@ import { BrandSettingsForm } from "@/components/brand-settings-form";
 import { BusinessBrainForm } from "@/components/business-brain-form";
 import { OfferCreateForm } from "@/components/offer-create-form";
 import { GoalCreateForm } from "@/components/goal-create-form";
+import { LeadCreateForm } from "@/components/lead-create-form";
 import { LeadFollowUpButtons } from "@/components/lead-follow-up";
 import { CopyLink } from "@/components/copy-link";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
@@ -343,6 +344,14 @@ export default async function NextStepPage({
                       will not email anyone.
                     </p>
                   )}
+                  <p className="text-sm font-medium">
+                    Or add someone you already know
+                  </p>
+                  <LeadCreateForm
+                    offers={links.offers}
+                    goals={links.goals}
+                    disabled={!canManageLeads}
+                  />
                   <Button asChild variant="outline">
                     <Link href="/app/crm">Open Leads & customers</Link>
                   </Button>

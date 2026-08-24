@@ -482,6 +482,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If visits are recorded, the brand is saved, and how the business works is still empty, Next step asks the owner to save the kind of business and how it creates value. Open leads, the tracking snippet, the public lead form, and saving the brand still come first. GroovGro does not start marketing, send email, or edit the live website.
 
+### 48. Add a person from Next step (this slice)
+
+**Reason:** When no person has been captured yet, Next step already copies the public form. Adding someone the owner already knows still lived only on Leads. Put Save as new lead on that same Next step. GroovGro must not email anyone.
+
+**Affected:** Next step. Reuses `LeadCreateForm`. Does not email.
+
+**Migration risk:** None.
+
+**Current functionality:** If the website is connected and GroovGro has not captured a person yet, Next step asks the owner to copy the public form or add someone they already know. Open leads and the tracking snippet still come first. GroovGro does not email anyone.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
@@ -520,7 +530,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Draft copy in your voice from Next step is parked.** Ask the owner to create a draft after the profile and an example are saved. Do not send email, post, or edit the live website.
 - **Add an offer from Next step is parked.** Ask the owner to name what the business promotes when no confirmed offer exists. Do not start marketing.
 - **Save the brand from Next step is parked.** Ask the owner to save the business name, what it does, and who it serves when that is still empty. Do not start marketing.
-- **Save how the business works from Next step (this slice).** Ask the owner to save the kind of business and how it creates value when that is still empty. Do not start marketing.
+- **Save how the business works from Next step is parked.** Ask the owner to save the kind of business and how it creates value when that is still empty. Do not start marketing.
+- **Add a person from Next step (this slice).** Ask the owner to copy the public form or add someone they already know when no person has been captured yet. Do not email anyone.
 
 ## DESIGN FOR LATER
 
@@ -640,7 +651,8 @@ Organization
 39. **Draft copy in your voice from Next step** — create a draft on Next step after the profile and an example are saved. Done.
 40. **Add an offer from Next step** — save an offer on Next step when none are confirmed yet. Done.
 41. **Save the brand from Next step** — save name, what the business does, and who it serves on Next step when that is still empty. Done.
-42. **Save how the business works from Next step** — save the kind of business and how it creates value on Next step when that is still empty. This slice.
-43. **Guarded automation** — only after the above is trusted.
+42. **Save how the business works from Next step** — save the kind of business and how it creates value on Next step when that is still empty. Done.
+43. **Add a person from Next step** — copy the public form or add someone the owner already knows on Next step when no person has been captured yet. This slice.
+44. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
