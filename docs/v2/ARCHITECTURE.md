@@ -1322,7 +1322,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can save the brand voice even when that is not the main ask. Brand voice still has that form. GroovGro does not send email, post to social, or edit the live website.
 
-### 132. Keep Add a brand voice example on Next step when it is not the main ask (this slice)
+### 132. Keep Add a brand voice example on Next step when it is not the main ask
 
 **Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing voice example, that form only lived in the main recommendation. Brand voice still has that form. The owner had to leave Next step to paste writing they already like.
 
@@ -1331,6 +1331,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can add a brand voice example even when that is not the main ask. Brand voice still has that form. GroovGro does not send email, post to social, or edit the live website.
+
+### 133. Keep Draft copy in your voice on Next step when it is not the main ask (this slice)
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing voice draft, that form only lived in the main recommendation. Brand voice still has that form. The owner had to leave Next step to create a draft from the voice they saved.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can draft copy in the saved voice even when that is not the main ask. Brand voice still has that form. GroovGro keeps the draft in this workspace. It does not send email, post to social, or edit the live website.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1455,7 +1465,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Save how this business works on Next step when it is not the main ask is parked.** Next step can save how this business works even when that is not the main ask. Business still has that form. Do not start marketing, send email, or edit the live website.
 - **Keep Add an offer on Next step when it is not the main ask is parked.** Next step can add an offer even when that is not the main ask. Offers still has that form. Do not start marketing.
 - **Keep Save your brand voice on Next step when it is not the main ask is parked.** Next step can save the brand voice even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
-- **Keep Add a brand voice example on Next step when it is not the main ask (this slice).** Next step can add a brand voice example even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
+- **Keep Add a brand voice example on Next step when it is not the main ask is parked.** Next step can add a brand voice example even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
+- **Keep Draft copy in your voice on Next step when it is not the main ask (this slice).** Next step can draft copy in the saved voice even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
 
 ## DESIGN FOR LATER
 
@@ -1660,7 +1671,8 @@ Organization
 124. **Keep Save how this business works on Next step when it is not the main ask** — Next step can save how this business works even when that is not the main ask; Business still has that form. Done.
 125. **Keep Add an offer on Next step when it is not the main ask** — Next step can add an offer even when that is not the main ask; Offers still has that form. Done.
 126. **Keep Save your brand voice on Next step when it is not the main ask** — Next step can save the brand voice even when that is not the main ask; Brand voice still has that form. Done.
-127. **Keep Add a brand voice example on Next step when it is not the main ask** — Next step can add a brand voice example even when that is not the main ask; Brand voice still has that form. This slice.
-128. **Guarded automation** — only after the above is trusted.
+127. **Keep Add a brand voice example on Next step when it is not the main ask** — Next step can add a brand voice example even when that is not the main ask; Brand voice still has that form. Done.
+128. **Keep Draft copy in your voice on Next step when it is not the main ask** — Next step can draft copy in the saved voice even when that is not the main ask; Brand voice still has that form. This slice.
+129. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

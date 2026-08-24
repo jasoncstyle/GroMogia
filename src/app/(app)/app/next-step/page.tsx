@@ -850,6 +850,23 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.needsDraftBrandVoice &&
+          !isDraftBrandVoiceNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Draft copy in your voice</CardTitle>
+                <CardDescription>
+                  Create a draft here from the voice you saved. GroovGro
+                  keeps it in this workspace. It will not send email, post
+                  to social, or edit the live website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BrandVoiceDraftForm disabled={!canManageBrand} />
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.activateGoalId &&
           step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
             <Card>
