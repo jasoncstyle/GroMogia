@@ -972,7 +972,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can approve or reject proposed actions. Decisions lists them and names Next step. Approving does not run them. GroovGro does not execute.
 
-### 97. Keep Your work approval on Next step (this slice)
+### 97. Keep Your work approval on Next step
 
 **Reason:** Your work still showed Approve and Reject on waiting actions after Next step already had those buttons. The owner could approve from Your work instead of staying on Next step.
 
@@ -981,6 +981,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can approve or reject proposed actions. Your work lists waiting actions and names Next step. I did this stays on Your work. GroovGro does not execute.
+
+### 98. Keep Goals approval on Next step (this slice)
+
+**Reason:** Goals still showed Approve and Reject on proposed plan actions after Next step already had those buttons. The owner could approve from Goals instead of staying on Next step.
+
+**Affected:** Goals plan actions.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can approve or reject proposed actions. Goals lists them and names Next step. Draft and approve a plan still stay on Goals. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1070,7 +1080,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep specialists on Next step is parked.** Next step shows specialists and Save to Decision History. Intelligence is the briefing from connected data. Leave-alone still names the module page. Do not execute.
 - **Keep The path so far on Next step is parked.** Next step shows The path so far. Dashboard and Decisions name Next step for that story. Do not run marketing.
 - **Keep proposed-action approval on Next step is parked.** Next step can approve or reject proposed actions. Decisions lists them and names Next step. Do not execute.
-- **Keep Your work approval on Next step (this slice).** Next step can approve or reject proposed actions. Your work lists waiting actions and names Next step. Do not execute.
+- **Keep Your work approval on Next step is parked.** Next step can approve or reject proposed actions. Your work lists waiting actions and names Next step. Do not execute.
+- **Keep Goals approval on Next step (this slice).** Next step can approve or reject proposed actions. Goals lists them and names Next step. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -1240,7 +1251,8 @@ Organization
 89. **Keep specialists on Next step** — Next step shows specialists and Save to Decision History; Intelligence is the briefing from connected data. Done.
 90. **Keep The path so far on Next step** — Next step shows The path so far; Dashboard and Decisions name Next step for that story. Done.
 91. **Keep proposed-action approval on Next step** — Next step can approve or reject proposed actions; Decisions lists them and names Next step. Done.
-92. **Keep Your work approval on Next step** — Next step can approve or reject proposed actions; Your work lists waiting actions and names Next step. This slice.
-93. **Guarded automation** — only after the above is trusted.
+92. **Keep Your work approval on Next step** — Next step can approve or reject proposed actions; Your work lists waiting actions and names Next step. Done.
+93. **Keep Goals approval on Next step** — Next step can approve or reject proposed actions; Goals lists them and names Next step. This slice.
+94. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

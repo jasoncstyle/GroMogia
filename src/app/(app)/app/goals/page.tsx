@@ -14,7 +14,6 @@ import {
   GrowthPlanReviewButtons,
   ProposePlanActionsButton,
 } from "@/components/growth-plan-actions";
-import { WaitingActionButtons } from "@/components/next-step-actions";
 import { OwnerWorkButtons } from "@/components/owner-work-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { GoalCreateForm } from "@/components/goal-create-form";
@@ -77,7 +76,6 @@ export default async function GoalsPage() {
   const canCreateGoal = hasPermission(session.permissions, "create_goals");
   const canDraftPlan = hasPermission(session.permissions, "modify_goals");
   const canApprovePlan = hasPermission(session.permissions, "approve_plans");
-  const canApproveAction = hasPermission(session.permissions, "approve_actions");
   const canUpdateWork = hasPermission(session.permissions, "modify_goals");
   const actions = snapshot?.actions ?? [];
 
@@ -88,8 +86,9 @@ export default async function GoalsPage() {
         <p className="text-muted-foreground">
           A Goal is a measurable outcome. A draft stays a draft until you
           click Make this the active Goal. GroovGro can then draft a plan.
-          Approving that plan does not run marketing. Suggested goals stay
-          drafts until you confirm them.
+          Approving that plan does not run marketing. Approve or reject
+          proposed actions on Next step. Suggested goals stay drafts until
+          you confirm them.
         </p>
         <div className="mt-3">
           <ReviewConnectedDataButton disabled={!session.organizationId} />
@@ -432,10 +431,10 @@ export default async function GoalsPage() {
                             </p>
                             {action.status === "proposed" ||
                             action.status === "awaiting_approval" ? (
-                              <WaitingActionButtons
-                                actionId={action.id}
-                                canApprove={canApproveAction}
-                              />
+                              <p className="text-xs text-muted-foreground">
+                                Approve or reject this on Next step. Approving
+                                does not run it.
+                              </p>
                             ) : null}
                             {action.status === "approved" ? (
                               <OwnerWorkButtons
