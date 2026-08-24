@@ -1,5 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
+import { CONNECT_WEBSITE_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -222,7 +223,7 @@ function websiteReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Spe
       recommend: {
         kind: "recommend",
         classification: "operational",
-        title: "Connect the existing website",
+        title: CONNECT_WEBSITE_STEP_TITLE,
         body: "Paste the tracking snippet on the site you already have. Do not move the site into GroovGro.",
         href: "/app/website",
       },

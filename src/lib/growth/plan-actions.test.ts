@@ -194,6 +194,25 @@ describe("growth plan actions", () => {
     );
   });
 
+  it("does not copy the connect-website next step back into action text", () => {
+    const actions = draftActionsFromApprovedPlan({
+      goalTitle: "More people get in touch",
+      nextStepTitle: "Connect the existing website",
+      nextStepBody: "Paste the tracking snippet on the site you already have.",
+      nextStepKind: "recommend",
+      websiteConnected: true,
+      openLeadCount: 0,
+      confirmedOfferCount: 1,
+      inferredOfferCount: 0,
+    });
+    assert.equal(actions.length, 1);
+    assert.equal(actions[0]?.actionType, "watch_progress");
+    assert.doesNotMatch(
+      actions.map((action) => action.description).join(" "),
+      /Paste the tracking snippet on the site you already have/,
+    );
+  });
+
   it("does not bake industry-specific words into action helpers", () => {
     const source = readFileSync(join(process.cwd(), "src/lib/growth/plan-actions.ts"), "utf8");
     for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk", "electrician"]) {

@@ -439,4 +439,13 @@ describe("coordinated next step", () => {
     assert.match(source, /ConfirmRejectButtons/);
     assert.match(source, /CONFIRM_DRAFTS_STEP_TITLE/);
   });
+
+  it("puts the website address form on Next step when the site is not connected", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(source, /WebsiteConnectForm/);
+    assert.match(source, /CONNECT_WEBSITE_STEP_TITLE/);
+  });
 });

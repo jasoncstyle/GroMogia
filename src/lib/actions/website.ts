@@ -77,6 +77,8 @@ export async function saveWebsiteConnection(formData: FormData): Promise<ActionR
   revalidatePath("/app/website");
   revalidatePath("/app");
   revalidatePath("/app/analytics");
+  revalidatePath("/app/next-step");
+  revalidatePath("/app/business");
     return "Website saved";
   });
 }
