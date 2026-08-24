@@ -1630,4 +1630,26 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(page, /Change the schedule/);
     assert.doesNotMatch(page, /href="\/app\/goals"/);
   });
+
+  it("offers Next step from Website, Leads, Bookings, and the other owner pages", () => {
+    const link = readFileSync(
+      join(process.cwd(), "src/components/open-next-step-link.tsx"),
+      "utf8",
+    );
+    assert.match(link, /href="\/app\/next-step"/);
+    assert.match(link, /Open Next step/);
+    for (const file of [
+      "src/app/(app)/app/website/page.tsx",
+      "src/app/(app)/app/crm/page.tsx",
+      "src/app/(app)/app/commerce/page.tsx",
+      "src/app/(app)/app/seo/page.tsx",
+      "src/app/(app)/app/brand-voice/page.tsx",
+      "src/app/(app)/app/business/page.tsx",
+      "src/app/(app)/app/events/page.tsx",
+      "src/app/(app)/app/offers/page.tsx",
+    ]) {
+      const page = readFileSync(join(process.cwd(), file), "utf8");
+      assert.match(page, /OpenNextStepLink/, file);
+    }
+  });
 });

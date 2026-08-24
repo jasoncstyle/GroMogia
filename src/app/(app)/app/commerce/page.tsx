@@ -4,6 +4,7 @@ import { formatMoney } from "@/lib/money";
 import { getCommerceSnapshot } from "@/lib/phase2/queries";
 import { Badge } from "@/components/ui/badge";
 import { StripeReadCopyPanel } from "@/components/stripe-read-copy-panel";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import {
   Card,
   CardContent,
@@ -135,6 +136,8 @@ export default async function CommercePage() {
           )}
         </CardContent>
       </Card>
+
+      <OpenNextStepLink />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { getBrandVoicePageData, readDraftOutput } from "@/lib/phase5/queries";
 import { BrandVoiceDraftForm } from "@/components/brand-voice-draft-form";
 import { BrandVoiceExampleForm } from "@/components/brand-voice-example-form";
 import { BrandVoiceProfileForm } from "@/components/brand-voice-profile-form";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import {
@@ -150,6 +151,8 @@ export default async function BrandVoicePage() {
           </Card>
         </>
       )}
+
+      <OpenNextStepLink />
     </div>
   );
 }

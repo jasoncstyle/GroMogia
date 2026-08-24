@@ -10,6 +10,7 @@ import { resolveOrganizationSlug } from "@/lib/org";
 import { formatMoney } from "@/lib/money";
 import { CopyLink } from "@/components/copy-link";
 import { LeadCreateForm } from "@/components/lead-create-form";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
@@ -235,6 +236,8 @@ export default async function CrmPage() {
           )}
         </CardContent>
       </Card>
+
+      <OpenNextStepLink />
     </div>
   );
 }

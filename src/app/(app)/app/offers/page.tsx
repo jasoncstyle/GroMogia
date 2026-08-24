@@ -5,6 +5,7 @@ import {
   ReviewConnectedDataButton,
 } from "@/components/growth-review";
 import { OfferCreateForm } from "@/components/offer-create-form";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { CONSTRAINT_TYPES, labelFor } from "@/lib/growth/types";
@@ -230,6 +231,8 @@ export default async function OffersPage() {
           )}
         </CardContent>
       </Card>
+
+      <OpenNextStepLink />
     </div>
   );
 }

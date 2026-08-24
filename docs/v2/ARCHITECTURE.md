@@ -602,7 +602,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If a Goal reached its target, what changed says to read the history on Next step. If a next Goal was already drafted, the toast says Open Next step. If SEO has no connected website, Connect website opens Next step. GroovGro does not start marketing.
 
-### 60. Dashboard Connect website opens Next step (this slice)
+### 60. Dashboard Connect website opens Next step
 
 **Reason:** The home screen still had an outline Connect website button that opened Website. The website address form already lives on Next step.
 
@@ -611,6 +611,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Connect website on the home screen opens Next step. Next step stays the filled button. GroovGro does not move the live site.
+
+### 61. Owner module pages offer Next step (this slice)
+
+**Reason:** Website, Leads, Bookings, SEO, Brand voice, Business, Events, and Offers had no way back to Next step if the owner landed there.
+
+**Affected:** Those owner pages.
+
+**Migration risk:** None.
+
+**Current functionality:** Those pages have an outline Open Next step button. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -663,7 +673,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Growth review can change the schedule here is parked.** Save the day and time on Growth review. Do not send the owner to Goals. Do not change the business then.
 - **Your work filled button is Next step is parked.** Open Next step is the filled button. Open the approved plan stays outline so the owner can read it. Do not execute.
 - **What changed and next-Goal copy name Next step is parked.** Read the history and review a drafted next Goal on Next step. SEO Connect website opens Next step. Do not start marketing.
-- **Dashboard Connect website opens Next step (this slice).** The outline Connect website button opens Next step. Do not move the live site.
+- **Dashboard Connect website opens Next step is parked.** The outline Connect website button opens Next step. Do not move the live site.
+- **Owner module pages offer Next step (this slice).** Website, Leads, Bookings, SEO, Brand voice, Business, Events, and Offers have Open Next step. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -796,7 +807,8 @@ Organization
 52. **Growth review can change the schedule here** — save the day and time on Growth review instead of sending the owner to Goals. Done.
 53. **Your work filled button is Next step** — Open Next step is the filled button; Open the approved plan stays outline so the owner can read it. Done.
 54. **What changed and next-Goal copy name Next step** — read the history and review a drafted next Goal on Next step; SEO Connect website opens Next step. Done.
-55. **Dashboard Connect website opens Next step** — the outline Connect website button opens Next step. This slice.
-56. **Guarded automation** — only after the above is trusted.
+55. **Dashboard Connect website opens Next step** — the outline Connect website button opens Next step. Done.
+56. **Owner module pages offer Next step** — Website, Leads, Bookings, SEO, Brand voice, Business, Events, and Offers have Open Next step. This slice.
+57. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -20,6 +20,7 @@ import {
   ReviewConnectedDataButton,
 } from "@/components/growth-review";
 import { WebsitePageChecklist } from "@/components/website-page-checklist";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -187,6 +188,8 @@ export default async function BusinessBrainPage() {
           href="/app/goals"
         />
       </div>
+
+      <OpenNextStepLink />
     </div>
   );
 }

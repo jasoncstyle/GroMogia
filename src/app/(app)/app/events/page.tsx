@@ -6,6 +6,7 @@ import { events } from "@/lib/db/schema";
 import { getGrowthLinkOptions } from "@/lib/growth/queries";
 import { formatMoney } from "@/lib/money";
 import { EventCreateForm } from "@/components/event-create-form";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { hasPermission } from "@/lib/permissions";
 import {
   Card,
@@ -113,6 +114,8 @@ export default async function EventsPage() {
           )}
         </CardContent>
       </Card>
+
+      <OpenNextStepLink />
     </div>
   );
 }

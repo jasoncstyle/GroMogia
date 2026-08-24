@@ -17,6 +17,7 @@ import { StatusAlertList } from "@/components/status-alert";
 import { TrackingSnippet } from "@/components/tracking-snippet";
 import { WebsitePageChecklist } from "@/components/website-page-checklist";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import {
   Card,
   CardContent,
@@ -170,6 +171,8 @@ export default async function WebsitePage() {
           </CardContent>
         </Card>
       ) : null}
+
+      <OpenNextStepLink />
     </div>
   );
 }
