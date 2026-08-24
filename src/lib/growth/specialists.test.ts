@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { FOLLOW_UP_LEADS_STEP_TITLE } from "./plan-draft";
+import { FOLLOW_UP_LEADS_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -72,6 +72,7 @@ describe("growth specialists", () => {
     assert.equal(seo.recommend.classification, "operational");
     assert.equal(seo.recommend.href, "/app/seo");
     assert.equal(seo.executeAllowed, false);
+    assert.equal(seo.recommend.title, RUN_SEO_STEP_TITLE);
     assert.match(seo.recommend.body, /will not edit the website/);
   });
 

@@ -28,6 +28,8 @@ import { getBuilderEditorData, listBuilderPages } from "@/lib/website-builder/qu
 
 function revalidateSeo() {
   revalidatePath("/app/seo");
+  revalidatePath("/app/next-step");
+  revalidatePath("/app");
 }
 
 async function requireSeoEditor() {

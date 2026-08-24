@@ -112,7 +112,7 @@ When approved actions are ready, Next step lists them with Open the page, I did 
 
 When the owner has marked work done, Next step asks them to compare the Goal number. GroovGro does not change the plan.
 
-**First build slice (this branch):** Next step can confirm or reject suggested offers and goals, save the existing website address, review a connected website that has not been read yet, open Leads & customers when that is the recommendation, and save this week’s growth review when the recommendation is wait. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
+**First build slice (this branch):** Next step can confirm or reject suggested offers and goals, save the existing website address, review a connected website that has not been read yet, open Leads & customers when that is the recommendation, run a homepage SEO check, and save this week’s growth review when the recommendation is wait. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
 
 ## Stripe (do not mix, do not replace)
 

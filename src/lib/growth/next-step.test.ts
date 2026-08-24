@@ -529,4 +529,22 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.kind, "no_change_yet");
     assert.equal(step.primary.source, "learning");
   });
+
+  it("puts Run homepage check on Next step when SEO has not been checked", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({ seoCheckedAt: null, openLeadCount: 0, websiteConnected: true }),
+      ),
+      waitingActions: [],
+    });
+    assert.equal(step.primary.title, "Run an SEO check");
+    assert.equal(step.primary.href, "/app/seo");
+    assert.match(page, /RUN_SEO_STEP_TITLE/);
+    assert.match(page, /RunHomepageSeoButton/);
+  });
 });

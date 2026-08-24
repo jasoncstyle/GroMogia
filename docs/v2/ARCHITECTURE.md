@@ -272,7 +272,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If Next step is follow up open leads, the owner opens Leads & customers from that page. GroovGro does not email anyone.
 
-### 27. Save this week’s growth review from Next step (this slice)
+### 27. Save this week’s growth review from Next step
 
 **Reason:** When the coordinated next step is wait from the weekly review, the owner still had to open Growth review to save it. Put that save on Next step.
 
@@ -281,6 +281,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If Next step is wait from the review, the owner can save this week’s review to Decision History there. After Check what changed, a wait still uses Save nothing yet. GroovGro does not execute.
+
+### 28. Run an SEO check from Next step (this slice)
+
+**Reason:** When no SEO check has been saved, Next step already names that work. Put Run homepage check there so the owner does not have to open SEO first. GroovGro must not edit the website.
+
+**Affected:** Next step. Reuses `runSeoAudit`. Does not change the connected website.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is run an SEO check, the owner can run the homepage check there. GroovGro does not edit the live site.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -300,7 +310,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Do owner work from Next step is parked.** Ask the owner to do approved work on Next step. Do not execute.
 - **Check what changed from Next step is parked.** Ask the owner to compare the Goal number after work. Do not execute.
 - **Confirm Business drafts from Next step is parked.** Ask the owner to confirm or reject suggested offers and goals. Do not execute. Do not start ads.
-- **Save this week’s growth review from Next step (this slice).** Ask the owner to save the weekly wait to Decision History. Do not execute.
+- **Save this week’s growth review from Next step is parked.** Ask the owner to save the weekly wait to Decision History. Do not execute.
+- **Run an SEO check from Next step (this slice).** Ask the owner to run the homepage check. Do not edit the live site.
 
 ## DESIGN FOR LATER
 
@@ -400,7 +411,8 @@ Organization
 19. **Do owner work from Next step** — ask the owner to do approved work on Next step. Done.
 20. **Check what changed from Next step** — ask the owner to compare the Goal number after work. Done.
 21. **Confirm Business drafts from Next step** — ask the owner to confirm or reject suggested offers and goals. Done.
-22. **Connect, review, follow up, and save wait from Next step** — keep those owner buttons on Next step. This slice.
-23. **Guarded automation** — only after the above is trusted.
+22. **Connect, review, follow up, and save wait from Next step** — keep those owner buttons on Next step. Done.
+23. **Run an SEO check from Next step** — run the homepage check on Next step. This slice.
+24. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

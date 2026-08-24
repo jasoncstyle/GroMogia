@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_WEBSITE_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_WEBSITE_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -163,7 +163,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
     recommend = {
       kind: "recommend",
       classification: "operational",
-      title: "Run an SEO check",
+      title: RUN_SEO_STEP_TITLE,
       body: "Open SEO and check the connected homepage. GroovGro will not edit the website.",
       href: "/app/seo",
     };

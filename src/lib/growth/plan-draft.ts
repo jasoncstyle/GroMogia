@@ -66,6 +66,7 @@ export const CONFIRM_DRAFTS_STEP_TITLE = "Confirm or reject what GroovGro drafte
 export const CONNECT_WEBSITE_STEP_TITLE = "Connect the existing website";
 export const REVIEW_SITE_STEP_TITLE = "Review the connected website";
 export const FOLLOW_UP_LEADS_STEP_TITLE = "Follow up open leads";
+export const RUN_SEO_STEP_TITLE = "Run an SEO check";
 
 function isPlanLoopNextStep(title: string): boolean {
   const text = clean(title);
