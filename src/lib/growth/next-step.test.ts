@@ -641,6 +641,40 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.source, "drafts");
   });
 
+  it("keeps website review on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 1, websiteConnected: true })),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: false,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsWebsiteReview, true);
+    assert.match(page, /needsWebsiteReview/);
+    assert.match(page, /primary\.title !== REVIEW_SITE_STEP_TITLE/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/business/page.tsx"), "utf8"),
+      /ReviewConnectedDataButton/,
+    );
+    assert.doesNotMatch(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/website/page.tsx"), "utf8"),
+      /WebsitePageChecklist/,
+    );
+    const alreadyRead = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 1, websiteConnected: true })),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(alreadyRead.needsWebsiteReview, false);
+  });
+
   it("puts Review connected data on Next step when the site is saved but unread", () => {
     const source = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),

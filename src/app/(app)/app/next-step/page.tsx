@@ -113,7 +113,7 @@ export default async function NextStepPage({
       ? await getGrowthSettingsForm(session.organizationId)
       : null;
   const discoveredPages =
-    session.organizationId && step?.primary.title === REVIEW_SITE_STEP_TITLE
+    session.organizationId && step?.needsWebsiteReview
       ? await getDiscoveredWebsitePages(session.organizationId)
       : [];
   const approvedStoryPlan =
@@ -584,6 +584,27 @@ export default async function NextStepPage({
                     />
                   </div>
                 ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsWebsiteReview &&
+          step.primary.title !== REVIEW_SITE_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Review the connected website</CardTitle>
+                <CardDescription>
+                  The website address is saved, but GroovGro has not read
+                  the pages yet. Find pages here, check the important ones,
+                  then review. GroovGro will not change the live site.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <WebsitePageChecklist
+                  pages={discoveredPages}
+                  disabled={!canManageWebsite && !canManageOffers}
+                />
+                <ReviewConnectedDataButton disabled={!session.organizationId} />
               </CardContent>
             </Card>
           ) : null}

@@ -197,6 +197,7 @@ export type CoordinatedNextStep = {
   reports: SpecialistReport[]
   finishedWorkCount: number
   latestLearning: string
+  needsWebsiteReview: boolean
   executeAllowed: false
 };
 
@@ -514,6 +515,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     reports: input.reports,
     finishedWorkCount: input.finishedWorkCount ?? 0,
     latestLearning: input.latestLearning ?? "",
+    needsWebsiteReview: Boolean(reviewSite),
     executeAllowed: false,
   };
 }
