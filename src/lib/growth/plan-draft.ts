@@ -64,6 +64,7 @@ export const OWNER_WORK_STEP_TITLE = "Do the work you already approved";
 export const CHECK_CHANGED_STEP_TITLE = "Check what changed";
 export const CONFIRM_DRAFTS_STEP_TITLE = "Confirm or reject what GroovGro drafted";
 export const CONNECT_WEBSITE_STEP_TITLE = "Connect the existing website";
+export const REVIEW_SITE_STEP_TITLE = "Review the connected website";
 
 function isPlanLoopNextStep(title: string): boolean {
   const text = clean(title);
@@ -75,7 +76,8 @@ function isPlanLoopNextStep(title: string): boolean {
     text === OWNER_WORK_STEP_TITLE ||
     text === CHECK_CHANGED_STEP_TITLE ||
     text === CONFIRM_DRAFTS_STEP_TITLE ||
-    text === CONNECT_WEBSITE_STEP_TITLE
+    text === CONNECT_WEBSITE_STEP_TITLE ||
+    text === REVIEW_SITE_STEP_TITLE
   );
 }
 

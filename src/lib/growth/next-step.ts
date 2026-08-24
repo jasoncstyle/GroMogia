@@ -1,12 +1,12 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
 export type NextStepKind = "no_change_yet" | "recommend";
 export type NextStepClass = "operational" | "optimization" | "strategic";
-export type NextStepSource = "drafts" | "specialist" | "review" | "owner_work" | "learning" | "goals";
+export type NextStepSource = "drafts" | "specialist" | "review" | "owner_work" | "learning" | "goals" | "website";
 
 export type NextStepCandidate = {
   kind: NextStepKind
@@ -60,6 +60,8 @@ export type NextStepInput = {
   uncheckedWork?: UncheckedWork[]
   uncheckedWorkCount?: number
   inferredDrafts?: InferredDraft[]
+  websiteConnected?: boolean
+  websiteRead?: boolean
   latestLearningKind?: WorkLearningKind | ""
   latestLearningOutcome?: string
   latestLearningGoalId?: string | null
@@ -105,6 +107,23 @@ function draftsCandidate(count: number): NextStepCandidate | null {
     body: `${count} suggested offer${count === 1 ? "" : "s or goals"} still need you to confirm or reject here. Nothing becomes active until you do. GroovGro will not start marketing.`,
     href: "/app/business",
     source: "drafts",
+    specialistId: null,
+    goalId: null,
+  };
+}
+
+function reviewSiteCandidate(
+  connected: boolean | undefined,
+  read: boolean | undefined,
+): NextStepCandidate | null {
+  if (!connected || read !== false) return null;
+  return {
+    kind: "recommend",
+    classification: "operational",
+    title: REVIEW_SITE_STEP_TITLE,
+    body: "The website address is saved, but GroovGro has not read the pages yet. Find pages on Website, check the important ones, then review here. GroovGro will not change the live site.",
+    href: "/app/website",
+    source: "website",
     specialistId: null,
     goalId: null,
   };
@@ -340,6 +359,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   const checkChanged = checkChangedCandidate(
     input.uncheckedWorkCount ?? uncheckedWork.length,
   );
+  const reviewSite = reviewSiteCandidate(input.websiteConnected, input.websiteRead);
   const activate = activateGoalCandidate(input.activateGoalId, input.activateGoalTitle);
   const draftPlan = draftPlanCandidate(input.planGoalId, input.planGoalTitle);
   const approvePlan = approvePlanCandidate(input);
@@ -357,7 +377,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   ].sort((a, b) => score(b) - score(a));
 
   return {
-    primary: drafts ?? ownerWork ?? checkChanged ?? activate ?? draftPlan ?? approvePlan ?? proposeActions ?? waitingApprove ?? learning ?? ranked[0] ?? nothingYet(),
+    primary: drafts ?? ownerWork ?? checkChanged ?? reviewSite ?? activate ?? draftPlan ?? approvePlan ?? proposeActions ?? waitingApprove ?? learning ?? ranked[0] ?? nothingYet(),
     leftAlone,
     waitingActions,
     openWork,

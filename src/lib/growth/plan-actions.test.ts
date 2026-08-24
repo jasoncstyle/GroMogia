@@ -213,6 +213,25 @@ describe("growth plan actions", () => {
     );
   });
 
+  it("does not copy the review-website next step back into action text", () => {
+    const actions = draftActionsFromApprovedPlan({
+      goalTitle: "More people get in touch",
+      nextStepTitle: "Review the connected website",
+      nextStepBody: "Find pages, then review here.",
+      nextStepKind: "recommend",
+      websiteConnected: true,
+      openLeadCount: 0,
+      confirmedOfferCount: 1,
+      inferredOfferCount: 0,
+    });
+    assert.equal(actions.length, 1);
+    assert.equal(actions[0]?.actionType, "watch_progress");
+    assert.doesNotMatch(
+      actions.map((action) => action.description).join(" "),
+      /Review the connected website/,
+    );
+  });
+
   it("does not bake industry-specific words into action helpers", () => {
     const source = readFileSync(join(process.cwd(), "src/lib/growth/plan-actions.ts"), "utf8");
     for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk", "electrician"]) {

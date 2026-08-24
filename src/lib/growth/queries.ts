@@ -28,6 +28,7 @@ import { coordinateNextStep } from "@/lib/growth/next-step";
 import { isOpenOwnerWork, needsWhatChangedCheck } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
 import { generateGrowthReview } from "@/lib/growth/review";
+import { websiteWasRead } from "@/lib/growth/status-alerts";
 import {
   buildSpecialistReports,
   type SpecialistFacts,
@@ -344,9 +345,10 @@ export async function getSpecialistReports(organizationId: string) {
 }
 
 export async function getCoordinatedNextStep(organizationId: string) {
-  const [snapshot, reports] = await Promise.all([
+  const [snapshot, reports, dashboard] = await Promise.all([
     getGrowthSnapshot(organizationId),
     getSpecialistReports(organizationId),
+    getDashboardSnapshot(organizationId),
   ]);
   if (!snapshot) return null;
 
@@ -429,5 +431,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
     proposePlanGoalTitle: propose?.goal.title ?? "",
     proposePlanVersion: propose?.plan.version,
     activeGoalIds: snapshot.activeGoals.map((goal) => goal.id),
+    websiteConnected: Boolean(dashboard.website?.publicUrl),
+    websiteRead: websiteWasRead(snapshot.brain?.inferredSummary),
   });
 }

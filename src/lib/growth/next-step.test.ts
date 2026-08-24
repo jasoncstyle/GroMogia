@@ -448,4 +448,38 @@ describe("coordinated next step", () => {
     assert.match(source, /WebsiteConnectForm/);
     assert.match(source, /CONNECT_WEBSITE_STEP_TITLE/);
   });
+
+  it("asks the owner to review a saved website before specialist follow-up", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts({ openLeadCount: 3, websiteConnected: true })),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: false,
+    });
+    assert.equal(step.primary.title, "Review the connected website");
+    assert.equal(step.primary.source, "website");
+    assert.match(step.primary.body, /will not change the live site/);
+    assert.equal(step.executeAllowed, false);
+  });
+
+  it("keeps confirming drafts ahead of reviewing a saved website", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 1, websiteConnected: true })),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: false,
+    });
+    assert.equal(step.primary.source, "drafts");
+  });
+
+  it("puts Review connected data on Next step when the site is saved but unread", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(source, /ReviewConnectedDataButton/);
+    assert.match(source, /REVIEW_SITE_STEP_TITLE/);
+  });
 });
