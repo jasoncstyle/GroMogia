@@ -202,6 +202,7 @@ export type CoordinatedNextStep = {
   activateGoalTitle: string
   planGoalId: string | null
   planGoalTitle: string
+  approvePlanId: string | null
   executeAllowed: false
 };
 
@@ -524,6 +525,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     activateGoalTitle: (input.activateGoalTitle ?? "").replace(/\s+/g, " ").trim(),
     planGoalId: draftPlan?.goalId ?? null,
     planGoalTitle: (input.planGoalTitle ?? "").replace(/\s+/g, " ").trim(),
+    approvePlanId: approvePlan?.planId ?? null,
     executeAllowed: false,
   };
 }

@@ -699,6 +699,13 @@ export default async function NextStepPage({
                   disabled={!canDraftPlan}
                 />
               ) : null}
+              {step.approvePlanId &&
+              step.primary.title !== APPROVE_PLAN_STEP_TITLE ? (
+                <GrowthPlanReviewButtons
+                  planId={step.approvePlanId}
+                  canApprove={canApprovePlan}
+                />
+              ) : null}
             </CardContent>
           </Card>
 

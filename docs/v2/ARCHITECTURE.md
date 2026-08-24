@@ -1182,7 +1182,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can make a draft the active Goal even when that is not the main ask. Goals lists that draft and names Next step. GroovGro does not start marketing.
 
-### 118. Keep Draft a plan on Next step when it is not the main ask (this slice)
+### 118. Keep Draft a plan on Next step when it is not the main ask
 
 **Reason:** When activate, drafts, approved work, Check what changed, or an unread website outranked a missing plan, Draft a plan only lived in the main recommendation. Goals no longer has that button. Write a plan yourself still stays on Goals. The owner had to finish the other ask first, or leave Next step with no way to draft a plan.
 
@@ -1191,6 +1191,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can draft a plan for the active Goal even when that is not the main ask. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. GroovGro does not execute.
+
+### 119. Keep Approve a plan on Next step when it is not the main ask (this slice)
+
+**Reason:** When a missing plan, activate, drafts, approved work, Check what changed, or an unread website outranked a draft plan, Approve and Reject only lived in the main recommendation. Goals no longer has those buttons. The owner had to finish the other ask first, or leave Next step with no way to approve the draft.
+
+**Affected:** Next step plan card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can approve or reject a draft plan even when that is not the main ask. Goals lists draft plans and names Next step. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1301,7 +1311,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep I did this on Next step when it is not the main ask is parked.** Next step can mark approved work done even when that is not the main ask. Your work still has those buttons. Do not execute.
 - **Keep website review on Next step when it is not the main ask is parked.** Next step can find pages, check the important ones, then review even when that is not the main ask. Business still has Review to run it again. Do not change the live site.
 - **Keep Activate Goal on Next step when it is not the main ask is parked.** Next step can make a draft the active Goal even when that is not the main ask. Goals lists that draft and names Next step. Do not start marketing.
-- **Keep Draft a plan on Next step when it is not the main ask (this slice).** Next step can draft a plan for the active Goal even when that is not the main ask. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Do not execute.
+- **Keep Draft a plan on Next step when it is not the main ask is parked.** Next step can draft a plan for the active Goal even when that is not the main ask. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Do not execute.
+- **Keep Approve a plan on Next step when it is not the main ask (this slice).** Next step can approve or reject a draft plan even when that is not the main ask. Goals lists draft plans and names Next step. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -1492,7 +1503,8 @@ Organization
 110. **Keep I did this on Next step when it is not the main ask** — Next step can mark approved work done even when that is not the main ask; Your work still has those buttons. Done.
 111. **Keep website review on Next step when it is not the main ask** — Next step can find pages, check the important ones, then review even when that is not the main ask; Business still has Review to run it again. Done.
 112. **Keep Activate Goal on Next step when it is not the main ask** — Next step can make a draft the active Goal even when that is not the main ask; Goals lists that draft and names Next step. Done.
-113. **Keep Draft a plan on Next step when it is not the main ask** — Next step can draft a plan for the active Goal even when that is not the main ask; Goals lists goals and names Next step. Write a plan yourself still stays on Goals. This slice.
-114. **Guarded automation** — only after the above is trusted.
+113. **Keep Draft a plan on Next step when it is not the main ask** — Next step can draft a plan for the active Goal even when that is not the main ask; Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Done.
+114. **Keep Approve a plan on Next step when it is not the main ask** — Next step can approve or reject a draft plan even when that is not the main ask; Goals lists draft plans and names Next step. This slice.
+115. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

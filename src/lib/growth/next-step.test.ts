@@ -411,6 +411,31 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.title, "Draft a plan for this Goal");
   });
 
+  it("keeps Approve a plan on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      planGoalId: "goal-2",
+      planGoalTitle: "Next: More people get in touch",
+      approvePlanId: "plan-9",
+      approvePlanGoalId: "goal-9",
+      approvePlanGoalTitle: "Something else",
+    });
+    assert.equal(step.primary.title, "Draft a plan for this Goal");
+    assert.equal(step.approvePlanId, "plan-9");
+    assert.match(page, /approvePlanId/);
+    assert.match(page, /primary\.title !== APPROVE_PLAN_STEP_TITLE/);
+    assert.doesNotMatch(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/goals/page.tsx"), "utf8"),
+      /GrowthPlanReviewButtons/,
+    );
+  });
+
   it("asks the owner to propose first actions after a plan is approved", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,
