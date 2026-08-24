@@ -192,6 +192,40 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.title, "Make this the active Goal");
   });
 
+  it("asks the owner to approve a draft plan before specialist follow-up", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts({ openLeadCount: 3 })),
+      waitingActions: [],
+      approvePlanId: "plan-2",
+      approvePlanGoalId: "goal-2",
+      approvePlanGoalTitle: "Next: More people get in touch",
+      approvePlanVersion: 2,
+      approvePlanExcerpt: "Follow up open leads. GroovGro will not run this.",
+    });
+    assert.equal(step.primary.title, "Approve this plan");
+    assert.equal(step.primary.planId, "plan-2");
+    assert.equal(step.primary.goalId, "goal-2");
+    assert.equal(step.primary.source, "goals");
+    assert.match(step.primary.body, /does not run marketing/);
+    assert.match(step.primary.body, /will not run this/);
+    assert.equal(step.executeAllowed, false);
+  });
+
+  it("keeps drafting a missing plan ahead of approving a different draft", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      planGoalId: "goal-2",
+      planGoalTitle: "Next: More people get in touch",
+      approvePlanId: "plan-9",
+      approvePlanGoalId: "goal-9",
+      approvePlanGoalTitle: "Something else",
+    });
+    assert.equal(step.primary.title, "Draft a plan for this Goal");
+  });
+
   it("points at Goals when learning says the target was reached", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,

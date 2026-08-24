@@ -63,7 +63,7 @@ function planLine(facts: GrowthStoryFacts): string {
     return `An approved Growth Plan${version} is the current write-up. Approving it did not run marketing.`;
   }
   if (clean(facts.goalTitle)) {
-    return "There is a Goal, but no approved plan yet. Draft a plan on Next step or Goals. GroovGro will not run it.";
+    return "There is a Goal, but no approved plan yet. Draft or approve a plan on Next step or Goals. GroovGro will not run it.";
   }
   return "A plan comes after a Goal. Open Goals first.";
 }

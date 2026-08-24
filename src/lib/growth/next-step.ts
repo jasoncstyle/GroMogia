@@ -1,6 +1,6 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
-import { DRAFT_PLAN_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -17,6 +17,7 @@ export type NextStepCandidate = {
   source: NextStepSource
   specialistId: SpecialistId | null
   goalId: string | null
+  planId?: string | null
 };
 
 export type WaitingAction = {
@@ -39,6 +40,11 @@ export type NextStepInput = {
   activateGoalTitle?: string
   planGoalId?: string | null
   planGoalTitle?: string
+  approvePlanId?: string | null
+  approvePlanGoalId?: string | null
+  approvePlanGoalTitle?: string
+  approvePlanVersion?: number
+  approvePlanExcerpt?: string
   activeGoalIds?: string[]
 };
 
@@ -116,6 +122,27 @@ function draftPlanCandidate(
     source: "goals",
     specialistId: null,
     goalId,
+  };
+}
+
+function approvePlanCandidate(input: NextStepInput): NextStepCandidate | null {
+  if (!input.approvePlanId) return null;
+  const name =
+    (input.approvePlanGoalTitle ?? "").replace(/\s+/g, " ").trim() || "this Goal";
+  const version = input.approvePlanVersion;
+  const versionLabel = version != null ? ` v${version}` : "";
+  const excerpt = (input.approvePlanExcerpt ?? "").replace(/\s+/g, " ").trim();
+  const intro = `“${name}” has draft plan${versionLabel} waiting. Approve or reject it. Approving does not run marketing.`;
+  return {
+    kind: "recommend",
+    classification: "operational",
+    title: APPROVE_PLAN_STEP_TITLE,
+    body: excerpt ? `${intro} ${excerpt}` : intro,
+    href: "/app/goals",
+    source: "goals",
+    specialistId: null,
+    goalId: input.approvePlanGoalId ?? null,
+    planId: input.approvePlanId,
   };
 }
 
@@ -228,6 +255,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   const ownerWork = ownerWorkCandidate(input.openWorkCount ?? 0);
   const activate = activateGoalCandidate(input.activateGoalId, input.activateGoalTitle);
   const draftPlan = draftPlanCandidate(input.planGoalId, input.planGoalTitle);
+  const approvePlan = approvePlanCandidate(input);
   const learning = learningCandidate(input);
   const usable = input.reports.filter((report) => !DISCONNECTED_CHANNELS.has(report.id));
   const leftAlone = [
@@ -240,7 +268,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   ].sort((a, b) => score(b) - score(a));
 
   return {
-    primary: drafts ?? ownerWork ?? activate ?? draftPlan ?? learning ?? ranked[0] ?? nothingYet(),
+    primary: drafts ?? ownerWork ?? activate ?? draftPlan ?? approvePlan ?? learning ?? ranked[0] ?? nothingYet(),
     leftAlone,
     waitingActions,
     executeAllowed: false,
