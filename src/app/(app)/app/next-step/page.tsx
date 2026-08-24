@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { DraftGrowthPlanButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { NextStepResponseButtons, WaitingActionButtons } from "@/components/next-step-actions";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
+import { DRAFT_PLAN_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 
@@ -24,6 +26,7 @@ export default async function NextStepPage() {
   const canApprove = hasPermission(session.permissions, "approve_actions");
   const canCreateGoal = hasPermission(session.permissions, "create_goals");
   const canActivateGoal = hasPermission(session.permissions, "modify_goals");
+  const canDraftPlan = hasPermission(session.permissions, "modify_goals");
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -72,6 +75,11 @@ export default async function NextStepPage() {
               step.primary.title === "Make this the active Goal" &&
               step.primary.goalId ? (
                 <ActivateGoalButton goalId={step.primary.goalId} />
+              ) : null}
+              {canDraftPlan &&
+              step.primary.title === DRAFT_PLAN_STEP_TITLE &&
+              step.primary.goalId ? (
+                <DraftGrowthPlanButton goalId={step.primary.goalId} />
               ) : null}
             </CardContent>
           </Card>
@@ -129,7 +137,8 @@ export default async function NextStepPage() {
             <CardHeader>
               <CardTitle>Write it as a plan</CardTitle>
               <CardDescription>
-                Next step is one thing to do now. A Growth Plan is a versioned
+                Next step is one thing to do now. If GroovGro asks you to draft
+                a plan, use the button above. A Growth Plan is a versioned
                 write-up for a Goal. After you approve a plan, GroovGro can
                 propose the first actions. Nothing runs until you say so, and
                 even then GroovGro does not execute.

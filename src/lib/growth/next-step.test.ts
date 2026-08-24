@@ -160,6 +160,38 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.href, "/app/business");
   });
 
+  it("asks the owner to draft a plan for an active Goal after moving on", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      latestLearningKind: "target_reached",
+      latestLearningOutcome: "The Goal reached its target. GroovGro will not start a new campaign.",
+      latestLearningGoalId: "goal-1",
+      activeGoalIds: ["goal-2"],
+      planGoalId: "goal-2",
+      planGoalTitle: "Next: More people get in touch",
+    });
+    assert.equal(step.primary.title, "Draft a plan for this Goal");
+    assert.equal(step.primary.goalId, "goal-2");
+    assert.equal(step.primary.source, "goals");
+    assert.match(step.primary.body, /will not run it/);
+    assert.equal(step.executeAllowed, false);
+  });
+
+  it("keeps activate ahead of drafting a plan", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      activateGoalId: "goal-2",
+      activateGoalTitle: "Next: More people get in touch",
+      planGoalId: "goal-3",
+      planGoalTitle: "Another Goal",
+    });
+    assert.equal(step.primary.title, "Make this the active Goal");
+  });
+
   it("points at Goals when learning says the target was reached", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,

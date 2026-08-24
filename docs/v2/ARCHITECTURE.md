@@ -140,7 +140,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None. Reads existing actions and decision outcomes.
 
-**Current functionality:** Next step priority is (1) confirm drafts, (2) do approved work on Your work, (3) make a drafted next Goal active, (4) use the latest what-changed outcome, (5) specialist recommend, (6) wait. Ads, email, and social stay left alone. GroovGro does not execute.
+**Current functionality:** Next step priority is (1) confirm drafts, (2) do approved work on Your work, (3) make a drafted next Goal active, (4) draft a plan for an active Goal that has none, (5) use the latest what-changed outcome, (6) specialist recommend, (7) wait. Ads, email, and social stay left alone. GroovGro does not execute.
 
 ### 14. The path so far
 
@@ -162,7 +162,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If a Goal is achieved or the live number meets the target, the owner can draft the next Goal. The new target is the current number plus the previous target size. It is saved as a draft. GroovGro does not execute.
 
-### 16. Make a draft Goal active (this slice)
+### 16. Make a draft Goal active
 
 **Reason:** After a next Goal is drafted, the owner still had to hunt a status dropdown. One button should make that draft the active Goal.
 
@@ -171,6 +171,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** A reviewed draft Goal can be made active. Suggested website drafts stay on Business. If the draft came from a reached Goal, that older Goal is marked achieved. Other active Goals are paused. GroovGro does not execute.
+
+### 17. Draft a plan from Next step (this slice)
+
+**Reason:** After a Goal is made active, the owner still had to open Goals to draft a plan. Next step should name that and put the button there. A reached-Goal note from the previous Goal should not keep showing.
+
+**Affected:** `src/lib/growth/plan-draft.ts`, `src/lib/growth/next-step.ts`, Next step. Reuses `draftGrowthPlanForGoal`. Does not auto-approve or execute.
+
+**Migration risk:** None.
+
+**Current functionality:** If an active Goal has no draft or approved plan and has not reached its target, Next step asks the owner to draft a plan. The Draft a plan button is on Next step. Confirming Business drafts, Your work, and activating a next Goal still come first. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -182,7 +192,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Next step learning is parked.** Coordinate drafts, Your work, and what changed. Do not execute.
 - **Growth story is parked.** One path so far. Do not execute.
 - **Next Goal is parked.** Draft the next Goal after one is reached. Do not execute.
-- **Activate Goal (this slice).** Make a reviewed draft the active Goal. Do not execute. Do not start ads.
+- **Activate Goal is parked.** Make a reviewed draft the active Goal. Do not execute.
+- **Draft a plan from Next step (this slice).** Ask the owner to draft a plan for the active Goal. Do not execute. Do not start ads.
 
 ## DESIGN FOR LATER
 
@@ -274,7 +285,8 @@ Organization
 11. **Next step uses learning** — drafts, Your work, then what changed. Done.
 12. **Growth story** — one path so far on Dashboard and Decisions. Done.
 13. **Next Goal** — draft the next Goal after one is reached. Done.
-14. **Activate Goal** — make a reviewed draft the active Goal. This slice.
-15. **Guarded automation** — only after the above is trusted.
+14. **Activate Goal** — make a reviewed draft the active Goal. Done.
+15. **Draft a plan from Next step** — ask the owner to draft a plan for the active Goal. This slice.
+16. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

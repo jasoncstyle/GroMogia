@@ -1,5 +1,6 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
+import { DRAFT_PLAN_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -36,6 +37,9 @@ export type NextStepInput = {
   latestLearningGoalId?: string | null
   activateGoalId?: string | null
   activateGoalTitle?: string
+  planGoalId?: string | null
+  planGoalTitle?: string
+  activeGoalIds?: string[]
 };
 
 export type CoordinatedNextStep = {
@@ -97,6 +101,24 @@ function activateGoalCandidate(
   };
 }
 
+function draftPlanCandidate(
+  goalId: string | null | undefined,
+  title: string | undefined,
+): NextStepCandidate | null {
+  if (!goalId) return null;
+  const name = (title ?? "").replace(/\s+/g, " ").trim() || "this Goal";
+  return {
+    kind: "recommend",
+    classification: "operational",
+    title: DRAFT_PLAN_STEP_TITLE,
+    body: `“${name}” is the active Goal. Draft a plan so GroovGro can propose the first actions. GroovGro will not run it.`,
+    href: "/app/goals",
+    source: "goals",
+    specialistId: null,
+    goalId,
+  };
+}
+
 function ownerWorkCandidate(count: number): NextStepCandidate | null {
   if (count <= 0) return null;
   return {
@@ -120,6 +142,11 @@ function learningCandidate(input: NextStepInput): NextStepCandidate | null {
     " GroovGro will not start ads, send email, or change the live website.";
 
   if (kind === "target_reached") {
+    const stillActive =
+      !input.activeGoalIds?.length ||
+      (input.latestLearningGoalId != null &&
+        input.activeGoalIds.includes(input.latestLearningGoalId));
+    if (!stillActive) return null;
     return {
       kind: "recommend",
       classification: "operational",
@@ -200,6 +227,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   const drafts = draftsCandidate(input.inferredDraftCount);
   const ownerWork = ownerWorkCandidate(input.openWorkCount ?? 0);
   const activate = activateGoalCandidate(input.activateGoalId, input.activateGoalTitle);
+  const draftPlan = draftPlanCandidate(input.planGoalId, input.planGoalTitle);
   const learning = learningCandidate(input);
   const usable = input.reports.filter((report) => !DISCONNECTED_CHANNELS.has(report.id));
   const leftAlone = [
@@ -212,7 +240,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   ].sort((a, b) => score(b) - score(a));
 
   return {
-    primary: drafts ?? ownerWork ?? activate ?? learning ?? ranked[0] ?? nothingYet(),
+    primary: drafts ?? ownerWork ?? activate ?? draftPlan ?? learning ?? ranked[0] ?? nothingYet(),
     leftAlone,
     waitingActions,
     executeAllowed: false,
