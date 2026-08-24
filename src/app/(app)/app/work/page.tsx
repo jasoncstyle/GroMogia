@@ -1,6 +1,9 @@
 import Link from "next/link";
 
-import { OwnerWorkButtons } from "@/components/owner-work-actions";
+import {
+  CheckWhatChangedButton,
+  OwnerWorkButtons,
+} from "@/components/owner-work-actions";
 import { WaitingActionButtons } from "@/components/next-step-actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,7 +14,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
-import { hrefForGrowthAction, partitionOwnerWork } from "@/lib/growth/owner-work";
+import {
+  OWNER_DONE_STATUS,
+  hrefForGrowthAction,
+  partitionOwnerWork,
+} from "@/lib/growth/owner-work";
+import { workLearningFromResult } from "@/lib/growth/work-learning";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
@@ -24,6 +32,7 @@ export default async function OwnerWorkPage() {
   const work = partitionOwnerWork(snapshot?.actions ?? []);
   const canUpdate = hasPermission(session.permissions, "modify_goals");
   const canApprove = hasPermission(session.permissions, "approve_actions");
+  const canCheck = hasPermission(session.permissions, "view_decision_history");
   const approvedPlan = snapshot?.plans.find(
     (plan) => plan.status === "approved" || plan.status === "active",
   );
@@ -101,16 +110,29 @@ export default async function OwnerWorkPage() {
           <CardHeader>
             <CardTitle>Already handled</CardTitle>
             <CardDescription>
-              You marked these. GroovGro did not execute them.
+              You marked these. GroovGro did not execute them. Check what
+              changed compares the Goal number from when you finished to now.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            {work.finished.slice(0, 8).map((action) => (
-              <div key={action.id} className="rounded-lg border p-4 text-sm">
+            {work.finished.slice(0, 8).map((action) => {
+              const learned = workLearningFromResult(action.result ?? "");
+              return (
+              <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
                 <p className="font-medium">{action.description}</p>
                 <p className="text-muted-foreground">{labelFor(action.status)}</p>
+                {learned ? (
+                  <p className="text-muted-foreground">{learned}</p>
+                ) : null}
+                {action.status === OWNER_DONE_STATUS ? (
+                  <CheckWhatChangedButton
+                    actionId={action.id}
+                    canCheck={canCheck}
+                  />
+                ) : null}
               </div>
-            ))}
+              );
+            })}
           </CardContent>
         </Card>
       ) : null}

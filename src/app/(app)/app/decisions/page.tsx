@@ -226,6 +226,9 @@ export default async function DecisionsPage() {
                 {decision.rationale ? (
                   <p className="text-muted-foreground">{decision.rationale}</p>
                 ) : null}
+                {decision.outcome ? (
+                  <p className="text-muted-foreground">{decision.outcome}</p>
+                ) : null}
                 <p className="mt-1 text-xs text-muted-foreground">
                   {decision.createdAt.toLocaleString()}
                   {decision.evidenceWindow ? ` · ${decision.evidenceWindow}` : ""}

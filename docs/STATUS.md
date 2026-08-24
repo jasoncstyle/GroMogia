@@ -6,7 +6,7 @@ Last updated: 24 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-owner-work-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-work-learning-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** The website builder is paused. Next step, Growth Plan, and proposed actions are on `main`. This branch is Your work: approved actions the owner does. GroovGro records I did this or Skip. It does not execute. Do not start ads, execution, or autonomy.
+**V2 growth foundation is on `main`.** The website builder is paused. Next step, Growth Plan, proposed actions, and Your work are on `main`. This branch checks what changed after the owner marks work done. GroovGro compares the Goal number. It does not execute. Do not start ads, execution, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
@@ -64,7 +64,11 @@ Growth Plan draft/approve is on `main`. GroovGro writes a versioned plan from a 
 
 Proposed actions from an approved plan are on `main`. GroovGro proposes up to three first actions. The owner approves or rejects each one. Nothing runs.
 
-**First build slice (this branch):** Your work lists approved actions. The owner opens the page, does the work, and clicks I did this or Skip for now. GroovGro records that. It does not run marketing, send email, buy ads, charge a card, or change the live website.
+**Parked: Your work (24 August 2026)**
+
+Your work is on `main`. Approved actions are a list the owner does. I did this or Skip for now. GroovGro records that and does not execute.
+
+**First build slice (this branch):** After the owner marks work done, **Check what changed** compares the Goal number from that moment to now. GroovGro writes a plain-English outcome. It does not change the plan, start ads, send email, charge a card, or change the live website. If it is too soon, the recommendation is to wait.
 
 ## Stripe (do not mix, do not replace)
 
@@ -94,6 +98,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Growth Plan: GroovGro can draft a versioned plan from a Goal. Approve or reject. Approving does not execute.
 - Growth Actions from an approved plan: GroovGro can propose the first actions. Approve or reject. Nothing runs. Ads, email, and social stay left alone.
 - Your work: approved actions the owner does. I did this or Skip for now. GroovGro records it and does not execute.
+- What changed: after work is marked done, GroovGro can compare the Goal number and write what it learned. It does not change course or execute.
 
 ## Still later
 

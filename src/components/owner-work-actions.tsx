@@ -3,6 +3,7 @@
 import Link from "next/link";
 
 import {
+  checkWhatChanged,
   markOwnerActionDone,
   skipOwnerAction,
 } from "@/lib/actions/owner-work";
@@ -50,5 +51,33 @@ export function OwnerWorkButtons({
         </p>
       )}
     </div>
+  );
+}
+
+export function CheckWhatChangedButton({
+  actionId,
+  canCheck,
+}: {
+  actionId: string
+  canCheck: boolean
+}) {
+  if (!canCheck) {
+    return (
+      <p className="text-xs text-muted-foreground">
+        An owner or admin can check what changed. GroovGro will not run
+        anything.
+      </p>
+    );
+  }
+  return (
+    <SaveForm
+      action={checkWhatChanged}
+      successMessage="GroovGro compared the Goal number. It did not change the plan."
+    >
+      <input type="hidden" name="actionId" value={actionId} />
+      <SaveButton variant="outline" pendingLabel="Checking…">
+        Check what changed
+      </SaveButton>
+    </SaveForm>
   );
 }
