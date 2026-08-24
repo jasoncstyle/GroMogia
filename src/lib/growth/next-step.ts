@@ -106,7 +106,7 @@ function learningCandidate(input: NextStepInput): NextStepCandidate | null {
       title: "This Goal is reached",
       body:
         outcome ||
-        `The Goal number reached its target. Open Goals to set the next measurable outcome.${leaveAlone}`,
+        `The Goal number reached its target. Draft the next Goal, then set it to Active when you want it.${leaveAlone}`,
       href: "/app/goals",
       source: "learning",
       specialistId: null,

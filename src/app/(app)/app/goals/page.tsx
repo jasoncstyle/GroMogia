@@ -19,6 +19,11 @@ import {
 } from "@/components/growth-plan-actions";
 import { WaitingActionButtons } from "@/components/next-step-actions";
 import { OwnerWorkButtons } from "@/components/owner-work-actions";
+import { DraftNextGoalButton } from "@/components/next-goal-actions";
+import {
+  alreadyDraftedNextGoal,
+  canDraftNextGoal,
+} from "@/lib/growth/next-goal";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
@@ -71,6 +76,7 @@ export default async function GoalsPage() {
   const autonomy = AUTONOMY_LEVELS.find(
     (item) => item.level === (settings?.autonomyLevel ?? 2),
   );
+  const canCreateGoal = hasPermission(session.permissions, "create_goals");
   const canDraftPlan = hasPermission(session.permissions, "modify_goals");
   const canApprovePlan = hasPermission(session.permissions, "approve_plans");
   const canApproveAction = hasPermission(session.permissions, "approve_actions");
@@ -433,6 +439,17 @@ export default async function GoalsPage() {
                 {canDraftPlan ? (
                   <div className="mt-3">
                     <DraftGrowthPlanButton goalId={goal.id} />
+                  </div>
+                ) : null}
+                {canCreateGoal &&
+                canDraftNextGoal({
+                  status: goal.status,
+                  currentValue: goal.liveCurrentValue,
+                  targetValue: goal.targetValue,
+                }) &&
+                !alreadyDraftedNextGoal(snapshot?.goals ?? [], goal.id) ? (
+                  <div className="mt-3">
+                    <DraftNextGoalButton goalId={goal.id} />
                   </div>
                 ) : null}
                 {goal.progressHistory.length > 0 ? (
