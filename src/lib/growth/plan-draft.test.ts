@@ -230,6 +230,33 @@ describe("growth plan draft", () => {
     assert.match(summary, /Keep collecting/);
   });
 
+  it("does not copy the propose-actions next step back into the plan text", () => {
+    const summary = draftGrowthPlanSummary({
+      businessName: "North Desk",
+      description: "",
+      targetCustomers: "",
+      goal: {
+        title: "More people get in touch",
+        goalType: "lead_generation",
+        status: "active",
+        liveCurrentValue: 2,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "",
+        progressPercent: 20,
+      },
+      offers: [],
+      nextStepTitle: "Propose the first actions",
+      nextStepBody: "Propose the first actions so you can review them.",
+      nextStepKind: "recommend",
+      leftAlone: [],
+      websiteConnected: true,
+      openLeadCount: 0,
+    });
+    assert.doesNotMatch(summary, /Propose the first actions/);
+    assert.match(summary, /Keep collecting/);
+  });
+
   it("does not bake industry-specific words into plan helpers", () => {
     const source = readFileSync(join(process.cwd(), "src/lib/growth/plan-draft.ts"), "utf8");
     for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk", "electrician"]) {

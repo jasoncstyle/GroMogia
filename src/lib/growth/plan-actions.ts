@@ -1,3 +1,5 @@
+import { APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+
 export type PlanActionRisk = "operational" | "optimization" | "strategic";
 
 export type PlanActionDraft = {
@@ -28,6 +30,54 @@ function clip(value: string, max: number): string {
   const text = clean(value);
   if (text.length <= max) return text;
   return `${text.slice(0, max - 1).trimEnd()}…`;
+}
+
+function isLoopingNextStep(title: string): boolean {
+  const text = clean(title);
+  return (
+    text === DRAFT_PLAN_STEP_TITLE ||
+    text === APPROVE_PLAN_STEP_TITLE ||
+    text === PROPOSE_ACTIONS_STEP_TITLE
+  );
+}
+
+export function findPlanNeedingActions<
+  G extends {
+    id: string
+    title: string
+    status: string
+    discoveryStatus?: string
+  },
+  P extends {
+    id: string
+    goalId: string
+    status: string
+    version: number
+  },
+  A extends { planId: string | null },
+>(goals: G[], plans: P[], actions: A[]): { plan: P; goal: G } | null {
+  const activeIds = new Set(
+    goals
+      .filter((goal) => {
+        if (goal.status !== "active") return false;
+        const discovery = goal.discoveryStatus ?? "confirmed";
+        return discovery !== "inferred" && discovery !== "rejected";
+      })
+      .map((goal) => goal.id),
+  );
+  const approved = plans
+    .filter(
+      (plan) =>
+        (plan.status === "approved" || plan.status === "active") &&
+        activeIds.has(plan.goalId),
+    )
+    .sort((a, b) => b.version - a.version);
+  for (const plan of approved) {
+    if (actions.some((action) => action.planId === plan.id)) continue;
+    const goal = goals.find((row) => row.id === plan.goalId);
+    if (goal) return { plan, goal };
+  }
+  return null;
 }
 
 export function draftActionsFromApprovedPlan(
@@ -72,7 +122,7 @@ export function draftActionsFromApprovedPlan(
     });
   }
 
-  if (facts.nextStepKind === "recommend" && clean(facts.nextStepTitle)) {
+  if (facts.nextStepKind === "recommend" && clean(facts.nextStepTitle) && !isLoopingNextStep(facts.nextStepTitle)) {
     const body = clean(facts.nextStepBody);
     drafts.push({
       actionType: "do_next_step",
