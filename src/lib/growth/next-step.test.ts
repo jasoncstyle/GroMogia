@@ -1702,6 +1702,7 @@ describe("coordinated next step", () => {
     );
     assert.match(decisions, /Save this week/);
     assert.match(decisions, /from Next step/);
+    assert.match(decisions, /Recent decisions also appear on Next step/);
     assert.doesNotMatch(decisions, /saved\s+here from Growth review/);
   });
 
@@ -1733,6 +1734,7 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(page, /href="\/app\/growth-review"/);
     assert.doesNotMatch(page, /href="\/app\/work"/);
     assert.doesNotMatch(page, /href="\/app\/intelligence"/);
+    assert.doesNotMatch(page, /href="\/app\/decisions"/);
     assert.doesNotMatch(page, /Open Your work/);
     assert.match(page, /LeaveAloneNextStepButton/);
     assert.match(page, /weeklyLook/);
@@ -1839,6 +1841,36 @@ describe("coordinated next step", () => {
     assert.match(specialists, /Save to Decision History/);
     assert.match(specialists, /hideNextStepLink/);
     assert.match(specialists, /Open related page/);
+  });
+
+  it("lets the owner read Decision History on Next step", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      readableDecisions: [
+        {
+          id: "decision-1",
+          decisionType: "no_change",
+          recommendation: "Leave SEO alone this period.",
+          rationale: "There is not enough evidence to change SEO.",
+          outcome: "",
+          evidenceWindow: "specialist read / analyze / recommend",
+          confidence: 85,
+          createdAtLabel: "Aug 24, 2026",
+        },
+      ],
+    });
+    assert.equal(step.readableDecisions.length, 1);
+    assert.equal(step.readableDecisions[0]?.id, "decision-1");
+    assert.match(step.readableDecisions[0]?.recommendation ?? "", /Leave SEO alone/);
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(page, /step\.readableDecisions/);
+    assert.match(page, /Decision History/);
+    assert.doesNotMatch(page, /href="\/app\/decisions"/);
   });
 
   it("refreshes Next step after someone submits the public lead form", () => {

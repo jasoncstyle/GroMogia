@@ -638,12 +638,54 @@ export default async function NextStepPage({
             </CardContent>
           </Card>
 
+          <Card>
+            <CardHeader>
+              <CardTitle>Decision History</CardTitle>
+              <CardDescription>
+                Next step is one thing to do now. Decisions record why a
+                change was recommended or left alone. Read the latest here.
+                GroovGro will not run them.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {step.readableDecisions.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  No decisions saved yet. Use the buttons above. GroovGro will
+                  not run them.
+                </p>
+              ) : (
+                step.readableDecisions.map((decision) => (
+                  <div key={decision.id} className="rounded-lg border p-4 text-sm">
+                    <p className="font-medium">
+                      {decision.decisionType === "no_change"
+                        ? "No change yet"
+                        : labelFor(decision.decisionType)}
+                    </p>
+                    <p>{decision.recommendation}</p>
+                    {decision.rationale ? (
+                      <p className="text-muted-foreground">{decision.rationale}</p>
+                    ) : null}
+                    {decision.outcome ? (
+                      <p className="text-muted-foreground">{decision.outcome}</p>
+                    ) : null}
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {decision.createdAtLabel}
+                      {decision.evidenceWindow
+                        ? ` · ${decision.evidenceWindow}`
+                        : ""}
+                      {decision.confidence
+                        ? ` · confidence ${decision.confidence}`
+                        : ""}
+                    </p>
+                  </div>
+                ))
+              )}
+            </CardContent>
+          </Card>
+
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline">
               <Link href="/app">The path so far</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/app/decisions">Decisions</Link>
             </Button>
           </div>
         </>

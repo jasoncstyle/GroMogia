@@ -741,5 +741,15 @@ export async function getCoordinatedNextStep(organizationId: string) {
       howWeAreDoing: snapshot.weeklyReview.howWeAreDoing,
       whatNeedsAttention: snapshot.weeklyReview.whatNeedsAttention,
     },
+    readableDecisions: snapshot.decisions.slice(0, 5).map((decision) => ({
+      id: decision.id,
+      decisionType: decision.decisionType,
+      recommendation: decision.recommendation,
+      rationale: decision.rationale,
+      outcome: decision.outcome,
+      evidenceWindow: decision.evidenceWindow,
+      confidence: decision.confidence,
+      createdAtLabel: decision.createdAt.toLocaleString(),
+    })),
   });
 }

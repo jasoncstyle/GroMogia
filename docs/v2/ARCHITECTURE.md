@@ -872,7 +872,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Decisions names Next step to save this week’s look. Growth review stays for the monthly write-up. GroovGro does not start marketing.
 
-### 87. Next step shows specialist reports (this slice)
+### 87. Next step shows specialist reports
 
 **Reason:** Next step still sent the owner to Intelligence to read specialists. The owner can read each specialist and save the recommendation here.
 
@@ -881,6 +881,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step shows specialist reports and Save to Decision History. It does not send the owner to Intelligence from the footer. Leave-alone still names the module page. GroovGro does not execute.
+
+### 88. Next step shows Decision History (this slice)
+
+**Reason:** Next step still sent the owner to Decisions to read the history. Recent decisions can stay on Next step.
+
+**Affected:** Next step and Decisions copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows recent Decision History. It does not send the owner to Decisions from the footer. GroovGro does not run those decisions.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -960,7 +970,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Next step shows this week’s look is parked.** Next step shows this week’s look. It does not send the owner to Growth review from the footer. Do not change the business from that look.
 - **Business Active goals and Goals weekly copy stay on Next step is parked.** Business Active goals opens Next step. Goals schedule copy names Next step for this week’s look. Do not start marketing.
 - **Decisions copy names Next step for this week’s look is parked.** Decisions names Next step to save this week’s look. Growth review stays for the monthly write-up. Do not start marketing.
-- **Next step shows specialist reports (this slice).** Next step shows specialist reports and Save to Decision History. It does not send the owner to Intelligence from the footer. Leave-alone still names the module page. Do not execute.
+- **Next step shows specialist reports is parked.** Next step shows specialist reports and Save to Decision History. It does not send the owner to Intelligence from the footer. Leave-alone still names the module page. Do not execute.
+- **Next step shows Decision History (this slice).** Next step shows recent Decision History. It does not send the owner to Decisions from the footer. Do not run those decisions.
 
 ## DESIGN FOR LATER
 

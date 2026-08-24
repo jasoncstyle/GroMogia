@@ -69,7 +69,8 @@ export default async function DecisionsPage() {
           Decision History records why a change was recommended or left alone.
           The audit log records what changed. &quot;No change yet&quot; is a
           valid and useful decision. Save this week’s look from Next step.
-          The monthly write-up is on Growth review.
+          Recent decisions also appear on Next step. The monthly write-up is
+          on Growth review.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button asChild variant="outline" size="sm">
