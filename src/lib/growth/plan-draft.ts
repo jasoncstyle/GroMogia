@@ -119,7 +119,13 @@ export function skipsDuplicateNextStepAction(title: string): boolean {
     text === SAVE_PROGRESS_STEP_TITLE ||
     text === CONNECT_STRIPE_STEP_TITLE ||
     text === SYNC_STRIPE_STEP_TITLE ||
-    text === SAVE_REVIEW_SCHEDULE_STEP_TITLE
+    text === SAVE_REVIEW_SCHEDULE_STEP_TITLE ||
+    text === CONFIRM_DRAFTS_STEP_TITLE ||
+    text === CONNECT_WEBSITE_STEP_TITLE ||
+    text === REVIEW_SITE_STEP_TITLE ||
+    text === APPROVE_ACTIONS_STEP_TITLE ||
+    text === OWNER_WORK_STEP_TITLE ||
+    text === CHECK_CHANGED_STEP_TITLE
   );
 }
 

@@ -1022,7 +1022,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can confirm or reject suggested offers. Offers lists them and names Next step. Add an offer still stays on Offers. GroovGro does not execute.
 
-### 102. Keep Business confirm drafts on Next step (this slice)
+### 102. Keep Business confirm drafts on Next step
 
 **Reason:** Business still showed Confirm and Reject on suggested offers and goals after Next step already had those buttons. The owner could confirm a draft from Business instead of staying on Next step.
 
@@ -1031,6 +1031,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can confirm or reject suggested offers and goals. Business lists them so the owner can read them, and names Next step. Review connected data still stays on Business. GroovGro does not execute.
+
+### 103. Keep dedicated Next step buttons from creating duplicate actions (this slice)
+
+**Reason:** Confirm drafts, connect website, review site, approve actions, owner work, and check what changed already have dedicated buttons on Next step. I’ll do this on those loops could still save a duplicate proposed action.
+
+**Affected:** Next step I’ll do this.
+
+**Migration risk:** None.
+
+**Current functionality:** I’ll do this on those dedicated loops does not also save a duplicate proposed action. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1125,7 +1135,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Goals owner work on Next step is parked.** Next step and Your work can mark approved work done. Goals lists it and names Next step. Do not execute.
 - **Keep Goals confirm drafts on Next step is parked.** Next step can confirm or reject suggested goals. Goals lists them and names Next step. Do not execute.
 - **Keep Offers confirm drafts on Next step is parked.** Next step can confirm or reject suggested offers. Offers lists them and names Next step. Do not execute.
-- **Keep Business confirm drafts on Next step (this slice).** Next step can confirm or reject suggested offers and goals. Business lists them and names Next step. Do not execute.
+- **Keep Business confirm drafts on Next step is parked.** Next step can confirm or reject suggested offers and goals. Business lists them and names Next step. Do not execute.
+- **Keep dedicated Next step buttons from creating duplicate actions (this slice).** I’ll do this on confirm drafts, connect website, review site, approve actions, owner work, and check what changed does not also save a duplicate proposed action. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -1300,7 +1311,8 @@ Organization
 94. **Keep Goals owner work on Next step** — Next step and Your work can mark approved work done; Goals lists it and names Next step. Done.
 95. **Keep Goals confirm drafts on Next step** — Next step can confirm or reject suggested goals; Goals lists them and names Next step. Done.
 96. **Keep Offers confirm drafts on Next step** — Next step can confirm or reject suggested offers; Offers lists them and names Next step. Done.
-97. **Keep Business confirm drafts on Next step** — Next step can confirm or reject suggested offers and goals; Business lists them and names Next step. This slice.
-98. **Guarded automation** — only after the above is trusted.
+97. **Keep Business confirm drafts on Next step** — Next step can confirm or reject suggested offers and goals; Business lists them and names Next step. Done.
+98. **Keep dedicated Next step buttons from creating duplicate actions** — I’ll do this on dedicated loops does not also save a duplicate proposed action. This slice.
+99. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
