@@ -135,8 +135,27 @@ export type ReadableGrowthPlan = {
 export type WeeklyLook = {
   periodLabel: string
   headline: string
+  summary: string
+  whatChanged: string
   howWeAreDoing: string
   whatNeedsAttention: string
+  whatShouldHappenNext: string
+  whatIsLeftAlone: string
+  strategyNote: string
+  recommendations: {
+    title: string
+    recommendation: string
+    rationale: string
+    evidence: string
+    kind: "no_change_yet" | "recommend"
+    classification: string
+    confidence: number
+  }[]
+  evidenceChecks: {
+    channel: string
+    verdict: string
+    reason: string
+  }[]
 };
 
 export type ReadableDecision = {

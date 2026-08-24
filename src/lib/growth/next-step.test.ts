@@ -1648,6 +1648,9 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(page, /Change the schedule/);
     assert.doesNotMatch(page, /href="\/app\/goals"/);
     assert.doesNotMatch(page, /A weekly look at progress, and a monthly look/);
+    assert.doesNotMatch(page, /review=\{snapshot\.weeklyReview\}/);
+    assert.match(page, /snapshot\.monthlyReview/);
+    assert.doesNotMatch(page, /lg:grid-cols-2/);
   });
 
   it("keeps Goals, Growth review, and Your work from sending the owner away for Next step content", () => {
@@ -1848,20 +1851,51 @@ describe("coordinated next step", () => {
       weeklyLook: {
         periodLabel: "Week of Aug 17, 2026",
         headline: "Keep collecting evidence.",
+        summary: "No active Goal yet.",
+        whatChanged: "No Goal number moved this week.",
         howWeAreDoing: "No active Goal yet. Open Next step to add one.",
         whatNeedsAttention: "There is no active Goal. Open Next step to add one.",
+        whatShouldHappenNext: "Open Next step to add a measurable Goal.",
+        whatIsLeftAlone: "Ads, email, and social stay left alone.",
+        strategyNote: "Wait for a Goal before changing course.",
+        recommendations: [
+          {
+            title: "Add a Goal",
+            recommendation: "Open Next step to add a measurable Goal.",
+            rationale: "Reviews need a number to compare.",
+            evidence: "No active Goal is stored.",
+            kind: "recommend",
+            classification: "operational",
+            confidence: 80,
+          },
+        ],
+        evidenceChecks: [
+          {
+            channel: "seo",
+            verdict: "no_change_yet",
+            reason: "Not enough new Search Console rows yet.",
+          },
+        ],
       },
     });
     assert.equal(step.weeklyLook?.periodLabel, "Week of Aug 17, 2026");
     assert.match(step.weeklyLook?.headline ?? "", /Keep collecting evidence/);
+    assert.match(step.weeklyLook?.whatShouldHappenNext ?? "", /add a measurable Goal/);
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
       "utf8",
     );
+    const review = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/growth-review/page.tsx"),
+      "utf8",
+    );
     assert.match(page, /step\.weeklyLook/);
     assert.match(page, /This week/);
+    assert.match(page, /GrowthReviewBody/);
     assert.match(page, /This week[\s\S]*SaveGrowthReviewButton/);
     assert.doesNotMatch(page, /href="\/app\/growth-review"/);
+    assert.match(review, /snapshot\.monthlyReview/);
+    assert.doesNotMatch(review, /review=\{snapshot\.weeklyReview\}/);
   });
 
   it("lets the owner read and save specialists on Next step", () => {

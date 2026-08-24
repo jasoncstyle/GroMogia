@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { ConfirmRejectButtons, InferredBadge, ReviewConnectedDataButton, SaveGrowthReviewButton } from "@/components/growth-review";
+import { ConfirmRejectButtons, GrowthReviewBody, InferredBadge, ReviewConnectedDataButton, SaveGrowthReviewButton } from "@/components/growth-review";
 import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { NextStepResponseButtons, OpenPageNextStepButtons, LeaveAloneNextStepButton, WaitingActionButtons } from "@/components/next-step-actions";
@@ -643,16 +643,10 @@ export default async function NextStepPage({
                   : "A weekly look at progress. Read it here. GroovGro does not change the business from this look."}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-3 text-sm">
+            <CardContent className="space-y-4 text-sm">
               {step.weeklyLook ? (
                 <>
-                  <p className="font-medium">{step.weeklyLook.headline}</p>
-                  <p className="text-muted-foreground">
-                    {step.weeklyLook.howWeAreDoing}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {step.weeklyLook.whatNeedsAttention}
-                  </p>
+                  <GrowthReviewBody review={step.weeklyLook} />
                   {canDecide &&
                   !(
                     step.primary.source === "review" &&

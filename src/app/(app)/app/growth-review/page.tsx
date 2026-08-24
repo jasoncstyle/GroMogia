@@ -66,13 +66,10 @@ export default async function GrowthReviewPage() {
       </Card>
 
       {snapshot ? (
-        <div className="grid gap-6 lg:grid-cols-2">
-          <GrowthReviewCard review={snapshot.weeklyReview} canSave={canSave} />
-          <GrowthReviewCard review={snapshot.monthlyReview} canSave={canSave} />
-        </div>
+        <GrowthReviewCard review={snapshot.monthlyReview} canSave={canSave} />
       ) : (
         <p className="text-sm text-muted-foreground">
-          Sign in to generate a weekly and monthly review from connected data.
+          Sign in to generate a monthly review from connected data.
         </p>
       )}
 

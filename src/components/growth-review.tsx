@@ -202,6 +202,79 @@ function classificationLabel(value: string) {
   return labelFor(value);
 }
 
+export type ReadableGrowthReviewLook = {
+  headline: string
+  summary: string
+  whatChanged: string
+  howWeAreDoing: string
+  whatNeedsAttention: string
+  whatShouldHappenNext: string
+  whatIsLeftAlone: string
+  strategyNote: string
+  recommendations: {
+    title: string
+    kind: string
+    classification: string
+    confidence: number
+    recommendation: string
+    rationale: string
+    evidence: string
+  }[]
+  evidenceChecks: {
+    channel: string
+    verdict: string
+    reason: string
+  }[]
+};
+
+export function GrowthReviewBody({ review }: { review: ReadableGrowthReviewLook }) {
+  return (
+    <div className="space-y-4 text-sm">
+      <div>
+        <p className="font-medium">{review.headline}</p>
+        <p className="mt-1 text-muted-foreground">{review.summary}</p>
+      </div>
+      <ReviewSection title="What changed" body={review.whatChanged} />
+      <ReviewSection title="How we are doing" body={review.howWeAreDoing} />
+      <ReviewSection title="What needs attention" body={review.whatNeedsAttention} />
+      <ReviewSection title="What should happen next" body={review.whatShouldHappenNext} />
+      <ReviewSection title="What GroovGro is leaving alone" body={review.whatIsLeftAlone} />
+      <ReviewSection title="Strategy" body={review.strategyNote} />
+
+      <div className="space-y-3">
+        <p className="font-medium">Recommendations</p>
+        {review.recommendations.map((item) => (
+          <div key={item.title} className="rounded-lg border p-3">
+            <p className="font-medium">{item.title}</p>
+            <p className="text-xs text-muted-foreground">
+              {item.kind === "no_change_yet"
+                ? "Leave this alone"
+                : classificationLabel(item.classification)}
+              {item.confidence ? ` · confidence ${item.confidence}` : ""}
+            </p>
+            <p className="mt-1">{item.recommendation}</p>
+            <p className="mt-1 text-muted-foreground">{item.rationale}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{item.evidence}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-2">
+        <p className="font-medium">Evidence windows</p>
+        {review.evidenceChecks.map((check) => (
+          <p key={check.channel} className="text-muted-foreground">
+            <span className="font-medium text-foreground">
+              {labelFor(check.channel)}:{" "}
+            </span>
+            {check.verdict === "no_change_yet" ? "No change yet. " : "Threshold met. "}
+            {check.reason}
+          </p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function GrowthReviewCard({
   review,
   canSave,
@@ -217,49 +290,8 @@ export function GrowthReviewCard({
         </CardTitle>
         <CardDescription>{review.periodLabel}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4 text-sm">
-        <div>
-          <p className="font-medium">{review.headline}</p>
-          <p className="mt-1 text-muted-foreground">{review.summary}</p>
-        </div>
-        <ReviewSection title="What changed" body={review.whatChanged} />
-        <ReviewSection title="How we are doing" body={review.howWeAreDoing} />
-        <ReviewSection title="What needs attention" body={review.whatNeedsAttention} />
-        <ReviewSection title="What should happen next" body={review.whatShouldHappenNext} />
-        <ReviewSection title="What GroovGro is leaving alone" body={review.whatIsLeftAlone} />
-        <ReviewSection title="Strategy" body={review.strategyNote} />
-
-        <div className="space-y-3">
-          <p className="font-medium">Recommendations</p>
-          {review.recommendations.map((item) => (
-            <div key={item.title} className="rounded-lg border p-3">
-              <p className="font-medium">{item.title}</p>
-              <p className="text-xs text-muted-foreground">
-                {item.kind === "no_change_yet"
-                  ? "Leave this alone"
-                  : classificationLabel(item.classification)}
-                {item.confidence ? ` · confidence ${item.confidence}` : ""}
-              </p>
-              <p className="mt-1">{item.recommendation}</p>
-              <p className="mt-1 text-muted-foreground">{item.rationale}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{item.evidence}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="space-y-2">
-          <p className="font-medium">Evidence windows</p>
-          {review.evidenceChecks.map((check) => (
-            <p key={check.channel} className="text-muted-foreground">
-              <span className="font-medium text-foreground">
-                {labelFor(check.channel)}:{" "}
-              </span>
-              {check.verdict === "no_change_yet" ? "No change yet. " : "Threshold met. "}
-              {check.reason}
-            </p>
-          ))}
-        </div>
-
+      <CardContent className="space-y-4">
+        <GrowthReviewBody review={review} />
         <SaveGrowthReviewButton
           kind={review.kind}
           canSave={canSave}

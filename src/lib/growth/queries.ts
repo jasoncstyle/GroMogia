@@ -738,8 +738,27 @@ export async function getCoordinatedNextStep(organizationId: string) {
     weeklyLook: {
       periodLabel: snapshot.weeklyReview.periodLabel,
       headline: snapshot.weeklyReview.headline,
+      summary: snapshot.weeklyReview.summary,
+      whatChanged: snapshot.weeklyReview.whatChanged,
       howWeAreDoing: snapshot.weeklyReview.howWeAreDoing,
       whatNeedsAttention: snapshot.weeklyReview.whatNeedsAttention,
+      whatShouldHappenNext: snapshot.weeklyReview.whatShouldHappenNext,
+      whatIsLeftAlone: snapshot.weeklyReview.whatIsLeftAlone,
+      strategyNote: snapshot.weeklyReview.strategyNote,
+      recommendations: snapshot.weeklyReview.recommendations.map((item) => ({
+        title: item.title,
+        recommendation: item.recommendation,
+        rationale: item.rationale,
+        evidence: item.evidence,
+        kind: item.kind,
+        classification: item.classification,
+        confidence: item.confidence,
+      })),
+      evidenceChecks: snapshot.weeklyReview.evidenceChecks.map((check) => ({
+        channel: check.channel,
+        verdict: check.verdict,
+        reason: check.reason,
+      })),
     },
     readableDecisions: snapshot.decisions.slice(0, 5).map((decision) => ({
       id: decision.id,
