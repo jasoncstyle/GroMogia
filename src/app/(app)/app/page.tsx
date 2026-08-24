@@ -68,6 +68,7 @@ export default async function DashboardPage() {
         : "Brand, website, and Stripe are in a good starting place. Add an event or a lead to see the dashboard fill in.";
 
   const ownerWork = partitionOwnerWork(growth?.actions ?? []);
+  const latestWorkLearning = growth?.decisions.find((row) => row.outcome)?.outcome;
 
   const nextStepText = inferredCount > 0
     ? "Open Business to confirm or reject what GroovGro drafted. Nothing becomes active until you confirm."
@@ -172,7 +173,7 @@ export default async function DashboardPage() {
         <QuestionCard title="How are we doing?" body={happening} />
         <QuestionCard
           title="What changed, and why?"
-          body={growth?.weeklyReview.whatChanged ?? why}
+          body={latestWorkLearning ?? growth?.weeklyReview.whatChanged ?? why}
         />
         <QuestionCard
           title="What needs attention?"

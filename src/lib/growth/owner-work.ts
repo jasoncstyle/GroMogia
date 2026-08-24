@@ -33,6 +33,7 @@ export type OwnerWorkAction = {
   risk: string
   actionType: string
   module: string
+  result?: string
 };
 
 export function hrefForGrowthAction(action: {
