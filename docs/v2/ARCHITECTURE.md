@@ -1342,7 +1342,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can draft copy in the saved voice even when that is not the main ask. Brand voice still has that form. GroovGro keeps the draft in this workspace. It does not send email, post to social, or edit the live website.
 
-### 134. Keep Choose when you look at growth on Next step when it is not the main ask (this slice)
+### 134. Keep Choose when you look at growth on Next step when it is not the main ask
 
 **Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing look schedule, that form only lived in the main recommendation. Growth review still has that form. The owner had to leave Next step to save the day and time they look at this week's numbers.
 
@@ -1351,6 +1351,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can save when to look at this week's numbers even when that is not the main ask. Growth review still has that form. GroovGro does not change the business then.
+
+### 135. Keep Run an SEO check on Next step when it is not the main ask (this slice)
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing homepage SEO check, that button only lived in the main recommendation. SEO still has that check. The owner had to leave Next step to run it.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can run a homepage SEO check even when that is not the main ask. SEO still has that check. GroovGro does not edit the website.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1477,7 +1487,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Save your brand voice on Next step when it is not the main ask is parked.** Next step can save the brand voice even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
 - **Keep Add a brand voice example on Next step when it is not the main ask is parked.** Next step can add a brand voice example even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
 - **Keep Draft copy in your voice on Next step when it is not the main ask is parked.** Next step can draft copy in the saved voice even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
-- **Keep Choose when you look at growth on Next step when it is not the main ask (this slice).** Next step can save when to look at this week's numbers even when that is not the main ask. Growth review still has that form. Do not change the business then.
+- **Keep Choose when you look at growth on Next step when it is not the main ask is parked.** Next step can save when to look at this week's numbers even when that is not the main ask. Growth review still has that form. Do not change the business then.
+- **Keep Run an SEO check on Next step when it is not the main ask (this slice).** Next step can run a homepage SEO check even when that is not the main ask. SEO still has that check. Do not edit the website.
 
 ## DESIGN FOR LATER
 
@@ -1684,7 +1695,8 @@ Organization
 126. **Keep Save your brand voice on Next step when it is not the main ask** — Next step can save the brand voice even when that is not the main ask; Brand voice still has that form. Done.
 127. **Keep Add a brand voice example on Next step when it is not the main ask** — Next step can add a brand voice example even when that is not the main ask; Brand voice still has that form. Done.
 128. **Keep Draft copy in your voice on Next step when it is not the main ask** — Next step can draft copy in the saved voice even when that is not the main ask; Brand voice still has that form. Done.
-129. **Keep Choose when you look at growth on Next step when it is not the main ask** — Next step can save when to look at this week's numbers even when that is not the main ask; Growth review still has that form. This slice.
-130. **Guarded automation** — only after the above is trusted.
+129. **Keep Choose when you look at growth on Next step when it is not the main ask** — Next step can save when to look at this week's numbers even when that is not the main ask; Growth review still has that form. Done.
+130. **Keep Run an SEO check on Next step when it is not the main ask** — Next step can run a homepage SEO check even when that is not the main ask; SEO still has that check. This slice.
+131. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

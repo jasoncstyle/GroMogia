@@ -1049,6 +1049,34 @@ describe("coordinated next step", () => {
     assert.match(page, /RunHomepageSeoButton/);
   });
 
+  it("keeps Run an SEO check on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          seoCheckedAt: null,
+          websiteConnected: true,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsRunSeo, true);
+    assert.match(page, /needsRunSeo/);
+    assert.match(page, /primary.title !== RUN_SEO_STEP_TITLE/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/seo/page.tsx"), "utf8"),
+      /runSeoAudit/,
+    );
+  });
+
   it("puts Connect Search Console on Next step after a homepage check", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),

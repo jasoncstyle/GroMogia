@@ -889,6 +889,22 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.needsRunSeo &&
+          step.primary.title !== RUN_SEO_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Run an SEO check</CardTitle>
+                <CardDescription>
+                  Check the connected homepage here. GroovGro will not edit
+                  the website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <RunHomepageSeoButton disabled={!canManageSeo} />
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.activateGoalId &&
           step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
             <Card>
