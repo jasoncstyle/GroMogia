@@ -1856,6 +1856,35 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("keeps Connect payments on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          stripeConfigured: true,
+          stripeConnected: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsStripeReadCopy, true);
+    assert.match(page, /needsStripeReadCopy/);
+    assert.match(page, /!isStripeReadCopyNextStep/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/commerce/page.tsx"), "utf8"),
+      /StripeReadCopyPanel/,
+    );
+  });
+
   it("keeps sharing the lead form ahead of connecting payments", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,

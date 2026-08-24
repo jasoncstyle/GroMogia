@@ -718,6 +718,43 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.needsStripeReadCopy &&
+          !isStripeReadCopyNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {step.reports.some(
+                    (report) => report.recommend.title === CONNECT_STRIPE_STEP_TITLE,
+                  )
+                    ? "Connect payments"
+                    : "Sync recent payments"}
+                </CardTitle>
+                <CardDescription>
+                  {step.reports.some(
+                    (report) => report.recommend.title === CONNECT_STRIPE_STEP_TITLE,
+                  )
+                    ? "Mark this workspace as connected so GroovGro can read a copy of payments. GroovGro will not charge a card, create a Stripe account, or change checkout on the connected website."
+                    : "Copy recent payment records here. GroovGro will not charge a card or change checkout on the connected website."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <StripeReadCopyPanel
+                  configured={dashboard?.stripeConfigured ?? false}
+                  connected={dashboard?.stripeConnected ?? false}
+                  lastError={dashboard?.stripeLastError}
+                  canManage={canManageIntegrations}
+                  mode={
+                    step.reports.some(
+                      (report) => report.recommend.title === CONNECT_STRIPE_STEP_TITLE,
+                    )
+                      ? "connect"
+                      : "sync"
+                  }
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.activateGoalId &&
           step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
             <Card>

@@ -1262,7 +1262,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can move or mark open leads even when that is not the main ask. Leads & customers still has Move and Mark customer. GroovGro does not email anyone.
 
-### 126. Keep Share the public lead form on Next step when it is not the main ask (this slice)
+### 126. Keep Share the public lead form on Next step when it is not the main ask
 
 **Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a workspace with no captured person, the public form and Add a person only lived in the main recommendation. Leads & customers still has those. The owner had to leave Next step to share the form or add someone.
 
@@ -1271,6 +1271,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can copy the public lead form or add a person even when that is not the main ask. Leads & customers still has the form and Add a person. GroovGro does not email anyone.
+
+### 127. Keep Connect payments on Next step when it is not the main ask (this slice)
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked connecting or syncing a payment copy, Connect Stripe and Sync only lived in the main recommendation. Bookings still has that panel. The owner had to leave Next step to mark the workspace connected or copy recent payments.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can connect so GroovGro can read a copy of payments, or sync recent payment records, even when that is not the main ask. Bookings still has Connect Stripe and Sync. GroovGro does not charge a card or change checkout.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1389,7 +1399,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Connect website on Next step when it is not the main ask is parked.** Next step can save the existing website address even when that is not the main ask. Website still has the address field and tracking snippet. Do not move the live site.
 - **Keep tracking snippet on Next step when it is not the main ask is parked.** Next step can copy the tracking snippet even when that is not the main ask. Website still has the snippet. Do not replace the live site.
 - **Keep Follow up open leads on Next step when it is not the main ask is parked.** Next step can move or mark open leads even when that is not the main ask. Leads & customers still has Move and Mark customer. Do not email anyone.
-- **Keep Share the public lead form on Next step when it is not the main ask (this slice).** Next step can copy the public lead form or add a person even when that is not the main ask. Leads & customers still has the form and Add a person. Do not email anyone.
+- **Keep Share the public lead form on Next step when it is not the main ask is parked.** Next step can copy the public lead form or add a person even when that is not the main ask. Leads & customers still has the form and Add a person. Do not email anyone.
+- **Keep Connect payments on Next step when it is not the main ask (this slice).** Next step can connect so GroovGro can read a copy of payments, or sync recent payment records, even when that is not the main ask. Bookings still has Connect Stripe and Sync. Do not charge a card or change checkout.
 
 ## DESIGN FOR LATER
 
@@ -1588,7 +1599,8 @@ Organization
 118. **Keep Connect website on Next step when it is not the main ask** — Next step can save the existing website address even when that is not the main ask; Website still has the address field and tracking snippet. Done.
 119. **Keep tracking snippet on Next step when it is not the main ask** — Next step can copy the tracking snippet even when that is not the main ask; Website still has the snippet. Done.
 120. **Keep Follow up open leads on Next step when it is not the main ask** — Next step can move or mark open leads even when that is not the main ask; Leads & customers still has Move and Mark customer. Done.
-121. **Keep Share the public lead form on Next step when it is not the main ask** — Next step can copy the public lead form or add a person even when that is not the main ask; Leads & customers still has the form and Add a person. This slice.
-122. **Guarded automation** — only after the above is trusted.
+121. **Keep Share the public lead form on Next step when it is not the main ask** — Next step can copy the public lead form or add a person even when that is not the main ask; Leads & customers still has the form and Add a person. Done.
+122. **Keep Connect payments on Next step when it is not the main ask** — Next step can connect so GroovGro can read a copy of payments, or sync recent payment records, even when that is not the main ask; Bookings still has Connect Stripe and Sync. This slice.
+123. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
