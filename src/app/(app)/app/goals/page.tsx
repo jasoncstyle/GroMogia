@@ -14,7 +14,6 @@ import {
   GrowthPlanReviewButtons,
   ProposePlanActionsButton,
 } from "@/components/growth-plan-actions";
-import { OwnerWorkButtons } from "@/components/owner-work-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { GoalCreateForm } from "@/components/goal-create-form";
 import { GrowthSettingsForm } from "@/components/growth-settings-form";
@@ -24,7 +23,6 @@ import {
   canActivateDraftGoal,
   canDraftNextGoal,
 } from "@/lib/growth/next-goal";
-import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { hasPermission } from "@/lib/permissions";
@@ -76,7 +74,6 @@ export default async function GoalsPage() {
   const canCreateGoal = hasPermission(session.permissions, "create_goals");
   const canDraftPlan = hasPermission(session.permissions, "modify_goals");
   const canApprovePlan = hasPermission(session.permissions, "approve_plans");
-  const canUpdateWork = hasPermission(session.permissions, "modify_goals");
   const actions = snapshot?.actions ?? [];
 
   return (
@@ -87,8 +84,8 @@ export default async function GoalsPage() {
           A Goal is a measurable outcome. A draft stays a draft until you
           click Make this the active Goal. GroovGro can then draft a plan.
           Approving that plan does not run marketing. Approve or reject
-          proposed actions on Next step. Suggested goals stay drafts until
-          you confirm them.
+          proposed actions on Next step. Do approved work on Next step or
+          Your work. Suggested goals stay drafts until you confirm them.
         </p>
         <div className="mt-3">
           <ReviewConnectedDataButton disabled={!session.organizationId} />
@@ -437,11 +434,10 @@ export default async function GoalsPage() {
                               </p>
                             ) : null}
                             {action.status === "approved" ? (
-                              <OwnerWorkButtons
-                                actionId={action.id}
-                                href={hrefForGrowthAction(action)}
-                                canUpdate={canUpdateWork}
-                              />
+                              <p className="text-xs text-muted-foreground">
+                                Do this on Next step or Your work. GroovGro
+                                will not run it.
+                              </p>
                             ) : null}
                           </div>
                         ))}
