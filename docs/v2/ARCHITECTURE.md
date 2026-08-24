@@ -782,7 +782,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Confirm drafts, add a Goal, and a reached Goal name Next step. Growth review’s When to look row also has Open Next step. GroovGro does not start marketing.
 
-### 78. Growth Plan and far-behind review name Next step (this slice)
+### 78. Growth Plan and far-behind review name Next step
 
 **Reason:** A drafted Growth Plan still told the owner to connect the website without naming Next step. Growth review still told the owner a Goal was far behind without naming Next step.
 
@@ -791,6 +791,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Connecting the website from a plan names Next step. A far-behind Goal names Next step. GroovGro does not start marketing or change the live site.
+
+### 79. Next step does not send the owner to Your work (this slice)
+
+**Reason:** Next step still had Open Your work. Your work then says to open Next step, so the owner bounced between the two pages.
+
+**Affected:** Next step footer.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step keeps Open Goals so the owner can read a plan write-up. It does not send the owner to Your work. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -861,7 +871,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Website review copy opens Next step is parked.** After saving a website address, Website names Next step instead of Business. Do not change the live site.
 - **Empty Goal copy stays on Next step is parked.** Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. Reading an existing Goal or approved plan still opens Goals. Do not start marketing.
 - **Growth review copy names Next step is parked.** Confirm drafts, add a Goal, and a reached Goal name Next step. Do not start marketing.
-- **Growth Plan and far-behind review name Next step (this slice).** Connecting the website from a plan, and a far-behind Goal, name Next step. Do not start marketing or change the live site.
+- **Growth Plan and far-behind review name Next step is parked.** Connecting the website from a plan, and a far-behind Goal, name Next step. Do not start marketing or change the live site.
+- **Next step does not send the owner to Your work (this slice).** Next step keeps Open Goals to read a plan. It does not send the owner to Your work. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -1012,7 +1023,8 @@ Organization
 70. **Website review copy opens Next step** — after saving a website address, Website names Next step instead of Business. Done.
 71. **Empty Goal copy stays on Next step** — Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. Done.
 72. **Growth review copy names Next step** — confirm drafts, add a Goal, and a reached Goal name Next step. Done.
-73. **Growth Plan and far-behind review name Next step** — connecting the website from a plan, and a far-behind Goal, name Next step. This slice.
-74. **Guarded automation** — only after the above is trusted.
+73. **Growth Plan and far-behind review name Next step** — connecting the website from a plan, and a far-behind Goal, name Next step. Done.
+74. **Next step does not send the owner to Your work** — Next step keeps Open Goals to read a plan; it does not send the owner to Your work. This slice.
+75. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -1705,6 +1705,16 @@ describe("coordinated next step", () => {
     assert.match(goals, /Open Next step/);
   });
 
+  it("keeps Next step from sending the owner to Your work", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(page, /href="\/app\/goals">Open Goals/);
+    assert.doesNotMatch(page, /href="\/app\/work"/);
+    assert.doesNotMatch(page, /Open Your work/);
+  });
+
   it("refreshes Next step after someone submits the public lead form", () => {
     const source = readFileSync(
       join(process.cwd(), "src/lib/actions/public-lead.ts"),
