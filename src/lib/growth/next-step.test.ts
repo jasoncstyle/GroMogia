@@ -1672,8 +1672,11 @@ describe("coordinated next step", () => {
     assert.match(goals, /href="\/app\/growth-review">Open growth review/);
     assert.match(goals, /Approve or reject\s+proposed actions on Next step/);
     assert.match(goals, /Do approved work on Next step or\s+Your work/);
+    assert.match(goals, /Confirm or reject suggested goals on Next step/);
+    assert.match(goals, /Confirm or reject this on Next step/);
     assert.doesNotMatch(goals, /WaitingActionButtons/);
     assert.doesNotMatch(goals, /OwnerWorkButtons/);
+    assert.doesNotMatch(goals, /ConfirmRejectButtons/);
     assert.doesNotMatch(goals, /href="\/app\/intelligence"/);
     assert.doesNotMatch(goals, /href="\/app\/decisions"/);
     assert.doesNotMatch(goals, /Read the path so far/);

@@ -5,7 +5,6 @@ import {
   updateGoalProgress,
 } from "@/lib/actions/growth";
 import {
-  ConfirmRejectButtons,
   InferredBadge,
   ReviewConnectedDataButton,
 } from "@/components/growth-review";
@@ -85,7 +84,8 @@ export default async function GoalsPage() {
           click Make this the active Goal. GroovGro can then draft a plan.
           Approving that plan does not run marketing. Approve or reject
           proposed actions on Next step. Do approved work on Next step or
-          Your work. Suggested goals stay drafts until you confirm them.
+          Your work. Confirm or reject suggested goals on Next step. They
+          stay drafts until you do.
         </p>
         <div className="mt-3">
           <ReviewConnectedDataButton disabled={!session.organizationId} />
@@ -155,8 +155,9 @@ export default async function GoalsPage() {
           <CardHeader>
             <CardTitle>Suggested goals waiting for you</CardTitle>
             <CardDescription>
-              GroovGro drafted these from connected data. Confirming makes a
-              Goal active. Rejecting leaves it unused. Nothing else happens.
+              GroovGro drafted these from connected data. Confirm or reject
+              them on Next step. Confirming makes a Goal active. Rejecting
+              leaves it unused. Nothing else happens.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -171,9 +172,10 @@ export default async function GoalsPage() {
                 </p>
                 <p className="text-sm text-muted-foreground">{goal.liveNote}</p>
                 <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
-                <div className="mt-3">
-                  <ConfirmRejectButtons id={goal.id} kind="goal" />
-                </div>
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Confirm or reject this on Next step. Confirming makes it
+                  active. GroovGro will not start marketing.
+                </p>
               </div>
             ))}
           </CardContent>
