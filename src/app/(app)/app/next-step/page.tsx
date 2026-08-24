@@ -651,6 +651,42 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.openLeads.length > 0 &&
+          !isFollowUpLeadsNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Follow up open leads</CardTitle>
+                <CardDescription>
+                  Give each open lead a next step here. GroovGro will not
+                  email them.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {leadFormUrl ? <CopyLink url={leadFormUrl} /> : null}
+                {step.openLeads.map((lead) => (
+                  <div key={lead.id} className="space-y-2 rounded-lg border p-4 text-sm">
+                    <p className="font-medium">
+                      {lead.name || lead.email || "Unnamed person"}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {lead.stageName}
+                      {lead.email ? ` · ${lead.email}` : ""}
+                      {lead.source ? ` · ${lead.source}` : ""}
+                    </p>
+                    <LeadFollowUpButtons
+                      leadId={lead.id}
+                      stageId={lead.stageId}
+                      stages={step.leadStages}
+                      canMove={canManageLeads}
+                      canConvert={canManageCustomers}
+                      isWon={lead.isWon}
+                    />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.activateGoalId &&
           step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
             <Card>

@@ -121,6 +121,46 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("keeps Follow up open leads on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({ inferredDraftCount: 1, openLeadCount: 3 }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+      openLeads: [
+        {
+          id: "lead-1",
+          name: "Alex Rivera",
+          email: "alex@example.com",
+          stageId: "stage-new",
+          stageName: "New",
+          source: "website",
+          isWon: false,
+        },
+      ],
+      leadStages: [{ id: "stage-new", name: "New" }],
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.openLeads.length, 1);
+    assert.match(page, /openLeads\.length > 0/);
+    assert.match(page, /!isFollowUpLeadsNextStep/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/crm/page.tsx"), "utf8"),
+      /moveLead/,
+    );
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/crm/page.tsx"), "utf8"),
+      /convertLeadToCustomer/,
+    );
+  });
+
   it("says nothing should change when evidence is thin and work is current", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,
