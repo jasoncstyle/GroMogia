@@ -460,9 +460,9 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None.
 
-**Current functionality:** If visits are recorded, the brand is saved, and no confirmed offer exists, Next step asks the owner to name something the business promotes or wants a customer to do. Open leads, the tracking snippet, the public lead form, and saving the brand still come first. GroovGro does not start marketing.
+**Current functionality:** If visits are recorded and no confirmed offer exists, Next step asks the owner to name something the business promotes or wants a customer to do. Open leads, the tracking snippet, the public lead form, saving the brand, and saving how the business works still come first. GroovGro does not start marketing.
 
-### 46. Save the brand from Next step (this slice)
+### 46. Save the brand from Next step
 
 **Reason:** Name, what the business does, and who it serves still lived only on Brand. Put Save brand on Next step. GroovGro must not start marketing.
 
@@ -471,6 +471,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If visits are recorded and the brand is missing what the business does or who it serves, Next step asks the owner to save those. Open leads, the tracking snippet, and the public lead form still come first. GroovGro does not start marketing, send email, or edit the live website.
+
+### 47. Save how the business works from Next step (this slice)
+
+**Reason:** Industry and how the business creates value still lived only on Business. Put Save business on Next step. GroovGro must not start marketing.
+
+**Affected:** Next step. Reuses `BusinessBrainForm`. Does not execute.
+
+**Migration risk:** None.
+
+**Current functionality:** If visits are recorded, the brand is saved, and how the business works is still empty, Next step asks the owner to save the kind of business and how it creates value. Open leads, the tracking snippet, the public lead form, and saving the brand still come first. GroovGro does not start marketing, send email, or edit the live website.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -509,7 +519,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Refresh stale Search Console numbers from Next step is parked.** Ask the owner to refresh when stored numbers are more than a week old. Do not edit the live site.
 - **Draft copy in your voice from Next step is parked.** Ask the owner to create a draft after the profile and an example are saved. Do not send email, post, or edit the live website.
 - **Add an offer from Next step is parked.** Ask the owner to name what the business promotes when no confirmed offer exists. Do not start marketing.
-- **Save the brand from Next step (this slice).** Ask the owner to save the business name, what it does, and who it serves when that is still empty. Do not start marketing.
+- **Save the brand from Next step is parked.** Ask the owner to save the business name, what it does, and who it serves when that is still empty. Do not start marketing.
+- **Save how the business works from Next step (this slice).** Ask the owner to save the kind of business and how it creates value when that is still empty. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -628,7 +639,8 @@ Organization
 38. **Refresh stale Search Console numbers from Next step** — refresh Search Console numbers on Next step when they are more than a week old. Done.
 39. **Draft copy in your voice from Next step** — create a draft on Next step after the profile and an example are saved. Done.
 40. **Add an offer from Next step** — save an offer on Next step when none are confirmed yet. Done.
-41. **Save the brand from Next step** — save name, what the business does, and who it serves on Next step when that is still empty. This slice.
-42. **Guarded automation** — only after the above is trusted.
+41. **Save the brand from Next step** — save name, what the business does, and who it serves on Next step when that is still empty. Done.
+42. **Save how the business works from Next step** — save the kind of business and how it creates value on Next step when that is still empty. This slice.
+43. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

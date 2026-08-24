@@ -33,6 +33,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     brandVoiceExampleSaved: true,
     brandVoiceDraftSaved: true,
     brandSettingsSaved: true,
+    businessBrainSaved: true,
     confirmedOfferCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
@@ -1237,6 +1238,73 @@ describe("coordinated next step", () => {
       websiteRead: true,
     });
     assert.equal(step.primary.title, "Save your brand");
+  });
+
+  it("puts Save how this business works on Next step after the brand is saved", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          businessBrainSaved: false,
+          confirmedOfferCount: 0,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Save how this business works");
+    assert.equal(step.primary.classification, "strategic");
+    assert.match(step.primary.body, /will not start marketing/);
+    assert.match(page, /isSaveBusinessNextStep/);
+    assert.match(page, /BusinessBrainForm/);
+    assert.match(
+      readFileSync(
+        join(process.cwd(), "src/app/(app)/app/business/page.tsx"),
+        "utf8",
+      ),
+      /BusinessBrainForm/,
+    );
+  });
+
+  it("keeps sharing the lead form ahead of saving how the business works", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          businessBrainSaved: false,
+          recordedVisitCount: 1,
+          openLeadCount: 0,
+          contactCount: 0,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Share the public lead form");
+  });
+
+  it("keeps saving how the business works ahead of adding an offer", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          businessBrainSaved: false,
+          confirmedOfferCount: 0,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Save how this business works");
   });
 
   it("puts Add event on Next step when the schedule needs a review", () => {

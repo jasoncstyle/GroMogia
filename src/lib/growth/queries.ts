@@ -430,6 +430,32 @@ function brandSettingsAreSaved(
   return Boolean(brand?.description?.trim() && brand?.targetCustomers?.trim());
 }
 
+export async function getBusinessBrainForm(organizationId: string) {
+  const db = getDb();
+  if (!db) return null;
+  const rows = await db
+    .select({
+      industry: businessBrains.industry,
+      businessModel: businessBrains.businessModel,
+      locations: businessBrains.locations,
+      serviceAreas: businessBrains.serviceAreas,
+      operatingHours: businessBrains.operatingHours,
+      seasonality: businessBrains.seasonality,
+      notes: businessBrains.notes,
+      discoveryStatus: businessBrains.discoveryStatus,
+    })
+    .from(businessBrains)
+    .where(eq(businessBrains.organizationId, organizationId))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+function businessBrainIsSaved(
+  brain: { industry?: string | null; businessModel?: string | null } | null,
+): boolean {
+  return Boolean(brain?.industry?.trim() && brain?.businessModel?.trim());
+}
+
 async function getBrandVoiceFacts(organizationId: string) {
   const db = getDb();
   if (!db) {
@@ -507,6 +533,7 @@ export async function getSpecialistReports(organizationId: string) {
     brandVoiceExampleSaved: brandVoice.brandVoiceExampleSaved,
     brandVoiceDraftSaved: brandVoice.brandVoiceDraftSaved,
     brandSettingsSaved: brandSettingsAreSaved(snapshot.brand),
+    businessBrainSaved: businessBrainIsSaved(snapshot.brain),
     confirmedOfferCount: snapshot.offers.filter(
       (offer) => (offer.discoveryStatus ?? "confirmed") === "confirmed",
     ).length,
