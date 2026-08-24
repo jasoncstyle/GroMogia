@@ -492,7 +492,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If the website is connected and GroovGro has not captured a person yet, Next step asks the owner to copy the public form or add someone they already know. Open leads and the tracking snippet still come first. GroovGro does not email anyone.
 
-### 49. Find pages from Next step (this slice)
+### 49. Find pages from Next step
 
 **Reason:** When a website is saved but unread, Next step already had Review connected data, but Find pages still sent the owner to Website. Put Find pages and the page checklist on Next step. GroovGro must not change the live site.
 
@@ -502,7 +502,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If the website address is saved and pages have not been read yet, Next step asks the owner to find pages, check the important ones, then review. GroovGro does not change the live site.
 
-### 50. Save today's Goal number from Next step (this slice)
+### 50. Save today's Goal number from Next step
 
 **Reason:** Saving today's Goal number from connected data still lived only on Goals. Put Save progress on Next step when a connected Goal has no history yet. GroovGro must not start marketing.
 
@@ -511,6 +511,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If visits are recorded and an active connected Goal has never stored today's number, Next step asks the owner to save it. Open leads, the tracking snippet, and the public lead form still come first. GroovGro does not start marketing.
+
+### 51. Connect payments from Next step (this slice)
+
+**Reason:** Marking the workspace as connected so GroovGro can read a copy of payments still lived only on Bookings & payments. The Dashboard already asked for it. Put Connect and Sync on Next step. GroovGro must not charge a card or change checkout.
+
+**Affected:** Next step. Reuses `StripeReadCopyPanel`. Does not charge. Does not change checkout.
+
+**Migration risk:** None.
+
+**Current functionality:** If Stripe keys are on the deployment and this workspace is not marked connected, Next step asks the owner to connect so GroovGro can read a copy of payments. If it is connected but has never synced, Next step asks the owner to copy recent payment records. Open leads, the tracking snippet, and the public lead form still come first. GroovGro does not charge a card, create a Stripe account, or change checkout on the connected website.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -553,7 +563,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Save how the business works from Next step is parked.** Ask the owner to save the kind of business and how it creates value when that is still empty. Do not start marketing.
 - **Add a person from Next step is parked.** Ask the owner to copy the public form or add someone they already know when no person has been captured yet. Do not email anyone.
 - **Find pages from Next step is parked.** Ask the owner to find pages, check the important ones, and review when the website is saved but unread. Do not change the live site.
-- **Save today's Goal number from Next step (this slice).** Ask the owner to save today's Goal number when a connected Goal has no history yet. Do not start marketing.
+- **Save today's Goal number from Next step is parked.** Ask the owner to save today's Goal number when a connected Goal has no history yet. Do not start marketing.
+- **Connect payments from Next step (this slice).** Ask the owner to connect so GroovGro can read a copy of payments, or sync recent payment records when the workspace is connected but has never synced. Do not charge a card or change checkout.
 
 ## DESIGN FOR LATER
 
@@ -676,7 +687,8 @@ Organization
 42. **Save how the business works from Next step** — save the kind of business and how it creates value on Next step when that is still empty. Done.
 43. **Add a person from Next step** — copy the public form or add someone the owner already knows on Next step when no person has been captured yet. Done.
 44. **Find pages from Next step** — find pages, check the important ones, and review on Next step when the website is saved but unread. Done.
-45. **Save today's Goal number from Next step** — save today's Goal number on Next step when a connected Goal has no history yet. This slice.
-46. **Guarded automation** — only after the above is trusted.
+45. **Save today's Goal number from Next step** — save today's Goal number on Next step when a connected Goal has no history yet. Done.
+46. **Connect payments from Next step** — connect so GroovGro can read a copy of payments, or sync recent payment records, on Next step. This slice. GroovGro does not charge a card or change checkout.
+47. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

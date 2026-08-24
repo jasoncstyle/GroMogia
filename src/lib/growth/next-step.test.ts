@@ -35,6 +35,9 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     brandSettingsSaved: true,
     businessBrainSaved: true,
     goalProgressNeedsSave: false,
+    stripeConfigured: true,
+    stripeConnected: true,
+    stripeSynced: true,
     confirmedOfferCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
@@ -1360,6 +1363,118 @@ describe("coordinated next step", () => {
       websiteRead: true,
     });
     assert.equal(step.primary.title, "Share the public lead form");
+  });
+
+  it("puts Connect payments on Next step when Stripe is not marked connected", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          stripeConfigured: true,
+          stripeConnected: false,
+          brandSettingsSaved: false,
+          goalProgressNeedsSave: true,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Connect payments");
+    assert.equal(step.primary.classification, "optimization");
+    assert.equal(step.primary.href, "/app/commerce");
+    assert.match(step.primary.body, /Connect here/);
+    assert.match(step.primary.body, /will not charge a card/);
+    assert.match(step.primary.body, /change checkout/);
+    assert.match(page, /isStripeReadCopyNextStep/);
+    assert.match(page, /StripeReadCopyPanel/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/commerce/page.tsx"), "utf8"),
+      /StripeReadCopyPanel/,
+    );
+  });
+
+  it("keeps sharing the lead form ahead of connecting payments", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          stripeConfigured: true,
+          stripeConnected: false,
+          recordedVisitCount: 1,
+          openLeadCount: 0,
+          contactCount: 0,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Share the public lead form");
+  });
+
+  it("keeps following up open leads ahead of connecting payments", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          stripeConfigured: true,
+          stripeConnected: false,
+          recordedVisitCount: 1,
+          openLeadCount: 2,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Follow up open leads");
+  });
+
+  it("keeps pasting the tracking snippet ahead of connecting payments", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          stripeConfigured: true,
+          stripeConnected: false,
+          recordedVisitCount: 0,
+          openLeadCount: 0,
+          contactCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Paste the tracking snippet");
+  });
+
+  it("puts Sync recent payments on Next step when Stripe is connected but never synced", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          stripeConfigured: true,
+          stripeConnected: true,
+          stripeSynced: false,
+          brandSettingsSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Sync recent payments");
+    assert.equal(step.primary.classification, "optimization");
+    assert.match(step.primary.body, /Copy recent payment records here/);
+    assert.match(step.primary.body, /will not charge a card/);
   });
 
   it("puts Add event on Next step when the schedule needs a review", () => {

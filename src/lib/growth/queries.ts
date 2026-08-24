@@ -558,6 +558,9 @@ export async function getSpecialistReports(organizationId: string) {
         goal.liveComputable &&
         !goal.progressRecordedAt,
     ),
+    stripeConfigured: dashboard.stripeConfigured,
+    stripeConnected: dashboard.stripeConnected,
+    stripeSynced: dashboard.stripeSynced,
     confirmedOfferCount: snapshot.offers.filter(
       (offer) => (offer.discoveryStatus ?? "confirmed") === "confirmed",
     ).length,

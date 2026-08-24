@@ -1,10 +1,9 @@
-import { connectStripe, disconnectStripe, syncStripePayments } from "@/lib/actions/stripe";
 import { getAppSession } from "@/lib/auth/session";
 import { isStripeConfigured } from "@/lib/env";
 import { formatMoney } from "@/lib/money";
 import { getCommerceSnapshot } from "@/lib/phase2/queries";
 import { Badge } from "@/components/ui/badge";
-import { SaveButton, SaveForm } from "@/components/save-form";
+import { StripeReadCopyPanel } from "@/components/stripe-read-copy-panel";
 import {
   Card,
   CardContent,
@@ -55,34 +54,13 @@ export default async function CommercePage() {
             docs/phase-2/USER_SETUP.md.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-wrap gap-2">
-          {!stripeReady ? (
-            <p className="text-sm text-muted-foreground">
-              STRIPE_SECRET_KEY is not on this deployment yet.
-            </p>
-          ) : connected ? (
-            <>
-              <SaveForm action={syncStripePayments} successMessage="Stripe synced">
-                <SaveButton type="submit" pendingLabel="Syncing…">
-                  Sync recent Stripe activity
-                </SaveButton>
-              </SaveForm>
-              <SaveForm action={disconnectStripe} successMessage="Stripe disconnected">
-                <SaveButton type="submit" variant="outline">
-                  Disconnect
-                </SaveButton>
-              </SaveForm>
-            </>
-          ) : (
-            <SaveForm action={connectStripe} successMessage="Stripe connected">
-              <SaveButton type="submit">Connect Stripe</SaveButton>
-            </SaveForm>
-          )}
-          {snapshot.stripe?.lastError ? (
-            <p className="w-full text-sm text-destructive">
-              {snapshot.stripe.lastError}
-            </p>
-          ) : null}
+        <CardContent>
+          <StripeReadCopyPanel
+            configured={stripeReady}
+            connected={connected}
+            lastError={snapshot.stripe?.lastError}
+            showDisconnect
+          />
         </CardContent>
       </Card>
 

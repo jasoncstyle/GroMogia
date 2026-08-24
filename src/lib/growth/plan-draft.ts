@@ -86,6 +86,8 @@ export const ADD_OFFER_STEP_TITLE = "Add an offer";
 export const SAVE_BRAND_STEP_TITLE = "Save your brand";
 export const SAVE_BUSINESS_STEP_TITLE = "Save how this business works";
 export const SAVE_PROGRESS_STEP_TITLE = "Save today's Goal number";
+export const CONNECT_STRIPE_STEP_TITLE = "Connect payments";
+export const SYNC_STRIPE_STEP_TITLE = "Sync recent payments";
 
 export function skipsDuplicateNextStepAction(title: string): boolean {
   const text = clean(title);
@@ -113,7 +115,9 @@ export function skipsDuplicateNextStepAction(title: string): boolean {
     text === ADD_OFFER_STEP_TITLE ||
     text === SAVE_BRAND_STEP_TITLE ||
     text === SAVE_BUSINESS_STEP_TITLE ||
-    text === SAVE_PROGRESS_STEP_TITLE
+    text === SAVE_PROGRESS_STEP_TITLE ||
+    text === CONNECT_STRIPE_STEP_TITLE ||
+    text === SYNC_STRIPE_STEP_TITLE
   );
 }
 
@@ -211,6 +215,11 @@ export function isSaveBusinessNextStep(title: string): boolean {
 
 export function isSaveProgressNextStep(title: string): boolean {
   return clean(title) === SAVE_PROGRESS_STEP_TITLE;
+}
+
+export function isStripeReadCopyNextStep(title: string): boolean {
+  const text = clean(title);
+  return text === CONNECT_STRIPE_STEP_TITLE || text === SYNC_STRIPE_STEP_TITLE;
 }
 
 export function isReadGoalNextStep(title: string): boolean {

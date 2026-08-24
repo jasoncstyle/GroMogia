@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_OFFER_STEP_TITLE, CONNECT_SEARCH_CONSOLE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SAVE_PROGRESS_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "./plan-draft";
+import { ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_OFFER_STEP_TITLE, CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SAVE_PROGRESS_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE, SYNC_STRIPE_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -40,6 +40,9 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     brandSettingsSaved: true,
     businessBrainSaved: true,
     goalProgressNeedsSave: false,
+    stripeConfigured: true,
+    stripeConnected: true,
+    stripeSynced: true,
     confirmedOfferCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
@@ -585,6 +588,82 @@ describe("growth specialists", () => {
     );
     assert.ok(website);
     assert.equal(website.recommend.title, SAVE_PROGRESS_STEP_TITLE);
+  });
+
+  it("asks to connect payments so GroovGro can read a copy", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 1,
+          stripeConfigured: true,
+          stripeConnected: false,
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.equal(crm.recommend.kind, "recommend");
+    assert.equal(crm.recommend.classification, "optimization");
+    assert.equal(crm.recommend.title, CONNECT_STRIPE_STEP_TITLE);
+    assert.equal(crm.recommend.href, "/app/commerce");
+    assert.match(crm.recommend.body, /Connect here/);
+    assert.match(crm.recommend.body, /will not charge a card/);
+    assert.match(crm.recommend.body, /change checkout/);
+  });
+
+  it("asks to sync payments after Stripe is marked connected", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 1,
+          stripeConfigured: true,
+          stripeConnected: true,
+          stripeSynced: false,
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.equal(crm.recommend.kind, "recommend");
+    assert.equal(crm.recommend.classification, "optimization");
+    assert.equal(crm.recommend.title, SYNC_STRIPE_STEP_TITLE);
+    assert.match(crm.recommend.body, /Copy recent payment records here/);
+    assert.match(crm.recommend.body, /will not charge a card/);
+  });
+
+  it("keeps sharing the lead form ahead of connecting payments", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 0,
+          websiteConnected: true,
+          stripeConfigured: true,
+          stripeConnected: false,
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.equal(crm.recommend.title, SHARE_LEAD_FORM_STEP_TITLE);
+  });
+
+  it("does not ask to connect payments when Stripe keys are missing", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 1,
+          stripeConfigured: false,
+          stripeConnected: false,
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.equal(crm.recommend.kind, "no_change_yet");
   });
 
   it("notices a far-behind availability Goal only after enough evidence", () => {

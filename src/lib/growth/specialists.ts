@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_OFFER_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SAVE_PROGRESS_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_OFFER_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SAVE_PROGRESS_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE, SYNC_STRIPE_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -54,6 +54,9 @@ export type SpecialistFacts = {
   brandSettingsSaved: boolean
   businessBrainSaved: boolean
   goalProgressNeedsSave: boolean
+  stripeConfigured: boolean
+  stripeConnected: boolean
+  stripeSynced: boolean
   confirmedOfferCount: number
   upcomingEventCount: number
   evidenceSample: EvidenceSample
@@ -427,11 +430,27 @@ function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
               body: "Copy the public lead form here, or add someone you already know. GroovGro will not email anyone.",
               href: "/app/crm",
             }
-          : leaveAlone(
-              "/app/crm",
-              "Leave the pipeline alone",
-              "There are no open leads that need a next step right now.",
-            ),
+          : facts.stripeConfigured && !facts.stripeConnected
+            ? {
+                kind: "recommend",
+                classification: "optimization",
+                title: CONNECT_STRIPE_STEP_TITLE,
+                body: "Mark this workspace as connected so GroovGro can read a copy of payments. Connect here. GroovGro will not charge a card, create a Stripe account, or change checkout on the connected website.",
+                href: "/app/commerce",
+              }
+            : facts.stripeConfigured && facts.stripeConnected && !facts.stripeSynced
+              ? {
+                  kind: "recommend",
+                  classification: "optimization",
+                  title: SYNC_STRIPE_STEP_TITLE,
+                  body: "Copy recent payment records here. GroovGro will not charge a card or change checkout on the connected website.",
+                  href: "/app/commerce",
+                }
+              : leaveAlone(
+                  "/app/crm",
+                  "Leave the pipeline alone",
+                  "There are no open leads that need a next step right now.",
+                ),
     executeAllowed: false,
   };
 }

@@ -21,6 +21,7 @@ import { CopyLink } from "@/components/copy-link";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { TrackingSnippet } from "@/components/tracking-snippet";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
+import { StripeReadCopyPanel } from "@/components/stripe-read-copy-panel";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
 import { WebsitePageChecklist } from "@/components/website-page-checklist";
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,7 @@ import { getBrandSettingsForm, getBusinessBrainForm, getCoordinatedNextStep, get
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSaveBusinessNextStep, isSaveProgressNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSaveBusinessNextStep, isSaveProgressNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, isStripeReadCopyNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -75,6 +76,7 @@ export default async function NextStepPage({
   const canManageSeo = hasPermission(session.permissions, "manage_seo");
   const canConnectSearchConsole =
     canManageSeo || hasPermission(session.permissions, "manage_integrations");
+  const canManageIntegrations = hasPermission(session.permissions, "manage_integrations");
   const openPageLabel = step ? openPageLabelForNextStep(step.primary.title) : null;
   const dedicatedVisible = step
     ? showsDedicatedNextStepControl(step.primary.title, {
@@ -392,6 +394,23 @@ export default async function NextStepPage({
                   <SaveConnectedProgressButton disabled={!canDraftPlan} />
                   <Button asChild variant="outline">
                     <Link href="/app/goals">Open Goals</Link>
+                  </Button>
+                </>
+              ) : isStripeReadCopyNextStep(step.primary.title) ? (
+                <>
+                  <StripeReadCopyPanel
+                    configured={dashboard?.stripeConfigured ?? false}
+                    connected={dashboard?.stripeConnected ?? false}
+                    lastError={dashboard?.stripeLastError}
+                    canManage={canManageIntegrations}
+                    mode={
+                      step.primary.title === CONNECT_STRIPE_STEP_TITLE
+                        ? "connect"
+                        : "sync"
+                    }
+                  />
+                  <Button asChild variant="outline">
+                    <Link href="/app/commerce">Open Bookings & payments</Link>
                   </Button>
                 </>
               ) : isSaveBrandVoiceNextStep(step.primary.title) ? (
