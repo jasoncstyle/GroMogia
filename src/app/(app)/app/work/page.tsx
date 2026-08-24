@@ -59,8 +59,8 @@ export default async function OwnerWorkPage() {
         <CardContent className="space-y-4">
           {work.open.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              Nothing is ready yet. Approve a proposed action on Next step
-              or Goals, or propose the first actions from an approved plan.
+              Nothing is ready yet. Open Next step to approve a proposed action
+              or propose the first actions from an approved plan.
             </p>
           ) : (
             work.open.map((action) => (
@@ -140,20 +140,16 @@ export default async function OwnerWorkPage() {
       ) : null}
 
       <div className="flex flex-wrap gap-2">
+        <Button asChild>
+          <Link href="/app/next-step">Open Next step</Link>
+        </Button>
         {approvedPlan ? (
-          <Button asChild>
+          <Button asChild variant="outline">
             <Link href="/app/goals">Open the approved plan</Link>
           </Button>
-        ) : (
-          <Button asChild>
-            <Link href="/app/goals">Draft or approve a plan</Link>
-          </Button>
-        )}
+        ) : null}
         <Button asChild variant="outline">
           <Link href="/app">The path so far</Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/app/next-step">Next step</Link>
         </Button>
         <Button asChild variant="outline">
           <Link href="/app/decisions">Decisions</Link>

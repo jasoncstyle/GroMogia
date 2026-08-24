@@ -103,6 +103,22 @@ describe("owner work", () => {
     assert.equal(parts.open[0]?.id, "2");
   });
 
+  it("makes Next step the filled button on Your work", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/work/page.tsx"),
+      "utf8",
+    );
+    assert.match(
+      page,
+      /<Button asChild>\s*<Link href="\/app\/next-step">Open Next step<\/Link>/,
+    );
+    assert.match(
+      page,
+      /variant="outline">\s*<Link href="\/app\/goals">Open the approved plan<\/Link>/,
+    );
+    assert.doesNotMatch(page, /Draft or approve a plan/);
+  });
+
   it("does not bake industry-specific words into owner-work helpers", () => {
     const source = readFileSync(join(process.cwd(), "src/lib/growth/owner-work.ts"), "utf8");
     for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk", "electrician"]) {
