@@ -1042,7 +1042,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** I’ll do this on those dedicated loops does not also save a duplicate proposed action. GroovGro does not execute.
 
-### 104. Keep find-pages on Next step (this slice)
+### 104. Keep find-pages on Next step
 
 **Reason:** Business still showed the Find pages checklist after Next step and Website already had that loop. The owner could finish an unread-site review from Business instead of staying on Next step.
 
@@ -1051,6 +1051,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step and Website can find pages and check the important ones. Business keeps Review connected data and names Next step to find pages. GroovGro does not change the live site.
+
+### 105. Keep the review schedule on Next step (this slice)
+
+**Reason:** Goals still showed the day-and-time form after Next step and Growth review already had it. The owner could change the schedule from Goals instead of staying on Next step.
+
+**Affected:** Goals schedule card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can save when you look at this week’s numbers. Growth review can change that day later. Goals names Next step. GroovGro does not change the business from that schedule.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1147,7 +1157,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Offers confirm drafts on Next step is parked.** Next step can confirm or reject suggested offers. Offers lists them and names Next step. Do not execute.
 - **Keep Business confirm drafts on Next step is parked.** Next step can confirm or reject suggested offers and goals. Business lists them and names Next step. Do not execute.
 - **Keep dedicated Next step buttons from creating duplicate actions is parked.** I’ll do this on confirm drafts, connect website, review site, approve actions, owner work, and check what changed does not also save a duplicate proposed action. Do not execute.
-- **Keep find-pages on Next step (this slice).** Next step and Website can find pages. Business keeps Review connected data and names Next step to find pages. Do not change the live site.
+- **Keep find-pages on Next step is parked.** Next step and Website can find pages. Business keeps Review connected data and names Next step to find pages. Do not change the live site.
+- **Keep the review schedule on Next step (this slice).** Next step can save when you look at this week’s numbers. Growth review can change that day later. Goals names Next step. Do not change the business from that schedule.
 
 ## DESIGN FOR LATER
 
@@ -1324,7 +1335,8 @@ Organization
 96. **Keep Offers confirm drafts on Next step** — Next step can confirm or reject suggested offers; Offers lists them and names Next step. Done.
 97. **Keep Business confirm drafts on Next step** — Next step can confirm or reject suggested offers and goals; Business lists them and names Next step. Done.
 98. **Keep dedicated Next step buttons from creating duplicate actions** — I’ll do this on dedicated loops does not also save a duplicate proposed action. Done.
-99. **Keep find-pages on Next step** — Next step and Website can find pages; Business keeps Review connected data and names Next step. This slice.
-100. **Guarded automation** — only after the above is trusted.
+99. **Keep find-pages on Next step** — Next step and Website can find pages; Business keeps Review connected data and names Next step. Done.
+100. **Keep the review schedule on Next step** — Next step can save when you look at this week’s numbers; Growth review can change that day later; Goals names Next step. This slice.
+101. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

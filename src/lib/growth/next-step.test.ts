@@ -1508,7 +1508,7 @@ describe("coordinated next step", () => {
     assert.match(step.primary.body, /will not change the business/);
     assert.match(page, /isSaveReviewScheduleNextStep/);
     assert.match(page, /GrowthSettingsForm/);
-    assert.match(
+    assert.doesNotMatch(
       readFileSync(join(process.cwd(), "src/app/(app)/app/goals/page.tsx"), "utf8"),
       /GrowthSettingsForm/,
     );
@@ -1677,6 +1677,7 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(goals, /WaitingActionButtons/);
     assert.doesNotMatch(goals, /OwnerWorkButtons/);
     assert.doesNotMatch(goals, /ConfirmRejectButtons/);
+    assert.doesNotMatch(goals, /GrowthSettingsForm/);
     const offers = readFileSync(
       join(process.cwd(), "src/app/(app)/app/offers/page.tsx"),
       "utf8",
@@ -1776,6 +1777,8 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.match(goalsPage, /Open Next step to\s+read this week/);
+    assert.match(goalsPage, /Choose when you look\s+at this week/);
+    assert.doesNotMatch(goalsPage, /GrowthSettingsForm/);
     assert.doesNotMatch(goalsPage, /Open Growth review\s+to read the current weekly/);
     const decisions = readFileSync(
       join(process.cwd(), "src/app/(app)/app/decisions/page.tsx"),

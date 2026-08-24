@@ -15,7 +15,6 @@ import {
 } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { GoalCreateForm } from "@/components/goal-create-form";
-import { GrowthSettingsForm } from "@/components/growth-settings-form";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import {
   alreadyDraftedNextGoal,
@@ -125,16 +124,16 @@ export default async function GoalsPage() {
           <CardTitle>Growth review schedule</CardTitle>
           <CardDescription>
             This is when routine reviews are presented. It does not force
-            GroovGro to change the business on that day. Open Next step to
-            read this week’s look. Open Growth review for the monthly
-            summary.
+            GroovGro to change the business on that day. Choose when you look
+            at this week’s numbers on Next step. Open Growth review to change
+            that day later. Open Next step to read this week’s look.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <GrowthSettingsForm
-            settings={settings}
-            disabled={!session.organizationId}
-          />
+          <p className="text-sm text-muted-foreground">
+            The schedule form is on Next step when GroovGro asks, and on
+            Growth review if you want to change it later.
+          </p>
         </CardContent>
       </Card>
 
