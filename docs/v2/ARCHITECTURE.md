@@ -84,14 +84,32 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Computable goals write `currentValue` and one snapshot per day from connected leads, bookings, and payments. Manual Current updates write a hand-saved snapshot. GroovGro does not execute marketing.
 
+### 8. Coordinated Next step
+
+**Reason:** Specialists and reviews can list many ideas. The owner needs one next thing, or an explicit wait.
+
+**Affected:** `src/lib/growth/next-step.ts`, Next step screen, specialist reports, Business drafts.
+
+**Current functionality:** One coordinated recommendation from Goals, specialists, and drafts. Approve or reject saved proposals. Do not execute. Ads, email, and social stay left alone.
+
+### 9. Versioned Growth Plan from a Goal (this slice)
+
+**Reason:** A Goal without a written plan is only a number. The owner needs a versioned strategy they can approve or reject before anything runs.
+
+**Affected:** `src/lib/growth/plan-draft.ts`, `src/lib/actions/growth-plan.ts`, Goals screen. Uses existing `growth_plans`.
+
+**Migration risk:** None. Reuses the existing plans table. New drafts increment `version`. Approving supersedes other approved/active plans for that Goal.
+
+**Current functionality:** GroovGro drafts a plain-English plan from a confirmed Goal, Brand, confirmed offers, Next step, website connection, and open leads. The owner approves or rejects. Approving writes Decision History. GroovGro does not execute, start ads, send email, charge a card, or change the live website.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
-- **Growth Director coordination (this slice), approval-first.** Shown to the owner as Next step. Reads Goals, specialists, and drafts. One recommendation or “nothing yet.” Approve or reject. Do not execute. Do not start ads.
+- **Next step is parked.** Coordination stays approval-first and does not execute.
+- **Growth Plan draft/approve (this slice).** Versioned write-up from a Goal. Approve or reject. Do not execute. Do not start ads.
 
 ## DESIGN FOR LATER
 
-- Growth Director coordination
 - Guarded execution of Actions
 - Google Ads / Meta / email / social / reviews
 - Capability registry as a formal runtime
@@ -172,7 +190,8 @@ Organization
 3. **Reviews** — weekly / monthly summaries, including no-change. Done in this slice.
 4. **Intelligence on goals** — specialists read, analyze, and recommend, including no-change. Done in this slice.
 5. **Specialist work with Goal linkage** — SEO and other connected modules recommend; email and ads stay disconnected. Done for recommend-only.
-6. **Growth Director** — coordinate, still approval-first.
-7. **Guarded automation** — only after the above is trusted.
+6. **Growth Director** — coordinate as Next step, still approval-first. Done for recommend-only.
+7. **Growth Plan** — versioned draft from a Goal; owner approves or rejects. This slice.
+8. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
