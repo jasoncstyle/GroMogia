@@ -108,6 +108,8 @@ function AppNav({
   const work = navModules(session.enabledModules, "work");
   const grow = navModules(session.enabledModules, "grow");
   const settings = navModules(session.enabledModules, "settings");
+  const nextStep = grow.find((item) => item.id === "growth_next");
+  const growRest = grow.filter((item) => item.id !== "growth_next");
 
   return (
     <nav className="flex flex-1 flex-col gap-4 overflow-y-auto p-3">
@@ -119,6 +121,15 @@ function AppNav({
           active={pathname === "/app"}
           onNavigate={onNavigate}
         />
+        {nextStep ? (
+          <NavLink
+            href={nextStep.href}
+            label={nextStep.name}
+            icon={ICONS.growth_next ?? ListChecks}
+            active={pathname.startsWith(nextStep.href)}
+            onNavigate={onNavigate}
+          />
+        ) : null}
         {work.map((item) => (
           <NavLink
             key={item.id}
@@ -130,12 +141,12 @@ function AppNav({
           />
         ))}
       </div>
-      {grow.length > 0 ? (
+      {growRest.length > 0 ? (
         <div className="flex flex-col gap-1">
           <p className="px-2.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
             Grow
           </p>
-          {grow.map((item) => (
+          {growRest.map((item) => (
             <NavLink
               key={item.id}
               href={item.href}
