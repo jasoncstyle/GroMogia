@@ -623,12 +623,38 @@ export default async function NextStepPage({
             </CardContent>
           </Card>
 
+          <Card>
+            <CardHeader>
+              <CardTitle>This week’s look</CardTitle>
+              <CardDescription>
+                {step.weeklyLook
+                  ? `${step.weeklyLook.periodLabel}. Read it here. GroovGro does not change the business from this look.`
+                  : "A weekly look at progress. Read it here. GroovGro does not change the business from this look."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              {step.weeklyLook ? (
+                <>
+                  <p className="font-medium">{step.weeklyLook.headline}</p>
+                  <p className="text-muted-foreground">
+                    {step.weeklyLook.howWeAreDoing}
+                  </p>
+                  <p className="text-muted-foreground">
+                    {step.weeklyLook.whatNeedsAttention}
+                  </p>
+                </>
+              ) : (
+                <p className="text-muted-foreground">
+                  No weekly look is ready yet. Stay here. GroovGro will not
+                  start marketing.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline">
               <Link href="/app">The path so far</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/app/growth-review">Growth review</Link>
             </Button>
             <Button asChild variant="outline">
               <Link href="/app/intelligence">Specialists</Link>

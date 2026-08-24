@@ -735,5 +735,11 @@ export async function getCoordinatedNextStep(organizationId: string) {
           progressPercent: readableGoal.progressPercent,
         }
       : null,
+    weeklyLook: {
+      periodLabel: snapshot.weeklyReview.periodLabel,
+      headline: snapshot.weeklyReview.headline,
+      howWeAreDoing: snapshot.weeklyReview.howWeAreDoing,
+      whatNeedsAttention: snapshot.weeklyReview.whatNeedsAttention,
+    },
   });
 }

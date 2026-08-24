@@ -1716,9 +1716,11 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(page, /href="\/app\/goals">Open Goals/);
     assert.doesNotMatch(page, /label="Open Goals"/);
     assert.doesNotMatch(page, /href="\/app\/goals">Goals/);
+    assert.doesNotMatch(page, /href="\/app\/growth-review"/);
     assert.doesNotMatch(page, /href="\/app\/work"/);
     assert.doesNotMatch(page, /Open Your work/);
     assert.match(page, /LeaveAloneNextStepButton/);
+    assert.match(page, /weeklyLook/);
   });
 
   it("lets the owner read the Growth Plan on Next step", () => {
@@ -1773,6 +1775,29 @@ describe("coordinated next step", () => {
     assert.match(page, /step\.readableGoal/);
     assert.match(page, /<CardTitle>The Goal<\/CardTitle>/);
     assert.doesNotMatch(page, /href="\/app\/goals">Open Goals/);
+  });
+
+  it("lets the owner read this week’s look on Next step", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      weeklyLook: {
+        periodLabel: "Week of Aug 17, 2026",
+        headline: "Keep collecting evidence.",
+        howWeAreDoing: "No active Goal yet. Open Next step to add one.",
+        whatNeedsAttention: "There is no active Goal. Open Next step to add one.",
+      },
+    });
+    assert.equal(step.weeklyLook?.periodLabel, "Week of Aug 17, 2026");
+    assert.match(step.weeklyLook?.headline ?? "", /Keep collecting evidence/);
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(page, /step\.weeklyLook/);
+    assert.match(page, /This week/);
+    assert.doesNotMatch(page, /href="\/app\/growth-review"/);
   });
 
   it("refreshes Next step after someone submits the public lead form", () => {

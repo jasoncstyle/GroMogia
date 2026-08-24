@@ -117,6 +117,7 @@ export type NextStepInput = {
   activeGoalIds?: string[]
   readablePlan?: ReadableGrowthPlan | null
   readableGoal?: LearningGoal | null
+  weeklyLook?: WeeklyLook | null
 };
 
 export type ReadableGrowthPlan = {
@@ -126,6 +127,13 @@ export type ReadableGrowthPlan = {
   version: number
   status: string
   strategySummary: string
+};
+
+export type WeeklyLook = {
+  periodLabel: string
+  headline: string
+  howWeAreDoing: string
+  whatNeedsAttention: string
 };
 
 export type CoordinatedNextStep = {
@@ -141,6 +149,7 @@ export type CoordinatedNextStep = {
   learningGoal: LearningGoal | null
   readablePlan: ReadableGrowthPlan | null
   readableGoal: LearningGoal | null
+  weeklyLook: WeeklyLook | null
   executeAllowed: false
 };
 
@@ -445,6 +454,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     learningGoal: input.learningGoal ?? null,
     readablePlan: input.readablePlan ?? null,
     readableGoal: input.readableGoal ?? null,
+    weeklyLook: input.weeklyLook ?? null,
     executeAllowed: false,
   };
 }
