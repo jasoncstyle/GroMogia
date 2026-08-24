@@ -206,6 +206,7 @@ export type CoordinatedNextStep = {
   proposePlanId: string | null
   reachedGoalId: string | null
   needsAddGoal: boolean
+  needsConnectWebsite: boolean
   executeAllowed: false
 };
 
@@ -535,6 +536,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
         ? (learning.goalId ?? null)
         : null,
     needsAddGoal: learning?.title === ADD_GOAL_STEP_TITLE,
+    needsConnectWebsite: input.websiteConnected === false,
     executeAllowed: false,
   };
 }

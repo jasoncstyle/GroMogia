@@ -774,6 +774,29 @@ describe("coordinated next step", () => {
     assert.match(source, /CONNECT_WEBSITE_STEP_TITLE/);
   });
 
+  it("keeps Connect website on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({ inferredDraftCount: 1, websiteConnected: false, websiteUrl: "" }),
+      ),
+      waitingActions: [],
+      websiteConnected: false,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsConnectWebsite, true);
+    assert.match(page, /needsConnectWebsite/);
+    assert.match(page, /primary\.title !== CONNECT_WEBSITE_STEP_TITLE/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/website/page.tsx"), "utf8"),
+      /name="publicUrl"/,
+    );
+  });
+
   it("asks the owner to review a saved website before specialist follow-up", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,

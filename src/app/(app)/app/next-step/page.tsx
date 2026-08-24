@@ -588,6 +588,25 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.needsConnectWebsite &&
+          step.primary.title !== CONNECT_WEBSITE_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Connect the existing website</CardTitle>
+                <CardDescription>
+                  Paste the address of the site you already have. GroovGro
+                  will not move the live site.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <WebsiteConnectForm
+                  defaultUrl={dashboard?.website?.publicUrl ?? ""}
+                  canSave={canManageWebsite}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.needsWebsiteReview &&
           step.primary.title !== REVIEW_SITE_STEP_TITLE ? (
             <Card>
