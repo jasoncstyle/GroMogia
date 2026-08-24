@@ -134,6 +134,9 @@ export default async function NextStepPage() {
 
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline">
+              <Link href="/app">The path so far</Link>
+            </Button>
+            <Button asChild variant="outline">
               <Link href="/app/goals">Goals</Link>
             </Button>
             <Button asChild variant="outline">

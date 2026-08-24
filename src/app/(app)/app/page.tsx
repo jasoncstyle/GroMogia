@@ -11,8 +11,10 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl, missingFoundationServices } from "@/lib/env";
+import { GrowthStoryCard } from "@/components/growth-story";
 import { partitionOwnerWork } from "@/lib/growth/owner-work";
 import { getCoordinatedNextStep, getGrowthSnapshot } from "@/lib/growth/queries";
+import { buildGrowthStory, storyFactsFromWorkspace } from "@/lib/growth/story";
 import {
   buildStatusAlerts,
   websiteWasRead,
@@ -69,6 +71,26 @@ export default async function DashboardPage() {
 
   const ownerWork = partitionOwnerWork(growth?.actions ?? []);
   const latestWorkLearning = growth?.decisions.find((row) => row.outcome)?.outcome;
+  const approvedPlan = growth?.plans.find(
+    (plan) => plan.status === "approved" || plan.status === "active",
+  );
+  const storyBeats = buildGrowthStory(
+    storyFactsFromWorkspace({
+      businessName: session.organizationName ?? "",
+      goal: growth?.activeGoals[0] ?? null,
+      plan: approvedPlan ?? null,
+      openWorkCount: ownerWork.open.length,
+      finishedWorkCount: ownerWork.finished.length,
+      latestLearning: latestWorkLearning ?? "",
+      nextStep: nextStep
+        ? {
+            title: nextStep.primary.title,
+            body: nextStep.primary.body,
+            href: nextStep.primary.href,
+          }
+        : null,
+    }),
+  );
 
   const nextStepText = inferredCount > 0
     ? "Open Business to confirm or reject what GroovGro drafted. Nothing becomes active until you confirm."
@@ -133,6 +155,8 @@ export default async function DashboardPage() {
           </CardHeader>
         </Card>
       )}
+
+      {session.organizationId ? <GrowthStoryCard beats={storyBeats} /> : null}
 
       {snapshot ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

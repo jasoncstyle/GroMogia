@@ -110,6 +110,9 @@ export default async function GoalsPage() {
           </p>
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline" size="sm">
+              <Link href="/app">Read the path so far</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
               <Link href="/app/next-step">Open next step</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
