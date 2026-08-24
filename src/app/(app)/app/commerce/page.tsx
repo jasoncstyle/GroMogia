@@ -2,8 +2,11 @@ import { getAppSession } from "@/lib/auth/session";
 import { isStripeConfigured } from "@/lib/env";
 import { formatMoney } from "@/lib/money";
 import { getCommerceSnapshot } from "@/lib/phase2/queries";
+import { isUnmatchedPaymentCopy, labelForMatchedPerson } from "@/lib/commerce/match-charge";
+import { hasPermission } from "@/lib/permissions";
 import { Badge } from "@/components/ui/badge";
 import { StripeReadCopyPanel } from "@/components/stripe-read-copy-panel";
+import { MatchChargeForm } from "@/components/match-charge-form";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
 import {
   Card,
@@ -25,9 +28,13 @@ export default async function CommercePage() {
   const session = await getAppSession();
   const snapshot = session.organizationId
     ? await getCommerceSnapshot(session.organizationId)
-    : { bookings: [], payments: [], stripe: null };
+    : { bookings: [], payments: [], people: [], stripe: null };
   const stripeReady = isStripeConfigured();
   const connected = snapshot.stripe?.status === "connected";
+  const canMatch = hasPermission(session.permissions, "manage_customers");
+  const unmatchedCount = snapshot.payments.filter((payment) =>
+    isUnmatchedPaymentCopy(payment),
+  ).length;
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -37,7 +44,9 @@ export default async function CommercePage() {
         </h1>
         <p className="text-muted-foreground">
           GroovGro stores amounts, status, and Stripe IDs. It never stores card
-          numbers, CVC codes, or bank account numbers.
+          numbers, CVC codes, or bank account numbers. Match a charge to a
+          person here when checkout did not include an email. GroovGro will
+          not charge a card or change checkout on the connected website.
         </p>
       </div>
 
@@ -68,6 +77,11 @@ export default async function CommercePage() {
       <Card>
         <CardHeader>
           <CardTitle>Payments</CardTitle>
+          <CardDescription>
+            {unmatchedCount > 0
+              ? `${unmatchedCount} payment${unmatchedCount === 1 ? "" : "s"} ${unmatchedCount === 1 ? "has" : "have"} no person yet. Matching does not change live checkout.`
+              : "When a checkout copy has an email, GroovGro matches it automatically. You can match the rest here."}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {snapshot.payments.length === 0 ? (
@@ -81,6 +95,7 @@ export default async function CommercePage() {
                   <TableHead>Amount</TableHead>
                   <TableHead>Kind</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Person</TableHead>
                   <TableHead>Stripe object</TableHead>
                 </TableRow>
               </TableHeader>
@@ -92,6 +107,17 @@ export default async function CommercePage() {
                     </TableCell>
                     <TableCell>{payment.kind}</TableCell>
                     <TableCell>{payment.status}</TableCell>
+                    <TableCell>
+                      {payment.person ? (
+                        labelForMatchedPerson(payment.person)
+                      ) : (
+                        <MatchChargeForm
+                          paymentId={payment.id}
+                          people={snapshot.people}
+                          disabled={!canMatch}
+                        />
+                      )}
+                    </TableCell>
                     <TableCell className="font-mono text-xs">
                       {payment.providerObjectId}
                     </TableCell>

@@ -1392,6 +1392,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. GroovGro does not change ads or the website.
 
+### 139. Match charges to people on Bookings (this slice)
+
+**Reason:** Intelligence asks the owner to match Stripe charge copies that have no person email. That work belongs on Bookings. Bookings listed amounts and Stripe IDs but had no way to attach a person, so Goal numbers and marketing source stayed unattributed.
+
+**Affected:** Bookings payments table.
+
+**Migration risk:** None. Existing matched copies keep their person. Unmatched copies stay unmatched until the owner chooses someone.
+
+**Current functionality:** Bookings can match a payment copy to a person already in the workspace. GroovGro does not charge a card, create a Stripe account, or change checkout on the connected website.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
@@ -1521,7 +1531,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Run an SEO check on Next step when it is not the main ask is parked.** Next step can run a homepage SEO check even when that is not the main ask. SEO still has that check. Do not edit the website.
 - **Keep SEO drafts on Next step when they are not the main ask is parked.** Next step can draft and approve homepage SEO copy even when that is not the main ask. SEO still has those checks. Do not change the connected website or start ads.
 - **Keep Search Console on Next step when it is not the main ask is parked.** Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask. SEO still has that panel. Do not edit the website, submit a sitemap, or buy ads.
-- **Keep Add a calendar item on Next step when it is not the main ask (this slice).** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. Do not change ads or the website.
+- **Keep Add a calendar item on Next step when it is not the main ask is parked.** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. Do not change ads or the website.
+- **Match charges to people on Bookings (this slice).** Bookings can match a payment copy to a person when checkout did not include an email. Intelligence still names Bookings for that loop. Do not charge a card or change checkout.
 
 ## DESIGN FOR LATER
 
@@ -1732,7 +1743,8 @@ Organization
 130. **Keep Run an SEO check on Next step when it is not the main ask** — Next step can run a homepage SEO check even when that is not the main ask; SEO still has that check. Done.
 131. **Keep SEO drafts on Next step when they are not the main ask** — Next step can draft and approve homepage SEO copy even when that is not the main ask; SEO still has those checks. Done.
 132. **Keep Search Console on Next step when it is not the main ask** — Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask; SEO still has that panel. Done.
-133. **Keep Add a calendar item on Next step when it is not the main ask** — Next step can review upcoming items and add a calendar item even when that is not the main ask; Events still has that form. This slice.
-134. **Guarded automation** — only after the above is trusted.
+133. **Keep Add a calendar item on Next step when it is not the main ask** — Next step can review upcoming items and add a calendar item even when that is not the main ask; Events still has that form. Done.
+134. **Match charges to people on Bookings** — Bookings can match a payment copy to a person; Intelligence still names Bookings. This slice. Do not charge a card or change checkout.
+135. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, gte, inArray, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import {
@@ -175,7 +175,12 @@ export async function getDashboardSnapshot(organizationId: string) {
 export async function getCommerceSnapshot(organizationId: string) {
   const db = getDb();
   if (!db) {
-    return { bookings: [], payments: [], stripe: null as null };
+    return {
+      bookings: [],
+      payments: [],
+      people: [] as { id: string; displayName: string; email: string | null }[],
+      stripe: null as null,
+    };
   }
 
   const bookingRows = await db
@@ -186,11 +191,29 @@ export async function getCommerceSnapshot(organizationId: string) {
     .limit(50);
 
   const paymentRows = await db
-    .select()
+    .select({
+      payment: payments,
+      person: {
+        displayName: contacts.displayName,
+        email: contacts.email,
+      },
+    })
     .from(payments)
+    .leftJoin(contacts, eq(payments.contactId, contacts.id))
     .where(eq(payments.organizationId, organizationId))
     .orderBy(desc(payments.createdAt))
     .limit(50);
+
+  const people = await db
+    .select({
+      id: contacts.id,
+      displayName: contacts.displayName,
+      email: contacts.email,
+    })
+    .from(contacts)
+    .where(eq(contacts.organizationId, organizationId))
+    .orderBy(asc(contacts.displayName))
+    .limit(200);
 
   const [stripe] = await db
     .select()
@@ -203,5 +226,18 @@ export async function getCommerceSnapshot(organizationId: string) {
     )
     .limit(1);
 
-  return { bookings: bookingRows, payments: paymentRows, stripe: stripe ?? null };
+  return {
+    bookings: bookingRows,
+    payments: paymentRows.map((row) => ({
+      ...row.payment,
+      person: row.payment.contactId
+        ? {
+            displayName: row.person?.displayName ?? "",
+            email: row.person?.email ?? null,
+          }
+        : null,
+    })),
+    people,
+    stripe: stripe ?? null,
+  };
 }
