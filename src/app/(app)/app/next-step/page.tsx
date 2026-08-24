@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { DraftGrowthPlanButton } from "@/components/growth-plan-actions";
+import { DraftGrowthPlanButton, GrowthPlanReviewButtons } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { NextStepResponseButtons, WaitingActionButtons } from "@/components/next-step-actions";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
-import { DRAFT_PLAN_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 
@@ -27,6 +27,7 @@ export default async function NextStepPage() {
   const canCreateGoal = hasPermission(session.permissions, "create_goals");
   const canActivateGoal = hasPermission(session.permissions, "modify_goals");
   const canDraftPlan = hasPermission(session.permissions, "modify_goals");
+  const canApprovePlan = hasPermission(session.permissions, "approve_plans");
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -80,6 +81,13 @@ export default async function NextStepPage() {
               step.primary.title === DRAFT_PLAN_STEP_TITLE &&
               step.primary.goalId ? (
                 <DraftGrowthPlanButton goalId={step.primary.goalId} />
+              ) : null}
+              {step.primary.title === APPROVE_PLAN_STEP_TITLE &&
+              step.primary.planId ? (
+                <GrowthPlanReviewButtons
+                  planId={step.primary.planId}
+                  canApprove={canApprovePlan}
+                />
               ) : null}
             </CardContent>
           </Card>
@@ -138,10 +146,10 @@ export default async function NextStepPage() {
               <CardTitle>Write it as a plan</CardTitle>
               <CardDescription>
                 Next step is one thing to do now. If GroovGro asks you to draft
-                a plan, use the button above. A Growth Plan is a versioned
-                write-up for a Goal. After you approve a plan, GroovGro can
-                propose the first actions. Nothing runs until you say so, and
-                even then GroovGro does not execute.
+                or approve a plan, use the buttons above. A Growth Plan is a
+                versioned write-up for a Goal. After you approve a plan,
+                GroovGro can propose the first actions. Nothing runs until you
+                say so, and even then GroovGro does not execute.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">

@@ -22,7 +22,7 @@ import {
 } from "@/lib/db/schema";
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
-import { findPlanDraftGoal } from "@/lib/growth/plan-draft";
+import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal } from "@/lib/growth/plan-draft";
 import { coordinateNextStep } from "@/lib/growth/next-step";
 import { isOpenOwnerWork } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
@@ -358,6 +358,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
     })),
     snapshot.plans,
   );
+  const approve = findDraftPlanToApprove(snapshot.activeGoals, snapshot.plans);
   return coordinateNextStep({
     inferredDraftCount:
       snapshot.inferredOffers.length + snapshot.inferredGoals.length,
@@ -381,6 +382,11 @@ export async function getCoordinatedNextStep(organizationId: string) {
     activateGoalTitle: activate?.title ?? "",
     planGoalId: planGoal?.id ?? null,
     planGoalTitle: planGoal?.title ?? "",
+    approvePlanId: approve?.plan.id ?? null,
+    approvePlanGoalId: approve?.goal.id ?? null,
+    approvePlanGoalTitle: approve?.goal.title ?? "",
+    approvePlanVersion: approve?.plan.version,
+    approvePlanExcerpt: approve ? draftPlanExcerpt(approve.plan.strategySummary) : "",
     activeGoalIds: snapshot.activeGoals.map((goal) => goal.id),
   });
 }

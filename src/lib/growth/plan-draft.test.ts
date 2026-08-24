@@ -3,7 +3,13 @@ import { describe, it } from "node:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { draftGrowthPlanSummary, findPlanDraftGoal, goalNeedsPlanDraft } from "./plan-draft";
+import {
+  draftGrowthPlanSummary,
+  draftPlanExcerpt,
+  findDraftPlanToApprove,
+  findPlanDraftGoal,
+  goalNeedsPlanDraft,
+} from "./plan-draft";
 
 describe("growth plan draft", () => {
   it("writes a plan from a Goal and connected facts without starting marketing", () => {
@@ -128,6 +134,48 @@ describe("growth plan draft", () => {
     );
   });
 
+  it("finds a draft plan on the active Goal for the owner to approve", () => {
+    const picked = findDraftPlanToApprove(
+      [
+        { id: "goal-1", title: "Old Goal", status: "achieved" },
+        { id: "goal-2", title: "Next: More people get in touch", status: "active" },
+      ],
+      [
+        {
+          id: "plan-old",
+          goalId: "goal-1",
+          status: "draft",
+          version: 3,
+          strategySummary: "Old draft.",
+        },
+        {
+          id: "plan-1",
+          goalId: "goal-2",
+          status: "draft",
+          version: 1,
+          strategySummary: "Follow up open leads. GroovGro will not start marketing.",
+        },
+        {
+          id: "plan-2",
+          goalId: "goal-2",
+          status: "draft",
+          version: 2,
+          strategySummary: "Keep collecting evidence. GroovGro will not run this.",
+        },
+      ],
+    );
+    assert.equal(picked?.plan.id, "plan-2");
+    assert.equal(picked?.goal.id, "goal-2");
+    assert.equal(
+      findDraftPlanToApprove(
+        [{ id: "goal-2", title: "Next: More people get in touch", status: "active", discoveryStatus: "inferred" }],
+        [{ id: "plan-1", goalId: "goal-2", status: "draft", version: 1, strategySummary: "Nope." }],
+      ),
+      null,
+    );
+    assert.match(draftPlanExcerpt("Keep collecting evidence. GroovGro will not run this."), /will not run this/);
+  });
+
   it("does not copy the draft-plan next step back into the plan text", () => {
     const summary = draftGrowthPlanSummary({
       businessName: "North Desk",
@@ -152,6 +200,33 @@ describe("growth plan draft", () => {
       openLeadCount: 0,
     });
     assert.doesNotMatch(summary, /Draft a plan for this Goal/);
+    assert.match(summary, /Keep collecting/);
+  });
+
+  it("does not copy the approve-plan next step back into the plan text", () => {
+    const summary = draftGrowthPlanSummary({
+      businessName: "North Desk",
+      description: "",
+      targetCustomers: "",
+      goal: {
+        title: "More people get in touch",
+        goalType: "lead_generation",
+        status: "active",
+        liveCurrentValue: 2,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "",
+        progressPercent: 20,
+      },
+      offers: [],
+      nextStepTitle: "Approve this plan",
+      nextStepBody: "Approve or reject it. Approving does not run marketing.",
+      nextStepKind: "recommend",
+      leftAlone: [],
+      websiteConnected: true,
+      openLeadCount: 0,
+    });
+    assert.doesNotMatch(summary, /Approve this plan/);
     assert.match(summary, /Keep collecting/);
   });
 

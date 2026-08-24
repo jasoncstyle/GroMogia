@@ -57,6 +57,12 @@ function progressLine(goal: PlanDraftGoal): string {
 }
 
 export const DRAFT_PLAN_STEP_TITLE = "Draft a plan for this Goal";
+export const APPROVE_PLAN_STEP_TITLE = "Approve this plan";
+
+function isPlanLoopNextStep(title: string): boolean {
+  const text = clean(title);
+  return text === DRAFT_PLAN_STEP_TITLE || text === APPROVE_PLAN_STEP_TITLE;
+}
 
 export function goalNeedsPlanDraft(
   goal: {
@@ -98,12 +104,50 @@ export function findPlanDraftGoal<
   return goals.find((goal) => goalNeedsPlanDraft(goal, plans)) ?? null;
 }
 
+export function findDraftPlanToApprove<
+  G extends {
+    id: string
+    title: string
+    status: string
+    discoveryStatus?: string
+  },
+  P extends {
+    id: string
+    goalId: string
+    status: string
+    version: number
+    strategySummary: string
+  },
+>(goals: G[], plans: P[]): { plan: P; goal: G } | null {
+  const activeIds = new Set(
+    goals
+      .filter((goal) => {
+        if (goal.status !== "active") return false;
+        const discovery = goal.discoveryStatus ?? "confirmed";
+        return discovery !== "inferred" && discovery !== "rejected";
+      })
+      .map((goal) => goal.id),
+  );
+  const drafts = plans
+    .filter((plan) => plan.status === "draft" && activeIds.has(plan.goalId))
+    .sort((a, b) => b.version - a.version);
+  const plan = drafts[0];
+  if (!plan) return null;
+  const goal = goals.find((row) => row.id === plan.goalId);
+  if (!goal) return null;
+  return { plan, goal };
+}
+
+export function draftPlanExcerpt(summary: string): string {
+  return clip(summary, 400);
+}
+
 export function draftGrowthPlanSummary(facts: PlanDraftFacts): string {
   const name = clean(facts.businessName) || "This business";
   const goal = facts.goal;
   const offers = facts.offers.map((offer) => clean(offer.name)).filter(Boolean);
   const doNow: string[] = [];
-  if (facts.nextStepKind === "recommend" && clean(facts.nextStepTitle) && clean(facts.nextStepTitle) !== DRAFT_PLAN_STEP_TITLE) {
+  if (facts.nextStepKind === "recommend" && clean(facts.nextStepTitle) && !isPlanLoopNextStep(facts.nextStepTitle)) {
     doNow.push(`${clean(facts.nextStepTitle)}. ${clean(facts.nextStepBody)}`);
   }
   if (facts.openLeadCount > 0) {
