@@ -668,6 +668,13 @@ export default async function NextStepPage({
                   disabled={!canCreateGoal}
                 />
               ) : null}
+              {step.needsAddGoal &&
+              !isAddGoalNextStep(step.primary.title) ? (
+                <GoalCreateForm
+                  offers={links.offers}
+                  disabled={!canCreateGoal}
+                />
+              ) : null}
             </CardContent>
           </Card>
 

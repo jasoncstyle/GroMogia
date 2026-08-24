@@ -608,6 +608,29 @@ describe("coordinated next step", () => {
     assert.match(goalsPage, /GoalCreateForm/);
   });
 
+  it("keeps Add a Goal on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 1 })),
+      waitingActions: [],
+      latestLearningKind: "no_goal",
+      latestLearningOutcome:
+        "This work is not tied to a Goal number, so GroovGro cannot compare progress. Add a Goal here so GroovGro can compare a number.",
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsAddGoal, true);
+    assert.match(page, /needsAddGoal/);
+    assert.match(page, /!isAddGoalNextStep\(step\.primary\.title\)/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/goals/page.tsx"), "utf8"),
+      /GoalCreateForm/,
+    );
+  });
+
   it("puts the Goal numbers on Next step when the number is lower", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
