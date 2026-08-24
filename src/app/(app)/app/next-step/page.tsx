@@ -688,10 +688,17 @@ export default async function NextStepPage({
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  No plan is written yet. Use the buttons above when Next step
-                  asks you to draft one. GroovGro will not run it.
+                  No plan is written yet. Draft one here when the active Goal
+                  has no plan. GroovGro will not run it.
                 </p>
               )}
+              {step.planGoalId &&
+              step.primary.title !== DRAFT_PLAN_STEP_TITLE ? (
+                <DraftGrowthPlanButton
+                  goalId={step.planGoalId}
+                  disabled={!canDraftPlan}
+                />
+              ) : null}
             </CardContent>
           </Card>
 

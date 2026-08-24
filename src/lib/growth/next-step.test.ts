@@ -348,6 +348,35 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.title, "Make this the active Goal");
   });
 
+  it("keeps Draft a plan on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      activateGoalId: "goal-2",
+      activateGoalTitle: "Next: More people get in touch",
+      planGoalId: "goal-3",
+      planGoalTitle: "Another Goal",
+    });
+    assert.equal(step.primary.title, "Make this the active Goal");
+    assert.equal(step.planGoalId, "goal-3");
+    assert.equal(step.planGoalTitle, "Another Goal");
+    assert.match(page, /planGoalId/);
+    assert.match(page, /primary\.title !== DRAFT_PLAN_STEP_TITLE/);
+    assert.doesNotMatch(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/goals/page.tsx"), "utf8"),
+      /DraftGrowthPlanButton/,
+    );
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/goals/page.tsx"), "utf8"),
+      /Write a plan yourself/,
+    );
+  });
+
   it("asks the owner to approve a draft plan before specialist follow-up", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,
