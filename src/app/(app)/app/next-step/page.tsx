@@ -18,7 +18,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -42,6 +42,15 @@ export default async function NextStepPage() {
   const canManageWebsite = hasPermission(session.permissions, "manage_website");
   const canManageSeo = hasPermission(session.permissions, "manage_seo");
   const openPageLabel = step ? openPageLabelForNextStep(step.primary.title) : null;
+  const dedicatedVisible = step
+    ? showsDedicatedNextStepControl(step.primary.title, {
+        canCreateGoal,
+        canActivateGoal,
+        canDraftPlan,
+        goalId: step.primary.goalId,
+        planId: step.primary.planId,
+      })
+    : false;
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -170,7 +179,13 @@ export default async function NextStepPage() {
                     <Link href="/app/growth-review">Open Growth review</Link>
                   </Button>
                 </div>
-              ) : hasDedicatedNextStepControls(step.primary.title) ? null : canDecide ? (
+              ) : dedicatedVisible ? null : hasDedicatedNextStepControls(step.primary.title) ? (
+                <OpenPageNextStepButtons
+                  href={step.primary.href}
+                  label="Open Goals"
+                  canDecide={canDecide}
+                />
+              ) : canDecide ? (
                 <NextStepResponseButtons
                   kind={step.primary.kind}
                   href={step.primary.href}

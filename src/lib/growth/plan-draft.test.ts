@@ -20,6 +20,7 @@ import {
   READ_GOAL_STEP_TITLE,
   REVIEW_SCHEDULE_STEP_TITLE,
   RUN_SEO_STEP_TITLE,
+  showsDedicatedNextStepControl,
   skipsDuplicateNextStepAction,
 } from "./plan-draft";
 
@@ -442,6 +443,24 @@ describe("growth plan draft", () => {
     assert.equal(hasDedicatedNextStepControls(GOAL_REACHED_STEP_TITLE), true);
     assert.equal(hasDedicatedNextStepControls(ACTIVATE_GOAL_STEP_TITLE), true);
     assert.equal(hasDedicatedNextStepControls(FOLLOW_UP_LEADS_STEP_TITLE), false);
+    assert.equal(
+      showsDedicatedNextStepControl(GOAL_REACHED_STEP_TITLE, {
+        canCreateGoal: true,
+        canActivateGoal: false,
+        canDraftPlan: false,
+        goalId: "goal-1",
+      }),
+      true,
+    );
+    assert.equal(
+      showsDedicatedNextStepControl(GOAL_REACHED_STEP_TITLE, {
+        canCreateGoal: false,
+        canActivateGoal: false,
+        canDraftPlan: false,
+        goalId: "goal-1",
+      }),
+      false,
+    );
     assert.equal(skipsDuplicateNextStepAction(FOLLOW_UP_LEADS_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(RUN_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(FIX_SEO_STEP_TITLE), true);

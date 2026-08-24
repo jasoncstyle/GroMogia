@@ -310,7 +310,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None.
 
-**Current functionality:** If Next step already has Draft the next Goal, Make this the active Goal, Draft a plan, Approve this plan, or Propose the first actions, those are the only buttons. If what changed says to read or add a Goal, Open Goals is the main button. GroovGro does not execute.
+**Current functionality:** If Next step already has Draft the next Goal, Make this the active Goal, Draft a plan, Approve this plan, or Propose the first actions, those are the only buttons. If the signed-in person cannot use that button, Next step shows Open Goals instead of I’ll do this. If what changed says to read or add a Goal, Open Goals is the main button. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 

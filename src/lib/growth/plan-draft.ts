@@ -104,6 +104,25 @@ export function hasDedicatedNextStepControls(title: string): boolean {
   );
 }
 
+export function showsDedicatedNextStepControl(
+  title: string,
+  access: {
+    canCreateGoal: boolean
+    canActivateGoal: boolean
+    canDraftPlan: boolean
+    goalId?: string | null
+    planId?: string | null
+  },
+): boolean {
+  const text = clean(title);
+  if (text === GOAL_REACHED_STEP_TITLE) return Boolean(access.canCreateGoal && access.goalId);
+  if (text === ACTIVATE_GOAL_STEP_TITLE) return Boolean(access.canActivateGoal && access.goalId);
+  if (text === DRAFT_PLAN_STEP_TITLE) return Boolean(access.canDraftPlan && access.goalId);
+  if (text === APPROVE_PLAN_STEP_TITLE) return Boolean(access.planId);
+  if (text === PROPOSE_ACTIONS_STEP_TITLE) return Boolean(access.canDraftPlan && access.planId);
+  return false;
+}
+
 export function openPageLabelForNextStep(title: string): string | null {
   const text = clean(title);
   if (text === FOLLOW_UP_LEADS_STEP_TITLE) return "Open Leads & customers";
