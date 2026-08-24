@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { DraftNextGoalButton } from "@/components/next-goal-actions";
 import { NextStepResponseButtons, WaitingActionButtons } from "@/components/next-step-actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +22,7 @@ export default async function NextStepPage() {
     : null;
   const canDecide = hasPermission(session.permissions, "view_decision_history");
   const canApprove = hasPermission(session.permissions, "approve_actions");
+  const canCreateGoal = hasPermission(session.permissions, "create_goals");
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -60,6 +62,11 @@ export default async function NextStepPage() {
                   <Link href={step.primary.href}>Open the page</Link>
                 </Button>
               )}
+              {canCreateGoal &&
+              step.primary.title === "This Goal is reached" &&
+              step.primary.goalId ? (
+                <DraftNextGoalButton goalId={step.primary.goalId} />
+              ) : null}
             </CardContent>
           </Card>
 
