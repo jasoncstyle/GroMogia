@@ -586,6 +586,36 @@ describe("coordinated next step", () => {
     assert.match(source, /REVIEW_SITE_STEP_TITLE/);
   });
 
+  it("keeps Review connected data off Dashboard, Goals, and Offers", () => {
+    const dashboard = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      "utf8",
+    );
+    const goals = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/goals/page.tsx"),
+      "utf8",
+    );
+    const offers = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/offers/page.tsx"),
+      "utf8",
+    );
+    const business = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/business/page.tsx"),
+      "utf8",
+    );
+    const nextStep = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.doesNotMatch(dashboard, /ReviewConnectedDataButton/);
+    assert.doesNotMatch(goals, /ReviewConnectedDataButton/);
+    assert.doesNotMatch(offers, /ReviewConnectedDataButton/);
+    assert.match(goals, /Review connected data on Next step/);
+    assert.match(offers, /Review connected data on Next step when/);
+    assert.match(business, /ReviewConnectedDataButton/);
+    assert.match(nextStep, /ReviewConnectedDataButton/);
+  });
+
   it("opens Leads, SEO, or Events from Next step without I’ll do this", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
@@ -1606,6 +1636,7 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(source, /Intelligence and specialists/);
     assert.match(source, /Read\s+the path so far on Next step/);
     assert.doesNotMatch(source, /GrowthStoryCard/);
+    assert.doesNotMatch(source, /ReviewConnectedDataButton/);
   });
 
   it("keeps the owner on Next step instead of a second Open Website or Open SEO button", () => {
@@ -1674,17 +1705,21 @@ describe("coordinated next step", () => {
     assert.match(goals, /Do approved work on Next step or\s+Your work/);
     assert.match(goals, /Confirm or reject suggested goals on Next step/);
     assert.match(goals, /Confirm or reject this on Next step/);
+    assert.match(goals, /Review connected data on Next step/);
     assert.doesNotMatch(goals, /WaitingActionButtons/);
     assert.doesNotMatch(goals, /OwnerWorkButtons/);
     assert.doesNotMatch(goals, /ConfirmRejectButtons/);
     assert.doesNotMatch(goals, /GrowthSettingsForm/);
+    assert.doesNotMatch(goals, /ReviewConnectedDataButton/);
     const offers = readFileSync(
       join(process.cwd(), "src/app/(app)/app/offers/page.tsx"),
       "utf8",
     );
     assert.match(offers, /Confirm or reject suggested offers on Next step/);
     assert.match(offers, /Confirm or reject this on Next step/);
+    assert.match(offers, /Review connected data on Next step when/);
     assert.doesNotMatch(offers, /ConfirmRejectButtons/);
+    assert.doesNotMatch(offers, /ReviewConnectedDataButton/);
     const drafts = readFileSync(
       join(process.cwd(), "src/components/growth-review.tsx"),
       "utf8",
@@ -1771,6 +1806,7 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(business, /Then you can find\s+pages here/);
     assert.match(business, /Confirm\s+or reject suggested drafts on Next step/);
     assert.match(business, /Confirm or reject on Next step/);
+    assert.match(business, /ReviewConnectedDataButton/);
     assert.doesNotMatch(business, /ConfirmRejectButtons/);
     assert.doesNotMatch(business, /on Website first/);
     assert.doesNotMatch(business, /href="\/app\/goals"/);

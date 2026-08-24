@@ -4,10 +4,7 @@ import {
   createGrowthPlan,
   updateGoalProgress,
 } from "@/lib/actions/growth";
-import {
-  InferredBadge,
-  ReviewConnectedDataButton,
-} from "@/components/growth-review";
+import { InferredBadge } from "@/components/growth-review";
 import {
   DraftGrowthPlanButton,
   GrowthPlanReviewButtons,
@@ -84,11 +81,9 @@ export default async function GoalsPage() {
           Approving that plan does not run marketing. Approve or reject
           proposed actions on Next step. Do approved work on Next step or
           Your work. Confirm or reject suggested goals on Next step. They
-          stay drafts until you do.
+          stay drafts until you do. Review connected data on Next step
+          when GroovGro asks, or on Business if you want to run it again.
         </p>
-        <div className="mt-3">
-          <ReviewConnectedDataButton disabled={!session.organizationId} />
-        </div>
       </div>
 
       <Card>

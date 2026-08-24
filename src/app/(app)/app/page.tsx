@@ -20,7 +20,6 @@ import { formatMoney } from "@/lib/money";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { isModuleEnabled } from "@/lib/modules/catalog";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
-import { ReviewConnectedDataButton } from "@/components/growth-review";
 import { StatusAlertList } from "@/components/status-alert";
 
 export default async function DashboardPage() {
@@ -258,9 +257,6 @@ export default async function DashboardPage() {
               Open public lead form
             </a>
           </Button>
-        ) : null}
-        {isModuleEnabled(session.enabledModules, "business_brain") ? (
-          <ReviewConnectedDataButton disabled={!session.organizationId} />
         ) : null}
         {isModuleEnabled(session.enabledModules, "growth_next") ? (
           <Button asChild>

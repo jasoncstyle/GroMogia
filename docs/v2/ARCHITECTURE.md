@@ -1062,7 +1062,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can save when you look at this week’s numbers. Growth review can change that day later. Goals names Next step. GroovGro does not change the business from that schedule.
 
-### 106. Keep Website find-pages on Next step (this slice)
+### 106. Keep Website find-pages on Next step
 
 **Reason:** Website still showed the Find pages checklist after Next step already had that loop, and after Website copy already named Next step. The owner could finish an unread-site review from Website instead of staying on Next step.
 
@@ -1071,6 +1071,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can find pages and check the important ones. Website keeps the address and tracking snippet, and names Next step to find pages. GroovGro does not change the live site.
+
+### 107. Keep Review connected data on Next step (this slice)
+
+**Reason:** Dashboard, Goals, and Offers still ran Review connected data after Next step already had that loop for an unread site. The owner could skip Find pages and review from those screens instead of staying on Next step.
+
+**Affected:** Dashboard, Goals, and Offers review buttons.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can find pages, check the important ones, then Review connected data when the site is unread. Business keeps Review connected data to run it again. Dashboard, Goals, and Offers name Next step. GroovGro does not change the live site.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1169,7 +1179,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep dedicated Next step buttons from creating duplicate actions is parked.** I’ll do this on confirm drafts, connect website, review site, approve actions, owner work, and check what changed does not also save a duplicate proposed action. Do not execute.
 - **Keep find-pages on Next step is parked.** Next step and Website can find pages. Business keeps Review connected data and names Next step to find pages. Do not change the live site.
 - **Keep the review schedule on Next step is parked.** Next step can save when you look at this week’s numbers. Growth review can change that day later. Goals names Next step. Do not change the business from that schedule.
-- **Keep Website find-pages on Next step (this slice).** Next step can find pages. Website keeps the address and tracking snippet, and names Next step to find pages. Do not change the live site.
+- **Keep Website find-pages on Next step is parked.** Next step can find pages. Website keeps the address and tracking snippet, and names Next step to find pages. Do not change the live site.
+- **Keep Review connected data on Next step (this slice).** Next step can find pages, check the important ones, then review. Business keeps Review connected data to run it again. Dashboard, Goals, and Offers name Next step. Do not change the live site.
 
 ## DESIGN FOR LATER
 
@@ -1348,7 +1359,8 @@ Organization
 98. **Keep dedicated Next step buttons from creating duplicate actions** — I’ll do this on dedicated loops does not also save a duplicate proposed action. Done.
 99. **Keep find-pages on Next step** — Next step and Website can find pages; Business keeps Review connected data and names Next step. Done.
 100. **Keep the review schedule on Next step** — Next step can save when you look at this week’s numbers; Growth review can change that day later; Goals names Next step. Done.
-101. **Keep Website find-pages on Next step** — Next step can find pages; Website keeps the address and snippet, and names Next step. This slice.
-102. **Guarded automation** — only after the above is trusted.
+101. **Keep Website find-pages on Next step** — Next step can find pages; Website keeps the address and snippet, and names Next step. Done.
+102. **Keep Review connected data on Next step** — Next step can find pages, check the important ones, then review; Business keeps Review connected data to run it again; Dashboard, Goals, and Offers name Next step. This slice.
+103. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

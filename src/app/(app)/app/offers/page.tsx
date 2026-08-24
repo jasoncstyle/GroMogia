@@ -1,8 +1,5 @@
 import { createConstraint } from "@/lib/actions/growth";
-import {
-  InferredBadge,
-  ReviewConnectedDataButton,
-} from "@/components/growth-review";
+import { InferredBadge } from "@/components/growth-review";
 import { OfferCreateForm } from "@/components/offer-create-form";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { getAppSession } from "@/lib/auth/session";
@@ -47,11 +44,9 @@ export default async function OffersPage() {
           An Offer is anything this business promotes, sells, or wants a
           customer to do. It is not assumed to be a physical product.
           Confirm or reject suggested offers on Next step. They stay
-          drafts until you do.
+          drafts until you do. Review connected data on Next step when
+          GroovGro asks, or on Business if you want to run it again.
         </p>
-        <div className="mt-3">
-          <ReviewConnectedDataButton disabled={!session.organizationId} />
-        </div>
       </div>
 
       <Card>
