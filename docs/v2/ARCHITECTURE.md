@@ -1352,7 +1352,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can save when to look at this week's numbers even when that is not the main ask. Growth review still has that form. GroovGro does not change the business then.
 
-### 135. Keep Run an SEO check on Next step when it is not the main ask (this slice)
+### 135. Keep Run an SEO check on Next step when it is not the main ask
 
 **Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a missing homepage SEO check, that button only lived in the main recommendation. SEO still has that check. The owner had to leave Next step to run it.
 
@@ -1361,6 +1361,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can run a homepage SEO check even when that is not the main ask. SEO still has that check. GroovGro does not edit the website.
+
+### 136. Keep SEO drafts on Next step when they are not the main ask (this slice)
+
+**Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked blocking or improve-when-you-have-time SEO items, those draft and approve buttons only lived in the main recommendation. SEO still has those checks. The owner had to leave Next step to draft and approve the copy.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can draft and approve homepage SEO copy even when that is not the main ask. SEO still has those checks. GroovGro does not change the connected website or start ads.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1488,7 +1498,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Add a brand voice example on Next step when it is not the main ask is parked.** Next step can add a brand voice example even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
 - **Keep Draft copy in your voice on Next step when it is not the main ask is parked.** Next step can draft copy in the saved voice even when that is not the main ask. Brand voice still has that form. Do not send email, post to social, or edit the live website.
 - **Keep Choose when you look at growth on Next step when it is not the main ask is parked.** Next step can save when to look at this week's numbers even when that is not the main ask. Growth review still has that form. Do not change the business then.
-- **Keep Run an SEO check on Next step when it is not the main ask (this slice).** Next step can run a homepage SEO check even when that is not the main ask. SEO still has that check. Do not edit the website.
+- **Keep Run an SEO check on Next step when it is not the main ask is parked.** Next step can run a homepage SEO check even when that is not the main ask. SEO still has that check. Do not edit the website.
+- **Keep SEO drafts on Next step when they are not the main ask (this slice).** Next step can draft and approve homepage SEO copy even when that is not the main ask. SEO still has those checks. Do not change the connected website or start ads.
 
 ## DESIGN FOR LATER
 
@@ -1696,7 +1707,8 @@ Organization
 127. **Keep Add a brand voice example on Next step when it is not the main ask** — Next step can add a brand voice example even when that is not the main ask; Brand voice still has that form. Done.
 128. **Keep Draft copy in your voice on Next step when it is not the main ask** — Next step can draft copy in the saved voice even when that is not the main ask; Brand voice still has that form. Done.
 129. **Keep Choose when you look at growth on Next step when it is not the main ask** — Next step can save when to look at this week's numbers even when that is not the main ask; Growth review still has that form. Done.
-130. **Keep Run an SEO check on Next step when it is not the main ask** — Next step can run a homepage SEO check even when that is not the main ask; SEO still has that check. This slice.
-131. **Guarded automation** — only after the above is trusted.
+130. **Keep Run an SEO check on Next step when it is not the main ask** — Next step can run a homepage SEO check even when that is not the main ask; SEO still has that check. Done.
+131. **Keep SEO drafts on Next step when they are not the main ask** — Next step can draft and approve homepage SEO copy even when that is not the main ask; SEO still has those checks. This slice.
+132. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

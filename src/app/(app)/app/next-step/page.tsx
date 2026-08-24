@@ -41,7 +41,7 @@ import { getBrandSettingsForm, getBusinessBrainForm, getCoordinatedNextStep, get
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSaveBusinessNextStep, isSaveProgressNextStep, isSaveReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, isStripeReadCopyNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, FIX_SEO_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSaveBusinessNextStep, isSaveProgressNextStep, isSaveReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, isStripeReadCopyNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { buildGrowthStory, storyFactsFromWorkspace } from "@/lib/growth/story";
 import { hasPermission } from "@/lib/permissions";
@@ -901,6 +901,59 @@ export default async function NextStepPage({
               </CardHeader>
               <CardContent>
                 <RunHomepageSeoButton disabled={!canManageSeo} />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSeoDraft &&
+          !isSeoDraftNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {step.reports.some(
+                    (report) => report.recommend.title === FIX_SEO_STEP_TITLE,
+                  )
+                    ? "Fix blocking SEO items"
+                    : "Improve the page when you have time"}
+                </CardTitle>
+                <CardDescription>
+                  {step.reports.some(
+                    (report) => report.recommend.title === FIX_SEO_STEP_TITLE,
+                  )
+                    ? "Draft and approve the blocking items here. GroovGro will not change the connected website."
+                    : "The waiting threshold is met and the page has items to make clearer. Draft and approve that copy here. GroovGro will not change the connected website or start ads."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {step.seoDrafts.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    Draft the title and description changes here, then
+                    approve them. GroovGro does not paste them onto the live
+                    site.
+                  </p>
+                ) : null}
+                {step.seoDrafts.map((draft) => (
+                  <FoldableSample
+                    key={draft.id}
+                    title={draft.title}
+                    subtitle="Waiting"
+                  >
+                    <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted p-3 text-xs">
+                      {draft.proposedChange}
+                    </pre>
+                    {draft.howToApply ? (
+                      <p className="text-sm text-muted-foreground">
+                        {draft.howToApply}
+                      </p>
+                    ) : null}
+                    <SeoDraftDecisionButtons
+                      draftId={draft.id}
+                      proposedChange={draft.proposedChange}
+                      disabled={!canManageSeo}
+                    />
+                  </FoldableSample>
+                ))}
+                <DraftSeoImprovementsButton disabled={!canManageSeo} />
               </CardContent>
             </Card>
           ) : null}

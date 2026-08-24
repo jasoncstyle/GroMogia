@@ -1077,6 +1077,37 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("keeps SEO drafts on Next step when they are not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          seoScore: 42,
+          seoSummary: "Missing title and description.",
+          seoFailCount: 2,
+          seoWarnCount: 1,
+          seoCheckedAt: now,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsSeoDraft, true);
+    assert.match(page, /needsSeoDraft/);
+    assert.match(page, /!isSeoDraftNextStep/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/seo/page.tsx"), "utf8"),
+      /createSeoDrafts/,
+    );
+  });
+
   it("puts Connect Search Console on Next step after a homepage check", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
