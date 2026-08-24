@@ -1762,6 +1762,10 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.match(business, /Save a website address on Next step first/);
+    assert.match(business, /Find pages and check the\s+important ones on Next step/);
+    assert.match(business, /Find pages and check the important ones on Next step/);
+    assert.doesNotMatch(business, /WebsitePageChecklist/);
+    assert.doesNotMatch(business, /Then you can find\s+pages here/);
     assert.match(business, /Confirm\s+or reject suggested drafts on Next step/);
     assert.match(business, /Confirm or reject on Next step/);
     assert.doesNotMatch(business, /ConfirmRejectButtons/);

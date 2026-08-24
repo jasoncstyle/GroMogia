@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
-import { websiteDiscoveredPages, websites } from "@/lib/db/schema";
+import { websites } from "@/lib/db/schema";
 import { missingFoundationServices } from "@/lib/env";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import {
@@ -19,7 +19,6 @@ import {
   InferredOfferDraft,
   ReviewConnectedDataButton,
 } from "@/components/growth-review";
-import { WebsitePageChecklist } from "@/components/website-page-checklist";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,7 +32,7 @@ import {
 export default async function BusinessBrainPage() {
   const session = await getAppSession();
   const db = getDb();
-  const [snapshot, websiteRows, discoveredRows] = await Promise.all([
+  const [snapshot, websiteRows] = await Promise.all([
     session.organizationId
       ? getGrowthSnapshot(session.organizationId)
       : Promise.resolve(null),
@@ -43,12 +42,6 @@ export default async function BusinessBrainPage() {
           .from(websites)
           .where(eq(websites.organizationId, session.organizationId))
           .limit(1)
-      : Promise.resolve([]),
-    db && session.organizationId
-      ? db
-          .select()
-          .from(websiteDiscoveredPages)
-          .where(eq(websiteDiscoveredPages.organizationId, session.organizationId))
       : Promise.resolve([]),
   ]);
   const brain = snapshot?.brain;
@@ -82,31 +75,31 @@ export default async function BusinessBrainPage() {
         <CardHeader>
           <CardTitle>Review connected data</CardTitle>
           <CardDescription>
-            Saving a website address is not enough. Find pages, check the
-            important ones, then click Review connected data so GroovGro can
-            read events, bookings, payments, and those checked pages. Confirm
-            or reject suggested drafts on Next step. It will not guess an
-            industry, change the website, or start marketing.
+            Saving a website address is not enough. Find pages and check the
+            important ones on Next step, then click Review connected data so
+            GroovGro can read events, bookings, payments, and those checked
+            pages. Confirm or reject suggested drafts on Next step. It will
+            not guess an industry, change the website, or start marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {websiteRows[0]?.publicUrl ? (
-            <WebsitePageChecklist
-              pages={discoveredRows}
-              disabled={!session.organizationId}
-            />
+            <p className="text-sm text-muted-foreground">
+              Find pages and check the important ones on Next step, then
+              review here. GroovGro will not change the live site.
+            </p>
           ) : (
             <p className="text-sm text-muted-foreground">
-              Save a website address on Next step first. Then you can find
-              pages here.
+              Save a website address on Next step first. Then find pages
+              there.
             </p>
           )}
           {brain?.inferredSummary ? (
             <p className="text-sm text-muted-foreground">{brain.inferredSummary}</p>
           ) : (
             <p className="text-sm text-muted-foreground">
-              No review yet. Check the pages GroovGro should read, then click
-              the button. Connecting the address does not do that by itself.
+              No review yet. Find pages on Next step, then click the button
+              here. Connecting the address does not do that by itself.
             </p>
           )}
           <ReviewConnectedDataButton disabled={!session.organizationId} />
