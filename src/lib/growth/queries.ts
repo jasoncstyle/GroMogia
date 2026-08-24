@@ -3,6 +3,7 @@ import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
 import { readGoogleSecret } from "@/lib/actions/search-console";
 import { getDb } from "@/lib/db";
 import {
+  aiActionLogs,
   availabilityConstraints,
   bookings,
   brandSettings,
@@ -410,8 +411,14 @@ async function getLatestSeoSummary(organizationId: string) {
 
 async function getBrandVoiceFacts(organizationId: string) {
   const db = getDb();
-  if (!db) return { brandVoiceSaved: false, brandVoiceExampleSaved: false };
-  const [profileRows, exampleRows] = await Promise.all([
+  if (!db) {
+    return {
+      brandVoiceSaved: false,
+      brandVoiceExampleSaved: false,
+      brandVoiceDraftSaved: false,
+    };
+  }
+  const [profileRows, exampleRows, draftRows] = await Promise.all([
     db
       .select({ organizationId: brandVoiceProfiles.organizationId })
       .from(brandVoiceProfiles)
@@ -422,10 +429,21 @@ async function getBrandVoiceFacts(organizationId: string) {
       .from(brandVoiceExamples)
       .where(eq(brandVoiceExamples.organizationId, organizationId))
       .limit(1),
+    db
+      .select({ id: aiActionLogs.id })
+      .from(aiActionLogs)
+      .where(
+        and(
+          eq(aiActionLogs.organizationId, organizationId),
+          eq(aiActionLogs.actionType, "brand_voice_draft"),
+        ),
+      )
+      .limit(1),
   ]);
   return {
     brandVoiceSaved: profileRows.length > 0,
     brandVoiceExampleSaved: exampleRows.length > 0,
+    brandVoiceDraftSaved: draftRows.length > 0,
   };
 }
 
@@ -466,6 +484,7 @@ export async function getSpecialistReports(organizationId: string) {
     ),
     brandVoiceSaved: brandVoice.brandVoiceSaved,
     brandVoiceExampleSaved: brandVoice.brandVoiceExampleSaved,
+    brandVoiceDraftSaved: brandVoice.brandVoiceDraftSaved,
     upcomingEventCount: dashboard.upcomingEvents.length,
     evidenceSample: defaultCheck?.sample ?? {
       elapsedDays: 0,

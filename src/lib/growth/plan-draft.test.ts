@@ -20,6 +20,7 @@ import {
   SHARE_LEAD_FORM_STEP_TITLE,
   SAVE_BRAND_VOICE_STEP_TITLE,
   ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE,
+  DRAFT_BRAND_VOICE_STEP_TITLE,
   GOAL_REACHED_STEP_TITLE,
   goalNeedsPlanDraft,
   hasDedicatedNextStepControls,
@@ -34,6 +35,7 @@ import {
   isShareLeadFormNextStep,
   isSaveBrandVoiceNextStep,
   isAddBrandVoiceExampleNextStep,
+  isDraftBrandVoiceNextStep,
   openPageLabelForNextStep,
   READ_GOAL_STEP_TITLE,
   REVIEW_SCHEDULE_STEP_TITLE,
@@ -459,6 +461,8 @@ describe("growth plan draft", () => {
     assert.equal(isSaveBrandVoiceNextStep(SAVE_BRAND_VOICE_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE), null);
     assert.equal(isAddBrandVoiceExampleNextStep(ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(DRAFT_BRAND_VOICE_STEP_TITLE), null);
+    assert.equal(isDraftBrandVoiceNextStep(DRAFT_BRAND_VOICE_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(FIX_SEO_STEP_TITLE), null);
     assert.equal(openPageLabelForNextStep(IMPROVE_SEO_STEP_TITLE), null);
     assert.equal(isSeoDraftNextStep(FIX_SEO_STEP_TITLE), true);
@@ -501,6 +505,7 @@ describe("growth plan draft", () => {
     assert.equal(skipsDuplicateNextStepAction(SHARE_LEAD_FORM_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(SAVE_BRAND_VOICE_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(DRAFT_BRAND_VOICE_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(RUN_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(FIX_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);

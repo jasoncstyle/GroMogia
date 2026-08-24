@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "./plan-draft";
+import { ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, CONNECT_SEARCH_CONSOLE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -36,6 +36,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     recordedVisitCount: 1,
     brandVoiceSaved: true,
     brandVoiceExampleSaved: true,
+    brandVoiceDraftSaved: true,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
     advertisingConnected: false,
@@ -333,6 +334,43 @@ describe("growth specialists", () => {
     );
     assert.ok(website);
     assert.equal(website.recommend.title, SAVE_BRAND_VOICE_STEP_TITLE);
+  });
+
+  it("asks to draft copy after the voice profile and an example are saved", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceSaved: true,
+          brandVoiceExampleSaved: true,
+          brandVoiceDraftSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, DRAFT_BRAND_VOICE_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/brand-voice");
+    assert.match(website.recommend.body, /Create a draft here/);
+    assert.match(website.recommend.body, /will not send email/);
+  });
+
+  it("keeps adding a brand voice example ahead of drafting copy", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceSaved: true,
+          brandVoiceExampleSaved: false,
+          brandVoiceDraftSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE);
   });
 
   it("keeps pasting the tracking snippet ahead of saving brand voice", () => {

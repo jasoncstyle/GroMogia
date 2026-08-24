@@ -69,6 +69,7 @@ export const FOLLOW_UP_LEADS_STEP_TITLE = "Follow up open leads";
 export const SHARE_LEAD_FORM_STEP_TITLE = "Share the public lead form";
 export const SAVE_BRAND_VOICE_STEP_TITLE = "Save your brand voice";
 export const ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE = "Add a brand voice example";
+export const DRAFT_BRAND_VOICE_STEP_TITLE = "Draft copy in your voice";
 export const RUN_SEO_STEP_TITLE = "Run an SEO check";
 export const FIX_SEO_STEP_TITLE = "Fix blocking SEO items";
 export const IMPROVE_SEO_STEP_TITLE = "Improve the page when you have time";
@@ -89,6 +90,7 @@ export function skipsDuplicateNextStepAction(title: string): boolean {
     text === SHARE_LEAD_FORM_STEP_TITLE ||
     text === SAVE_BRAND_VOICE_STEP_TITLE ||
     text === ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE ||
+    text === DRAFT_BRAND_VOICE_STEP_TITLE ||
     text === RUN_SEO_STEP_TITLE ||
     text === FIX_SEO_STEP_TITLE ||
     text === IMPROVE_SEO_STEP_TITLE ||
@@ -177,6 +179,10 @@ export function isSaveBrandVoiceNextStep(title: string): boolean {
 
 export function isAddBrandVoiceExampleNextStep(title: string): boolean {
   return clean(title) === ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE;
+}
+
+export function isDraftBrandVoiceNextStep(title: string): boolean {
+  return clean(title) === DRAFT_BRAND_VOICE_STEP_TITLE;
 }
 
 export function isAddGoalNextStep(title: string): boolean {

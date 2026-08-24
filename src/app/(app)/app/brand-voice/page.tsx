@@ -1,10 +1,8 @@
-import {
-  generateBrandVoiceDraft,
-  removeBrandVoiceExample,
-} from "@/lib/actions/brand-voice";
+import { removeBrandVoiceExample } from "@/lib/actions/brand-voice";
 import { getAppSession } from "@/lib/auth/session";
 import { purposeLabel } from "@/lib/brand-voice/draft";
 import { getBrandVoicePageData, readDraftOutput } from "@/lib/phase5/queries";
+import { BrandVoiceDraftForm } from "@/components/brand-voice-draft-form";
 import { BrandVoiceExampleForm } from "@/components/brand-voice-example-form";
 import { BrandVoiceProfileForm } from "@/components/brand-voice-profile-form";
 import { FoldableSample } from "@/components/foldable-sample";
@@ -16,11 +14,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-
-const selectClassName =
-  "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 text-sm";
 
 export default async function BrandVoicePage() {
   const session = await getAppSession();
@@ -123,36 +116,7 @@ export default async function BrandVoicePage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <SaveForm
-                action={generateBrandVoiceDraft}
-                successMessage="Draft saved in GroovGro. It was not sent or published."
-                className="space-y-3"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="purpose">Draft type</Label>
-                  <select
-                    id="purpose"
-                    name="purpose"
-                    className={selectClassName}
-                    defaultValue="website_blurb"
-                  >
-                    <option value="website_blurb">Website blurb</option>
-                    <option value="follow_up_note">Follow-up note (not sent)</option>
-                    <option value="social_post">Social post (not published)</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="topic">Topic</Label>
-                  <Textarea
-                    id="topic"
-                    name="topic"
-                    rows={3}
-                    required
-                    placeholder="What this piece should cover"
-                  />
-                </div>
-                <SaveButton pendingLabel="Drafting…">Create draft</SaveButton>
-              </SaveForm>
+              <BrandVoiceDraftForm />
 
               {data.drafts.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
