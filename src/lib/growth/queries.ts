@@ -472,6 +472,29 @@ function businessBrainIsSaved(
   return Boolean(brain?.industry?.trim() && brain?.businessModel?.trim());
 }
 
+export async function getGrowthSettingsForm(organizationId: string) {
+  const db = getDb();
+  if (!db) return null;
+  const rows = await db
+    .select({
+      reviewFrequency: growthSettings.reviewFrequency,
+      reviewDay: growthSettings.reviewDay,
+      reviewTime: growthSettings.reviewTime,
+      timezone: growthSettings.timezone,
+    })
+    .from(growthSettings)
+    .where(eq(growthSettings.organizationId, organizationId))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+function growthScheduleIsSaved(
+  settings: { createdAt?: Date | null; updatedAt?: Date | null } | null,
+): boolean {
+  if (!settings?.createdAt || !settings?.updatedAt) return false;
+  return settings.updatedAt.getTime() > settings.createdAt.getTime();
+}
+
 async function getBrandVoiceFacts(organizationId: string) {
   const db = getDb();
   if (!db) {
@@ -561,6 +584,7 @@ export async function getSpecialistReports(organizationId: string) {
     stripeConfigured: dashboard.stripeConfigured,
     stripeConnected: dashboard.stripeConnected,
     stripeSynced: dashboard.stripeSynced,
+    growthScheduleSaved: growthScheduleIsSaved(snapshot.settings),
     confirmedOfferCount: snapshot.offers.filter(
       (offer) => (offer.discoveryStatus ?? "confirmed") === "confirmed",
     ).length,

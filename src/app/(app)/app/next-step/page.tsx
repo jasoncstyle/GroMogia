@@ -22,6 +22,7 @@ import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-con
 import { TrackingSnippet } from "@/components/tracking-snippet";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import { StripeReadCopyPanel } from "@/components/stripe-read-copy-panel";
+import { GrowthSettingsForm } from "@/components/growth-settings-form";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
 import { WebsitePageChecklist } from "@/components/website-page-checklist";
 import { Button } from "@/components/ui/button";
@@ -34,11 +35,11 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
-import { getBrandSettingsForm, getBusinessBrainForm, getCoordinatedNextStep, getDiscoveredWebsitePages, getGrowthLinkOptions } from "@/lib/growth/queries";
+import { getBrandSettingsForm, getBusinessBrainForm, getCoordinatedNextStep, getDiscoveredWebsitePages, getGrowthLinkOptions, getGrowthSettingsForm } from "@/lib/growth/queries";
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSaveBusinessNextStep, isSaveProgressNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, isStripeReadCopyNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSaveBusinessNextStep, isSaveProgressNextStep, isSaveReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, isStripeReadCopyNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -103,6 +104,10 @@ export default async function NextStepPage({
   const brain =
     session.organizationId && step && isSaveBusinessNextStep(step.primary.title)
       ? await getBusinessBrainForm(session.organizationId)
+      : null;
+  const growthSettings =
+    session.organizationId && step && isSaveReviewScheduleNextStep(step.primary.title)
+      ? await getGrowthSettingsForm(session.organizationId)
       : null;
   const discoveredPages =
     session.organizationId && step?.primary.title === REVIEW_SITE_STEP_TITLE
@@ -411,6 +416,16 @@ export default async function NextStepPage({
                   />
                   <Button asChild variant="outline">
                     <Link href="/app/commerce">Open Bookings & payments</Link>
+                  </Button>
+                </>
+              ) : isSaveReviewScheduleNextStep(step.primary.title) ? (
+                <>
+                  <GrowthSettingsForm
+                    settings={growthSettings}
+                    disabled={!canManageSettings}
+                  />
+                  <Button asChild variant="outline">
+                    <Link href="/app/goals">Open Goals</Link>
                   </Button>
                 </>
               ) : isSaveBrandVoiceNextStep(step.primary.title) ? (

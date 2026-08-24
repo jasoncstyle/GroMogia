@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   createGrowthPlan,
   updateGoalProgress,
-  updateGrowthSettings,
 } from "@/lib/actions/growth";
 import {
   ConfirmRejectButtons,
@@ -19,6 +18,7 @@ import { WaitingActionButtons } from "@/components/next-step-actions";
 import { OwnerWorkButtons } from "@/components/owner-work-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { GoalCreateForm } from "@/components/goal-create-form";
+import { GrowthSettingsForm } from "@/components/growth-settings-form";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import {
   alreadyDraftedNextGoal,
@@ -32,8 +32,6 @@ import { hasPermission } from "@/lib/permissions";
 import {
   AUTONOMY_LEVELS,
   GOAL_STATUSES,
-  REVIEW_FREQUENCIES,
-  WEEKDAYS,
   labelFor,
 } from "@/lib/growth/types";
 import { formatMoney } from "@/lib/money";
@@ -145,62 +143,10 @@ export default async function GoalsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SaveForm
-            action={updateGrowthSettings}
-            successMessage="Review schedule saved"
-            className="grid gap-4 md:grid-cols-2"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="reviewFrequency">How often</Label>
-              <select
-                id="reviewFrequency"
-                name="reviewFrequency"
-                className={selectClassName}
-                defaultValue={settings?.reviewFrequency ?? "weekly"}
-              >
-                {REVIEW_FREQUENCIES.map((frequency) => (
-                  <option key={frequency} value={frequency}>
-                    {labelFor(frequency)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="reviewDay">Day</Label>
-              <select
-                id="reviewDay"
-                name="reviewDay"
-                className={selectClassName}
-                defaultValue={settings?.reviewDay ?? "monday"}
-              >
-                {WEEKDAYS.map((day) => (
-                  <option key={day} value={day}>
-                    {labelFor(day)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="reviewTime">Time</Label>
-              <Input
-                id="reviewTime"
-                name="reviewTime"
-                type="time"
-                defaultValue={settings?.reviewTime ?? "10:00"}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="timezone">Timezone</Label>
-              <Input
-                id="timezone"
-                name="timezone"
-                defaultValue={settings?.timezone ?? "America/New_York"}
-              />
-            </div>
-            <SaveButton type="submit" disabled={!session.organizationId}>
-              Save schedule
-            </SaveButton>
-          </SaveForm>
+          <GrowthSettingsForm
+            settings={settings}
+            disabled={!session.organizationId}
+          />
         </CardContent>
       </Card>
 

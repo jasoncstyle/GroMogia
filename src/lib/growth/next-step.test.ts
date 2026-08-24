@@ -38,6 +38,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     stripeConfigured: true,
     stripeConnected: true,
     stripeSynced: true,
+    growthScheduleSaved: true,
     confirmedOfferCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
@@ -1475,6 +1476,54 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.classification, "optimization");
     assert.match(step.primary.body, /Copy recent payment records here/);
     assert.match(step.primary.body, /will not charge a card/);
+  });
+
+  it("puts Choose when you look at growth on Next step when the schedule has never been saved", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          growthScheduleSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Choose when you look at growth");
+    assert.equal(step.primary.classification, "strategic");
+    assert.equal(step.primary.href, "/app/goals");
+    assert.match(step.primary.body, /here/);
+    assert.match(step.primary.body, /will not change the business/);
+    assert.match(page, /isSaveReviewScheduleNextStep/);
+    assert.match(page, /GrowthSettingsForm/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/goals/page.tsx"), "utf8"),
+      /GrowthSettingsForm/,
+    );
+  });
+
+  it("keeps connecting payments ahead of choosing when you look at growth", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          stripeConfigured: true,
+          stripeConnected: false,
+          growthScheduleSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Connect payments");
   });
 
   it("puts Add event on Next step when the schedule needs a review", () => {
