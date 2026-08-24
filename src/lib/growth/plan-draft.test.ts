@@ -17,6 +17,7 @@ import {
   findPlanDraftGoal,
   FIX_SEO_STEP_TITLE,
   FOLLOW_UP_LEADS_STEP_TITLE,
+  SHARE_LEAD_FORM_STEP_TITLE,
   GOAL_REACHED_STEP_TITLE,
   goalNeedsPlanDraft,
   hasDedicatedNextStepControls,
@@ -28,6 +29,7 @@ import {
   isReviewScheduleNextStep,
   isSearchConsoleNextStep,
   isSeoDraftNextStep,
+  isShareLeadFormNextStep,
   openPageLabelForNextStep,
   READ_GOAL_STEP_TITLE,
   REVIEW_SCHEDULE_STEP_TITLE,
@@ -447,6 +449,8 @@ describe("growth plan draft", () => {
   it("names the Open button for specialist work that already lives on another page", () => {
     assert.equal(openPageLabelForNextStep(FOLLOW_UP_LEADS_STEP_TITLE), null);
     assert.equal(isFollowUpLeadsNextStep(FOLLOW_UP_LEADS_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(SHARE_LEAD_FORM_STEP_TITLE), null);
+    assert.equal(isShareLeadFormNextStep(SHARE_LEAD_FORM_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(FIX_SEO_STEP_TITLE), null);
     assert.equal(openPageLabelForNextStep(IMPROVE_SEO_STEP_TITLE), null);
     assert.equal(isSeoDraftNextStep(FIX_SEO_STEP_TITLE), true);
@@ -486,6 +490,7 @@ describe("growth plan draft", () => {
       false,
     );
     assert.equal(skipsDuplicateNextStepAction(FOLLOW_UP_LEADS_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(SHARE_LEAD_FORM_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(RUN_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(FIX_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);

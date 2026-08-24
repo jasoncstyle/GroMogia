@@ -26,6 +26,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     searchConsoleProperty: true,
     searchConsoleSnapshot: true,
     openLeadCount: 0,
+    contactCount: 1,
     recordedVisitCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
@@ -855,6 +856,48 @@ describe("coordinated next step", () => {
       websiteRead: true,
     });
     assert.equal(step.primary.title, "Follow up open leads");
+  });
+
+  it("puts Share the public lead form on Next step when no person has been captured yet", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 0,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Share the public lead form");
+    assert.equal(step.primary.classification, "optimization");
+    assert.match(step.primary.body, /will not email anyone/);
+    assert.match(page, /isShareLeadFormNextStep/);
+    assert.match(page, /CopyLink/);
+  });
+
+  it("keeps pasting the tracking snippet ahead of sharing the lead form", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          recordedVisitCount: 0,
+          openLeadCount: 0,
+          contactCount: 0,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Paste the tracking snippet");
   });
 
   it("puts Add event on Next step when the schedule needs a review", () => {

@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -31,6 +31,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     searchConsoleProperty: true,
     searchConsoleSnapshot: true,
     openLeadCount: 0,
+    contactCount: 1,
     recordedVisitCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
@@ -230,6 +231,25 @@ describe("growth specialists", () => {
     assert.match(crm.recommend.body, /Give each open lead a next step here/);
     assert.match(crm.recommend.body, /will not email them/);
     assert.equal(crm.recommend.href, "/app/crm");
+  });
+
+  it("asks to share the public lead form when no person has been captured yet", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          openLeadCount: 0,
+          contactCount: 0,
+          websiteConnected: true,
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.equal(crm.recommend.kind, "recommend");
+    assert.equal(crm.recommend.classification, "optimization");
+    assert.equal(crm.recommend.title, SHARE_LEAD_FORM_STEP_TITLE);
+    assert.match(crm.recommend.body, /Copy the public lead form here/);
+    assert.match(crm.recommend.body, /will not email anyone/);
   });
 
   it("notices a far-behind availability Goal only after enough evidence", () => {

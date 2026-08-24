@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -45,6 +45,7 @@ export type SpecialistFacts = {
   searchConsoleProperty: boolean
   searchConsoleSnapshot: boolean
   openLeadCount: number
+  contactCount: number
   recordedVisitCount: number
   upcomingEventCount: number
   evidenceSample: EvidenceSample
@@ -312,7 +313,9 @@ function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
     mode: "read_analyze_recommend",
     available: true,
     relatedGoal: goal ? { id: goal.id, title: goal.title, goalType: goal.goalType } : null,
-    read: `${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"} in this workspace.`,
+    read: `${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"} in this workspace.${
+      facts.contactCount === 0 ? " GroovGro has not captured a person yet." : ""
+    }`,
     analyze: `${goalLine} GroovGro can see the pipeline. It cannot email people.`,
     recommend:
       facts.openLeadCount > 0
@@ -323,11 +326,19 @@ function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
             body: "Give each open lead a next step here. GroovGro will not email them.",
             href: "/app/crm",
           }
-        : leaveAlone(
-            "/app/crm",
-            "Leave the pipeline alone",
-            "There are no open leads that need a next step right now.",
-          ),
+        : facts.contactCount === 0 && facts.websiteConnected
+          ? {
+              kind: "recommend",
+              classification: "optimization",
+              title: SHARE_LEAD_FORM_STEP_TITLE,
+              body: "Copy the public lead form here and share it. GroovGro will not email anyone.",
+              href: "/app/crm",
+            }
+          : leaveAlone(
+              "/app/crm",
+              "Leave the pipeline alone",
+              "There are no open leads that need a next step right now.",
+            ),
     executeAllowed: false,
   };
 }

@@ -429,6 +429,7 @@ export async function getSpecialistReports(organizationId: string) {
     websiteConnected: Boolean(dashboard.website?.publicUrl),
     websiteUrl: dashboard.website?.publicUrl ?? "",
     openLeadCount: dashboard.openLeadCount,
+    contactCount: dashboard.contactCount,
     recordedVisitCount: dashboard.topChannels.reduce(
       (total, row) => total + row.count,
       0,

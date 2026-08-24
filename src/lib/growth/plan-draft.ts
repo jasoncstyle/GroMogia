@@ -66,6 +66,7 @@ export const CONFIRM_DRAFTS_STEP_TITLE = "Confirm or reject what GroovGro drafte
 export const CONNECT_WEBSITE_STEP_TITLE = "Connect the existing website";
 export const REVIEW_SITE_STEP_TITLE = "Review the connected website";
 export const FOLLOW_UP_LEADS_STEP_TITLE = "Follow up open leads";
+export const SHARE_LEAD_FORM_STEP_TITLE = "Share the public lead form";
 export const RUN_SEO_STEP_TITLE = "Run an SEO check";
 export const FIX_SEO_STEP_TITLE = "Fix blocking SEO items";
 export const IMPROVE_SEO_STEP_TITLE = "Improve the page when you have time";
@@ -83,6 +84,7 @@ export function skipsDuplicateNextStepAction(title: string): boolean {
   const text = clean(title);
   return (
     text === FOLLOW_UP_LEADS_STEP_TITLE ||
+    text === SHARE_LEAD_FORM_STEP_TITLE ||
     text === RUN_SEO_STEP_TITLE ||
     text === FIX_SEO_STEP_TITLE ||
     text === IMPROVE_SEO_STEP_TITLE ||
@@ -159,6 +161,10 @@ export function isReviewScheduleNextStep(title: string): boolean {
 
 export function isFollowUpLeadsNextStep(title: string): boolean {
   return clean(title) === FOLLOW_UP_LEADS_STEP_TITLE;
+}
+
+export function isShareLeadFormNextStep(title: string): boolean {
+  return clean(title) === SHARE_LEAD_FORM_STEP_TITLE;
 }
 
 export function isAddGoalNextStep(title: string): boolean {
