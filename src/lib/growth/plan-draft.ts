@@ -62,6 +62,7 @@ export const PROPOSE_ACTIONS_STEP_TITLE = "Propose the first actions";
 export const APPROVE_ACTIONS_STEP_TITLE = "Approve or reject these actions";
 export const OWNER_WORK_STEP_TITLE = "Do the work you already approved";
 export const CHECK_CHANGED_STEP_TITLE = "Check what changed";
+export const CONFIRM_DRAFTS_STEP_TITLE = "Confirm or reject what GroovGro drafted";
 
 function isPlanLoopNextStep(title: string): boolean {
   const text = clean(title);
@@ -71,7 +72,8 @@ function isPlanLoopNextStep(title: string): boolean {
     text === PROPOSE_ACTIONS_STEP_TITLE ||
     text === APPROVE_ACTIONS_STEP_TITLE ||
     text === OWNER_WORK_STEP_TITLE ||
-    text === CHECK_CHANGED_STEP_TITLE
+    text === CHECK_CHANGED_STEP_TITLE ||
+    text === CONFIRM_DRAFTS_STEP_TITLE
   );
 }
 

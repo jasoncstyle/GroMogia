@@ -95,6 +95,8 @@ function revalidateGrowth() {
   revalidatePath("/app/decisions");
   revalidatePath("/app/growth-review");
   revalidatePath("/app/website");
+  revalidatePath("/app/next-step");
+  revalidatePath("/app/work");
 }
 
 async function requirePermission(permission: Permission) {

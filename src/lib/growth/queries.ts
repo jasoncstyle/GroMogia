@@ -392,6 +392,24 @@ export async function getCoordinatedNextStep(organizationId: string) {
         description: action.description,
         status: action.status,
       })),
+    inferredDrafts: [
+      ...snapshot.inferredOffers.map((offer) => ({
+        id: offer.id,
+        kind: "offer" as const,
+        title: offer.name,
+        description: offer.description,
+        inferredFrom: offer.inferredFrom,
+        confidence: offer.confidence,
+      })),
+      ...snapshot.inferredGoals.map((goal) => ({
+        id: goal.id,
+        kind: "goal" as const,
+        title: goal.title,
+        description: goal.description,
+        inferredFrom: goal.inferredFrom,
+        confidence: goal.confidence,
+      })),
+    ],
     latestLearningKind: learned
       ? (learningKindFromOutcome(learned.outcome) ?? "")
       : "",

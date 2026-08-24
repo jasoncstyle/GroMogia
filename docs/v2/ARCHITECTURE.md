@@ -222,7 +222,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If approved actions are ready, Next step lists them in the main recommendation with Open the page, I did this, and Skip for now. Confirming Business drafts still comes first. GroovGro does not execute.
 
-### 22. Check what changed from Next step (this slice)
+### 22. Check what changed from Next step
 
 **Reason:** After the owner marks work done, they still had to open Your work to compare the Goal number. Next step should name that and put Check what changed there. GroovGro must not change the plan or execute.
 
@@ -231,6 +231,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If finished work has no stored what-changed note yet, Next step asks the owner to check what changed in the main recommendation. Doing approved work still comes first. GroovGro does not execute.
+
+### 23. Confirm Business drafts from Next step (this slice)
+
+**Reason:** Confirming drafts is the first Next step, but Confirm and Reject still lived only on Business. The owner needs those buttons in the main recommendation. Confirming must not start marketing.
+
+**Affected:** `src/lib/growth/next-step.ts`, Next step. Reuses `confirmOffer` / `rejectOffer` / `confirmGoal` / `rejectGoal`. Does not activate marketing.
+
+**Migration risk:** None.
+
+**Current functionality:** If suggested offers or goals are waiting, Next step lists them with Confirm and Reject. Nothing becomes active until the owner confirms. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -248,7 +258,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Propose first actions from Next step is parked.** Ask the owner to propose the first actions from an approved plan. Do not execute.
 - **Approve proposed actions from Next step is parked.** Ask the owner to approve or reject proposed actions. Do not execute.
 - **Do owner work from Next step is parked.** Ask the owner to do approved work on Next step. Do not execute.
-- **Check what changed from Next step (this slice).** Ask the owner to compare the Goal number after work. Do not execute. Do not start ads.
+- **Check what changed from Next step is parked.** Ask the owner to compare the Goal number after work. Do not execute.
+- **Confirm Business drafts from Next step (this slice).** Ask the owner to confirm or reject suggested offers and goals. Do not execute. Do not start ads.
 
 ## DESIGN FOR LATER
 
@@ -346,7 +357,8 @@ Organization
 17. **Propose first actions from Next step** — ask the owner to propose the first actions. Done.
 18. **Approve proposed actions from Next step** — ask the owner to approve or reject proposed actions. Done.
 19. **Do owner work from Next step** — ask the owner to do approved work on Next step. Done.
-20. **Check what changed from Next step** — ask the owner to compare the Goal number after work. This slice.
-21. **Guarded automation** — only after the above is trusted.
+20. **Check what changed from Next step** — ask the owner to compare the Goal number after work. Done.
+21. **Confirm Business drafts from Next step** — ask the owner to confirm or reject suggested offers and goals. This slice.
+22. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

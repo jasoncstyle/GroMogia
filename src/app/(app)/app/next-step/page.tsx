@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ConfirmRejectButtons, InferredBadge } from "@/components/growth-review";
 import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { NextStepResponseButtons, WaitingActionButtons } from "@/components/next-step-actions";
@@ -15,7 +16,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 
@@ -61,7 +62,25 @@ export default async function NextStepPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm">{step.primary.body}</p>
-              {step.primary.title === APPROVE_ACTIONS_STEP_TITLE ? (
+              {step.primary.title === CONFIRM_DRAFTS_STEP_TITLE ? (
+                step.inferredDrafts.map((draft) => (
+                  <div key={draft.id} className="space-y-2 rounded-lg border p-4 text-sm">
+                    <p className="font-medium">{draft.title}</p>
+                    {draft.description ? (
+                      <p className="text-muted-foreground">
+                        {draft.description.length > 280
+                          ? `${draft.description.slice(0, 279).trimEnd()}…`
+                          : draft.description}
+                      </p>
+                    ) : null}
+                    <InferredBadge
+                      source={draft.inferredFrom}
+                      confidence={draft.confidence}
+                    />
+                    <ConfirmRejectButtons id={draft.id} kind={draft.kind} />
+                  </div>
+                ))
+              ) : step.primary.title === APPROVE_ACTIONS_STEP_TITLE ? (
                 step.waitingActions.map((action) => (
                   <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
                     <p className="font-medium">{action.description}</p>
@@ -194,13 +213,13 @@ export default async function NextStepPage() {
             <CardHeader>
               <CardTitle>Write it as a plan</CardTitle>
               <CardDescription>
-                Next step is one thing to do now. If GroovGro asks you to draft
-                a plan, approve it, propose the first actions, approve those
-                actions, do work you already approved, or check what changed,
-                use the buttons above. A Growth Plan is a versioned write-up
-                for a Goal. After you approve a plan, GroovGro can propose the
-                first actions. Nothing runs until you say so, and even then
-                GroovGro does not execute.
+                Next step is one thing to do now. If GroovGro asks you to
+                confirm drafts, draft a plan, approve it, propose the first
+                actions, approve those actions, do work you already approved,
+                or check what changed, use the buttons above. A Growth Plan is
+                a versioned write-up for a Goal. After you approve a plan,
+                GroovGro can propose the first actions. Nothing runs until you
+                say so, and even then GroovGro does not execute.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">

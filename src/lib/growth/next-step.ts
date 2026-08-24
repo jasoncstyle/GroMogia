@@ -1,6 +1,6 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -42,6 +42,15 @@ export type UncheckedWork = {
   status: string
 };
 
+export type InferredDraft = {
+  id: string
+  kind: "offer" | "goal"
+  title: string
+  description: string
+  inferredFrom: string
+  confidence: number
+};
+
 export type NextStepInput = {
   inferredDraftCount: number
   reports: SpecialistReport[]
@@ -50,6 +59,7 @@ export type NextStepInput = {
   openWorkCount?: number
   uncheckedWork?: UncheckedWork[]
   uncheckedWorkCount?: number
+  inferredDrafts?: InferredDraft[]
   latestLearningKind?: WorkLearningKind | ""
   latestLearningOutcome?: string
   latestLearningGoalId?: string | null
@@ -75,6 +85,7 @@ export type CoordinatedNextStep = {
   waitingActions: WaitingAction[]
   openWork: OpenOwnerWork[]
   uncheckedWork: UncheckedWork[]
+  inferredDrafts: InferredDraft[]
   executeAllowed: false
 };
 
@@ -90,8 +101,8 @@ function draftsCandidate(count: number): NextStepCandidate | null {
   return {
     kind: "recommend",
     classification: "operational",
-    title: "Confirm or reject what GroovGro drafted",
-    body: `${count} suggested offer${count === 1 ? "" : "s or goals"} still need you to confirm or reject. Nothing becomes active until you do. GroovGro will not start marketing.`,
+    title: CONFIRM_DRAFTS_STEP_TITLE,
+    body: `${count} suggested offer${count === 1 ? "" : "s or goals"} still need you to confirm or reject here. Nothing becomes active until you do. GroovGro will not start marketing.`,
     href: "/app/business",
     source: "drafts",
     specialistId: null,
@@ -323,7 +334,8 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   );
   const openWork = input.openWork ?? [];
   const uncheckedWork = input.uncheckedWork ?? [];
-  const drafts = draftsCandidate(input.inferredDraftCount);
+  const inferredDrafts = input.inferredDrafts ?? [];
+  const drafts = draftsCandidate(inferredDrafts.length || input.inferredDraftCount);
   const ownerWork = ownerWorkCandidate(input.openWorkCount ?? openWork.length);
   const checkChanged = checkChangedCandidate(
     input.uncheckedWorkCount ?? uncheckedWork.length,
@@ -350,6 +362,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     waitingActions,
     openWork,
     uncheckedWork,
+    inferredDrafts,
     executeAllowed: false,
   };
 }

@@ -41,9 +41,32 @@ describe("coordinated next step", () => {
       waitingActions: [],
     });
     assert.equal(step.primary.href, "/app/business");
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
     assert.equal(step.primary.classification, "operational");
     assert.equal(step.executeAllowed, false);
     assert.match(step.primary.body, /will not start marketing/);
+    assert.match(step.primary.body, /here/);
+  });
+
+  it("keeps suggested drafts on the next step so the owner can confirm them there", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts({ openLeadCount: 3 })),
+      waitingActions: [],
+      inferredDrafts: [
+        {
+          id: "offer-1",
+          kind: "offer",
+          title: "Weekend Workshop",
+          description: "A two-day starter session.",
+          inferredFrom: "website",
+          confidence: 70,
+        },
+      ],
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.inferredDrafts.length, 1);
+    assert.equal(step.inferredDrafts[0]?.id, "offer-1");
   });
 
   it("picks follow-up of open leads over disconnected ad channels", () => {
@@ -406,5 +429,14 @@ describe("coordinated next step", () => {
     );
     assert.match(source, /CheckWhatChangedButton/);
     assert.match(source, /CHECK_CHANGED_STEP_TITLE/);
+  });
+
+  it("puts Confirm and Reject on Next step for Business drafts", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(source, /ConfirmRejectButtons/);
+    assert.match(source, /CONFIRM_DRAFTS_STEP_TITLE/);
   });
 });
