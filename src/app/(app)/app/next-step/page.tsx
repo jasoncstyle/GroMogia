@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
-import { APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 
@@ -57,7 +57,21 @@ export default async function NextStepPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm">{step.primary.body}</p>
-              {canDecide ? (
+              {step.primary.title === APPROVE_ACTIONS_STEP_TITLE ? (
+                step.waitingActions.map((action) => (
+                  <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
+                    <p className="font-medium">{action.description}</p>
+                    <p className="text-muted-foreground">
+                      {action.status} · {labelFor(action.risk)}
+                      {action.module ? ` · ${action.module}` : ""}
+                    </p>
+                    <WaitingActionButtons
+                      actionId={action.id}
+                      canApprove={canApprove}
+                    />
+                  </div>
+                ))
+              ) : canDecide ? (
                 <NextStepResponseButtons
                   kind={step.primary.kind}
                   href={step.primary.href}
@@ -97,7 +111,8 @@ export default async function NextStepPage() {
             </CardContent>
           </Card>
 
-          {step.waitingActions.length > 0 ? (
+          {step.waitingActions.length > 0 &&
+          step.primary.title !== APPROVE_ACTIONS_STEP_TITLE ? (
             <Card>
               <CardHeader>
                 <CardTitle>Waiting for your say</CardTitle>
@@ -151,11 +166,11 @@ export default async function NextStepPage() {
               <CardTitle>Write it as a plan</CardTitle>
               <CardDescription>
                 Next step is one thing to do now. If GroovGro asks you to draft
-                a plan, approve it, or propose the first actions, use the
-                buttons above. A Growth Plan is a versioned write-up for a
-                Goal. After you approve a plan, GroovGro can propose the first
-                actions. Nothing runs until you say so, and even then GroovGro
-                does not execute.
+                a plan, approve it, propose the first actions, or approve those
+                actions, use the buttons above. A Growth Plan is a versioned
+                write-up for a Goal. After you approve a plan, GroovGro can
+                propose the first actions. Nothing runs until you say so, and
+                even then GroovGro does not execute.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
