@@ -16,9 +16,11 @@ import {
 export function SpecialistReports({
   reports,
   canSave,
+  hideNextStepLink = false,
 }: {
   reports: SpecialistReport[]
   canSave: boolean
+  hideNextStepLink?: boolean
 }) {
   return (
     <div className="space-y-4">
@@ -54,13 +56,16 @@ export function SpecialistReports({
                 <p className="font-medium">{report.recommend.title}</p>
                 <p className="text-muted-foreground">{report.recommend.body}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <Button asChild variant="outline" size="sm">
-                    <Link href={report.recommend.href}>
-                      {report.recommend.href === "/app/next-step"
-                        ? "Open Next step"
-                        : "Open related page"}
-                    </Link>
-                  </Button>
+                  {hideNextStepLink &&
+                  report.recommend.href === "/app/next-step" ? null : (
+                    <Button asChild variant="outline" size="sm">
+                      <Link href={report.recommend.href}>
+                        {report.recommend.href === "/app/next-step"
+                          ? "Open Next step"
+                          : "Open related page"}
+                      </Link>
+                    </Button>
+                  )}
                   <SaveForm
                     action={saveSpecialistRecommendation}
                     successMessage={

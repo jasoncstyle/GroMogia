@@ -150,6 +150,7 @@ export type CoordinatedNextStep = {
   readablePlan: ReadableGrowthPlan | null
   readableGoal: LearningGoal | null
   weeklyLook: WeeklyLook | null
+  reports: SpecialistReport[]
   executeAllowed: false
 };
 
@@ -455,6 +456,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     readablePlan: input.readablePlan ?? null,
     readableGoal: input.readableGoal ?? null,
     weeklyLook: input.weeklyLook ?? null,
+    reports: input.reports,
     executeAllowed: false,
   };
 }

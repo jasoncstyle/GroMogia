@@ -862,7 +862,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Business Active goals opens Next step. Goals schedule copy names Next step for this week’s look. GroovGro does not start marketing.
 
-### 86. Decisions copy names Next step for this week’s look (this slice)
+### 86. Decisions copy names Next step for this week’s look
 
 **Reason:** Decisions still told the owner to save weekly and monthly reviews from Growth review. This week’s look already lives on Next step.
 
@@ -871,6 +871,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Decisions names Next step to save this week’s look. Growth review stays for the monthly write-up. GroovGro does not start marketing.
+
+### 87. Next step shows specialist reports (this slice)
+
+**Reason:** Next step still sent the owner to Intelligence to read specialists. The owner can read each specialist and save the recommendation here.
+
+**Affected:** Next step.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows specialist reports and Save to Decision History. It does not send the owner to Intelligence from the footer. Leave-alone still names the module page. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -949,7 +959,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Goal and plan loops stay on Next step is parked.** Activate, draft, approve, propose, waiting actions, and a reached Goal name Next step. Do not execute.
 - **Next step shows this week’s look is parked.** Next step shows this week’s look. It does not send the owner to Growth review from the footer. Do not change the business from that look.
 - **Business Active goals and Goals weekly copy stay on Next step is parked.** Business Active goals opens Next step. Goals schedule copy names Next step for this week’s look. Do not start marketing.
-- **Decisions copy names Next step for this week’s look (this slice).** Decisions names Next step to save this week’s look. Growth review stays for the monthly write-up. Do not start marketing.
+- **Decisions copy names Next step for this week’s look is parked.** Decisions names Next step to save this week’s look. Growth review stays for the monthly write-up. Do not start marketing.
+- **Next step shows specialist reports (this slice).** Next step shows specialist reports and Save to Decision History. It does not send the owner to Intelligence from the footer. Leave-alone still names the module page. Do not execute.
 
 ## DESIGN FOR LATER
 

@@ -23,6 +23,7 @@ import { TrackingSnippet } from "@/components/tracking-snippet";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import { StripeReadCopyPanel } from "@/components/stripe-read-copy-panel";
 import { GrowthSettingsForm } from "@/components/growth-settings-form";
+import { SpecialistReports } from "@/components/specialist-reports";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
 import { WebsitePageChecklist } from "@/components/website-page-checklist";
 import { Button } from "@/components/ui/button";
@@ -528,28 +529,13 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>What GroovGro is leaving alone</CardTitle>
-              <CardDescription>
-                Ads, email, and social stay off. Thin evidence stays as wait.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              {step.leftAlone.length === 0 ? (
-                <p className="text-muted-foreground">
-                  Nothing extra is being left alone this period.
-                </p>
-              ) : (
-                step.leftAlone.map((item) => (
-                  <div key={`${item.specialistId ?? item.title}`}>
-                    <p className="font-medium">{item.title}</p>
-                    <p className="text-muted-foreground">{item.body}</p>
-                  </div>
-                ))
-              )}
-            </CardContent>
-          </Card>
+          {step.reports.length > 0 ? (
+            <SpecialistReports
+              reports={step.reports}
+              canSave={canDecide}
+              hideNextStepLink
+            />
+          ) : null}
 
           <Card>
             <CardHeader>
@@ -655,9 +641,6 @@ export default async function NextStepPage({
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline">
               <Link href="/app">The path so far</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/app/intelligence">Specialists</Link>
             </Button>
             <Button asChild variant="outline">
               <Link href="/app/decisions">Decisions</Link>
