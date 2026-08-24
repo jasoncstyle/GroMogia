@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ConfirmRejectButtons, InferredBadge, ReviewConnectedDataButton, SaveGrowthReviewButton } from "@/components/growth-review";
 import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
-import { NextStepResponseButtons, OpenPageNextStepButtons, WaitingActionButtons } from "@/components/next-step-actions";
+import { NextStepResponseButtons, OpenPageNextStepButtons, LeaveAloneNextStepButton, WaitingActionButtons } from "@/components/next-step-actions";
 import { OwnerWorkButtons, CheckWhatChangedButton } from "@/components/owner-work-actions";
 import { DraftSeoImprovementsButton, RunHomepageSeoButton, SeoDraftDecisionButtons } from "@/components/seo-actions";
 import { FoldableSample } from "@/components/foldable-sample";
@@ -453,11 +453,14 @@ export default async function NextStepPage({
                   />
                 </div>
               ) : dedicatedVisible ? null : hasDedicatedNextStepControls(step.primary.title) ? (
-                <OpenPageNextStepButtons
-                  href={step.primary.href}
-                  label="Open Goals"
-                  canDecide={canDecide}
-                />
+                canDecide ? (
+                  <LeaveAloneNextStepButton />
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    You can read the Goal and plan here. An owner or admin can
+                    use the buttons. GroovGro will not run them.
+                  </p>
+                )
               ) : canDecide ? (
                 <NextStepResponseButtons
                   kind={step.primary.kind}

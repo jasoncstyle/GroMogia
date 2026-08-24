@@ -24,18 +24,22 @@ export function OpenPageNextStepButtons({
       <Button asChild>
         <Link href={href}>{label}</Link>
       </Button>
-      {canDecide ? (
-        <SaveForm
-          action={saveNextStepResponse}
-          successMessage="GroovGro recorded that nothing should change yet."
-        >
-          <input type="hidden" name="response" value="leave_alone" />
-          <SaveButton variant="outline" pendingLabel="Saving…">
-            Leave this alone
-          </SaveButton>
-        </SaveForm>
-      ) : null}
+      {canDecide ? <LeaveAloneNextStepButton /> : null}
     </div>
+  );
+}
+
+export function LeaveAloneNextStepButton() {
+  return (
+    <SaveForm
+      action={saveNextStepResponse}
+      successMessage="GroovGro recorded that nothing should change yet."
+    >
+      <input type="hidden" name="response" value="leave_alone" />
+      <SaveButton variant="outline" pendingLabel="Saving…">
+        Leave this alone
+      </SaveButton>
+    </SaveForm>
   );
 }
 

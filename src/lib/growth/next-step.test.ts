@@ -274,7 +274,7 @@ describe("coordinated next step", () => {
       activateGoalTitle: "Next: More people get in touch",
     });
     assert.equal(step.primary.title, "Make this the active Goal");
-    assert.equal(step.primary.href, "/app/goals");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.primary.source, "goals");
     assert.equal(step.primary.goalId, "goal-2");
     assert.match(step.primary.body, /will not start marketing/);
@@ -432,7 +432,7 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.title, "Propose the first actions");
   });
 
-  it("points at Goals when learning says the target was reached", () => {
+  it("keeps Goal reached on Next step", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,
       reports: buildSpecialistReports(facts()),
@@ -441,7 +441,7 @@ describe("coordinated next step", () => {
       latestLearningOutcome: "The Goal reached its target. GroovGro will not start a new campaign.",
       latestLearningGoalId: "goal-1",
     });
-    assert.equal(step.primary.href, "/app/goals");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.primary.source, "learning");
     assert.match(step.primary.body, /will not start a new campaign/);
   });
@@ -1700,6 +1700,7 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(source, /href: "\/app\/website"/);
     assert.doesNotMatch(source, /href: "\/app\/work"/);
     assert.doesNotMatch(source, /href: "\/app\/growth-review"/);
+    assert.doesNotMatch(source, /href: "\/app\/goals"/);
     const goals = readFileSync(
       join(process.cwd(), "src/app/(app)/app/goals/page.tsx"),
       "utf8",
@@ -1713,9 +1714,11 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.doesNotMatch(page, /href="\/app\/goals">Open Goals/);
+    assert.doesNotMatch(page, /label="Open Goals"/);
     assert.doesNotMatch(page, /href="\/app\/goals">Goals/);
     assert.doesNotMatch(page, /href="\/app\/work"/);
     assert.doesNotMatch(page, /Open Your work/);
+    assert.match(page, /LeaveAloneNextStepButton/);
   });
 
   it("lets the owner read the Growth Plan on Next step", () => {
