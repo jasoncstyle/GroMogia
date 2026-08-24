@@ -1,6 +1,6 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
-import { ACTIVATE_GOAL_STEP_TITLE, ADD_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, OWNER_WORK_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, READ_GOAL_STEP_TITLE, REVIEW_SITE_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, ADD_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, OWNER_WORK_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, READ_GOAL_STEP_TITLE, REVIEW_SITE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -208,6 +208,7 @@ export type CoordinatedNextStep = {
   needsAddGoal: boolean
   needsConnectWebsite: boolean
   needsPasteSnippet: boolean
+  needsShareLeadForm: boolean
   executeAllowed: false
 };
 
@@ -540,6 +541,9 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     needsConnectWebsite: input.websiteConnected === false,
     needsPasteSnippet: input.reports.some(
       (report) => report.recommend.title === PASTE_SNIPPET_STEP_TITLE,
+    ),
+    needsShareLeadForm: input.reports.some(
+      (report) => report.recommend.title === SHARE_LEAD_FORM_STEP_TITLE,
     ),
     executeAllowed: false,
   };

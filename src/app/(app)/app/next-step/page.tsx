@@ -687,6 +687,37 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.needsShareLeadForm &&
+          !isShareLeadFormNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Share the public lead form</CardTitle>
+                <CardDescription>
+                  Copy the public lead form here, or add someone you already
+                  know. GroovGro will not email anyone.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {leadFormUrl ? (
+                  <CopyLink url={leadFormUrl} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    The public lead form is not ready on this page yet.
+                    GroovGro will not email anyone.
+                  </p>
+                )}
+                <p className="text-sm font-medium">
+                  Or add someone you already know
+                </p>
+                <LeadCreateForm
+                  offers={links.offers}
+                  goals={links.goals}
+                  disabled={!canManageLeads}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.activateGoalId &&
           step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
             <Card>

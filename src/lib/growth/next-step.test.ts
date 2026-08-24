@@ -1338,6 +1338,39 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("keeps Share the public lead form on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          openLeadCount: 0,
+          contactCount: 0,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsShareLeadForm, true);
+    assert.match(page, /needsShareLeadForm/);
+    assert.match(page, /!isShareLeadFormNextStep/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/crm/page.tsx"), "utf8"),
+      /LeadCreateForm/,
+    );
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/crm/page.tsx"), "utf8"),
+      /CopyLink/,
+    );
+  });
+
   it("keeps pasting the tracking snippet ahead of sharing the lead form", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,
