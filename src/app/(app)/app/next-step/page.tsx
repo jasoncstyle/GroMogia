@@ -628,6 +628,29 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.needsPasteSnippet &&
+          !isPasteSnippetNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Paste the tracking snippet</CardTitle>
+                <CardDescription>
+                  Copy the tracking snippet here and paste it on the site
+                  you already have. GroovGro does not replace that site.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {snippet ? (
+                  <TrackingSnippet snippet={snippet} />
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    Save the website address first, then copy the snippet.
+                    GroovGro does not replace the live site.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.activateGoalId &&
           step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
             <Card>
