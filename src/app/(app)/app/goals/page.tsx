@@ -2,7 +2,6 @@ import Link from "next/link";
 
 import {
   createGrowthPlan,
-  refreshConnectedGoalProgress,
   updateGoalProgress,
   updateGrowthSettings,
 } from "@/lib/actions/growth";
@@ -20,6 +19,7 @@ import { WaitingActionButtons } from "@/components/next-step-actions";
 import { OwnerWorkButtons } from "@/components/owner-work-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { GoalCreateForm } from "@/components/goal-create-form";
+import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import {
   alreadyDraftedNextGoal,
   canActivateDraftGoal,
@@ -256,14 +256,7 @@ export default async function GoalsPage() {
         </CardHeader>
         <CardContent className="space-y-4">
           {goals.some((goal) => goal.liveComputable) ? (
-            <SaveForm
-              action={refreshConnectedGoalProgress}
-              successMessage="Progress saved"
-            >
-              <SaveButton type="submit" disabled={!session.organizationId}>
-                Save progress from connected data
-              </SaveButton>
-            </SaveForm>
+            <SaveConnectedProgressButton disabled={!session.organizationId} />
           ) : null}
           {goals.length === 0 ? (
             <p className="text-sm text-muted-foreground">

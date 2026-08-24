@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_OFFER_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_OFFER_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SAVE_PROGRESS_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -53,6 +53,7 @@ export type SpecialistFacts = {
   brandVoiceDraftSaved: boolean
   brandSettingsSaved: boolean
   businessBrainSaved: boolean
+  goalProgressNeedsSave: boolean
   confirmedOfferCount: number
   upcomingEventCount: number
   evidenceSample: EvidenceSample
@@ -274,6 +275,15 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
       title: PASTE_SNIPPET_STEP_TITLE,
       body: "Copy the tracking snippet here and paste it on the site you already have. GroovGro does not replace that site.",
       href: "/app/website",
+    };
+  }
+  if (facts.goalProgressNeedsSave) {
+    return {
+      kind: "recommend",
+      classification: "strategic",
+      title: SAVE_PROGRESS_STEP_TITLE,
+      body: "Save today's Goal number from connected leads, bookings, and payments. That stores a history. GroovGro will not start marketing.",
+      href: "/app/goals",
     };
   }
   if (!facts.brandSettingsSaved) {

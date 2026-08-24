@@ -502,6 +502,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If the website address is saved and pages have not been read yet, Next step asks the owner to find pages, check the important ones, then review. GroovGro does not change the live site.
 
+### 50. Save today's Goal number from Next step (this slice)
+
+**Reason:** Saving today's Goal number from connected data still lived only on Goals. Put Save progress on Next step when a connected Goal has no history yet. GroovGro must not start marketing.
+
+**Affected:** Next step. Reuses `SaveConnectedProgressButton`. Does not execute.
+
+**Migration risk:** None.
+
+**Current functionality:** If visits are recorded and an active connected Goal has never stored today's number, Next step asks the owner to save it. Open leads, the tracking snippet, and the public lead form still come first. GroovGro does not start marketing.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
@@ -542,7 +552,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Save the brand from Next step is parked.** Ask the owner to save the business name, what it does, and who it serves when that is still empty. Do not start marketing.
 - **Save how the business works from Next step is parked.** Ask the owner to save the kind of business and how it creates value when that is still empty. Do not start marketing.
 - **Add a person from Next step is parked.** Ask the owner to copy the public form or add someone they already know when no person has been captured yet. Do not email anyone.
-- **Find pages from Next step (this slice).** Ask the owner to find pages, check the important ones, and review when the website is saved but unread. Do not change the live site.
+- **Find pages from Next step is parked.** Ask the owner to find pages, check the important ones, and review when the website is saved but unread. Do not change the live site.
+- **Save today's Goal number from Next step (this slice).** Ask the owner to save today's Goal number when a connected Goal has no history yet. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -664,7 +675,8 @@ Organization
 41. **Save the brand from Next step** — save name, what the business does, and who it serves on Next step when that is still empty. Done.
 42. **Save how the business works from Next step** — save the kind of business and how it creates value on Next step when that is still empty. Done.
 43. **Add a person from Next step** — copy the public form or add someone the owner already knows on Next step when no person has been captured yet. Done.
-44. **Find pages from Next step** — find pages, check the important ones, and review on Next step when the website is saved but unread. This slice.
-45. **Guarded automation** — only after the above is trusted.
+44. **Find pages from Next step** — find pages, check the important ones, and review on Next step when the website is saved but unread. Done.
+45. **Save today's Goal number from Next step** — save today's Goal number on Next step when a connected Goal has no history yet. This slice.
+46. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -34,6 +34,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     brandVoiceDraftSaved: true,
     brandSettingsSaved: true,
     businessBrainSaved: true,
+    goalProgressNeedsSave: false,
     confirmedOfferCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
@@ -1312,6 +1313,53 @@ describe("coordinated next step", () => {
       websiteRead: true,
     });
     assert.equal(step.primary.title, "Save how this business works");
+  });
+
+  it("puts Save today's Goal number on Next step when a connected Goal has no history yet", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          goalProgressNeedsSave: true,
+          brandSettingsSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Save today's Goal number");
+    assert.equal(step.primary.classification, "strategic");
+    assert.match(step.primary.body, /will not start marketing/);
+    assert.match(page, /isSaveProgressNextStep/);
+    assert.match(page, /SaveConnectedProgressButton/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/goals/page.tsx"), "utf8"),
+      /SaveConnectedProgressButton/,
+    );
+  });
+
+  it("keeps sharing the lead form ahead of saving today's Goal number", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          goalProgressNeedsSave: true,
+          recordedVisitCount: 1,
+          openLeadCount: 0,
+          contactCount: 0,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Share the public lead form");
   });
 
   it("puts Add event on Next step when the schedule needs a review", () => {

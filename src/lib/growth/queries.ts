@@ -550,6 +550,14 @@ export async function getSpecialistReports(organizationId: string) {
     brandVoiceDraftSaved: brandVoice.brandVoiceDraftSaved,
     brandSettingsSaved: brandSettingsAreSaved(snapshot.brand),
     businessBrainSaved: businessBrainIsSaved(snapshot.brain),
+    goalProgressNeedsSave: snapshot.goals.some(
+      (goal) =>
+        goal.status === "active" &&
+        (goal.discoveryStatus ?? "confirmed") !== "inferred" &&
+        (goal.discoveryStatus ?? "confirmed") !== "rejected" &&
+        goal.liveComputable &&
+        !goal.progressRecordedAt,
+    ),
     confirmedOfferCount: snapshot.offers.filter(
       (offer) => (offer.discoveryStatus ?? "confirmed") === "confirmed",
     ).length,

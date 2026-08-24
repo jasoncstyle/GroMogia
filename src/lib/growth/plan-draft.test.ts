@@ -9,6 +9,7 @@ import {
   ADD_OFFER_STEP_TITLE,
   SAVE_BRAND_STEP_TITLE,
   SAVE_BUSINESS_STEP_TITLE,
+  SAVE_PROGRESS_STEP_TITLE,
   CONNECT_SEARCH_CONSOLE_STEP_TITLE,
   CONNECT_WEBSITE_STEP_TITLE,
   PASTE_SNIPPET_STEP_TITLE,
@@ -32,6 +33,7 @@ import {
   isAddOfferNextStep,
   isSaveBrandNextStep,
   isSaveBusinessNextStep,
+  isSaveProgressNextStep,
   isFollowUpLeadsNextStep,
   isPasteSnippetNextStep,
   isReadGoalNextStep,
@@ -491,6 +493,8 @@ describe("growth plan draft", () => {
     assert.equal(isSaveBrandNextStep(SAVE_BRAND_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(SAVE_BUSINESS_STEP_TITLE), null);
     assert.equal(isSaveBusinessNextStep(SAVE_BUSINESS_STEP_TITLE), true);
+    assert.equal(openPageLabelForNextStep(SAVE_PROGRESS_STEP_TITLE), null);
+    assert.equal(isSaveProgressNextStep(SAVE_PROGRESS_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(RUN_SEO_STEP_TITLE), null);
     assert.equal(hasDedicatedNextStepControls(GOAL_REACHED_STEP_TITLE), true);
     assert.equal(hasDedicatedNextStepControls(ACTIVATE_GOAL_STEP_TITLE), true);
@@ -521,6 +525,7 @@ describe("growth plan draft", () => {
     assert.equal(skipsDuplicateNextStepAction(ADD_OFFER_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(SAVE_BRAND_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(SAVE_BUSINESS_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(SAVE_PROGRESS_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(RUN_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(FIX_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);
