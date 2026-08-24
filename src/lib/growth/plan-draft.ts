@@ -67,6 +67,28 @@ export const CONNECT_WEBSITE_STEP_TITLE = "Connect the existing website";
 export const REVIEW_SITE_STEP_TITLE = "Review the connected website";
 export const FOLLOW_UP_LEADS_STEP_TITLE = "Follow up open leads";
 export const RUN_SEO_STEP_TITLE = "Run an SEO check";
+export const FIX_SEO_STEP_TITLE = "Fix blocking SEO items";
+export const IMPROVE_SEO_STEP_TITLE = "Improve the page when you have time";
+export const REVIEW_SCHEDULE_STEP_TITLE = "Review the schedule or how people find it";
+
+export function skipsDuplicateNextStepAction(title: string): boolean {
+  const text = clean(title);
+  return (
+    text === FOLLOW_UP_LEADS_STEP_TITLE ||
+    text === RUN_SEO_STEP_TITLE ||
+    text === FIX_SEO_STEP_TITLE ||
+    text === IMPROVE_SEO_STEP_TITLE ||
+    text === REVIEW_SCHEDULE_STEP_TITLE
+  );
+}
+
+export function openPageLabelForNextStep(title: string): string | null {
+  const text = clean(title);
+  if (text === FOLLOW_UP_LEADS_STEP_TITLE) return "Open Leads & customers";
+  if (text === FIX_SEO_STEP_TITLE || text === IMPROVE_SEO_STEP_TITLE) return "Open SEO";
+  if (text === REVIEW_SCHEDULE_STEP_TITLE) return "Open Events";
+  return null;
+}
 
 function isPlanLoopNextStep(title: string): boolean {
   const text = clean(title);

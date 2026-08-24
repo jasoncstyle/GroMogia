@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { FOLLOW_UP_LEADS_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
+import { FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -92,7 +92,7 @@ describe("growth specialists", () => {
     );
     assert.ok(seo);
     assert.match(seo.read, /42 out of 100/);
-    assert.equal(seo.recommend.title, "Fix blocking SEO items");
+    assert.equal(seo.recommend.title, FIX_SEO_STEP_TITLE);
     assert.match(seo.recommend.body, /will not change the connected website/);
   });
 

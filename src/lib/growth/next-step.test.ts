@@ -484,7 +484,7 @@ describe("coordinated next step", () => {
     assert.match(source, /REVIEW_SITE_STEP_TITLE/);
   });
 
-  it("opens Leads & customers from Next step without I’ll do this", () => {
+  it("opens Leads, SEO, or Events from Next step without I’ll do this", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
       "utf8",
@@ -493,15 +493,14 @@ describe("coordinated next step", () => {
       join(process.cwd(), "src/components/next-step-actions.tsx"),
       "utf8",
     );
-    assert.match(page, /FOLLOW_UP_LEADS_STEP_TITLE/);
-    assert.match(page, /FollowUpLeadsButtons/);
-    const followUp = buttons.slice(
-      buttons.indexOf("FollowUpLeadsButtons"),
+    assert.match(page, /openPageLabelForNextStep/);
+    assert.match(page, /OpenPageNextStepButtons/);
+    const openPage = buttons.slice(
+      buttons.indexOf("OpenPageNextStepButtons"),
       buttons.indexOf("NextStepResponseButtons"),
     );
-    assert.match(followUp, /Open Leads/);
-    assert.equal(followUp.includes("do_this"), false);
-    assert.equal(followUp.includes("I’ll do this"), false);
+    assert.equal(openPage.includes("do_this"), false);
+    assert.equal(openPage.includes("I’ll do this"), false);
   });
 
   it("saves this week’s growth review on Next step when the wait is from the review", () => {

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ConfirmRejectButtons, InferredBadge, ReviewConnectedDataButton, SaveGrowthReviewButton } from "@/components/growth-review";
 import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
-import { FollowUpLeadsButtons, NextStepResponseButtons, WaitingActionButtons } from "@/components/next-step-actions";
+import { NextStepResponseButtons, OpenPageNextStepButtons, WaitingActionButtons } from "@/components/next-step-actions";
 import { OwnerWorkButtons, CheckWhatChangedButton } from "@/components/owner-work-actions";
 import { RunHomepageSeoButton } from "@/components/seo-actions";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
@@ -18,7 +18,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -41,6 +41,7 @@ export default async function NextStepPage() {
   const canApprovePlan = hasPermission(session.permissions, "approve_plans");
   const canManageWebsite = hasPermission(session.permissions, "manage_website");
   const canManageSeo = hasPermission(session.permissions, "manage_seo");
+  const openPageLabel = step ? openPageLabelForNextStep(step.primary.title) : null;
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -144,11 +145,6 @@ export default async function NextStepPage() {
                     <Link href="/app/website">Find pages on Website</Link>
                   </Button>
                 </>
-              ) : step.primary.title === FOLLOW_UP_LEADS_STEP_TITLE ? (
-                <FollowUpLeadsButtons
-                  href={step.primary.href}
-                  canDecide={canDecide}
-                />
               ) : step.primary.title === RUN_SEO_STEP_TITLE ? (
                 <div className="flex flex-wrap gap-2">
                   <RunHomepageSeoButton disabled={!canManageSeo} />
@@ -156,6 +152,12 @@ export default async function NextStepPage() {
                     <Link href="/app/seo">Open SEO</Link>
                   </Button>
                 </div>
+              ) : openPageLabel ? (
+                <OpenPageNextStepButtons
+                  href={step.primary.href}
+                  label={openPageLabel}
+                  canDecide={canDecide}
+                />
               ) : step.primary.source === "review" &&
                 step.primary.kind === "no_change_yet" ? (
                 <div className="flex flex-wrap gap-2">
@@ -264,7 +266,8 @@ export default async function NextStepPage() {
               <CardDescription>
                 Next step is one thing to do now. If GroovGro asks you to
                 confirm drafts, connect the existing website, review the
-                connected website, follow up open leads, run an SEO check, save this week&apos;s
+                connected website, follow up open leads, run an SEO check, open SEO or Events,
+                save this week&apos;s
                 review, draft a plan, approve it, propose the first
                 actions, approve those actions, do work you already approved,
                 or check what changed, use the buttons above. A Growth Plan is a versioned write-up for a

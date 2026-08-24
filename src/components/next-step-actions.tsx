@@ -10,17 +10,19 @@ import {
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Button } from "@/components/ui/button";
 
-export function FollowUpLeadsButtons({
+export function OpenPageNextStepButtons({
   href,
+  label,
   canDecide,
 }: {
   href: string
+  label: string
   canDecide: boolean
 }) {
   return (
     <div className="flex flex-wrap gap-2">
       <Button asChild>
-        <Link href={href}>Open Leads & customers</Link>
+        <Link href={href}>{label}</Link>
       </Button>
       {canDecide ? (
         <SaveForm

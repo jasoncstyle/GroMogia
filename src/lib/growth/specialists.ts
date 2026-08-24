@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_WEBSITE_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -171,7 +171,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
     recommend = {
       kind: "recommend",
       classification: "operational",
-      title: "Fix blocking SEO items",
+      title: FIX_SEO_STEP_TITLE,
       body: "Open SEO and work through the blocking items. Approve drafts there. GroovGro will not change the connected website from this page.",
       href: "/app/seo",
     };
@@ -179,7 +179,7 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
     recommend = {
       kind: "recommend",
       classification: "optimization",
-      title: "Improve the page when you have time",
+      title: IMPROVE_SEO_STEP_TITLE,
       body: "The waiting threshold is met and the page has items to make clearer. Review them on SEO. Do not start ads from this recommendation.",
       href: "/app/seo",
     };
@@ -309,7 +309,7 @@ function availabilityReport(
     recommend = {
       kind: "recommend",
       classification: "optimization",
-      title: "Review the schedule or how people find it",
+      title: REVIEW_SCHEDULE_STEP_TITLE,
       body: `${goal?.title ?? "The Goal"} is well short of its target. Review upcoming items and the related Offer. GroovGro will not change ads or the website.`,
       href: "/app/events",
     };

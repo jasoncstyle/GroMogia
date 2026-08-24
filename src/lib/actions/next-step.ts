@@ -9,7 +9,7 @@ import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import { decisionRecords, growthActions } from "@/lib/db/schema";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
-import { FOLLOW_UP_LEADS_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { skipsDuplicateNextStepAction } from "@/lib/growth/plan-draft";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
@@ -71,8 +71,7 @@ export async function saveNextStepResponse(
     if (
       !leaveAlone &&
       hasPermission(session.permissions, "modify_goals") &&
-      primary.title !== FOLLOW_UP_LEADS_STEP_TITLE &&
-      primary.title !== RUN_SEO_STEP_TITLE
+      !skipsDuplicateNextStepAction(primary.title)
     ) {
       const already = coordinated.waitingActions.some(
         (action) =>

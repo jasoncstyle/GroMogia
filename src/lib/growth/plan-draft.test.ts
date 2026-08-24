@@ -8,7 +8,14 @@ import {
   draftPlanExcerpt,
   findDraftPlanToApprove,
   findPlanDraftGoal,
+  FIX_SEO_STEP_TITLE,
+  FOLLOW_UP_LEADS_STEP_TITLE,
   goalNeedsPlanDraft,
+  IMPROVE_SEO_STEP_TITLE,
+  openPageLabelForNextStep,
+  REVIEW_SCHEDULE_STEP_TITLE,
+  RUN_SEO_STEP_TITLE,
+  skipsDuplicateNextStepAction,
 } from "./plan-draft";
 
 describe("growth plan draft", () => {
@@ -417,6 +424,18 @@ describe("growth plan draft", () => {
     });
     assert.doesNotMatch(summary, /Review the connected website/);
     assert.match(summary, /Keep collecting/);
+  });
+
+  it("names the Open button for specialist work that already lives on another page", () => {
+    assert.equal(openPageLabelForNextStep(FOLLOW_UP_LEADS_STEP_TITLE), "Open Leads & customers");
+    assert.equal(openPageLabelForNextStep(FIX_SEO_STEP_TITLE), "Open SEO");
+    assert.equal(openPageLabelForNextStep(IMPROVE_SEO_STEP_TITLE), "Open SEO");
+    assert.equal(openPageLabelForNextStep(REVIEW_SCHEDULE_STEP_TITLE), "Open Events");
+    assert.equal(openPageLabelForNextStep(RUN_SEO_STEP_TITLE), null);
+    assert.equal(skipsDuplicateNextStepAction(FOLLOW_UP_LEADS_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(RUN_SEO_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(FIX_SEO_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction("Draft a plan for this Goal"), false);
   });
 
   it("does not bake industry-specific words into plan helpers", () => {

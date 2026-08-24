@@ -282,7 +282,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If Next step is wait from the review, the owner can save this week’s review to Decision History there. After Check what changed, a wait still uses Save nothing yet. GroovGro does not execute.
 
-### 28. Run an SEO check from Next step (this slice)
+### 28. Run an SEO check from Next step
 
 **Reason:** When no SEO check has been saved, Next step already names that work. Put Run homepage check there so the owner does not have to open SEO first. GroovGro must not edit the website.
 
@@ -291,6 +291,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If Next step is run an SEO check, the owner can run the homepage check there. GroovGro does not edit the live site.
+
+### 29. Open SEO or Events from Next step (this slice)
+
+**Reason:** I’ll do this created a second proposed action for specialist work that is already “open this page.” Put Open SEO or Open Events on Next step instead.
+
+**Affected:** Next step. Reuses the SEO and Events pages. Does not edit the live website or change ads.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is fix SEO, improve the page, or review the schedule, the owner opens that page from Next step. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -311,7 +321,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Check what changed from Next step is parked.** Ask the owner to compare the Goal number after work. Do not execute.
 - **Confirm Business drafts from Next step is parked.** Ask the owner to confirm or reject suggested offers and goals. Do not execute. Do not start ads.
 - **Save this week’s growth review from Next step is parked.** Ask the owner to save the weekly wait to Decision History. Do not execute.
-- **Run an SEO check from Next step (this slice).** Ask the owner to run the homepage check. Do not edit the live site.
+- **Run an SEO check from Next step is parked.** Ask the owner to run the homepage check. Do not edit the live site.
+- **Open SEO or Events from Next step (this slice).** Ask the owner to open the named page. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -412,7 +423,8 @@ Organization
 20. **Check what changed from Next step** — ask the owner to compare the Goal number after work. Done.
 21. **Confirm Business drafts from Next step** — ask the owner to confirm or reject suggested offers and goals. Done.
 22. **Connect, review, follow up, and save wait from Next step** — keep those owner buttons on Next step. Done.
-23. **Run an SEO check from Next step** — run the homepage check on Next step. This slice.
-24. **Guarded automation** — only after the above is trusted.
+23. **Run an SEO check from Next step** — run the homepage check on Next step. Done.
+24. **Open SEO or Events from Next step** — open the named page instead of I’ll do this. This slice.
+25. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
