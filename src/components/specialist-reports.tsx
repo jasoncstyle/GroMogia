@@ -55,7 +55,11 @@ export function SpecialistReports({
                 <p className="text-muted-foreground">{report.recommend.body}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   <Button asChild variant="outline" size="sm">
-                    <Link href={report.recommend.href}>Open related page</Link>
+                    <Link href={report.recommend.href}>
+                      {report.recommend.href === "/app/next-step"
+                        ? "Open Next step"
+                        : "Open related page"}
+                    </Link>
                   </Button>
                   <SaveForm
                     action={saveSpecialistRecommendation}

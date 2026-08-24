@@ -153,7 +153,9 @@ function InsightBlock({
       </p>
       {href ? (
         <Button asChild variant="link" className="h-auto px-0">
-          <Link href={href}>Open related page</Link>
+          <Link href={href}>
+            {href === "/app/next-step" ? "Open Next step" : "Open related page"}
+          </Link>
         </Button>
       ) : null}
     </div>

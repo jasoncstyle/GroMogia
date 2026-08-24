@@ -552,7 +552,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Follow up leads, connect website, confirm offers, watch progress, SEO, Search Console, tracking snippet, brand, business, offers, brand voice, growth schedule, payments, and calendar review recommend Next step. Ads, email, and social stay left alone. GroovGro does not execute.
 
-### 55. Next step does not also send the owner to the module page (this slice)
+### 55. Next step does not also send the owner to the module page
 
 **Reason:** Next step already has the owner buttons. Extra Open Website, Open SEO, and Open Leads buttons still sent the owner away. Your work should name Next step. Matching charges to people still names Bookings.
 
@@ -561,6 +561,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** When the work is already on Next step, there is no second Open Website, Open SEO, Open Leads, Open Events, or Open Bookings button. Your work says Open Next step. Goal and plan fallbacks still name Goals when the main button is not available. GroovGro does not execute.
+
+### 56. The path so far, specialists, and Intelligence name Next step (this slice)
+
+**Reason:** The path so far still opened Goals for a missing Goal or plan, and Your work when nothing was ready. Specialists and Intelligence said Open related page even when the href was Next step.
+
+**Affected:** Growth story, Dashboard and Decisions path cards, specialist cards, Intelligence recommendations.
+
+**Migration risk:** None.
+
+**Current functionality:** If there is no Goal yet, The Goal opens Next step. If there is no approved plan yet, The plan opens Next step. The work always opens Next step. When a Goal or approved plan already exists, those cards still open Goals so the owner can read them. Specialists and Intelligence say Open Next step when that is the related page. Leave-alone still names the module page. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -608,7 +618,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Choose when you look at growth from Next step is parked.** Ask the owner to save the day and time they look at this week's numbers when that schedule has never been saved. Do not change the business then.
 - **Dashboard sends the owner to Next step is parked.** Next step is the filled home-screen button. Drafts, Stripe, and open leads say to open Next step. Do not start marketing.
 - **Owner work, specialists, and Intelligence send the owner to Next step is parked.** Recommend Next step for owner loops that already have buttons there. Leave-alone still names the module page. Do not execute.
-- **Next step does not also send the owner to the module page (this slice).** Do not show a second Open Website or Open SEO button. Your work names Next step. Do not execute.
+- **Next step does not also send the owner to the module page is parked.** Do not show a second Open Website or Open SEO button. Your work names Next step. Do not execute.
+- **The path so far, specialists, and Intelligence name Next step (this slice).** Missing Goal or plan, and the work beat, open Next step. Specialists and Intelligence say Open Next step when that is the related page. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -736,7 +747,8 @@ Organization
 47. **Choose when you look at growth from Next step** — save the day and time to read this week's numbers on Next step when that schedule has never been saved. Done. GroovGro does not change the business then.
 48. **Dashboard sends the owner to Next step** — Next step is the filled home-screen button; drafts, Stripe, and open leads say to open Next step. Done.
 49. **Owner work, specialists, and Intelligence send the owner to Next step** — recommend Next step for owner loops that already have buttons there. Done.
-50. **Next step does not also send the owner to the module page** — no second Open Website or Open SEO button when the work is already here. This slice.
-51. **Guarded automation** — only after the above is trusted.
+50. **Next step does not also send the owner to the module page** — no second Open Website or Open SEO button when the work is already here. Done.
+51. **The path so far, specialists, and Intelligence name Next step** — missing Goal or plan, and the work beat, open Next step. This slice.
+52. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -29,6 +29,8 @@ describe("growth story", () => {
     assert.match(beats[0]?.body ?? "", /More people get in touch/);
     assert.match(beats[0]?.body ?? "", /2 leads of 10 leads/);
     assert.match(beats[1]?.body ?? "", /v2/);
+    assert.equal(beats[0]?.href, "/app/goals");
+    assert.equal(beats[1]?.href, "/app/goals");
     assert.match(beats[2]?.body ?? "", /will not run/);
     assert.match(beats[2]?.body ?? "", /Next step/);
     assert.equal(beats[2]?.href, "/app/next-step");
@@ -56,7 +58,10 @@ describe("growth story", () => {
       nextStepHref: "",
     });
     assert.match(beats[0]?.body ?? "", /No active Goal/);
+    assert.equal(beats[0]?.href, "/app/next-step");
     assert.match(beats[1]?.body ?? "", /Open Next step or Goals first/);
+    assert.equal(beats[1]?.href, "/app/next-step");
+    assert.equal(beats[2]?.href, "/app/next-step");
     assert.equal(beats[4]?.href, "/app/next-step");
   });
 
@@ -102,7 +107,28 @@ describe("growth story", () => {
       nextStepHref: "/app/crm",
     });
     assert.equal(beats[4]?.href, "/app/next-step");
+    assert.equal(beats[2]?.href, "/app/next-step");
     assert.match(beats[4]?.body ?? "", /Follow up open leads/);
+  });
+
+  it("names Next step on the path, specialists, and Intelligence", () => {
+    const storyCard = readFileSync(
+      join(process.cwd(), "src/components/growth-story.tsx"),
+      "utf8",
+    );
+    const specialists = readFileSync(
+      join(process.cwd(), "src/components/specialist-reports.tsx"),
+      "utf8",
+    );
+    const intelligence = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/intelligence/page.tsx"),
+      "utf8",
+    );
+    assert.match(storyCard, /Open Next step/);
+    assert.match(specialists, /Open Next step/);
+    assert.match(intelligence, /Open Next step/);
+    assert.match(specialists, /Open related page/);
+    assert.match(intelligence, /Open related page/);
   });
 
   it("does not bake industry-specific words into the story helper", () => {

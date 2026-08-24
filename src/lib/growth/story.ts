@@ -132,17 +132,17 @@ export function buildGrowthStory(facts: GrowthStoryFacts): GrowthStoryBeat[] {
     {
       title: "The Goal",
       body: clip(`${name}. ${goalLine(facts)}`, 500),
-      href: "/app/goals",
+      href: clean(facts.goalTitle) ? "/app/goals" : "/app/next-step",
     },
     {
       title: "The plan",
       body: clip(planLine(facts), 500),
-      href: "/app/goals",
+      href: facts.hasApprovedPlan ? "/app/goals" : "/app/next-step",
     },
     {
       title: "The work",
       body: clip(workLine(facts), 500),
-      href: facts.openWorkCount > 0 || facts.finishedWorkCount > 0 ? "/app/next-step" : "/app/work",
+      href: "/app/next-step",
     },
     {
       title: "What changed",

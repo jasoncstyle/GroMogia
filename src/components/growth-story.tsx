@@ -30,7 +30,13 @@ export function GrowthStoryCard({
             <p className="font-medium">{beat.title}</p>
             <p className="text-sm text-muted-foreground">{beat.body}</p>
             <Button asChild variant="outline" size="sm">
-              <Link href={beat.href}>Open</Link>
+              <Link href={beat.href}>
+                {beat.href === "/app/next-step"
+                  ? "Open Next step"
+                  : beat.href === "/app/goals"
+                    ? "Open Goals"
+                    : "Open"}
+              </Link>
             </Button>
           </div>
         ))}
