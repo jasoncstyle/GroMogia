@@ -882,7 +882,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step shows specialist reports and Save to Decision History. It does not send the owner to Intelligence from the footer. Leave-alone still names the module page. GroovGro does not execute.
 
-### 88. Next step shows Decision History (this slice)
+### 88. Next step shows Decision History
 
 **Reason:** Next step still sent the owner to Decisions to read the history. Recent decisions can stay on Next step.
 
@@ -891,6 +891,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step shows recent Decision History. It does not send the owner to Decisions from the footer. GroovGro does not run those decisions.
+
+### 89. Next step shows The path so far (this slice)
+
+**Reason:** Next step still sent the owner to the Dashboard to read The path so far. Goal, plan, work, what changed, and the next step can stay on Next step.
+
+**Affected:** Next step.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows The path so far. It does not send the owner to the Dashboard from the footer. GroovGro does not run marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -971,7 +981,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Business Active goals and Goals weekly copy stay on Next step is parked.** Business Active goals opens Next step. Goals schedule copy names Next step for this week’s look. Do not start marketing.
 - **Decisions copy names Next step for this week’s look is parked.** Decisions names Next step to save this week’s look. Growth review stays for the monthly write-up. Do not start marketing.
 - **Next step shows specialist reports is parked.** Next step shows specialist reports and Save to Decision History. It does not send the owner to Intelligence from the footer. Leave-alone still names the module page. Do not execute.
-- **Next step shows Decision History (this slice).** Next step shows recent Decision History. It does not send the owner to Decisions from the footer. Do not run those decisions.
+- **Next step shows Decision History is parked.** Next step shows recent Decision History. It does not send the owner to Decisions from the footer. Do not run those decisions.
+- **Next step shows The path so far (this slice).** Next step shows The path so far. It does not send the owner to the Dashboard from the footer. Do not run marketing.
 
 ## DESIGN FOR LATER
 

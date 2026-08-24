@@ -23,6 +23,7 @@ import { TrackingSnippet } from "@/components/tracking-snippet";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import { StripeReadCopyPanel } from "@/components/stripe-read-copy-panel";
 import { GrowthSettingsForm } from "@/components/growth-settings-form";
+import { GrowthStoryCard } from "@/components/growth-story";
 import { SpecialistReports } from "@/components/specialist-reports";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
 import { WebsitePageChecklist } from "@/components/website-page-checklist";
@@ -42,6 +43,7 @@ import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSaveBusinessNextStep, isSaveProgressNextStep, isSaveReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, isStripeReadCopyNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
+import { buildGrowthStory, storyFactsFromWorkspace } from "@/lib/growth/story";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 
@@ -114,6 +116,29 @@ export default async function NextStepPage({
     session.organizationId && step?.primary.title === REVIEW_SITE_STEP_TITLE
       ? await getDiscoveredWebsitePages(session.organizationId)
       : [];
+  const approvedStoryPlan =
+    step?.readablePlan &&
+    (step.readablePlan.status === "approved" ||
+      step.readablePlan.status === "active")
+      ? { version: step.readablePlan.version }
+      : null;
+  const storyBeats = step
+    ? buildGrowthStory(
+        storyFactsFromWorkspace({
+          businessName: session.organizationName ?? "",
+          goal: step.readableGoal,
+          plan: approvedStoryPlan,
+          openWorkCount: step.openWork.length,
+          finishedWorkCount: step.finishedWorkCount,
+          latestLearning: step.latestLearning,
+          nextStep: {
+            title: step.primary.title,
+            body: step.primary.body,
+            href: step.primary.href,
+          },
+        }),
+      )
+    : [];
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -683,11 +708,7 @@ export default async function NextStepPage({
             </CardContent>
           </Card>
 
-          <div className="flex flex-wrap gap-2">
-            <Button asChild variant="outline">
-              <Link href="/app">The path so far</Link>
-            </Button>
-          </div>
+          <GrowthStoryCard beats={storyBeats} hideNextStepLink />
         </>
       )}
     </div>

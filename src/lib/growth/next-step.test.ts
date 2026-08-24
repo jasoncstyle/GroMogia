@@ -1735,6 +1735,7 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(page, /href="\/app\/work"/);
     assert.doesNotMatch(page, /href="\/app\/intelligence"/);
     assert.doesNotMatch(page, /href="\/app\/decisions"/);
+    assert.doesNotMatch(page, /href="\/app">The path so far/);
     assert.doesNotMatch(page, /Open Your work/);
     assert.match(page, /LeaveAloneNextStepButton/);
     assert.match(page, /weeklyLook/);
@@ -1871,6 +1872,32 @@ describe("coordinated next step", () => {
     assert.match(page, /step\.readableDecisions/);
     assert.match(page, /Decision History/);
     assert.doesNotMatch(page, /href="\/app\/decisions"/);
+  });
+
+  it("lets the owner read The path so far on Next step", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      finishedWorkCount: 2,
+      latestLearning: "The Goal number did not move. Stay the course.",
+    });
+    assert.equal(step.finishedWorkCount, 2);
+    assert.match(step.latestLearning, /Stay the course/);
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const story = readFileSync(
+      join(process.cwd(), "src/components/growth-story.tsx"),
+      "utf8",
+    );
+    assert.match(page, /GrowthStoryCard/);
+    assert.match(page, /hideNextStepLink/);
+    assert.match(page, /storyBeats/);
+    assert.doesNotMatch(page, /href="\/app">The path so far/);
+    assert.match(story, /hideNextStepLink/);
+    assert.match(story, /The path so far/);
   });
 
   it("refreshes Next step after someone submits the public lead form", () => {

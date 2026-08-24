@@ -119,6 +119,8 @@ export type NextStepInput = {
   readableGoal?: LearningGoal | null
   weeklyLook?: WeeklyLook | null
   readableDecisions?: ReadableDecision[]
+  finishedWorkCount?: number
+  latestLearning?: string
 };
 
 export type ReadableGrowthPlan = {
@@ -164,6 +166,8 @@ export type CoordinatedNextStep = {
   weeklyLook: WeeklyLook | null
   readableDecisions: ReadableDecision[]
   reports: SpecialistReport[]
+  finishedWorkCount: number
+  latestLearning: string
   executeAllowed: false
 };
 
@@ -471,6 +475,8 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     weeklyLook: input.weeklyLook ?? null,
     readableDecisions: input.readableDecisions ?? [],
     reports: input.reports,
+    finishedWorkCount: input.finishedWorkCount ?? 0,
+    latestLearning: input.latestLearning ?? "",
     executeAllowed: false,
   };
 }

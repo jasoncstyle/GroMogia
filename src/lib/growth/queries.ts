@@ -34,7 +34,7 @@ import { findActivateCandidate } from "@/lib/growth/next-goal";
 import { findPlanNeedingActions } from "@/lib/growth/plan-actions";
 import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal, findReadableGoal, findReadableGrowthPlan } from "@/lib/growth/plan-draft";
 import { coordinateNextStep } from "@/lib/growth/next-step";
-import { isOpenOwnerWork, needsWhatChangedCheck } from "@/lib/growth/owner-work";
+import { isFinishedOwnerWork, isOpenOwnerWork, needsWhatChangedCheck } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
 import { generateGrowthReview } from "@/lib/growth/review";
 import { websiteWasRead } from "@/lib/growth/status-alerts";
@@ -751,5 +751,9 @@ export async function getCoordinatedNextStep(organizationId: string) {
       confidence: decision.confidence,
       createdAtLabel: decision.createdAt.toLocaleString(),
     })),
+    finishedWorkCount: snapshot.actions.filter((action) =>
+      isFinishedOwnerWork(action.status),
+    ).length,
+    latestLearning: learned?.outcome ?? "",
   });
 }
