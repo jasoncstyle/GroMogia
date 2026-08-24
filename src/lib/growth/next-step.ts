@@ -1,6 +1,6 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
-import { ACTIVATE_GOAL_STEP_TITLE, ADD_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, OWNER_WORK_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, READ_GOAL_STEP_TITLE, REVIEW_SITE_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE, SYNC_STRIPE_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, ADD_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, OWNER_WORK_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, READ_GOAL_STEP_TITLE, REVIEW_SITE_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE, SYNC_STRIPE_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -211,6 +211,7 @@ export type CoordinatedNextStep = {
   needsShareLeadForm: boolean
   needsStripeReadCopy: boolean
   needsSaveBrand: boolean
+  needsSaveBusiness: boolean
   executeAllowed: false
 };
 
@@ -554,6 +555,9 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     ),
     needsSaveBrand: input.reports.some(
       (report) => report.recommend.title === SAVE_BRAND_STEP_TITLE,
+    ),
+    needsSaveBusiness: input.reports.some(
+      (report) => report.recommend.title === SAVE_BUSINESS_STEP_TITLE,
     ),
     executeAllowed: false,
   };

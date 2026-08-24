@@ -107,7 +107,9 @@ export default async function NextStepPage({
       ? await getBrandSettingsForm(session.organizationId)
       : null;
   const brain =
-    session.organizationId && step && isSaveBusinessNextStep(step.primary.title)
+    session.organizationId &&
+    step &&
+    (isSaveBusinessNextStep(step.primary.title) || step.needsSaveBusiness)
       ? await getBusinessBrainForm(session.organizationId)
       : null;
   const growthSettings =
@@ -773,6 +775,26 @@ export default async function NextStepPage({
                   brand={brand}
                   organizationName={session.organizationName}
                   disabled={!canManageBrand}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSaveBusiness &&
+          !isSaveBusinessNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Save how this business works</CardTitle>
+                <CardDescription>
+                  Save the kind of business this is and how it creates
+                  value. GroovGro will not start marketing, send email, or
+                  edit the live website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BusinessBrainForm
+                  brain={brain}
+                  disabled={!canManageSettings}
                 />
               </CardContent>
             </Card>

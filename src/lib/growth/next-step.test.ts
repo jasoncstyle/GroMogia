@@ -1734,6 +1734,37 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("keeps Save how this business works on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          businessBrainSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsSaveBusiness, true);
+    assert.match(page, /needsSaveBusiness/);
+    assert.match(page, /!isSaveBusinessNextStep/);
+    assert.match(
+      readFileSync(
+        join(process.cwd(), "src/app/(app)/app/business/page.tsx"),
+        "utf8",
+      ),
+      /BusinessBrainForm/,
+    );
+  });
+
   it("keeps sharing the lead form ahead of saving how the business works", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,
