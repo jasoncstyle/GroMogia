@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -43,6 +43,7 @@ export type SpecialistFacts = {
   seoCheckedAt: Date | null
   searchConsoleConnected: boolean
   searchConsoleProperty: boolean
+  searchConsoleSnapshot: boolean
   openLeadCount: number
   recordedVisitCount: number
   upcomingEventCount: number
@@ -208,6 +209,14 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       classification: "optimization",
       title: PICK_SEARCH_CONSOLE_STEP_TITLE,
       body: "Google is connected. Choose the Search Console property here so GroovGro can read search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
+      href: "/app/seo",
+    };
+  } else if (facts.searchConsoleConnected && facts.searchConsoleProperty && !facts.searchConsoleSnapshot) {
+    recommend = {
+      kind: "recommend",
+      classification: "optimization",
+      title: REFRESH_SEARCH_CONSOLE_STEP_TITLE,
+      body: "The Search Console property is saved. Refresh here so GroovGro can read the latest search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
       href: "/app/seo",
     };
   } else {

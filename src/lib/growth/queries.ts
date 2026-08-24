@@ -23,6 +23,7 @@ import {
   payments,
   seoAudits,
   seoDrafts,
+  searchConsoleSnapshots,
 } from "@/lib/db/schema";
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
@@ -352,10 +353,11 @@ async function getLatestSeoSummary(organizationId: string) {
       seoCheckedAt: null as Date | null,
       searchConsoleConnected: false,
       searchConsoleProperty: false,
+      searchConsoleSnapshot: false,
     };
   }
 
-  const [audits, googleRows] = await Promise.all([
+  const [audits, googleRows, snapshotRows] = await Promise.all([
     db
       .select()
       .from(seoAudits)
@@ -371,6 +373,11 @@ async function getLatestSeoSummary(organizationId: string) {
           eq(integrationConnections.providerKey, "google"),
         ),
       )
+      .limit(1),
+    db
+      .select({ id: searchConsoleSnapshots.id })
+      .from(searchConsoleSnapshots)
+      .where(eq(searchConsoleSnapshots.organizationId, organizationId))
       .limit(1),
   ]);
 
@@ -389,6 +396,7 @@ async function getLatestSeoSummary(organizationId: string) {
     seoCheckedAt: audit?.createdAt ?? null,
     searchConsoleConnected,
     searchConsoleProperty: Boolean(secret?.siteUrl),
+    searchConsoleSnapshot: snapshotRows.length > 0,
   };
 }
 

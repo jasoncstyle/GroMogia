@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -29,6 +29,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     seoCheckedAt: null,
     searchConsoleConnected: true,
     searchConsoleProperty: true,
+    searchConsoleSnapshot: true,
     openLeadCount: 0,
     recordedVisitCount: 1,
     upcomingEventCount: 0,
@@ -162,6 +163,31 @@ describe("growth specialists", () => {
     assert.equal(seo.recommend.classification, "optimization");
     assert.equal(seo.recommend.title, PICK_SEARCH_CONSOLE_STEP_TITLE);
     assert.match(seo.recommend.body, /Choose the Search Console property here/);
+    assert.match(seo.recommend.body, /will not edit the website/);
+  });
+
+  it("asks to refresh Search Console when a property is saved but no numbers are stored", () => {
+    const seo = specialistById(
+      buildSpecialistReports(
+        facts({
+          seoScore: 88,
+          seoSummary: "Looks complete.",
+          seoCheckedAt: now,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          searchConsoleConnected: true,
+          searchConsoleProperty: true,
+          searchConsoleSnapshot: false,
+          openLeadCount: 0,
+        }),
+      ),
+      "seo",
+    );
+    assert.ok(seo);
+    assert.equal(seo.recommend.kind, "recommend");
+    assert.equal(seo.recommend.classification, "optimization");
+    assert.equal(seo.recommend.title, REFRESH_SEARCH_CONSOLE_STEP_TITLE);
+    assert.match(seo.recommend.body, /Refresh here/);
     assert.match(seo.recommend.body, /will not edit the website/);
   });
 
