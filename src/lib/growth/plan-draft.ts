@@ -359,6 +359,13 @@ export function findReadableGrowthPlan<
   return { plan, goal };
 }
 
+export function findReadableGoal<
+  G extends { id: string; status: string; discoveryStatus?: string },
+>(goals: G[]): G | null {
+  const activeIds = activeConfirmedGoalIds(goals);
+  return goals.find((goal) => activeIds.has(goal.id)) ?? null;
+}
+
 export function draftPlanExcerpt(summary: string): string {
   return clip(summary, 400);
 }

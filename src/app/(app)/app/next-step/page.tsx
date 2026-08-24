@@ -550,6 +550,47 @@ export default async function NextStepPage({
 
           <Card>
             <CardHeader>
+              <CardTitle>The Goal</CardTitle>
+              <CardDescription>
+                Next step is one thing to do now. The Goal is the number
+                GroovGro compares. Read it here. GroovGro will not change it
+                by itself.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {step.readableGoal ? (
+                <div className="space-y-1 rounded-lg border p-4 text-sm">
+                  <p className="font-medium">{step.readableGoal.title}</p>
+                  <p>
+                    {step.readableGoal.unit
+                      ? `${step.readableGoal.liveCurrentValue} ${step.readableGoal.unit}`
+                      : String(step.readableGoal.liveCurrentValue)}
+                    {step.readableGoal.targetValue != null
+                      ? ` of ${
+                          step.readableGoal.unit
+                            ? `${step.readableGoal.targetValue} ${step.readableGoal.unit}`
+                            : String(step.readableGoal.targetValue)
+                        }`
+                      : ""}
+                    {step.readableGoal.progressPercent != null
+                      ? ` · ${step.readableGoal.progressPercent}% of the target`
+                      : ""}
+                  </p>
+                  {step.readableGoal.liveNote ? (
+                    <p className="text-muted-foreground">{step.readableGoal.liveNote}</p>
+                  ) : null}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No active Goal yet. Use the buttons above when Next step asks
+                  you to add one. GroovGro will not start marketing.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Write it as a plan</CardTitle>
               <CardDescription>
                 Next step is one thing to do now. Use the buttons above. A

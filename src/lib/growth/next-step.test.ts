@@ -1742,6 +1742,33 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(page, /href="\/app\/goals">Open Goals/);
   });
 
+  it("lets the owner read the Goal on Next step", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      readableGoal: {
+        id: "goal-2",
+        title: "More people get in touch",
+        liveCurrentValue: 2,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "2 open leads from the public form.",
+        progressPercent: 20,
+      },
+    });
+    assert.equal(step.readableGoal?.id, "goal-2");
+    assert.equal(step.readableGoal?.title, "More people get in touch");
+    assert.equal(step.readableGoal?.liveCurrentValue, 2);
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(page, /step\.readableGoal/);
+    assert.match(page, /<CardTitle>The Goal<\/CardTitle>/);
+    assert.doesNotMatch(page, /href="\/app\/goals">Open Goals/);
+  });
+
   it("refreshes Next step after someone submits the public lead form", () => {
     const source = readFileSync(
       join(process.cwd(), "src/lib/actions/public-lead.ts"),

@@ -53,7 +53,7 @@ function goalLine(facts: GrowthStoryFacts): string {
       parts.push(`The current number is ${current}.`);
     }
   }
-  parts.push("GroovGro will not change that Goal by itself.");
+  parts.push("Read it on Next step. GroovGro will not change that Goal by itself.");
   return parts.join(" ");
 }
 
@@ -132,7 +132,7 @@ export function buildGrowthStory(facts: GrowthStoryFacts): GrowthStoryBeat[] {
     {
       title: "The Goal",
       body: clip(`${name}. ${goalLine(facts)}`, 500),
-      href: clean(facts.goalTitle) ? "/app/goals" : "/app/next-step",
+      href: "/app/next-step",
     },
     {
       title: "The plan",

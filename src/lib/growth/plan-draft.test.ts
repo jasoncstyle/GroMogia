@@ -21,6 +21,7 @@ import {
   draftPlanExcerpt,
   findDraftPlanToApprove,
   findPlanDraftGoal,
+  findReadableGoal,
   findReadableGrowthPlan,
   FIX_SEO_STEP_TITLE,
   FOLLOW_UP_LEADS_STEP_TITLE,
@@ -284,6 +285,29 @@ describe("growth plan draft", () => {
         [{ id: "goal-2", title: "More people get in touch", status: "active", discoveryStatus: "inferred" }],
         [{ id: "plan-1", goalId: "goal-2", status: "approved", version: 1, strategySummary: "Nope." }],
       ),
+      null,
+    );
+  });
+
+  it("lets the owner read the active Goal without leaving Next step", () => {
+    const picked = findReadableGoal([
+      { id: "goal-1", title: "Old Goal", status: "achieved" },
+      {
+        id: "goal-2",
+        title: "More people get in touch",
+        status: "active",
+      },
+    ]);
+    assert.equal(picked?.id, "goal-2");
+    assert.equal(
+      findReadableGoal([
+        {
+          id: "goal-2",
+          title: "More people get in touch",
+          status: "active",
+          discoveryStatus: "inferred",
+        },
+      ]),
       null,
     );
   });

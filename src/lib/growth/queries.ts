@@ -32,7 +32,7 @@ import {
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
 import { findPlanNeedingActions } from "@/lib/growth/plan-actions";
-import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal, findReadableGrowthPlan } from "@/lib/growth/plan-draft";
+import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal, findReadableGoal, findReadableGrowthPlan } from "@/lib/growth/plan-draft";
 import { coordinateNextStep } from "@/lib/growth/next-step";
 import { isOpenOwnerWork, needsWhatChangedCheck } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
@@ -624,6 +624,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
   );
   const approve = findDraftPlanToApprove(snapshot.activeGoals, snapshot.plans);
   const readable = findReadableGrowthPlan(snapshot.activeGoals, snapshot.plans);
+  const readableGoal = findReadableGoal(snapshot.activeGoals);
   const propose = findPlanNeedingActions(
     snapshot.activeGoals,
     snapshot.plans,
@@ -721,6 +722,17 @@ export async function getCoordinatedNextStep(organizationId: string) {
           version: readable.plan.version,
           status: readable.plan.status,
           strategySummary: readable.plan.strategySummary,
+        }
+      : null,
+    readableGoal: readableGoal
+      ? {
+          id: readableGoal.id,
+          title: readableGoal.title,
+          liveCurrentValue: readableGoal.liveCurrentValue,
+          targetValue: readableGoal.targetValue,
+          unit: readableGoal.unit,
+          liveNote: readableGoal.liveNote,
+          progressPercent: readableGoal.progressPercent,
         }
       : null,
   });

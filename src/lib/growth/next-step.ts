@@ -116,6 +116,7 @@ export type NextStepInput = {
   proposePlanVersion?: number
   activeGoalIds?: string[]
   readablePlan?: ReadableGrowthPlan | null
+  readableGoal?: LearningGoal | null
 };
 
 export type ReadableGrowthPlan = {
@@ -139,6 +140,7 @@ export type CoordinatedNextStep = {
   leadStages: LeadStageOption[]
   learningGoal: LearningGoal | null
   readablePlan: ReadableGrowthPlan | null
+  readableGoal: LearningGoal | null
   executeAllowed: false
 };
 
@@ -442,6 +444,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     leadStages,
     learningGoal: input.learningGoal ?? null,
     readablePlan: input.readablePlan ?? null,
+    readableGoal: input.readableGoal ?? null,
     executeAllowed: false,
   };
 }
