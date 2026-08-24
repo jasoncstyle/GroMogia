@@ -1,8 +1,6 @@
 import Link from "next/link";
 
 import { proposeGrowthAction, recordDecision } from "@/lib/actions/growth";
-import { WaitingActionButtons } from "@/components/next-step-actions";
-import { hasPermission } from "@/lib/permissions";
 import { getAppSession } from "@/lib/auth/session";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
@@ -32,7 +30,6 @@ export default async function DecisionsPage() {
   const decisions = snapshot?.decisions ?? [];
   const actions = snapshot?.actions ?? [];
   const policies = snapshot?.policies ?? [];
-  const canApprove = hasPermission(session.permissions, "approve_actions");
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
@@ -43,7 +40,8 @@ export default async function DecisionsPage() {
           The audit log records what changed. &quot;No change yet&quot; is a
           valid and useful decision. Save this week’s look from Next step.
           Recent decisions also appear on Next step. Read the path so far on
-          Next step. The monthly write-up is on Growth review.
+          Next step. Approve or reject proposed actions on Next step. The
+          monthly write-up is on Growth review.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Button asChild variant="outline" size="sm">
@@ -250,6 +248,9 @@ export default async function DecisionsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Proposed actions</CardTitle>
+          <CardDescription>
+            Approve or reject these on Next step. Approving does not run them.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {actions.length === 0 ? (
@@ -262,12 +263,6 @@ export default async function DecisionsPage() {
                   {action.status} · {labelFor(action.risk)}
                   {action.module ? ` · ${action.module}` : ""}
                 </p>
-                {action.status === "proposed" || action.status === "awaiting_approval" ? (
-                  <WaitingActionButtons
-                    actionId={action.id}
-                    canApprove={canApprove}
-                  />
-                ) : null}
               </div>
             ))
           )}

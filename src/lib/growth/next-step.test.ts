@@ -1756,6 +1756,8 @@ describe("coordinated next step", () => {
     assert.match(decisions, /from Next step/);
     assert.match(decisions, /Recent decisions also appear on Next step/);
     assert.match(decisions, /Read the path so far on\s+Next step/);
+    assert.match(decisions, /Approve or reject proposed actions on Next step/);
+    assert.doesNotMatch(decisions, /WaitingActionButtons/);
     assert.doesNotMatch(decisions, /GrowthStoryCard/);
     assert.doesNotMatch(decisions, /saved\s+here from Growth review/);
   });
