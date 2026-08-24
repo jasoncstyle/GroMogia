@@ -64,11 +64,11 @@ If only one organization exists, incoming webhooks go there. If you later have m
 1. In GroovGro, open **Website connection**.
 2. Paste the public website address.
 3. Save. Saving the address does not read the pages.
-4. Click **Find pages**, check the important ones, then open **Business** and click **Review connected data**.
-5. Copy the tracking snippet and paste it before the closing `</body>` tag on that site.
-6. Share the public lead form link shown on the same page.
+4. Open **Next step**. Click **Find pages**, check the important ones, then click **Review connected data**. GroovGro does not change the live site. Open **Business** later if you want to run Review again.
+5. Copy the tracking snippet on **Website connection** and paste it before the closing `</body>` tag on that site. Keep that page open while you do it.
+6. Share the public lead form link on **Website connection**, or on **Next step** when GroovGro asks.
 
-This does **not** build a new website. The website builder is a later phase.
+This does **not** overwrite the connected website. The website builder stays paused.
 
 **How updates work:** GroovGro can check the site and draft changes. If you later use the GroovGro builder, WordPress, or a similar official connection, approved updates can be applied automatically. Otherwise you copy the change onto the connected site yourself. Each SEO draft says what to change and where.
 

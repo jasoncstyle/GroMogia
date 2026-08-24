@@ -310,7 +310,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None.
 
-**Current functionality:** If Next step already has Draft the next Goal, Make this the active Goal, Draft a plan, Approve this plan, or Propose the first actions, those are the only buttons. If the signed-in person cannot use that button, Next step shows Open Goals instead of I’ll do this. If what changed says to read or add a Goal, Open Goals is the main button. GroovGro does not execute.
+**Current functionality:** If Next step already has Draft the next Goal, Make this the active Goal, Draft a plan, Approve this plan, or Propose the first actions, those are the only buttons. If the signed-in person cannot use that button, Next step shows Leave this alone, not Open Goals. If what changed says to read or add a Goal, those buttons stay on Next step. GroovGro does not execute.
 
 ### 31. Draft and approve SEO copy from Next step
 
@@ -1112,7 +1112,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can draft a plan for the active Goal. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. GroovGro does not execute.
 
-### 111. Keep Goal history on Next step (this slice)
+### 111. Keep Goal history on Next step
 
 **Reason:** After Check what changed, a reached Goal told the owner to read the history on Next step, but the stored numbers only appeared on Goals. The owner had to leave Next step to see what changed.
 
@@ -1121,6 +1121,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step shows the saved Goal numbers with the current Goal. Goals still lists the full history and the Current box. GroovGro does not execute.
+
+### 112. Keep website review click-by-click on Next step (this slice)
+
+**Reason:** Phase 2 setup still told the owner to find pages, then open Business to review. Find pages and Review connected data already live on Next step. Following that guide sent the owner away.
+
+**Affected:** `docs/phase-2/USER_SETUP.md`.
+
+**Migration risk:** None.
+
+**Current functionality:** Setup click-by-click finds pages and reviews on Next step. Website still saves the address and shows the tracking snippet. Business still has Review to run it again. GroovGro does not change the live site.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1224,7 +1234,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep plan approve and propose on Next step is parked.** Next step can approve or reject a draft plan, and propose the first actions. Goals lists plans and names Next step. Write a plan yourself still stays on Goals. Do not execute.
 - **Keep Activate Goal and Draft next Goal on Next step is parked.** Next step can make a draft the active Goal, and draft the next Goal when one is reached. Goals lists those goals and names Next step. Do not execute.
 - **Keep Draft a plan on Next step is parked.** Next step can draft a plan for the active Goal. Goals lists goals and names Next step. Write a plan yourself still stays on Goals. Do not execute.
-- **Keep Goal history on Next step (this slice).** Next step shows the saved Goal numbers with the current Goal. Goals still lists the full history and the Current box. Do not execute.
+- **Keep Goal history on Next step is parked.** Next step shows the saved Goal numbers with the current Goal. Goals still lists the full history and the Current box. Do not execute.
+- **Keep website review click-by-click on Next step (this slice).** Setup click-by-click finds pages and reviews on Next step. Website still saves the address and shows the tracking snippet. Business still has Review to run it again. Do not change the live site.
 
 ## DESIGN FOR LATER
 
@@ -1408,7 +1419,8 @@ Organization
 103. **Keep plan approve and propose on Next step** — Next step can approve or reject a draft plan, and propose the first actions; Goals lists plans and names Next step. Done.
 104. **Keep Activate Goal and Draft next Goal on Next step** — Next step can make a draft the active Goal, and draft the next Goal when one is reached; Goals lists those goals and names Next step. Done.
 105. **Keep Draft a plan on Next step** — Next step can draft a plan for the active Goal; Goals lists goals and names Next step. Done.
-106. **Keep Goal history on Next step** — Next step shows the saved Goal numbers with the current Goal; Goals still lists the full history and the Current box. This slice.
-107. **Guarded automation** — only after the above is trusted.
+106. **Keep Goal history on Next step** — Next step shows the saved Goal numbers with the current Goal; Goals still lists the full history and the Current box. Done.
+107. **Keep website review click-by-click on Next step** — setup click-by-click finds pages and reviews on Next step; Business still has Review to run it again. This slice.
+108. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

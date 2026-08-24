@@ -1850,6 +1850,19 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(decisions, /saved\s+here from Growth review/);
   });
 
+  it("asks website setup click-by-click to find pages and review on Next step", () => {
+    const setup = readFileSync(
+      join(process.cwd(), "docs/phase-2/USER_SETUP.md"),
+      "utf8",
+    );
+    assert.match(setup, /Open \*\*Next step\*\*\. Click \*\*Find pages\*\*/);
+    assert.match(setup, /then click \*\*Review connected data\*\*/);
+    assert.doesNotMatch(
+      setup,
+      /open \*\*Business\*\* and click \*\*Review connected data\*\*/,
+    );
+  });
+
   it("keeps confirm drafts, review site, owner work, and wait on Next step", () => {
     const source = readFileSync(
       join(process.cwd(), "src/lib/growth/next-step.ts"),
