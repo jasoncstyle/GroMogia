@@ -682,7 +682,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Phones show a Next step button next to Menu. Desktop still uses the left nav. GroovGro does not execute.
 
-### 68. Saving a specialist recommendation refreshes Next step (this slice)
+### 68. Saving a specialist recommendation refreshes Next step
 
 **Reason:** Saving a specialist recommendation created a waiting action, but Next step and Your work were not refreshed, so the owner could still see the old ask.
 
@@ -691,6 +691,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** After a specialist recommendation is saved, Next step and Your work refresh. Approving or rejecting from Next step also refreshes Your work. GroovGro does not execute.
+
+### 69. A public lead form submission refreshes Next step (this slice)
+
+**Reason:** When someone submitted the public lead form, Next step could still ask to share the form instead of follow up.
+
+**Affected:** Public lead form save.
+
+**Migration risk:** None.
+
+**Current functionality:** After a public form submission, Next step and Leads refresh so follow-up can appear. GroovGro does not email anyone.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -751,7 +761,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Next step is first after Dashboard in the nav is parked.** Next step sits under Dashboard. Offers, Website, Leads, and Bookings stay below it. Do not execute.
 - **Intelligence people observations open Next step when that is the loop is parked.** Open leads or no person captured yet open Next step. A filled pipeline with no open leads still opens Leads. Matching charges still names Bookings. Do not email anyone.
 - **Phone header offers Next step is parked.** Phones show Next step next to Menu. Do not execute.
-- **Saving a specialist recommendation refreshes Next step (this slice).** After save, Next step and Your work refresh. Approving from Next step also refreshes Your work. Do not execute.
+- **Saving a specialist recommendation refreshes Next step is parked.** After save, Next step and Your work refresh. Approving from Next step also refreshes Your work. Do not execute.
+- **A public lead form submission refreshes Next step (this slice).** After someone submits the public form, Next step and Leads refresh so follow-up can appear. Do not email anyone.
 
 ## DESIGN FOR LATER
 
@@ -892,7 +903,8 @@ Organization
 60. **Next step is first after Dashboard in the nav** — Next step sits under Dashboard; Offers, Website, Leads, and Bookings stay below it. Done.
 61. **Intelligence people observations open Next step when that is the loop** — open leads or no person captured yet open Next step. Done.
 62. **Phone header offers Next step** — phones show Next step next to Menu. Done.
-63. **Saving a specialist recommendation refreshes Next step** — Next step and Your work refresh after save. This slice.
-64. **Guarded automation** — only after the above is trusted.
+63. **Saving a specialist recommendation refreshes Next step** — Next step and Your work refresh after save. Done.
+64. **A public lead form submission refreshes Next step** — Next step and Leads refresh after a public form submission. This slice.
+65. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

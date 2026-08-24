@@ -1683,4 +1683,13 @@ describe("coordinated next step", () => {
     );
     assert.match(goals, /Open Next step/);
   });
+
+  it("refreshes Next step after someone submits the public lead form", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/lib/actions/public-lead.ts"),
+      "utf8",
+    );
+    assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
+    assert.match(source, /revalidatePath\("\/app\/crm"\)/);
+  });
 });
