@@ -73,7 +73,7 @@ function workLine(facts: GrowthStoryFacts): string {
     return `${facts.openWorkCount} approved action${facts.openWorkCount === 1 ? "" : "s"} ${facts.openWorkCount === 1 ? "is" : "are"} ready on Next step. You do ${facts.openWorkCount === 1 ? "it" : "them"}. GroovGro will not run ${facts.openWorkCount === 1 ? "it" : "them"}.`;
   }
   if (facts.finishedWorkCount > 0) {
-    return `You already marked ${facts.finishedWorkCount} action${facts.finishedWorkCount === 1 ? "" : "s"}. Check what changed on Your work. GroovGro did not execute ${facts.finishedWorkCount === 1 ? "it" : "them"}.`;
+    return `You already marked ${facts.finishedWorkCount} action${facts.finishedWorkCount === 1 ? "" : "s"}. Check what changed on Next step. GroovGro did not execute ${facts.finishedWorkCount === 1 ? "it" : "them"}.`;
   }
   return "No approved actions are waiting. Propose the first actions from an approved plan. GroovGro will not run them.";
 }

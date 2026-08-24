@@ -76,6 +76,7 @@ describe("growth story", () => {
       nextStepHref: "/app/work",
     });
     assert.match(beats[2]?.body ?? "", /marked 2 actions/);
+    assert.match(beats[2]?.body ?? "", /Next step/);
     assert.match(beats[3]?.body ?? "", /Wait before changing course/);
   });
 

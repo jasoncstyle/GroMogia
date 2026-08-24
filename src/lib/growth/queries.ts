@@ -25,7 +25,7 @@ import { findActivateCandidate } from "@/lib/growth/next-goal";
 import { findPlanNeedingActions } from "@/lib/growth/plan-actions";
 import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal } from "@/lib/growth/plan-draft";
 import { coordinateNextStep } from "@/lib/growth/next-step";
-import { isOpenOwnerWork } from "@/lib/growth/owner-work";
+import { isOpenOwnerWork, needsWhatChangedCheck } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
 import { generateGrowthReview } from "@/lib/growth/review";
 import {
@@ -384,6 +384,13 @@ export async function getCoordinatedNextStep(organizationId: string) {
         module: action.module,
         actionType: action.actionType,
         risk: action.risk,
+      })),
+    uncheckedWork: snapshot.actions
+      .filter((action) => needsWhatChangedCheck(action))
+      .map((action) => ({
+        id: action.id,
+        description: action.description,
+        status: action.status,
       })),
     latestLearningKind: learned
       ? (learningKindFromOutcome(learned.outcome) ?? "")

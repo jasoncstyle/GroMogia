@@ -1,6 +1,6 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -36,12 +36,20 @@ export type OpenOwnerWork = {
   risk: string
 };
 
+export type UncheckedWork = {
+  id: string
+  description: string
+  status: string
+};
+
 export type NextStepInput = {
   inferredDraftCount: number
   reports: SpecialistReport[]
   waitingActions: WaitingAction[]
   openWork?: OpenOwnerWork[]
   openWorkCount?: number
+  uncheckedWork?: UncheckedWork[]
+  uncheckedWorkCount?: number
   latestLearningKind?: WorkLearningKind | ""
   latestLearningOutcome?: string
   latestLearningGoalId?: string | null
@@ -66,6 +74,7 @@ export type CoordinatedNextStep = {
   leftAlone: NextStepCandidate[]
   waitingActions: WaitingAction[]
   openWork: OpenOwnerWork[]
+  uncheckedWork: UncheckedWork[]
   executeAllowed: false
 };
 
@@ -207,6 +216,20 @@ function ownerWorkCandidate(count: number): NextStepCandidate | null {
   };
 }
 
+function checkChangedCandidate(count: number): NextStepCandidate | null {
+  if (count <= 0) return null;
+  return {
+    kind: "recommend",
+    classification: "operational",
+    title: CHECK_CHANGED_STEP_TITLE,
+    body: `${count} finished action${count === 1 ? "" : "s"} ${count === 1 ? "is" : "are"} ready to check. Compare the Goal number here. GroovGro will not change the plan.`,
+    href: "/app/work",
+    source: "learning",
+    specialistId: null,
+    goalId: null,
+  };
+}
+
 function learningCandidate(input: NextStepInput): NextStepCandidate | null {
   const kind = input.latestLearningKind;
   if (!kind) return null;
@@ -299,8 +322,12 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     isWaitingActionStatus(action.status),
   );
   const openWork = input.openWork ?? [];
+  const uncheckedWork = input.uncheckedWork ?? [];
   const drafts = draftsCandidate(input.inferredDraftCount);
   const ownerWork = ownerWorkCandidate(input.openWorkCount ?? openWork.length);
+  const checkChanged = checkChangedCandidate(
+    input.uncheckedWorkCount ?? uncheckedWork.length,
+  );
   const activate = activateGoalCandidate(input.activateGoalId, input.activateGoalTitle);
   const draftPlan = draftPlanCandidate(input.planGoalId, input.planGoalTitle);
   const approvePlan = approvePlanCandidate(input);
@@ -318,10 +345,11 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   ].sort((a, b) => score(b) - score(a));
 
   return {
-    primary: drafts ?? ownerWork ?? activate ?? draftPlan ?? approvePlan ?? proposeActions ?? waitingApprove ?? learning ?? ranked[0] ?? nothingYet(),
+    primary: drafts ?? ownerWork ?? checkChanged ?? activate ?? draftPlan ?? approvePlan ?? proposeActions ?? waitingApprove ?? learning ?? ranked[0] ?? nothingYet(),
     leftAlone,
     waitingActions,
     openWork,
+    uncheckedWork,
     executeAllowed: false,
   };
 }

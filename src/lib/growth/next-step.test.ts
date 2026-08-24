@@ -128,6 +128,50 @@ describe("coordinated next step", () => {
     assert.match(step.primary.body, /here/);
   });
 
+  it("asks the owner to check what changed after work is marked done", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts({ openLeadCount: 3 })),
+      waitingActions: [],
+      uncheckedWork: [
+        {
+          id: "w1",
+          description: "Follow up open leads.",
+          status: "completed_by_owner",
+        },
+      ],
+    });
+    assert.equal(step.primary.title, "Check what changed");
+    assert.equal(step.primary.source, "learning");
+    assert.equal(step.uncheckedWork.length, 1);
+    assert.equal(step.uncheckedWork[0]?.id, "w1");
+    assert.match(step.primary.body, /will not change the plan/);
+    assert.equal(step.executeAllowed, false);
+  });
+
+  it("keeps approved work ahead of checking what changed", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      openWorkCount: 1,
+      uncheckedWorkCount: 1,
+    });
+    assert.equal(step.primary.title, "Do the work you already approved");
+  });
+
+  it("keeps checking what changed ahead of activating a next Goal", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      uncheckedWorkCount: 1,
+      activateGoalId: "goal-2",
+      activateGoalTitle: "Next: More people get in touch",
+    });
+    assert.equal(step.primary.title, "Check what changed");
+  });
+
   it("keeps draft confirm ahead of approved work", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 1,
@@ -353,5 +397,14 @@ describe("coordinated next step", () => {
     assert.match(source, /OwnerWorkButtons/);
     assert.match(source, /OWNER_WORK_STEP_TITLE/);
     assert.match(source, /hrefForGrowthAction/);
+  });
+
+  it("puts Check what changed on Next step for finished work", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(source, /CheckWhatChangedButton/);
+    assert.match(source, /CHECK_CHANGED_STEP_TITLE/);
   });
 });

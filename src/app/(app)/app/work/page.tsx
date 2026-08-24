@@ -113,6 +113,7 @@ export default async function OwnerWorkPage() {
             <CardDescription>
               You marked these. GroovGro did not execute them. Check what
               changed compares the Goal number from when you finished to now.
+              You can also do that on Next step.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">

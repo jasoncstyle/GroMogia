@@ -7,6 +7,7 @@ import {
   hrefForGrowthAction,
   isFinishedOwnerWork,
   isOpenOwnerWork,
+  needsWhatChangedCheck,
   partitionOwnerWork,
 } from "./owner-work";
 
@@ -51,6 +52,22 @@ describe("owner work", () => {
     assert.equal(isFinishedOwnerWork("completed_by_owner"), true);
     assert.equal(isFinishedOwnerWork("skipped_by_owner"), true);
     assert.equal(isFinishedOwnerWork("approved"), false);
+  });
+
+  it("asks for a check only after the owner marked work done and nothing is stored yet", () => {
+    assert.equal(
+      needsWhatChangedCheck({ status: "completed_by_owner", result: "The owner did this." }),
+      true,
+    );
+    assert.equal(
+      needsWhatChangedCheck({
+        status: "completed_by_owner",
+        result: "The owner did this.\n\nWhat changed: Wait before changing course.",
+      }),
+      false,
+    );
+    assert.equal(needsWhatChangedCheck({ status: "skipped_by_owner" }), false);
+    assert.equal(needsWhatChangedCheck({ status: "approved" }), false);
   });
 
   it("partitions waiting, open, and finished work", () => {
