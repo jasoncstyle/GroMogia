@@ -706,6 +706,13 @@ export default async function NextStepPage({
                   canApprove={canApprovePlan}
                 />
               ) : null}
+              {step.proposePlanId &&
+              step.primary.title !== PROPOSE_ACTIONS_STEP_TITLE ? (
+                <ProposePlanActionsButton
+                  planId={step.proposePlanId}
+                  disabled={!canDraftPlan}
+                />
+              ) : null}
             </CardContent>
           </Card>
 
