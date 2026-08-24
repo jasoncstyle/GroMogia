@@ -5,11 +5,7 @@ import {
   updateGoalProgress,
 } from "@/lib/actions/growth";
 import { InferredBadge } from "@/components/growth-review";
-import {
-  DraftGrowthPlanButton,
-  GrowthPlanReviewButtons,
-  ProposePlanActionsButton,
-} from "@/components/growth-plan-actions";
+import { DraftGrowthPlanButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { GoalCreateForm } from "@/components/goal-create-form";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
@@ -68,7 +64,6 @@ export default async function GoalsPage() {
   );
   const canCreateGoal = hasPermission(session.permissions, "create_goals");
   const canDraftPlan = hasPermission(session.permissions, "modify_goals");
-  const canApprovePlan = hasPermission(session.permissions, "approve_plans");
   const actions = snapshot?.actions ?? [];
 
   return (
@@ -78,11 +73,12 @@ export default async function GoalsPage() {
         <p className="text-muted-foreground">
           A Goal is a measurable outcome. A draft stays a draft until you
           click Make this the active Goal. GroovGro can then draft a plan.
-          Approving that plan does not run marketing. Approve or reject
-          proposed actions on Next step. Do approved work on Next step or
-          Your work. Confirm or reject suggested goals on Next step. They
-          stay drafts until you do. Review connected data on Next step
-          when GroovGro asks, or on Business if you want to run it again.
+          Approve or reject that plan on Next step. Approving does not run
+          marketing. Approve or reject proposed actions on Next step. Do
+          approved work on Next step or Your work. Confirm or reject
+          suggested goals on Next step. They stay drafts until you do.
+          Review connected data on Next step when GroovGro asks, or on
+          Business if you want to run it again.
         </p>
       </div>
 
@@ -320,9 +316,9 @@ export default async function GoalsPage() {
           <CardTitle>Growth plans</CardTitle>
           <CardDescription>
             GroovGro can draft a plan from a Goal, confirmed offers, and the
-            current Next step. After you approve a plan, GroovGro can propose
-            the first actions. Approving a plan or an action does not run
-            marketing.
+            current Next step. Approve or reject a draft plan on Next step.
+            Propose the first actions on Next step. Approving a plan or an
+            action does not run marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -401,16 +397,17 @@ export default async function GoalsPage() {
                     </p>
                   </div>
                   {plan.status === "draft" ? (
-                    <GrowthPlanReviewButtons
-                      planId={plan.id}
-                      canApprove={canApprovePlan}
-                    />
+                    <p className="text-xs text-muted-foreground">
+                      Approve or reject this plan on Next step. Approving does
+                      not run marketing.
+                    </p>
                   ) : null}
                   {plan.status === "approved" || plan.status === "active" ? (
                     <div className="space-y-3">
-                      {canDraftPlan ? (
-                        <ProposePlanActionsButton planId={plan.id} />
-                      ) : null}
+                      <p className="text-xs text-muted-foreground">
+                        Propose the first actions on Next step. GroovGro will
+                        not run them.
+                      </p>
                       {actions
                         .filter((action) => action.planId === plan.id)
                         .map((action) => (

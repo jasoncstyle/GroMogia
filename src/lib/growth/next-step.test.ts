@@ -1702,6 +1702,9 @@ describe("coordinated next step", () => {
     assert.match(goals, /href="\/app\/next-step">Open Next step/);
     assert.match(goals, /href="\/app\/growth-review">Open growth review/);
     assert.match(goals, /Approve or reject\s+proposed actions on Next step/);
+    assert.match(goals, /Approve or reject that plan on Next step/);
+    assert.match(goals, /Approve or reject this plan on Next step/);
+    assert.match(goals, /Propose the first actions on Next step/);
     assert.match(goals, /Do approved work on Next step or\s+Your work/);
     assert.match(goals, /Confirm or reject suggested goals on Next step/);
     assert.match(goals, /Confirm or reject this on Next step/);
@@ -1711,6 +1714,8 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(goals, /ConfirmRejectButtons/);
     assert.doesNotMatch(goals, /GrowthSettingsForm/);
     assert.doesNotMatch(goals, /ReviewConnectedDataButton/);
+    assert.doesNotMatch(goals, /GrowthPlanReviewButtons/);
+    assert.doesNotMatch(goals, /ProposePlanActionsButton/);
     const offers = readFileSync(
       join(process.cwd(), "src/app/(app)/app/offers/page.tsx"),
       "utf8",

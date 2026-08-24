@@ -1072,7 +1072,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can find pages and check the important ones. Website keeps the address and tracking snippet, and names Next step to find pages. GroovGro does not change the live site.
 
-### 107. Keep Review connected data on Next step (this slice)
+### 107. Keep Review connected data on Next step
 
 **Reason:** Dashboard, Goals, and Offers still ran Review connected data after Next step already had that loop for an unread site. The owner could skip Find pages and review from those screens instead of staying on Next step.
 
@@ -1081,6 +1081,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can find pages, check the important ones, then Review connected data when the site is unread. Business keeps Review connected data to run it again. Dashboard, Goals, and Offers name Next step. GroovGro does not change the live site.
+
+### 108. Keep plan approve and propose on Next step (this slice)
+
+**Reason:** Goals still showed Approve and Reject on a draft plan, and Propose the first actions on an approved plan, after Next step already had those buttons. The owner could finish those loops from Goals instead of staying on Next step.
+
+**Affected:** Goals plan list.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can approve or reject a draft plan, and propose the first actions. Goals lists plans and names Next step. Draft a plan still stays on Goals. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1180,7 +1190,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep find-pages on Next step is parked.** Next step and Website can find pages. Business keeps Review connected data and names Next step to find pages. Do not change the live site.
 - **Keep the review schedule on Next step is parked.** Next step can save when you look at this week’s numbers. Growth review can change that day later. Goals names Next step. Do not change the business from that schedule.
 - **Keep Website find-pages on Next step is parked.** Next step can find pages. Website keeps the address and tracking snippet, and names Next step to find pages. Do not change the live site.
-- **Keep Review connected data on Next step (this slice).** Next step can find pages, check the important ones, then review. Business keeps Review connected data to run it again. Dashboard, Goals, and Offers name Next step. Do not change the live site.
+- **Keep Review connected data on Next step is parked.** Next step can find pages, check the important ones, then review. Business keeps Review connected data to run it again. Dashboard, Goals, and Offers name Next step. Do not change the live site.
+- **Keep plan approve and propose on Next step (this slice).** Next step can approve or reject a draft plan, and propose the first actions. Goals lists plans and names Next step. Draft a plan still stays on Goals. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -1360,7 +1371,8 @@ Organization
 99. **Keep find-pages on Next step** — Next step and Website can find pages; Business keeps Review connected data and names Next step. Done.
 100. **Keep the review schedule on Next step** — Next step can save when you look at this week’s numbers; Growth review can change that day later; Goals names Next step. Done.
 101. **Keep Website find-pages on Next step** — Next step can find pages; Website keeps the address and snippet, and names Next step. Done.
-102. **Keep Review connected data on Next step** — Next step can find pages, check the important ones, then review; Business keeps Review connected data to run it again; Dashboard, Goals, and Offers name Next step. This slice.
-103. **Guarded automation** — only after the above is trusted.
+102. **Keep Review connected data on Next step** — Next step can find pages, check the important ones, then review; Business keeps Review connected data to run it again; Dashboard, Goals, and Offers name Next step. Done.
+103. **Keep plan approve and propose on Next step** — Next step can approve or reject a draft plan, and propose the first actions; Goals lists plans and names Next step. This slice.
+104. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
