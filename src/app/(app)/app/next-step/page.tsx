@@ -28,7 +28,7 @@ import { getCoordinatedNextStep, getGrowthLinkOptions } from "@/lib/growth/queri
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddGoalNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddGoalNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -322,6 +322,39 @@ export default async function NextStepPage({
                     offers={links.offers}
                     disabled={!canCreateGoal}
                   />
+                  <Button asChild variant="outline">
+                    <Link href="/app/goals">Open Goals</Link>
+                  </Button>
+                </>
+              ) : isReadGoalNextStep(step.primary.title) ? (
+                <>
+                  {step.learningGoal ? (
+                    <div className="space-y-1 rounded-lg border p-4 text-sm">
+                      <p className="font-medium">{step.learningGoal.title}</p>
+                      <p>
+                        {step.learningGoal.unit
+                          ? `${step.learningGoal.liveCurrentValue} ${step.learningGoal.unit}`
+                          : String(step.learningGoal.liveCurrentValue)}
+                        {step.learningGoal.targetValue != null
+                          ? ` of ${
+                              step.learningGoal.unit
+                                ? `${step.learningGoal.targetValue} ${step.learningGoal.unit}`
+                                : String(step.learningGoal.targetValue)
+                            }`
+                          : ""}
+                        {step.learningGoal.progressPercent != null
+                          ? ` · ${step.learningGoal.progressPercent}% of the target`
+                          : ""}
+                      </p>
+                      {step.learningGoal.liveNote ? (
+                        <p className="text-muted-foreground">{step.learningGoal.liveNote}</p>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      The Goal number is on Goals. GroovGro will not add spend.
+                    </p>
+                  )}
                   <Button asChild variant="outline">
                     <Link href="/app/goals">Open Goals</Link>
                   </Button>

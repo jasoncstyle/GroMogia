@@ -542,5 +542,20 @@ export async function getCoordinatedNextStep(organizationId: string) {
     seoDrafts: openSeoDrafts,
     openLeads: pipeline.openLeads,
     leadStages: pipeline.leadStages,
+    learningGoal: learned?.goalId
+      ? (() => {
+          const goal = snapshot.goals.find((row) => row.id === learned.goalId);
+          if (!goal) return null;
+          return {
+            id: goal.id,
+            title: goal.title,
+            liveCurrentValue: goal.liveCurrentValue,
+            targetValue: goal.targetValue,
+            unit: goal.unit,
+            liveNote: goal.liveNote,
+            progressPercent: goal.progressPercent,
+          };
+        })()
+      : null,
   });
 }

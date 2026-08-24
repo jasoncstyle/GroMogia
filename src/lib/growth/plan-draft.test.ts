@@ -24,6 +24,7 @@ import {
   isAddGoalNextStep,
   isFollowUpLeadsNextStep,
   isPasteSnippetNextStep,
+  isReadGoalNextStep,
   isReviewScheduleNextStep,
   isSearchConsoleNextStep,
   isSeoDraftNextStep,
@@ -458,7 +459,8 @@ describe("growth plan draft", () => {
     assert.equal(isPasteSnippetNextStep(CONNECT_WEBSITE_STEP_TITLE), false);
     assert.equal(openPageLabelForNextStep(REVIEW_SCHEDULE_STEP_TITLE), null);
     assert.equal(isReviewScheduleNextStep(REVIEW_SCHEDULE_STEP_TITLE), true);
-    assert.equal(openPageLabelForNextStep(READ_GOAL_STEP_TITLE), "Open Goals");
+    assert.equal(openPageLabelForNextStep(READ_GOAL_STEP_TITLE), null);
+    assert.equal(isReadGoalNextStep(READ_GOAL_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(ADD_GOAL_STEP_TITLE), null);
     assert.equal(isAddGoalNextStep(ADD_GOAL_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(RUN_SEO_STEP_TITLE), null);

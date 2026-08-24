@@ -73,6 +73,16 @@ export type LeadStageOption = {
   name: string
 };
 
+export type LearningGoal = {
+  id: string
+  title: string
+  liveCurrentValue: number
+  targetValue: number | null
+  unit: string
+  liveNote: string
+  progressPercent: number | null
+};
+
 export type NextStepInput = {
   inferredDraftCount: number
   reports: SpecialistReport[]
@@ -85,6 +95,7 @@ export type NextStepInput = {
   seoDrafts?: SeoDraftItem[]
   openLeads?: OpenLeadItem[]
   leadStages?: LeadStageOption[]
+  learningGoal?: LearningGoal | null
   websiteConnected?: boolean
   websiteRead?: boolean
   latestLearningKind?: WorkLearningKind | ""
@@ -116,6 +127,7 @@ export type CoordinatedNextStep = {
   seoDrafts: SeoDraftItem[]
   openLeads: OpenLeadItem[]
   leadStages: LeadStageOption[]
+  learningGoal: LearningGoal | null
   executeAllowed: false
 };
 
@@ -322,7 +334,7 @@ function learningCandidate(input: NextStepInput): NextStepCandidate | null {
       title: READ_GOAL_STEP_TITLE,
       body:
         outcome ||
-        `The Goal number is lower than when you did the work. Do not add spend.${leaveAlone}`,
+        `The Goal number is lower than when you did the work. Read it here. Do not add spend.${leaveAlone}`,
       href: "/app/goals",
       source: "learning",
       specialistId: null,
@@ -417,6 +429,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     seoDrafts,
     openLeads,
     leadStages,
+    learningGoal: input.learningGoal ?? null,
     executeAllowed: false,
   };
 }

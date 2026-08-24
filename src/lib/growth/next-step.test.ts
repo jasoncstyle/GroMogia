@@ -456,6 +456,37 @@ describe("coordinated next step", () => {
     assert.match(goalsPage, /GoalCreateForm/);
   });
 
+  it("puts the Goal numbers on Next step when the number is lower", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      latestLearningKind: "declined",
+      latestLearningOutcome:
+        "After you did this work, the Goal is lower. Do not add spend. Read the Goal number here.",
+      latestLearningGoalId: "goal-1",
+      learningGoal: {
+        id: "goal-1",
+        title: "More people get in touch",
+        liveCurrentValue: 2,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "2 open leads from the public form.",
+        progressPercent: 20,
+      },
+    });
+    assert.equal(step.primary.title, "Read the Goal before changing course");
+    assert.equal(step.learningGoal?.id, "goal-1");
+    assert.equal(step.learningGoal?.liveCurrentValue, 2);
+    assert.match(step.primary.body, /Read the Goal number here/);
+    assert.match(page, /isReadGoalNextStep/);
+    assert.match(page, /learningGoal/);
+  });
+
   it("does not bake industry-specific words into the coordinator", () => {
     const source = readFileSync(join(process.cwd(), "src/lib/growth/next-step.ts"), "utf8");
     for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk", "electrician"]) {

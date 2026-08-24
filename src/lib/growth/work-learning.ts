@@ -143,7 +143,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "declined",
       changeCourse: false,
       outcome: clip(
-        `After you did this work, “${goal}” is lower. ${moved} Do not add spend. Open Goals and Next step.${leaveAlone}`,
+        `After you did this work, “${goal}” is lower. ${moved} Do not add spend. Read the Goal number here.${leaveAlone}`,
         2000,
       ),
     };
