@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { draftGrowthPlanSummary } from "./plan-draft";
+import { draftGrowthPlanSummary, findPlanDraftGoal, goalNeedsPlanDraft } from "./plan-draft";
 
 describe("growth plan draft", () => {
   it("writes a plan from a Goal and connected facts without starting marketing", () => {
@@ -92,6 +92,67 @@ describe("growth plan draft", () => {
     });
     assert.match(summary, /Connect the existing website/);
     assert.doesNotMatch(summary, /overwrite|clone|WordPress/i);
+  });
+
+  it("asks for a plan only on an active Goal that is not already reached", () => {
+    const goal = {
+      id: "goal-1",
+      status: "active",
+      currentValue: 2,
+      targetValue: 10,
+      discoveryStatus: "confirmed",
+    };
+    assert.equal(goalNeedsPlanDraft(goal, []), true);
+    assert.equal(
+      goalNeedsPlanDraft(goal, [{ goalId: "goal-1", status: "draft" }]),
+      false,
+    );
+    assert.equal(
+      goalNeedsPlanDraft({ ...goal, currentValue: 10 }, []),
+      false,
+    );
+    assert.equal(goalNeedsPlanDraft({ ...goal, status: "draft" }, []), false);
+    assert.equal(
+      goalNeedsPlanDraft({ ...goal, discoveryStatus: "inferred" }, []),
+      false,
+    );
+    assert.equal(
+      findPlanDraftGoal(
+        [
+          { ...goal, currentValue: 10 },
+          { id: "goal-2", status: "active", currentValue: 1, targetValue: 8, discoveryStatus: "confirmed" },
+        ],
+        [],
+      )?.id,
+      "goal-2",
+    );
+  });
+
+  it("does not copy the draft-plan next step back into the plan text", () => {
+    const summary = draftGrowthPlanSummary({
+      businessName: "North Desk",
+      description: "",
+      targetCustomers: "",
+      goal: {
+        title: "More people get in touch",
+        goalType: "lead_generation",
+        status: "active",
+        liveCurrentValue: 2,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "",
+        progressPercent: 20,
+      },
+      offers: [],
+      nextStepTitle: "Draft a plan for this Goal",
+      nextStepBody: "Draft a plan so GroovGro can propose the first actions.",
+      nextStepKind: "recommend",
+      leftAlone: [],
+      websiteConnected: true,
+      openLeadCount: 0,
+    });
+    assert.doesNotMatch(summary, /Draft a plan for this Goal/);
+    assert.match(summary, /Keep collecting/);
   });
 
   it("does not bake industry-specific words into plan helpers", () => {

@@ -1,3 +1,4 @@
+import { canDraftNextGoal } from "@/lib/growth/next-goal";
 import { labelFor } from "@/lib/growth/types";
 
 export type PlanDraftGoal = {
@@ -55,12 +56,54 @@ function progressLine(goal: PlanDraftGoal): string {
   return `${current} of ${target}.${percent}${goal.liveNote ? ` ${goal.liveNote}` : ""}`;
 }
 
+export const DRAFT_PLAN_STEP_TITLE = "Draft a plan for this Goal";
+
+export function goalNeedsPlanDraft(
+  goal: {
+    id: string
+    status: string
+    currentValue: number
+    targetValue: number | null
+    discoveryStatus?: string
+  },
+  plans: { goalId: string; status: string }[],
+): boolean {
+  if (goal.status !== "active") return false;
+  if (goal.discoveryStatus === "inferred") return false;
+  if (
+    canDraftNextGoal({
+      status: goal.status,
+      currentValue: goal.currentValue,
+      targetValue: goal.targetValue,
+    })
+  ) {
+    return false;
+  }
+  return !plans.some(
+    (plan) =>
+      plan.goalId === goal.id &&
+      (plan.status === "draft" || plan.status === "approved" || plan.status === "active"),
+  );
+}
+
+export function findPlanDraftGoal<
+  T extends {
+    id: string
+    status: string
+    currentValue: number
+    targetValue: number | null
+    discoveryStatus?: string
+  },
+>(goals: T[], plans: { goalId: string; status: string }[]): T | null {
+  return goals.find((goal) => goalNeedsPlanDraft(goal, plans)) ?? null;
+}
+
 export function draftGrowthPlanSummary(facts: PlanDraftFacts): string {
   const name = clean(facts.businessName) || "This business";
   const goal = facts.goal;
   const offers = facts.offers.map((offer) => clean(offer.name)).filter(Boolean);
   const doNow: string[] = [];
-  if (facts.nextStepKind === "recommend" && clean(facts.nextStepTitle)) {
+  if (facts.nextStepKind === "recommend" && clean(facts.nextStepTitle) && clean(facts.nextStepTitle) !== DRAFT_PLAN_STEP_TITLE) {
     doNow.push(`${clean(facts.nextStepTitle)}. ${clean(facts.nextStepBody)}`);
   }
   if (facts.openLeadCount > 0) {

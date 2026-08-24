@@ -22,6 +22,7 @@ import {
 } from "@/lib/db/schema";
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
+import { findPlanDraftGoal } from "@/lib/growth/plan-draft";
 import { coordinateNextStep } from "@/lib/growth/next-step";
 import { isOpenOwnerWork } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
@@ -350,6 +351,13 @@ export async function getCoordinatedNextStep(organizationId: string) {
 
   const learned = snapshot.decisions.find((row) => row.outcome);
   const activate = findActivateCandidate(snapshot.goals);
+  const planGoal = findPlanDraftGoal(
+    snapshot.activeGoals.map((goal) => ({
+      ...goal,
+      currentValue: goal.liveCurrentValue,
+    })),
+    snapshot.plans,
+  );
   return coordinateNextStep({
     inferredDraftCount:
       snapshot.inferredOffers.length + snapshot.inferredGoals.length,
@@ -371,5 +379,8 @@ export async function getCoordinatedNextStep(organizationId: string) {
     latestLearningGoalId: learned?.goalId ?? null,
     activateGoalId: activate?.id ?? null,
     activateGoalTitle: activate?.title ?? "",
+    planGoalId: planGoal?.id ?? null,
+    planGoalTitle: planGoal?.title ?? "",
+    activeGoalIds: snapshot.activeGoals.map((goal) => goal.id),
   });
 }
