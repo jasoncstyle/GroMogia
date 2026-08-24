@@ -147,4 +147,16 @@ describe("module catalog", () => {
     assert.match(source, /md:hidden/);
     assert.match(source, /app-mobile-menu/);
   });
+
+  it("puts a Next step button in the phone header", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/components/app-shell.tsx"),
+      "utf8",
+    );
+    assert.match(source, /isModuleEnabled\(session.enabledModules, "growth_next"\)/);
+    assert.match(
+      source,
+      /aria-controls="app-mobile-menu"[\s\S]*href="\/app\/next-step">Next step/,
+    );
+  });
 });

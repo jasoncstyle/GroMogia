@@ -662,7 +662,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step is the first signed-in nav item after Dashboard. Offers, Website, Leads, and Bookings stay below it. GroovGro does not execute.
 
-### 66. Intelligence people observations open Next step when that is the loop (this slice)
+### 66. Intelligence people observations open Next step when that is the loop
 
 **Reason:** Intelligence still sent People in the workspace to Leads even when follow-up or adding a person already lives on Next step.
 
@@ -671,6 +671,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If there are open leads, or no person has been captured yet, People in the workspace opens Next step. If people are already in the workspace and none are open leads, it still opens Leads. Matching charges still names Bookings. GroovGro does not email anyone.
+
+### 67. Phone header offers Next step (this slice)
+
+**Reason:** On a phone, Next step was only inside Menu. The owner had to open Menu to reach the page that already holds the owner-assistance buttons.
+
+**Affected:** Signed-in phone header.
+
+**Migration risk:** None.
+
+**Current functionality:** Phones show a Next step button next to Menu. Desktop still uses the left nav. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -729,7 +739,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Confirm drafts, review site, owner work, and wait stay on Next step is parked.** Those coordinator loops name Next step. Intelligence website and Stripe connect observations open Next step. Matching charges still names Bookings. Do not execute.
 - **Your work Open the page stays on Next step is parked.** Approved specialist, SEO, website, and brand-voice work open Next step. Saving I’ll do this does not name a different page. Leave-alone still names the module page. Do not execute.
 - **Next step is first after Dashboard in the nav is parked.** Next step sits under Dashboard. Offers, Website, Leads, and Bookings stay below it. Do not execute.
-- **Intelligence people observations open Next step when that is the loop (this slice).** Open leads or no person captured yet open Next step. A filled pipeline with no open leads still opens Leads. Matching charges still names Bookings. Do not email anyone.
+- **Intelligence people observations open Next step when that is the loop is parked.** Open leads or no person captured yet open Next step. A filled pipeline with no open leads still opens Leads. Matching charges still names Bookings. Do not email anyone.
+- **Phone header offers Next step (this slice).** Phones show Next step next to Menu. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -868,7 +879,8 @@ Organization
 58. **Confirm drafts, review site, owner work, and wait stay on Next step** — those coordinator loops name Next step; Intelligence website and Stripe connect observations open Next step. Done.
 59. **Your work Open the page stays on Next step** — approved specialist, SEO, website, and brand-voice work open Next step. Done.
 60. **Next step is first after Dashboard in the nav** — Next step sits under Dashboard; Offers, Website, Leads, and Bookings stay below it. Done.
-61. **Intelligence people observations open Next step when that is the loop** — open leads or no person captured yet open Next step. This slice.
-62. **Guarded automation** — only after the above is trusted.
+61. **Intelligence people observations open Next step when that is the loop** — open leads or no person captured yet open Next step. Done.
+62. **Phone header offers Next step** — phones show Next step next to Menu. This slice.
+63. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

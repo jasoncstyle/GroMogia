@@ -32,7 +32,7 @@ import {
 
 import type { AppSession } from "@/lib/auth/session";
 import { PRODUCT_NAME } from "@/lib/brand";
-import { navModules, type ModuleId } from "@/lib/modules/catalog";
+import { isModuleEnabled, navModules, type ModuleId } from "@/lib/modules/catalog";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -261,6 +261,11 @@ export function AppShell({
               <Menu className="size-5" />
               Menu
             </Button>
+            {isModuleEnabled(session.enabledModules, "growth_next") ? (
+              <Button asChild size="lg" className="h-11 px-4 md:hidden">
+                <Link href="/app/next-step">Next step</Link>
+              </Button>
+            ) : null}
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">
                 {session.name ?? `${PRODUCT_NAME} workspace`}
