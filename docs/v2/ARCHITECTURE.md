@@ -92,7 +92,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** One coordinated recommendation from Goals, specialists, and drafts. Approve or reject saved proposals. Do not execute. Ads, email, and social stay left alone.
 
-### 9. Versioned Growth Plan from a Goal (this slice)
+### 9. Versioned Growth Plan from a Goal
 
 **Reason:** A Goal without a written plan is only a number. The owner needs a versioned strategy they can approve or reject before anything runs.
 
@@ -102,11 +102,22 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** GroovGro drafts a plain-English plan from a confirmed Goal, Brand, confirmed offers, Next step, website connection, and open leads. The owner approves or rejects. Approving writes Decision History. GroovGro does not execute, start ads, send email, charge a card, or change the live website.
 
+### 10. Proposed actions from an approved plan (this slice)
+
+**Reason:** An approved plan is still only a write-up. The owner needs the first concrete actions, still proposed, so later execution has something to approve.
+
+**Affected:** `src/lib/growth/plan-actions.ts`, `src/lib/actions/growth-plan.ts`, Goals screen. Uses existing `growth_actions`.
+
+**Migration risk:** None. Reuses the existing actions table. Dedupes waiting actions on the same Goal by `actionType`.
+
+**Current functionality:** After a plan is approved, the owner can propose up to three first actions (follow up leads, connect the website, confirm offers, do the Next step, or wait). Approve or reject. GroovGro does not execute, start ads, send email, charge a card, or change the live website.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
 - **Next step is parked.** Coordination stays approval-first and does not execute.
-- **Growth Plan draft/approve (this slice).** Versioned write-up from a Goal. Approve or reject. Do not execute. Do not start ads.
+- **Growth Plan is parked.** Versioned write-up from a Goal. Approve or reject. Do not execute.
+- **Plan actions (this slice).** Propose first actions from an approved plan. Approve or reject. Do not execute. Do not start ads.
 
 ## DESIGN FOR LATER
 
@@ -191,7 +202,8 @@ Organization
 4. **Intelligence on goals** — specialists read, analyze, and recommend, including no-change. Done in this slice.
 5. **Specialist work with Goal linkage** — SEO and other connected modules recommend; email and ads stay disconnected. Done for recommend-only.
 6. **Growth Director** — coordinate as Next step, still approval-first. Done for recommend-only.
-7. **Growth Plan** — versioned draft from a Goal; owner approves or rejects. This slice.
-8. **Guarded automation** — only after the above is trusted.
+7. **Growth Plan** — versioned draft from a Goal; owner approves or rejects. Done for draft/approve.
+8. **Actions from an approved plan** — proposed only. This slice.
+9. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

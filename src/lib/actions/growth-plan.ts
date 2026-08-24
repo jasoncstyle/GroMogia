@@ -7,8 +7,10 @@ import { z } from "zod";
 import { recordAudit } from "@/lib/audit";
 import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
-import { decisionRecords, growthPlans } from "@/lib/db/schema";
+import { decisionRecords, growthActions, growthPlans } from "@/lib/db/schema";
+import { draftActionsFromApprovedPlan } from "@/lib/growth/plan-actions";
 import { draftGrowthPlanSummary } from "@/lib/growth/plan-draft";
+import { isWaitingActionStatus } from "@/lib/growth/next-step";
 import { getCoordinatedNextStep, getGrowthSnapshot } from "@/lib/growth/queries";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 import { hasPermission } from "@/lib/permissions";
@@ -254,5 +256,95 @@ export async function rejectGrowthPlan(
     });
     revalidatePlans();
     return "Plan rejected. GroovGro did not run it.";
+  });
+}
+
+export async function proposeActionsForApprovedPlan(
+  formData: FormData,
+): Promise<ActionResult> {
+  return runAction("Could not propose actions.", async () => {
+    const session = await requireOrgSession();
+    if (!hasPermission(session.permissions, "modify_goals")) {
+      throw new Error("You do not have permission to propose actions.");
+    }
+    const db = getDb();
+    if (!db) throw new Error("Database is not configured");
+    const { planId } = planIdSchema.parse({ planId: formData.get("planId") });
+
+    const [plan] = await db
+      .select()
+      .from(growthPlans)
+      .where(
+        and(
+          eq(growthPlans.id, planId),
+          eq(growthPlans.organizationId, session.organizationId),
+        ),
+      )
+      .limit(1);
+    if (!plan) throw new Error("That plan was not found.");
+    if (plan.status !== "approved" && plan.status !== "active") {
+      throw new Error("Approve the plan first. GroovGro will not propose actions from a draft.");
+    }
+
+    const [snapshot, nextStep, dashboard] = await Promise.all([
+      getGrowthSnapshot(session.organizationId),
+      getCoordinatedNextStep(session.organizationId),
+      getDashboardSnapshot(session.organizationId),
+    ]);
+    if (!snapshot) throw new Error("Sign in to propose actions.");
+
+    const goal = snapshot.goals.find((row) => row.id === plan.goalId);
+    const drafts = draftActionsFromApprovedPlan({
+      goalTitle: goal?.title ?? "",
+      nextStepTitle: nextStep?.primary.title ?? "",
+      nextStepBody: nextStep?.primary.body ?? "",
+      nextStepKind: nextStep?.primary.kind ?? "no_change_yet",
+      websiteConnected: Boolean(dashboard.website?.publicUrl),
+      openLeadCount: dashboard.openLeadCount,
+      confirmedOfferCount: snapshot.offers.filter(
+        (offer) => offer.discoveryStatus === "confirmed",
+      ).length,
+      inferredOfferCount: snapshot.inferredOffers.length,
+    });
+
+    const existingTypes = new Set(
+      snapshot.actions
+        .filter(
+          (action) =>
+            action.goalId === plan.goalId && isWaitingActionStatus(action.status),
+        )
+        .map((action) => action.actionType),
+    );
+    const fresh = drafts.filter((draft) => !existingTypes.has(draft.actionType));
+    if (fresh.length === 0) {
+      return "Those actions are already proposed. GroovGro still will not run them.";
+    }
+
+    for (const draft of fresh) {
+      const actionId = crypto.randomUUID();
+      await db.insert(growthActions).values({
+        id: actionId,
+        organizationId: session.organizationId,
+        goalId: plan.goalId,
+        planId: plan.id,
+        module: draft.module,
+        actionType: draft.actionType,
+        description: draft.description,
+        status: "proposed",
+        risk: draft.risk,
+        proposedBy: session.userId,
+      });
+      await recordAudit({
+        organizationId: session.organizationId,
+        actorUserId: session.userId,
+        action: "growth_action.proposed",
+        targetType: "growth_action",
+        targetId: actionId,
+        metadata: { planId: plan.id, executeAllowed: false },
+      });
+    }
+
+    revalidatePlans();
+    return `Proposed ${fresh.length} action${fresh.length === 1 ? "" : "s"}. GroovGro did not run them, send email, or start ads.`;
   });
 }

@@ -15,7 +15,9 @@ import {
 import {
   DraftGrowthPlanButton,
   GrowthPlanReviewButtons,
+  ProposePlanActionsButton,
 } from "@/components/growth-plan-actions";
+import { WaitingActionButtons } from "@/components/next-step-actions";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { hasPermission } from "@/lib/permissions";
@@ -69,6 +71,8 @@ export default async function GoalsPage() {
   );
   const canDraftPlan = hasPermission(session.permissions, "modify_goals");
   const canApprovePlan = hasPermission(session.permissions, "approve_plans");
+  const canApproveAction = hasPermission(session.permissions, "approve_actions");
+  const actions = snapshot?.actions ?? [];
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
@@ -455,8 +459,9 @@ export default async function GoalsPage() {
           <CardTitle>Growth plans</CardTitle>
           <CardDescription>
             GroovGro can draft a plan from a Goal, confirmed offers, and the
-            current Next step. Plans are versioned. A new plan does not
-            overwrite the last one. Approving a plan does not run marketing.
+            current Next step. After you approve a plan, GroovGro can propose
+            the first actions. Approving a plan or an action does not run
+            marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -539,6 +544,33 @@ export default async function GoalsPage() {
                       planId={plan.id}
                       canApprove={canApprovePlan}
                     />
+                  ) : null}
+                  {plan.status === "approved" || plan.status === "active" ? (
+                    <div className="space-y-3">
+                      {canDraftPlan ? (
+                        <ProposePlanActionsButton planId={plan.id} />
+                      ) : null}
+                      {actions
+                        .filter((action) => action.planId === plan.id)
+                        .map((action) => (
+                          <div
+                            key={action.id}
+                            className="space-y-2 rounded-md border p-3 text-sm"
+                          >
+                            <p className="font-medium">{action.description}</p>
+                            <p className="text-muted-foreground">
+                              {action.status} · {labelFor(action.risk)}
+                            </p>
+                            {action.status === "proposed" ||
+                            action.status === "awaiting_approval" ? (
+                              <WaitingActionButtons
+                                actionId={action.id}
+                                canApprove={canApproveAction}
+                              />
+                            ) : null}
+                          </div>
+                        ))}
+                    </div>
                   ) : null}
                 </div>
               ))}

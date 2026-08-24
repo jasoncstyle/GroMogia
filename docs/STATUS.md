@@ -6,7 +6,7 @@ Last updated: 24 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-growth-plan-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-plan-actions-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** The website builder is paused. Next step is on `main`. This branch drafts a versioned Growth Plan from a Goal. The owner approves or rejects it. GroovGro does not execute. Do not start ads, execution, or autonomy.
+**V2 growth foundation is on `main`.** The website builder is paused. Next step and Growth Plan draft/approve are on `main`. This branch proposes the first Growth Actions from an approved plan. The owner approves or rejects them. GroovGro does not execute. Do not start ads, execution, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
@@ -56,7 +56,11 @@ Jason’s idea (23 August 2026): help the owner build a **GroovGro-hosted** site
 
 Next step is on `main`. It names one thing to do — or wait. The owner can accept it, leave it alone, or approve/reject a saved proposal. GroovGro does not execute.
 
-**First build slice (this branch):** GroovGro drafts a versioned Growth Plan from a confirmed Goal, Brand, confirmed offers, Next step, and connected facts. The owner approves or rejects it. Approving does not run marketing, send email, buy ads, charge a card, or change the live website.
+**Parked: Growth Plan (24 August 2026)**
+
+Growth Plan draft/approve is on `main`. GroovGro writes a versioned plan from a Goal. The owner approves or rejects it. Approving does not execute.
+
+**First build slice (this branch):** After a plan is approved, GroovGro proposes up to three first actions from that plan, Goal, Next step, website connection, and open leads. The owner approves or rejects each action. Nothing runs. Ads, email, and social stay left alone.
 
 ## Stripe (do not mix, do not replace)
 
@@ -84,6 +88,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Phones get a Menu button that opens the same app navigation as the desktop sidebar.
 - Next step: one coordinated recommendation from Goals, specialists, and connected data. The owner accepts it or leaves it alone. Proposed actions can be approved or rejected. Nothing runs. Ads, email, and social stay left alone.
 - Growth Plan: GroovGro can draft a versioned plan from a Goal. Approve or reject. Approving does not execute.
+- Growth Actions from an approved plan: GroovGro can propose the first actions. Approve or reject. Nothing runs. Ads, email, and social stay left alone.
 
 ## Still later
 

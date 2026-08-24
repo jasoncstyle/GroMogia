@@ -147,13 +147,22 @@ export default async function DashboardPage() {
           title="What are we trying to accomplish?"
           body={
             growth && growth.activeGoals.length > 0
-              ? growth.activeGoals
-                  .map((goal) =>
-                    goal.progressPercent != null
-                      ? `${goal.title} (${goal.liveCurrentValue}/${goal.targetValue ?? "—"}, ${goal.progressPercent}% )`
-                      : goal.title,
+              ? [
+                  growth.activeGoals
+                    .map((goal) =>
+                      goal.progressPercent != null
+                        ? `${goal.title} (${goal.liveCurrentValue}/${goal.targetValue ?? "—"}, ${goal.progressPercent}% )`
+                        : goal.title,
+                    )
+                    .join(" · "),
+                  growth.plans.find(
+                    (plan) => plan.status === "approved" || plan.status === "active",
                   )
-                  .join(" · ")
+                    ? "An approved Growth Plan is on Goals. Propose the first actions there. GroovGro will not run them."
+                    : null,
+                ]
+                  .filter(Boolean)
+                  .join(" ")
               : "No active Growth Goal yet. Open Goals and write the first measurable outcome."
           }
         />
