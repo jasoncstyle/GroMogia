@@ -833,6 +833,23 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.needsAddBrandVoiceExample &&
+          !isAddBrandVoiceExampleNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Add a brand voice example</CardTitle>
+                <CardDescription>
+                  Paste writing you already like here. GroovGro uses this
+                  for drafts. It will not send email, post to social, or
+                  edit the live website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BrandVoiceExampleForm disabled={!canManageBrand} />
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.activateGoalId &&
           step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
             <Card>

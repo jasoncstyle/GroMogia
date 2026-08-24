@@ -1519,6 +1519,37 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("keeps Add a brand voice example on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          brandVoiceExampleSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsAddBrandVoiceExample, true);
+    assert.match(page, /needsAddBrandVoiceExample/);
+    assert.match(page, /!isAddBrandVoiceExampleNextStep/);
+    assert.match(
+      readFileSync(
+        join(process.cwd(), "src/app/(app)/app/brand-voice/page.tsx"),
+        "utf8",
+      ),
+      /BrandVoiceExampleForm/,
+    );
+  });
+
   it("keeps saving the brand voice profile ahead of adding an example", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,
