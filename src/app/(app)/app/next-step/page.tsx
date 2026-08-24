@@ -112,6 +112,21 @@ export default async function NextStepPage() {
             </CardContent>
           </Card>
 
+          <Card>
+            <CardHeader>
+              <CardTitle>Write it as a plan</CardTitle>
+              <CardDescription>
+                Next step is one thing to do now. A Growth Plan is a versioned
+                write-up for a Goal. Approving it still does not run marketing.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild>
+                <Link href="/app/goals">Draft a plan on Goals</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline">
               <Link href="/app/goals">Goals</Link>

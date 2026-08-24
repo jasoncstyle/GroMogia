@@ -12,8 +12,13 @@ import {
   InferredBadge,
   ReviewConnectedDataButton,
 } from "@/components/growth-review";
+import {
+  DraftGrowthPlanButton,
+  GrowthPlanReviewButtons,
+} from "@/components/growth-plan-actions";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
+import { hasPermission } from "@/lib/permissions";
 import {
   AUTONOMY_LEVELS,
   GOAL_STATUSES,
@@ -62,15 +67,17 @@ export default async function GoalsPage() {
   const autonomy = AUTONOMY_LEVELS.find(
     (item) => item.level === (settings?.autonomyLevel ?? 2),
   );
+  const canDraftPlan = hasPermission(session.permissions, "modify_goals");
+  const canApprovePlan = hasPermission(session.permissions, "approve_plans");
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Goals</h1>
         <p className="text-muted-foreground">
-          A Goal is a measurable outcome. GroovGro should help get there, then
-          wait for enough evidence before changing course. Suggested goals stay
-          drafts until you confirm them.
+          A Goal is a measurable outcome. GroovGro can draft a plan for a
+          confirmed Goal. Approving that plan does not run marketing.
+          Suggested goals stay drafts until you confirm them.
         </p>
         <div className="mt-3">
           <ReviewConnectedDataButton disabled={!session.organizationId} />
@@ -95,6 +102,9 @@ export default async function GoalsPage() {
             autopilot is feature-flagged off.
           </p>
           <div className="flex flex-wrap gap-2">
+            <Button asChild variant="outline" size="sm">
+              <Link href="/app/next-step">Open next step</Link>
+            </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/app/growth-review">Open growth review</Link>
             </Button>
@@ -410,6 +420,11 @@ export default async function GoalsPage() {
                     Update
                   </SaveButton>
                 </SaveForm>
+                {canDraftPlan ? (
+                  <div className="mt-3">
+                    <DraftGrowthPlanButton goalId={goal.id} />
+                  </div>
+                ) : null}
                 {goal.progressHistory.length > 0 ? (
                   <div className="mt-3">
                     <FoldableSample
@@ -439,10 +454,16 @@ export default async function GoalsPage() {
         <CardHeader>
           <CardTitle>Growth plans</CardTitle>
           <CardDescription>
-            Plans are versioned. A new plan does not overwrite the last one.
+            GroovGro can draft a plan from a Goal, confirmed offers, and the
+            current Next step. Plans are versioned. A new plan does not
+            overwrite the last one. Approving a plan does not run marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          <FoldableSample
+            title="Write a plan yourself"
+            subtitle="Optional. Most owners use Draft a plan for this Goal on a Goal above."
+          >
           <SaveForm
             action={createGrowthPlan}
             successMessage="Plan saved"
@@ -493,34 +514,35 @@ export default async function GoalsPage() {
               Save plan version
             </SaveButton>
           </SaveForm>
+          </FoldableSample>
 
           {plans.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No plans yet.</p>
+            <p className="text-sm text-muted-foreground">
+              No plans yet. Open a Goal above and click Draft a plan for this
+              Goal.
+            </p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Goal</TableHead>
-                  <TableHead>Version</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Summary</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {plans.map((plan) => (
-                  <TableRow key={plan.id}>
-                    <TableCell>
-                      {goals.find((goal) => goal.id === plan.goalId)?.title ?? "Goal"}
-                    </TableCell>
-                    <TableCell>v{plan.version}</TableCell>
-                    <TableCell>{plan.status}</TableCell>
-                    <TableCell className="max-w-xs truncate">
+            <div className="space-y-4">
+              {plans.map((plan) => (
+                <div key={plan.id} className="space-y-3 rounded-lg border p-4">
+                  <div>
+                    <p className="font-medium">
+                      {goals.find((goal) => goal.id === plan.goalId)?.title ?? "Goal"}{" "}
+                      · v{plan.version} · {plan.status}
+                    </p>
+                    <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">
                       {plan.strategySummary}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                    </p>
+                  </div>
+                  {plan.status === "draft" ? (
+                    <GrowthPlanReviewButtons
+                      planId={plan.id}
+                      canApprove={canApprovePlan}
+                    />
+                  ) : null}
+                </div>
+              ))}
+            </div>
           )}
         </CardContent>
       </Card>
