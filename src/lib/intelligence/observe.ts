@@ -190,9 +190,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Keep recording the journey",
-      body: "Website, leads, customers, and Stripe charges are in a usable starting place. Review Marketing after the next real purchase.",
+      body: "Website, leads, customers, and Stripe charges are in a usable starting place. Open Next step. GroovGro will not start ads.",
       evidence: ["dashboard snapshot"],
-      href: "/app/marketing",
+      href: "/app/next-step",
     });
   }
 

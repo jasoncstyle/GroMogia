@@ -495,11 +495,13 @@ describe("coordinated next step", () => {
       },
     });
     assert.equal(step.primary.title, "Read the Goal before changing course");
+    assert.equal(step.primary.href, "/app/next-step");
     assert.equal(step.learningGoal?.id, "goal-1");
     assert.equal(step.learningGoal?.liveCurrentValue, 2);
     assert.match(step.primary.body, /Read the Goal number here/);
     assert.match(page, /isReadGoalNextStep/);
     assert.match(page, /learningGoal/);
+    assert.doesNotMatch(page, /The Goal number is on Goals/);
   });
 
   it("does not bake industry-specific words into the coordinator", () => {

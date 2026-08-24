@@ -431,14 +431,10 @@ export default async function NextStepPage({
                       ) : null}
                     </div>
                   ) : (
-                    <>
-                      <p className="text-sm text-muted-foreground">
-                        The Goal number is on Goals. GroovGro will not add spend.
-                      </p>
-                      <Button asChild variant="outline">
-                        <Link href="/app/goals">Open Goals</Link>
-                      </Button>
-                    </>
+                    <p className="text-sm text-muted-foreground">
+                      The Goal number is not stored yet. Stay here. GroovGro
+                      will not add spend.
+                    </p>
                   )}
                 </>
               ) : openPageLabel ? (

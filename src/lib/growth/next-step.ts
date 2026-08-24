@@ -335,7 +335,7 @@ function learningCandidate(input: NextStepInput): NextStepCandidate | null {
       body:
         outcome ||
         `The Goal number is lower than when you did the work. Read it here. Do not add spend.${leaveAlone}`,
-      href: "/app/goals",
+      href: "/app/next-step",
       source: "learning",
       specialistId: null,
       goalId,

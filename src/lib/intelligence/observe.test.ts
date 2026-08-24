@@ -133,6 +133,30 @@ describe("intelligence observe", () => {
     assert.equal(stripe?.href, "/app/next-step");
   });
 
+  it("sends keep recording to Next step when the wait lives there", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        contactCount: 2,
+        customerCount: 1,
+        sources: [
+          {
+            source: "newsletter",
+            visits: 4,
+            leads: 1,
+            customers: 0,
+            revenueCents: 0,
+          },
+        ],
+      }),
+    );
+    const keep = brief.recommendations.find(
+      (item) => item.title === "Keep recording the journey",
+    );
+    assert.ok(keep);
+    assert.equal(keep.href, "/app/next-step");
+    assert.match(keep.body, /Open Next step/);
+  });
+
   it("sends people observations to Next step when follow-up or adding a person lives there", () => {
     const empty = buildIntelligenceBrief(facts({ contactCount: 0, openLeadCount: 0 }));
     const peopleEmpty = empty.observations.find(
