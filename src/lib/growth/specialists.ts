@@ -296,7 +296,7 @@ function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
             kind: "recommend",
             classification: "operational",
             title: FOLLOW_UP_LEADS_STEP_TITLE,
-            body: "Open Leads & customers and give each open lead a next step. GroovGro will not email them.",
+            body: "Give each open lead a next step here. GroovGro will not email them.",
             href: "/app/crm",
           }
         : leaveAlone(

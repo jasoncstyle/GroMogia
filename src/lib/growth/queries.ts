@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import {
@@ -6,6 +6,7 @@ import {
   bookings,
   brandSettings,
   businessBrains,
+  contacts,
   decisionRecords,
   events,
   evidencePolicies,
@@ -16,6 +17,7 @@ import {
   growthSettings,
   integrationConnections,
   leadRecords,
+  leadStages,
   offers,
   payments,
   seoAudits,
@@ -277,6 +279,67 @@ async function getOpenSeoDrafts(organizationId: string) {
     .orderBy(desc(seoDrafts.createdAt));
 }
 
+async function getOpenLeadsAndStages(organizationId: string) {
+  const db = getDb();
+  if (!db) return { openLeads: [], leadStages: [] as { id: string; name: string }[] };
+
+  const stages = await db
+    .select({
+      id: leadStages.id,
+      name: leadStages.name,
+      sortOrder: leadStages.sortOrder,
+      isWon: leadStages.isWon,
+      isLost: leadStages.isLost,
+    })
+    .from(leadStages)
+    .where(eq(leadStages.organizationId, organizationId))
+    .orderBy(asc(leadStages.sortOrder));
+  const openStageIds = stages
+    .filter((stage) => !stage.isWon && !stage.isLost)
+    .map((stage) => stage.id);
+  if (openStageIds.length === 0) {
+    return {
+      openLeads: [],
+      leadStages: stages.map((stage) => ({ id: stage.id, name: stage.name })),
+    };
+  }
+
+  const rows = await db
+    .select({
+      id: leadRecords.id,
+      name: contacts.displayName,
+      email: contacts.email,
+      stageId: leadStages.id,
+      stageName: leadStages.name,
+      source: leadRecords.source,
+      isWon: leadStages.isWon,
+    })
+    .from(leadRecords)
+    .innerJoin(contacts, eq(leadRecords.contactId, contacts.id))
+    .innerJoin(leadStages, eq(leadRecords.stageId, leadStages.id))
+    .where(
+      and(
+        eq(leadRecords.organizationId, organizationId),
+        inArray(leadRecords.stageId, openStageIds),
+      ),
+    )
+    .orderBy(desc(leadRecords.createdAt))
+    .limit(8);
+
+  return {
+    openLeads: rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      email: row.email ?? "",
+      stageId: row.stageId,
+      stageName: row.stageName,
+      source: row.source,
+      isWon: row.isWon,
+    })),
+    leadStages: stages.map((stage) => ({ id: stage.id, name: stage.name })),
+  };
+}
+
 async function getLatestSeoSummary(organizationId: string) {
   const db = getDb();
   if (!db) {
@@ -371,11 +434,12 @@ export async function getSpecialistReports(organizationId: string) {
 }
 
 export async function getCoordinatedNextStep(organizationId: string) {
-  const [snapshot, reports, dashboard, openSeoDrafts] = await Promise.all([
+  const [snapshot, reports, dashboard, openSeoDrafts, pipeline] = await Promise.all([
     getGrowthSnapshot(organizationId),
     getSpecialistReports(organizationId),
     getDashboardSnapshot(organizationId),
     getOpenSeoDrafts(organizationId),
+    getOpenLeadsAndStages(organizationId),
   ]);
   if (!snapshot) return null;
 
@@ -461,5 +525,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
     websiteConnected: Boolean(dashboard.website?.publicUrl),
     websiteRead: websiteWasRead(snapshot.brain?.inferredSummary),
     seoDrafts: openSeoDrafts,
+    openLeads: pipeline.openLeads,
+    leadStages: pipeline.leadStages,
   });
 }

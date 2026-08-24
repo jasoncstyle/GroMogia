@@ -342,7 +342,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If a website is connected and GroovGro has not recorded visits yet, Next step shows the tracking snippet to copy. Open leads still come first. GroovGro does not replace the live site.
 
-### 34. Review the schedule from Next step (this slice)
+### 34. Review the schedule from Next step
 
 **Reason:** When Next step is review the schedule, Add event still lived only on Events. Put the upcoming list and Save event on Next step. GroovGro must not change ads or the website.
 
@@ -351,6 +351,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If Next step is review the schedule, the owner can see upcoming items and add a calendar item there. GroovGro does not change ads or the website.
+
+### 35. Follow up open leads from Next step (this slice)
+
+**Reason:** Following up open leads still sent the owner to Leads & customers to move a person. Put Move and Mark customer on Next step. GroovGro must not email anyone.
+
+**Affected:** Next step. Reuses `moveLead` / `convertLeadToCustomer`. Does not send email.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is follow up open leads, the owner can move a person or mark them as a customer there, and copy the public lead form. GroovGro does not email anyone.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -377,7 +387,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Draft and approve SEO copy from Next step is parked.** Ask the owner to draft and approve homepage SEO copy. Do not edit the live site.
 - **Connect Search Console from Next step is parked.** Ask the owner to connect Search Console read-only. Do not edit the live site.
 - **Paste the tracking snippet from Next step is parked.** Ask the owner to copy the snippet. Do not replace the live site.
-- **Review the schedule from Next step (this slice).** Ask the owner to add a calendar item. Do not change ads or the website.
+- **Review the schedule from Next step is parked.** Ask the owner to add a calendar item. Do not change ads or the website.
+- **Follow up open leads from Next step (this slice).** Ask the owner to move a person or mark them as a customer. Do not email anyone.
 
 ## DESIGN FOR LATER
 
@@ -484,7 +495,8 @@ Organization
 26. **Draft and approve SEO copy from Next step** — draft and approve homepage SEO copy on Next step. Done.
 27. **Connect Search Console from Next step** — connect Search Console read-only from Next step. Done.
 28. **Paste the tracking snippet from Next step** — copy the snippet on Next step when visits are not recorded yet. Done.
-29. **Review the schedule from Next step** — add a calendar item on Next step. This slice.
-30. **Guarded automation** — only after the above is trusted.
+29. **Review the schedule from Next step** — add a calendar item on Next step. Done.
+30. **Follow up open leads from Next step** — move a person or mark them as a customer on Next step. This slice.
+31. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

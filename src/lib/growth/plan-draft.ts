@@ -129,7 +129,6 @@ export function showsDedicatedNextStepControl(
 
 export function openPageLabelForNextStep(title: string): string | null {
   const text = clean(title);
-  if (text === FOLLOW_UP_LEADS_STEP_TITLE) return "Open Leads & customers";
   if (text === READ_GOAL_STEP_TITLE || text === ADD_GOAL_STEP_TITLE) return "Open Goals";
   return null;
 }
@@ -149,6 +148,10 @@ export function isPasteSnippetNextStep(title: string): boolean {
 
 export function isReviewScheduleNextStep(title: string): boolean {
   return clean(title) === REVIEW_SCHEDULE_STEP_TITLE;
+}
+
+export function isFollowUpLeadsNextStep(title: string): boolean {
+  return clean(title) === FOLLOW_UP_LEADS_STEP_TITLE;
 }
 
 function isPlanLoopNextStep(title: string): boolean {

@@ -19,6 +19,7 @@ import {
   goalNeedsPlanDraft,
   hasDedicatedNextStepControls,
   IMPROVE_SEO_STEP_TITLE,
+  isFollowUpLeadsNextStep,
   isPasteSnippetNextStep,
   isReviewScheduleNextStep,
   isSearchConsoleNextStep,
@@ -440,7 +441,8 @@ describe("growth plan draft", () => {
   });
 
   it("names the Open button for specialist work that already lives on another page", () => {
-    assert.equal(openPageLabelForNextStep(FOLLOW_UP_LEADS_STEP_TITLE), "Open Leads & customers");
+    assert.equal(openPageLabelForNextStep(FOLLOW_UP_LEADS_STEP_TITLE), null);
+    assert.equal(isFollowUpLeadsNextStep(FOLLOW_UP_LEADS_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(FIX_SEO_STEP_TITLE), null);
     assert.equal(openPageLabelForNextStep(IMPROVE_SEO_STEP_TITLE), null);
     assert.equal(isSeoDraftNextStep(FIX_SEO_STEP_TITLE), true);

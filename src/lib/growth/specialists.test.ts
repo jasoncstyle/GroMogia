@@ -176,6 +176,7 @@ describe("growth specialists", () => {
     );
     assert.ok(crm);
     assert.equal(crm.recommend.title, FOLLOW_UP_LEADS_STEP_TITLE);
+    assert.match(crm.recommend.body, /Give each open lead a next step here/);
     assert.match(crm.recommend.body, /will not email them/);
     assert.equal(crm.recommend.href, "/app/crm");
   });

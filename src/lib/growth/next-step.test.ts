@@ -71,13 +71,35 @@ describe("coordinated next step", () => {
   });
 
   it("picks follow-up of open leads over disconnected ad channels", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
     const step = coordinateNextStep({
       inferredDraftCount: 0,
       reports: buildSpecialistReports(facts({ openLeadCount: 3 })),
       waitingActions: [],
+      openLeads: [
+        {
+          id: "lead-1",
+          name: "Alex Rivera",
+          email: "alex@example.com",
+          stageId: "stage-new",
+          stageName: "New",
+          source: "website",
+          isWon: false,
+        },
+      ],
+      leadStages: [{ id: "stage-new", name: "New" }],
     });
     assert.equal(step.primary.href, "/app/crm");
     assert.equal(step.primary.title, "Follow up open leads");
+    assert.match(step.primary.body, /Give each open lead a next step here/);
+    assert.equal(step.openLeads.length, 1);
+    assert.equal(step.openLeads[0]?.id, "lead-1");
+    assert.match(page, /isFollowUpLeadsNextStep/);
+    assert.match(page, /LeadFollowUpButtons/);
+    assert.match(page, /CopyLink/);
     assert.equal(
       step.leftAlone.some((item) => /ads/i.test(item.title) || /advertising/i.test(item.body)),
       true,
