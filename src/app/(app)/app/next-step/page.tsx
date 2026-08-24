@@ -816,6 +816,23 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.needsSaveBrandVoice &&
+          !isSaveBrandVoiceNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Save your brand voice</CardTitle>
+                <CardDescription>
+                  Save how this business sounds here. GroovGro uses this
+                  for drafts. It will not send email, post to social, or
+                  edit the live website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BrandVoiceProfileForm disabled={!canManageBrand} />
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.activateGoalId &&
           step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
             <Card>
