@@ -7,6 +7,7 @@ export type StatusAlertItem = {
   tone: StatusAlertTone
   title: string
   body: string
+  href?: string
 }
 
 export type StatusAlertFacts = {
@@ -74,7 +75,8 @@ export function buildStatusAlerts(facts: StatusAlertFacts): StatusAlertItem[] {
         id: "website",
         tone: "wait",
         title: "Website address is saved",
-        body: "GroovGro has the address, but it has not read the pages yet. Find pages, check the important ones, then click Review connected data.",
+        body: "GroovGro has the address, but it has not read the pages yet. Open Next step to find pages, check the important ones, then review. GroovGro does not change the live site.",
+        href: "/app/next-step",
       })
     }
   }

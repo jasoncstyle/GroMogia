@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import {
   CircleCheckIcon,
   OctagonXIcon,
@@ -5,6 +7,7 @@ import {
 } from "lucide-react";
 
 import type { StatusAlertItem, StatusAlertTone } from "@/lib/growth/status-alerts";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const toneStyles: Record<
@@ -35,7 +38,8 @@ export function StatusAlert({
   tone,
   title,
   body,
-}: Pick<StatusAlertItem, "tone" | "title" | "body">) {
+  href,
+}: Pick<StatusAlertItem, "tone" | "title" | "body" | "href">) {
   const style = toneStyles[tone];
   const Icon = style.icon;
 
@@ -50,9 +54,18 @@ export function StatusAlert({
       )}
     >
       <Icon aria-hidden className="mt-0.5 size-5 shrink-0" />
-      <div className="min-w-0 space-y-1">
-        <p className="font-medium leading-snug">{title}</p>
-        <p className="text-sm leading-relaxed opacity-90">{body}</p>
+      <div className="min-w-0 space-y-2">
+        <div className="space-y-1">
+          <p className="font-medium leading-snug">{title}</p>
+          <p className="text-sm leading-relaxed opacity-90">{body}</p>
+        </div>
+        {href ? (
+          <Button asChild variant="outline" size="sm">
+            <Link href={href}>
+              {href === "/app/next-step" ? "Open Next step" : "Open"}
+            </Link>
+          </Button>
+        ) : null}
       </div>
     </div>
   );
@@ -69,6 +82,7 @@ export function StatusAlertList({ alerts }: { alerts: StatusAlertItem[] }) {
           tone={alert.tone}
           title={alert.title}
           body={alert.body}
+          href={alert.href}
         />
       ))}
     </div>

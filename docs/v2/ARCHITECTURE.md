@@ -732,7 +732,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Read the Goal number stays on Next step. Intelligence wait opens Next step. Matching charges still names Bookings. UTM naming still names Marketing. Goal and plan coordinator loops still name Goals.
 
-### 73. Add a Goal and Dashboard empty lists stay on Next step (this slice)
+### 73. Add a Goal and Dashboard empty lists stay on Next step
 
 **Reason:** Adding a Goal already had a form on Next step, but the coordinator still named Goals. Empty lead and calendar lists on the Dashboard still sent the owner to Leads or Events.
 
@@ -741,6 +741,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Add a Goal stays on Next step. Empty lead and calendar lists on the Dashboard name Next step. Matching charges still names Bookings. Goal and plan coordinator loops still name Goals.
+
+### 74. Unread website status alerts open Next step (this slice)
+
+**Reason:** When the website address was saved but pages were unread, the amber alert told the owner to find pages and review, but it did not open Next step.
+
+**Affected:** Status alerts on Dashboard and Website.
+
+**Migration risk:** None.
+
+**Current functionality:** The unread-website alert has Open Next step. GroovGro does not change the live site.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -806,7 +816,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **A first recorded website visit refreshes Next step is parked.** After the snippet records its first visit, Next step refreshes so it can stop asking to paste the snippet. Do not replace the live site.
 - **A new Stripe payment copy refreshes Next step is parked.** After GroovGro stores a new payment row, Next step refreshes so follow-up and Goal numbers can update. Do not charge a card or change checkout.
 - **Read Goal and Intelligence wait stay on Next step is parked.** Read the Goal number stays on Next step. Intelligence wait opens Next step. Matching charges still names Bookings. Do not start ads.
-- **Add a Goal and Dashboard empty lists stay on Next step (this slice).** Add a Goal stays on Next step. Empty lead and calendar lists on the Dashboard name Next step. Do not email anyone.
+- **Add a Goal and Dashboard empty lists stay on Next step is parked.** Add a Goal stays on Next step. Empty lead and calendar lists on the Dashboard name Next step. Do not email anyone.
+- **Unread website status alerts open Next step (this slice).** The amber unread-website alert has Open Next step. Do not change the live site.
 
 ## DESIGN FOR LATER
 
@@ -952,7 +963,8 @@ Organization
 65. **A first recorded website visit refreshes Next step** — Next step refreshes after the snippet records its first visit. Done.
 66. **A new Stripe payment copy refreshes Next step** — Next step refreshes after GroovGro stores a new payment row. Done. GroovGro does not charge a card or change checkout.
 67. **Read Goal and Intelligence wait stay on Next step** — Read the Goal number stays on Next step; Intelligence wait opens Next step. Done.
-68. **Add a Goal and Dashboard empty lists stay on Next step** — Add a Goal stays on Next step; empty lead and calendar lists on the Dashboard name Next step. This slice.
-69. **Guarded automation** — only after the above is trusted.
+68. **Add a Goal and Dashboard empty lists stay on Next step** — Add a Goal stays on Next step; empty lead and calendar lists on the Dashboard name Next step. Done.
+69. **Unread website status alerts open Next step** — the unread-website alert has Open Next step. This slice.
+70. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
