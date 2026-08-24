@@ -147,6 +147,8 @@ describe("owner work", () => {
     assert.doesNotMatch(page, /href="\/app\/decisions"/);
     assert.doesNotMatch(page, /The path so far/);
     assert.doesNotMatch(page, /Draft or approve a plan/);
+    assert.match(page, /Approve or reject these on Next step/);
+    assert.doesNotMatch(page, /WaitingActionButtons/);
   });
 
   it("does not bake industry-specific words into owner-work helpers", () => {

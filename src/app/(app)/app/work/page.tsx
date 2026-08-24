@@ -4,7 +4,6 @@ import {
   CheckWhatChangedButton,
   OwnerWorkButtons,
 } from "@/components/owner-work-actions";
-import { WaitingActionButtons } from "@/components/next-step-actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,7 +30,6 @@ export default async function OwnerWorkPage() {
     : null;
   const work = partitionOwnerWork(snapshot?.actions ?? []);
   const canUpdate = hasPermission(session.permissions, "modify_goals");
-  const canApprove = hasPermission(session.permissions, "approve_actions");
   const canCheck = hasPermission(session.permissions, "view_decision_history");
 
   return (
@@ -83,7 +81,7 @@ export default async function OwnerWorkPage() {
           <CardHeader>
             <CardTitle>Still waiting for your say</CardTitle>
             <CardDescription>
-              Approve these first. Approving does not run them.
+              Approve or reject these on Next step. Approving does not run them.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -93,10 +91,6 @@ export default async function OwnerWorkPage() {
                 <p className="text-muted-foreground">
                   {action.status} · {labelFor(action.risk)}
                 </p>
-                <WaitingActionButtons
-                  actionId={action.id}
-                  canApprove={canApprove}
-                />
               </div>
             ))}
           </CardContent>

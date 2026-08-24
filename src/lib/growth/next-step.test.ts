@@ -1677,6 +1677,8 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(review, /href="\/app\/intelligence"/);
     assert.doesNotMatch(review, /href="\/app\/decisions"/);
     assert.match(work, /href="\/app\/next-step">Open Next step/);
+    assert.match(work, /Approve or reject these on Next step/);
+    assert.doesNotMatch(work, /WaitingActionButtons/);
     assert.doesNotMatch(work, /href="\/app\/decisions"/);
     assert.doesNotMatch(work, /The path so far/);
   });
