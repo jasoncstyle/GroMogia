@@ -112,7 +112,7 @@ When approved actions are ready, Next step lists them with Open the page, I did 
 
 When the owner has marked work done, Next step asks them to compare the Goal number. GroovGro does not change the plan.
 
-**First build slice (this branch):** When GroovGro has suggested offers or goals, Next step lists them with Confirm and Reject. Nothing becomes active until the owner confirms. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
+**First build slice (this branch):** Next step can confirm or reject suggested offers and goals, and can save the existing website address when that is the recommendation. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
 
 ## Stripe (do not mix, do not replace)
 
@@ -149,6 +149,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Do owner work from Next step: when approved actions are ready, Next step lists them with Open the page, I did this, and Skip for now. GroovGro does not run them.
 - Check what changed from Next step: when work is marked done, Next step asks the owner to compare the Goal number. GroovGro does not change the plan.
 - Confirm drafts from Next step: when suggested offers or goals are waiting, Next step lists them with Confirm and Reject. Nothing becomes active until the owner confirms.
+- Connect the existing website from Next step: when that is the recommendation, Next step has the website address field. GroovGro does not move the live site.
 - Growth Plan: GroovGro can draft a versioned plan from a Goal. Approve or reject. Approving does not execute.
 - Growth Actions from an approved plan: GroovGro can propose the first actions. Approve or reject. Nothing runs. Ads, email, and social stay left alone.
 - Your work: approved actions the owner does here or on Next step. I did this or Skip for now. GroovGro records it and does not execute.
