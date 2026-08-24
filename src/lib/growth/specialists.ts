@@ -44,6 +44,7 @@ export type SpecialistFacts = {
   searchConsoleConnected: boolean
   searchConsoleProperty: boolean
   searchConsoleSnapshot: boolean
+  searchConsoleSnapshotAt: Date | null
   openLeadCount: number
   contactCount: number
   recordedVisitCount: number
@@ -105,6 +106,22 @@ const CHANNEL: Record<SpecialistId, string> = {
   email: "email",
   social: "social",
 };
+
+export const SEARCH_CONSOLE_REFRESH_AFTER_DAYS = 7;
+
+function searchConsoleSnapshotStale(facts: SpecialistFacts): boolean {
+  if (!facts.searchConsoleSnapshotAt) return false;
+  const ageMs = facts.now.getTime() - facts.searchConsoleSnapshotAt.getTime();
+  return ageMs >= SEARCH_CONSOLE_REFRESH_AFTER_DAYS * 24 * 60 * 60 * 1000;
+}
+
+function searchConsoleNeedsRefresh(facts: SpecialistFacts): boolean {
+  return (
+    facts.searchConsoleConnected &&
+    facts.searchConsoleProperty &&
+    (!facts.searchConsoleSnapshot || searchConsoleSnapshotStale(facts))
+  );
+}
 
 function policyFor(policies: SpecialistPolicy[], channel: string): EvidencePolicy {
   return (
@@ -214,12 +231,14 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       body: "Google is connected. Choose the Search Console property here so GroovGro can read search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
       href: "/app/seo",
     };
-  } else if (facts.searchConsoleConnected && facts.searchConsoleProperty && !facts.searchConsoleSnapshot) {
+  } else if (searchConsoleNeedsRefresh(facts)) {
     recommend = {
       kind: "recommend",
       classification: "optimization",
       title: REFRESH_SEARCH_CONSOLE_STEP_TITLE,
-      body: "The Search Console property is saved. Refresh here so GroovGro can read the latest search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
+      body: facts.searchConsoleSnapshot
+        ? "The stored Search Console numbers are more than a week old. Refresh here so GroovGro can read the latest search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads."
+        : "The Search Console property is saved. Refresh here so GroovGro can read the latest search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
       href: "/app/seo",
     };
   } else {

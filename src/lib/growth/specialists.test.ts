@@ -30,6 +30,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     searchConsoleConnected: true,
     searchConsoleProperty: true,
     searchConsoleSnapshot: true,
+    searchConsoleSnapshotAt: now,
     openLeadCount: 0,
     contactCount: 1,
     recordedVisitCount: 1,
@@ -191,6 +192,32 @@ describe("growth specialists", () => {
     assert.equal(seo.recommend.classification, "optimization");
     assert.equal(seo.recommend.title, REFRESH_SEARCH_CONSOLE_STEP_TITLE);
     assert.match(seo.recommend.body, /Refresh here/);
+    assert.match(seo.recommend.body, /will not edit the website/);
+  });
+
+  it("asks to refresh Search Console when stored numbers are more than a week old", () => {
+    const seo = specialistById(
+      buildSpecialistReports(
+        facts({
+          seoScore: 88,
+          seoSummary: "Looks complete.",
+          seoCheckedAt: now,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          searchConsoleConnected: true,
+          searchConsoleProperty: true,
+          searchConsoleSnapshot: true,
+          searchConsoleSnapshotAt: new Date("2026-08-15T12:00:00.000Z"),
+          openLeadCount: 0,
+        }),
+      ),
+      "seo",
+    );
+    assert.ok(seo);
+    assert.equal(seo.recommend.kind, "recommend");
+    assert.equal(seo.recommend.classification, "optimization");
+    assert.equal(seo.recommend.title, REFRESH_SEARCH_CONSOLE_STEP_TITLE);
+    assert.match(seo.recommend.body, /more than a week old/);
     assert.match(seo.recommend.body, /will not edit the website/);
   });
 

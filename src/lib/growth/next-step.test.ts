@@ -25,6 +25,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     searchConsoleConnected: true,
     searchConsoleProperty: true,
     searchConsoleSnapshot: true,
+    searchConsoleSnapshotAt: now,
     openLeadCount: 0,
     contactCount: 1,
     recordedVisitCount: 1,
@@ -806,6 +807,56 @@ describe("coordinated next step", () => {
           searchConsoleConnected: true,
           searchConsoleProperty: true,
           searchConsoleSnapshot: false,
+          openLeadCount: 3,
+          seoScore: 88,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          seoCheckedAt: now,
+        }),
+      ),
+      waitingActions: [],
+    });
+    assert.equal(step.primary.title, "Follow up open leads");
+  });
+
+  it("puts Refresh Search Console on Next step when stored numbers are more than a week old", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          searchConsoleConnected: true,
+          searchConsoleProperty: true,
+          searchConsoleSnapshot: true,
+          searchConsoleSnapshotAt: new Date("2026-08-15T12:00:00.000Z"),
+          openLeadCount: 0,
+          seoScore: 88,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          seoCheckedAt: now,
+        }),
+      ),
+      waitingActions: [],
+    });
+    assert.equal(step.primary.title, "Refresh Search Console numbers");
+    assert.equal(step.primary.classification, "optimization");
+    assert.match(step.primary.body, /more than a week old/);
+    assert.match(page, /isSearchConsoleNextStep/);
+    assert.match(page, /SearchConsolePanel/);
+  });
+
+  it("keeps follow-up of open leads ahead of refreshing stale Search Console numbers", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          searchConsoleConnected: true,
+          searchConsoleProperty: true,
+          searchConsoleSnapshot: true,
+          searchConsoleSnapshotAt: new Date("2026-08-15T12:00:00.000Z"),
           openLeadCount: 3,
           seoScore: 88,
           seoFailCount: 0,

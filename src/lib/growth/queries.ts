@@ -356,6 +356,7 @@ async function getLatestSeoSummary(organizationId: string) {
       searchConsoleConnected: false,
       searchConsoleProperty: false,
       searchConsoleSnapshot: false,
+      searchConsoleSnapshotAt: null as Date | null,
     };
   }
 
@@ -377,9 +378,13 @@ async function getLatestSeoSummary(organizationId: string) {
       )
       .limit(1),
     db
-      .select({ id: searchConsoleSnapshots.id })
+      .select({
+        id: searchConsoleSnapshots.id,
+        createdAt: searchConsoleSnapshots.createdAt,
+      })
       .from(searchConsoleSnapshots)
       .where(eq(searchConsoleSnapshots.organizationId, organizationId))
+      .orderBy(desc(searchConsoleSnapshots.createdAt))
       .limit(1),
   ]);
 
@@ -399,6 +404,7 @@ async function getLatestSeoSummary(organizationId: string) {
     searchConsoleConnected,
     searchConsoleProperty: Boolean(secret?.siteUrl),
     searchConsoleSnapshot: snapshotRows.length > 0,
+    searchConsoleSnapshotAt: snapshotRows[0]?.createdAt ?? null,
   };
 }
 
