@@ -442,7 +442,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If Search Console is connected, a property is saved, and the stored numbers are more than a week old, Next step asks the owner to refresh. Open leads still come first. GroovGro does not edit the website, submit a sitemap, or buy ads.
 
-### 44. Draft copy in your voice from Next step (this slice)
+### 44. Draft copy in your voice from Next step
 
 **Reason:** After the voice profile and an example are saved, creating a draft still lived only on Brand voice. Put Create draft on Next step. GroovGro must not send, post, or edit the live website.
 
@@ -451,6 +451,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If visits are recorded, a brand voice profile and an example are saved, and no draft exists yet, Next step asks the owner to create a draft. Saving the profile, adding an example, open leads, the tracking snippet, and the public lead form still come first. GroovGro keeps the draft in this workspace. It does not send email, post to social, or edit the live website.
+
+### 45. Add an offer from Next step (this slice)
+
+**Reason:** When no confirmed offer exists, adding one still lived only on Offers. Put Save offer on Next step. GroovGro must not start marketing.
+
+**Affected:** Next step. Reuses `OfferCreateForm`. Does not execute.
+
+**Migration risk:** None.
+
+**Current functionality:** If visits are recorded and no confirmed offer exists, Next step asks the owner to name something the business promotes or wants a customer to do. Open leads, the tracking snippet, and the public lead form still come first. GroovGro does not start marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -487,7 +497,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Save brand voice from Next step is parked.** Ask the owner to save how the business sounds when visits are recorded and no profile exists yet. Do not send email, post, or edit the live website.
 - **Add a brand voice example from Next step is parked.** Ask the owner to paste writing they already like after the profile is saved. Do not send email, post, or edit the live website.
 - **Refresh stale Search Console numbers from Next step is parked.** Ask the owner to refresh when stored numbers are more than a week old. Do not edit the live site.
-- **Draft copy in your voice from Next step (this slice).** Ask the owner to create a draft after the profile and an example are saved. Do not send email, post, or edit the live website.
+- **Draft copy in your voice from Next step is parked.** Ask the owner to create a draft after the profile and an example are saved. Do not send email, post, or edit the live website.
+- **Add an offer from Next step (this slice).** Ask the owner to name what the business promotes when no confirmed offer exists. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -604,7 +615,8 @@ Organization
 36. **Save brand voice from Next step** — save how the business sounds on Next step when visits are recorded and no profile exists yet. Done.
 37. **Add a brand voice example from Next step** — paste writing the owner already likes on Next step after the profile is saved. Done.
 38. **Refresh stale Search Console numbers from Next step** — refresh Search Console numbers on Next step when they are more than a week old. Done.
-39. **Draft copy in your voice from Next step** — create a draft on Next step after the profile and an example are saved. This slice.
-40. **Guarded automation** — only after the above is trusted.
+39. **Draft copy in your voice from Next step** — create a draft on Next step after the profile and an example are saved. Done.
+40. **Add an offer from Next step** — save an offer on Next step when none are confirmed yet. This slice.
+41. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

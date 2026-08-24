@@ -1,20 +1,13 @@
-import {
-  createConstraint,
-  createOffer,
-} from "@/lib/actions/growth";
+import { createConstraint } from "@/lib/actions/growth";
 import {
   ConfirmRejectButtons,
   InferredBadge,
   ReviewConnectedDataButton,
 } from "@/components/growth-review";
+import { OfferCreateForm } from "@/components/offer-create-form";
 import { getAppSession } from "@/lib/auth/session";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
-import {
-  CONSTRAINT_TYPES,
-  OFFER_TYPES,
-  PRICING_MODELS,
-  labelFor,
-} from "@/lib/growth/types";
+import { CONSTRAINT_TYPES, labelFor } from "@/lib/growth/types";
 import { formatMoney } from "@/lib/money";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import {
@@ -26,7 +19,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Table,
   TableBody,
@@ -69,93 +61,7 @@ export default async function OffersPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <SaveForm
-            action={createOffer}
-            successMessage="Offer saved"
-            resetOnSuccess
-            className="grid gap-4 md:grid-cols-2"
-          >
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" name="name" required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="offerType">Type</Label>
-              <select id="offerType" name="offerType" className={selectClassName} defaultValue="other">
-                {OFFER_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {labelFor(type)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="category">Category</Label>
-              <Input id="category" name="category" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="pricingModel">Pricing model</Label>
-              <select
-                id="pricingModel"
-                name="pricingModel"
-                className={selectClassName}
-                defaultValue="unspecified"
-              >
-                {PRICING_MODELS.map((model) => (
-                  <option key={model} value={model}>
-                    {labelFor(model)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="availabilityModel">Availability model</Label>
-              <select
-                id="availabilityModel"
-                name="availabilityModel"
-                className={selectClassName}
-                defaultValue="unconstrained"
-              >
-                {CONSTRAINT_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {labelFor(type)}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="price">Price</Label>
-              <Input id="price" name="price" placeholder="0.00" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cost">Cost to deliver</Label>
-              <Input id="cost" name="cost" placeholder="0.00" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
-              <Input id="location" name="location" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <select id="status" name="status" className={selectClassName} defaultValue="active">
-                <option value="draft">Draft</option>
-                <option value="active">Active</option>
-                <option value="paused">Paused</option>
-                <option value="archived">Archived</option>
-              </select>
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="conversionUrl">Where the customer acts</Label>
-              <Input id="conversionUrl" name="conversionUrl" placeholder="https://" />
-            </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea id="description" name="description" rows={3} />
-            </div>
-            <SaveButton type="submit" disabled={!session.organizationId}>
-              Save offer
-            </SaveButton>
-          </SaveForm>
+          <OfferCreateForm disabled={!session.organizationId} />
         </CardContent>
       </Card>
 

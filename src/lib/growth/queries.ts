@@ -485,6 +485,9 @@ export async function getSpecialistReports(organizationId: string) {
     brandVoiceSaved: brandVoice.brandVoiceSaved,
     brandVoiceExampleSaved: brandVoice.brandVoiceExampleSaved,
     brandVoiceDraftSaved: brandVoice.brandVoiceDraftSaved,
+    confirmedOfferCount: snapshot.offers.filter(
+      (offer) => (offer.discoveryStatus ?? "confirmed") === "confirmed",
+    ).length,
     upcomingEventCount: dashboard.upcomingEvents.length,
     evidenceSample: defaultCheck?.sample ?? {
       elapsedDays: 0,

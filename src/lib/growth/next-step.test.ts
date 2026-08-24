@@ -32,6 +32,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     brandVoiceSaved: true,
     brandVoiceExampleSaved: true,
     brandVoiceDraftSaved: true,
+    confirmedOfferCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
     advertisingConnected: false,
@@ -1121,6 +1122,53 @@ describe("coordinated next step", () => {
       websiteRead: true,
     });
     assert.equal(step.primary.title, "Add a brand voice example");
+  });
+
+  it("puts Add an offer on Next step when visits are recorded and none are confirmed yet", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          confirmedOfferCount: 0,
+          recordedVisitCount: 1,
+          brandVoiceSaved: false,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Add an offer");
+    assert.equal(step.primary.classification, "strategic");
+    assert.match(step.primary.body, /will not start marketing/);
+    assert.match(page, /isAddOfferNextStep/);
+    assert.match(page, /OfferCreateForm/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/offers/page.tsx"), "utf8"),
+      /OfferCreateForm/,
+    );
+  });
+
+  it("keeps sharing the lead form ahead of adding an offer", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          confirmedOfferCount: 0,
+          recordedVisitCount: 1,
+          openLeadCount: 0,
+          contactCount: 0,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Share the public lead form");
   });
 
   it("puts Add event on Next step when the schedule needs a review", () => {
