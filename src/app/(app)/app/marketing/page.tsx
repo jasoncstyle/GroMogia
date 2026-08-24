@@ -1,6 +1,11 @@
+import Link from "next/link";
+
 import { getAppSession } from "@/lib/auth/session";
+import { appUrl } from "@/lib/env";
 import { formatMoney } from "@/lib/money";
+import { resolveOrganizationSlug } from "@/lib/org";
 import { getMarketingSnapshot } from "@/lib/phase3/queries";
+import { NamedLeadFormLink } from "@/components/named-lead-form-link";
 import {
   Card,
   CardContent,
@@ -23,6 +28,13 @@ export default async function MarketingPage() {
   const snapshot = session.organizationId
     ? await getMarketingSnapshot(session.organizationId)
     : null;
+  const slug = session.organizationId
+    ? await resolveOrganizationSlug(
+        session.organizationId,
+        session.organizationSlug,
+      )
+    : "";
+  const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -30,10 +42,32 @@ export default async function MarketingPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Marketing</h1>
         <p className="text-muted-foreground">
           First look at campaign → lead → customer → revenue from the website
-          snippet, the public form, and Stripe. This is not ads, SEO, or the
-          website builder. Attribution is imperfect.
+          snippet, the public form, and Stripe. Name a share below so this
+          table can show a real channel instead of direct, website, or stripe.
+          GroovGro will not buy ads.
         </p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Name a campaign on a shared link</CardTitle>
+          <CardDescription>
+            Type where you will share the public lead form and a name for this
+            share, then copy the link into the post or message you already
+            write. GroovGro will not buy ads, send email, or change the live
+            website.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {leadFormUrl ? (
+            <NamedLeadFormLink baseUrl={leadFormUrl} />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Sign in so GroovGro can build your public lead form link.
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {!snapshot ? (
         <p className="text-sm text-muted-foreground">
@@ -48,9 +82,8 @@ export default async function MarketingPage() {
               form or people you add. Revenue counts Stripe charges only
               (the <code className="text-foreground">ch_</code> rows), so one
               checkout is not counted three times. Add{" "}
-              <code className="text-foreground">?utm_source=</code> and{" "}
-              <code className="text-foreground">?utm_campaign=</code> to links
-              when you share the public form.
+              a named link when you share the public form. GroovGro will not
+              buy ads.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -87,7 +120,11 @@ export default async function MarketingPage() {
                   <p className="mt-4 text-sm text-muted-foreground">
                     {formatMoney(snapshot.unattributedRevenueCents)} in Stripe
                     charges has no person email yet, so it is listed as
-                    unattributed.
+                    unattributed. Match those on{" "}
+                    <Link href="/app/commerce" className="underline">
+                      Bookings
+                    </Link>
+                    . GroovGro will not change checkout.
                   </p>
                 ) : null}
               </>

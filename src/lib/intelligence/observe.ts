@@ -160,7 +160,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Name the campaign on shared links",
-      body: "Add ?utm_source= and ?utm_campaign= when you share the public lead form or landing pages so Marketing can show a real channel name instead of direct, website, or stripe.",
+      body: "On Marketing, type where you will share and a name for this share, then copy the link. GroovGro will not buy ads.",
       evidence: ["attribution sources are generic"],
       href: "/app/marketing",
     });
