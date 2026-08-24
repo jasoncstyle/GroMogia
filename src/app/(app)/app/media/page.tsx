@@ -3,6 +3,7 @@ import { getAppSession } from "@/lib/auth/session";
 import { isBlobConfigured } from "@/lib/media/blob";
 import { listMediaLibrary } from "@/lib/media/queries";
 import { MediaUploadControl } from "@/components/media-upload-control";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
@@ -104,6 +105,8 @@ export default async function MediaLibraryPage() {
           )}
         </CardContent>
       </Card>
+
+      <OpenNextStepLink />
     </div>
   );
 }

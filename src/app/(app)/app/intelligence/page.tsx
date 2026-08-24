@@ -12,6 +12,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { refreshIntelligence } from "@/lib/actions/intelligence";
 import { SpecialistReports } from "@/components/specialist-reports";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { getSpecialistReports } from "@/lib/growth/queries";
 import { hasPermission } from "@/lib/permissions";
 import {
@@ -129,6 +130,8 @@ export default async function IntelligencePage() {
           ) : null}
         </>
       )}
+
+      <OpenNextStepLink />
     </div>
   );
 }

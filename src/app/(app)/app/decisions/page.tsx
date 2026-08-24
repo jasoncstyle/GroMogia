@@ -5,6 +5,7 @@ import { WaitingActionButtons } from "@/components/next-step-actions";
 import { hasPermission } from "@/lib/permissions";
 import { getAppSession } from "@/lib/auth/session";
 import { GrowthStoryCard } from "@/components/growth-story";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { getCoordinatedNextStep, getGrowthSnapshot } from "@/lib/growth/queries";
 import { partitionOwnerWork } from "@/lib/growth/owner-work";
 import { buildGrowthStory, storyFactsFromWorkspace } from "@/lib/growth/story";
@@ -300,6 +301,8 @@ export default async function DecisionsPage() {
           </Button>
         </CardContent>
       </Card>
+
+      <OpenNextStepLink />
     </div>
   );
 }

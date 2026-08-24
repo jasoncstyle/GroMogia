@@ -1647,6 +1647,18 @@ describe("coordinated next step", () => {
       "src/app/(app)/app/business/page.tsx",
       "src/app/(app)/app/events/page.tsx",
       "src/app/(app)/app/offers/page.tsx",
+      "src/app/(app)/app/growth-review/page.tsx",
+      "src/app/(app)/app/intelligence/page.tsx",
+      "src/app/(app)/app/decisions/page.tsx",
+      "src/app/(app)/app/settings/page.tsx",
+      "src/app/(app)/app/settings/brand/page.tsx",
+      "src/app/(app)/app/settings/team/page.tsx",
+      "src/app/(app)/app/media/page.tsx",
+      "src/app/(app)/app/integrations/page.tsx",
+      "src/app/(app)/app/marketing/page.tsx",
+      "src/app/(app)/app/analytics/page.tsx",
+      "src/app/(app)/app/notifications/page.tsx",
+      "src/app/(app)/app/audit/page.tsx",
     ]) {
       const page = readFileSync(join(process.cwd(), file), "utf8");
       assert.match(page, /OpenNextStepLink/, file);

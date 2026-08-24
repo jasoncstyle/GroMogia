@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
 import { auditEvents } from "@/lib/db/schema";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 
 export default async function AuditPage() {
   const session = await getAppSession();
@@ -44,6 +45,8 @@ export default async function AuditPage() {
           ))}
         </ul>
       )}
+
+      <OpenNextStepLink />
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 
 export default async function AnalyticsPage() {
   const session = await getAppSession();
@@ -76,6 +77,8 @@ export default async function AnalyticsPage() {
           </Card>
         </>
       )}
+
+      <OpenNextStepLink />
     </div>
   );
 }

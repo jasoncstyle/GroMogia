@@ -1,6 +1,7 @@
 import { getAppSession } from "@/lib/auth/session";
 import { getBrandSettingsForm } from "@/lib/growth/queries";
 import { BrandSettingsForm } from "@/components/brand-settings-form";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 
 export default async function BrandSettingsPage() {
   const session = await getAppSession();
@@ -27,6 +28,8 @@ export default async function BrandSettingsPage() {
           Connect Clerk and Neon, then sign in, before this form can save.
         </p>
       )}
+
+      <OpenNextStepLink />
     </div>
   );
 }

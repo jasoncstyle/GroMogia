@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import {
   Card,
   CardDescription,
@@ -56,6 +57,8 @@ export default function SettingsPage() {
           </CardHeader>
         </Card>
       </div>
+
+      <OpenNextStepLink />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { GrowthReviewCard } from "@/components/growth-review";
 import { GrowthSettingsForm } from "@/components/growth-settings-form";
+import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -77,6 +78,8 @@ export default async function GrowthReviewPage() {
           Sign in to generate a weekly and monthly review from connected data.
         </p>
       )}
+
+      <OpenNextStepLink />
     </div>
   );
 }
