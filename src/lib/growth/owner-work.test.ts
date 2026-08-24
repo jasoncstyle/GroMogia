@@ -144,6 +144,8 @@ describe("owner work", () => {
     );
     assert.doesNotMatch(page, /Open the approved plan/);
     assert.doesNotMatch(page, /href="\/app\/goals"/);
+    assert.doesNotMatch(page, /href="\/app\/decisions"/);
+    assert.doesNotMatch(page, /The path so far/);
     assert.doesNotMatch(page, /Draft or approve a plan/);
   });
 

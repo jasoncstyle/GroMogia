@@ -115,19 +115,10 @@ export default async function GoalsPage() {
           </p>
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline" size="sm">
-              <Link href="/app">Read the path so far</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
               <Link href="/app/next-step">Open Next step</Link>
             </Button>
             <Button asChild variant="outline" size="sm">
               <Link href="/app/growth-review">Open growth review</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/app/decisions">Open decision history</Link>
-            </Button>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/app/intelligence">Open specialists</Link>
             </Button>
           </div>
         </CardContent>

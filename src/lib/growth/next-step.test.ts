@@ -1645,6 +1645,32 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(page, /href="\/app\/goals"/);
   });
 
+  it("keeps Goals, Growth review, and Your work from sending the owner away for Next step content", () => {
+    const goals = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/goals/page.tsx"),
+      "utf8",
+    );
+    const review = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/growth-review/page.tsx"),
+      "utf8",
+    );
+    const work = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/work/page.tsx"),
+      "utf8",
+    );
+    assert.match(goals, /href="\/app\/next-step">Open Next step/);
+    assert.match(goals, /href="\/app\/growth-review">Open growth review/);
+    assert.doesNotMatch(goals, /href="\/app\/intelligence"/);
+    assert.doesNotMatch(goals, /href="\/app\/decisions"/);
+    assert.doesNotMatch(goals, /Read the path so far/);
+    assert.match(review, /href="\/app\/next-step">Open Next step/);
+    assert.doesNotMatch(review, /href="\/app\/intelligence"/);
+    assert.doesNotMatch(review, /href="\/app\/decisions"/);
+    assert.match(work, /href="\/app\/next-step">Open Next step/);
+    assert.doesNotMatch(work, /href="\/app\/decisions"/);
+    assert.doesNotMatch(work, /The path so far/);
+  });
+
   it("offers Next step from Website, Leads, Bookings, and the other owner pages", () => {
     const link = readFileSync(
       join(process.cwd(), "src/components/open-next-step-link.tsx"),
