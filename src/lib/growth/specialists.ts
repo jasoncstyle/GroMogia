@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -181,6 +181,17 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       classification: "optimization",
       title: IMPROVE_SEO_STEP_TITLE,
       body: "The waiting threshold is met and the page has items to make clearer. Draft and approve that copy here. GroovGro will not change the connected website or start ads.",
+      href: "/app/seo",
+    };
+  } else if (
+    facts.websiteConnected &&
+    !facts.searchConsoleConnected
+  ) {
+    recommend = {
+      kind: "recommend",
+      classification: "optimization",
+      title: CONNECT_SEARCH_CONSOLE_STEP_TITLE,
+      body: "Connect Search Console here so GroovGro can read search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
       href: "/app/seo",
     };
   } else {

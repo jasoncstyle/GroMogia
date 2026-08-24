@@ -69,6 +69,7 @@ export const FOLLOW_UP_LEADS_STEP_TITLE = "Follow up open leads";
 export const RUN_SEO_STEP_TITLE = "Run an SEO check";
 export const FIX_SEO_STEP_TITLE = "Fix blocking SEO items";
 export const IMPROVE_SEO_STEP_TITLE = "Improve the page when you have time";
+export const CONNECT_SEARCH_CONSOLE_STEP_TITLE = "Connect Search Console";
 export const REVIEW_SCHEDULE_STEP_TITLE = "Review the schedule or how people find it";
 export const GOAL_REACHED_STEP_TITLE = "This Goal is reached";
 export const ACTIVATE_GOAL_STEP_TITLE = "Make this the active Goal";
@@ -82,6 +83,7 @@ export function skipsDuplicateNextStepAction(title: string): boolean {
     text === RUN_SEO_STEP_TITLE ||
     text === FIX_SEO_STEP_TITLE ||
     text === IMPROVE_SEO_STEP_TITLE ||
+    text === CONNECT_SEARCH_CONSOLE_STEP_TITLE ||
     text === REVIEW_SCHEDULE_STEP_TITLE ||
     text === GOAL_REACHED_STEP_TITLE ||
     text === ACTIVATE_GOAL_STEP_TITLE ||
@@ -134,6 +136,10 @@ export function openPageLabelForNextStep(title: string): string | null {
 export function isSeoDraftNextStep(title: string): boolean {
   const text = clean(title);
   return text === FIX_SEO_STEP_TITLE || text === IMPROVE_SEO_STEP_TITLE;
+}
+
+export function isSearchConsoleNextStep(title: string): boolean {
+  return clean(title) === CONNECT_SEARCH_CONSOLE_STEP_TITLE;
 }
 
 function isPlanLoopNextStep(title: string): boolean {

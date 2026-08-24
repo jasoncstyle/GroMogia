@@ -6,6 +6,7 @@ import { join } from "node:path";
 import {
   ACTIVATE_GOAL_STEP_TITLE,
   ADD_GOAL_STEP_TITLE,
+  CONNECT_SEARCH_CONSOLE_STEP_TITLE,
   draftGrowthPlanSummary,
   draftPlanExcerpt,
   findDraftPlanToApprove,
@@ -16,6 +17,7 @@ import {
   goalNeedsPlanDraft,
   hasDedicatedNextStepControls,
   IMPROVE_SEO_STEP_TITLE,
+  isSearchConsoleNextStep,
   isSeoDraftNextStep,
   openPageLabelForNextStep,
   READ_GOAL_STEP_TITLE,
@@ -439,6 +441,8 @@ describe("growth plan draft", () => {
     assert.equal(openPageLabelForNextStep(IMPROVE_SEO_STEP_TITLE), null);
     assert.equal(isSeoDraftNextStep(FIX_SEO_STEP_TITLE), true);
     assert.equal(isSeoDraftNextStep(IMPROVE_SEO_STEP_TITLE), true);
+    assert.equal(isSearchConsoleNextStep(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);
+    assert.equal(isSearchConsoleNextStep(FIX_SEO_STEP_TITLE), false);
     assert.equal(openPageLabelForNextStep(REVIEW_SCHEDULE_STEP_TITLE), "Open Events");
     assert.equal(openPageLabelForNextStep(READ_GOAL_STEP_TITLE), "Open Goals");
     assert.equal(openPageLabelForNextStep(ADD_GOAL_STEP_TITLE), "Open Goals");
@@ -467,6 +471,7 @@ describe("growth plan draft", () => {
     assert.equal(skipsDuplicateNextStepAction(FOLLOW_UP_LEADS_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(RUN_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(FIX_SEO_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(GOAL_REACHED_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction("Nothing should change yet"), false);
   });

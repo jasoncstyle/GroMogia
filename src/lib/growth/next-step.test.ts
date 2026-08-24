@@ -22,7 +22,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     seoFailCount: 0,
     seoWarnCount: 0,
     seoCheckedAt: now,
-    searchConsoleConnected: false,
+    searchConsoleConnected: true,
     openLeadCount: 0,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
@@ -593,6 +593,32 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.href, "/app/seo");
     assert.match(page, /RUN_SEO_STEP_TITLE/);
     assert.match(page, /RunHomepageSeoButton/);
+  });
+
+  it("puts Connect Search Console on Next step after a homepage check", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          searchConsoleConnected: false,
+          openLeadCount: 0,
+          seoScore: 88,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          seoCheckedAt: now,
+        }),
+      ),
+      waitingActions: [],
+    });
+    assert.equal(step.primary.title, "Connect Search Console");
+    assert.equal(step.primary.classification, "optimization");
+    assert.match(step.primary.body, /will not edit the website/);
+    assert.match(page, /isSearchConsoleNextStep/);
+    assert.match(page, /\/api\/google\/start/);
   });
 
   it("asks the Dashboard to propose first actions on Next step", () => {

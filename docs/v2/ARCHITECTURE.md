@@ -312,7 +312,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If Next step already has Draft the next Goal, Make this the active Goal, Draft a plan, Approve this plan, or Propose the first actions, those are the only buttons. If the signed-in person cannot use that button, Next step shows Open Goals instead of I’ll do this. If what changed says to read or add a Goal, Open Goals is the main button. GroovGro does not execute.
 
-### 31. Draft and approve SEO copy from Next step (this slice)
+### 31. Draft and approve SEO copy from Next step
 
 **Reason:** When Next step is fix blocking SEO items or improve the page, Draft improvements and Approve still lived only on SEO. Put those buttons on Next step. Approving must not edit the live connected website.
 
@@ -321,6 +321,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If Next step is fix blocking SEO items or improve the page, the owner can draft, copy, approve, or reject homepage SEO copy there. GroovGro does not paste that copy onto the live site.
+
+### 32. Connect Search Console from Next step (this slice)
+
+**Reason:** After a homepage check, Search Console still lived only on SEO. Put Connect Search Console on Next step when it is not connected. GroovGro must stay read-only.
+
+**Affected:** Next step. Reuses `/api/google/start`. Does not edit the website, submit a sitemap, or buy ads.
+
+**Migration risk:** None.
+
+**Current functionality:** If a homepage check is saved, blocking items are clear, and Search Console is not connected, Next step asks the owner to connect it there. GroovGro only reads search numbers.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -344,7 +354,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Run an SEO check from Next step is parked.** Ask the owner to run the homepage check. Do not edit the live site.
 - **Open SEO or Events from Next step is parked.** Ask the owner to open the named page. Do not execute.
 - **Keep one button on Next step is parked.** Do not show I’ll do this next to the real button. Do not execute.
-- **Draft and approve SEO copy from Next step (this slice).** Ask the owner to draft and approve homepage SEO copy. Do not edit the live site.
+- **Draft and approve SEO copy from Next step is parked.** Ask the owner to draft and approve homepage SEO copy. Do not edit the live site.
+- **Connect Search Console from Next step (this slice).** Ask the owner to connect Search Console read-only. Do not edit the live site.
 
 ## DESIGN FOR LATER
 
@@ -448,7 +459,8 @@ Organization
 23. **Run an SEO check from Next step** — run the homepage check on Next step. Done.
 24. **Open SEO or Events from Next step** — open the named page instead of I’ll do this. Done.
 25. **Keep one button on Next step** — do not show I’ll do this next to the real button. Done.
-26. **Draft and approve SEO copy from Next step** — draft and approve homepage SEO copy on Next step. This slice.
-27. **Guarded automation** — only after the above is trusted.
+26. **Draft and approve SEO copy from Next step** — draft and approve homepage SEO copy on Next step. Done.
+27. **Connect Search Console from Next step** — connect Search Console read-only from Next step. This slice.
+28. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -32,6 +32,8 @@ export type StoredGoogleSecret = {
 function revalidateSearchConsole() {
   revalidatePath("/app/seo");
   revalidatePath("/app/integrations");
+  revalidatePath("/app/next-step");
+  revalidatePath("/app");
 }
 
 function canManageSearchConsole(session: OrgSession): boolean {

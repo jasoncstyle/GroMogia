@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -27,7 +27,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     seoFailCount: 0,
     seoWarnCount: 0,
     seoCheckedAt: null,
-    searchConsoleConnected: false,
+    searchConsoleConnected: true,
     openLeadCount: 0,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
@@ -97,7 +97,7 @@ describe("growth specialists", () => {
     assert.match(seo.recommend.body, /will not change the connected website/);
   });
 
-  it("leaves SEO alone when the page is fine and evidence is thin", () => {
+  it("leaves SEO alone when the page is fine, Search Console is connected, and evidence is thin", () => {
     const seo = specialistById(
       buildSpecialistReports(
         facts({
@@ -106,6 +106,7 @@ describe("growth specialists", () => {
           seoCheckedAt: now,
           seoFailCount: 0,
           seoWarnCount: 0,
+          searchConsoleConnected: true,
         }),
       ),
       "seo",
@@ -113,6 +114,29 @@ describe("growth specialists", () => {
     assert.ok(seo);
     assert.equal(seo.recommend.kind, "no_change_yet");
     assert.match(seo.recommend.title, /Leave SEO alone/);
+  });
+
+  it("asks to connect Search Console after a homepage check when it is not connected", () => {
+    const seo = specialistById(
+      buildSpecialistReports(
+        facts({
+          seoScore: 88,
+          seoSummary: "Looks complete.",
+          seoCheckedAt: now,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          searchConsoleConnected: false,
+          openLeadCount: 0,
+        }),
+      ),
+      "seo",
+    );
+    assert.ok(seo);
+    assert.equal(seo.recommend.kind, "recommend");
+    assert.equal(seo.recommend.classification, "optimization");
+    assert.equal(seo.recommend.title, CONNECT_SEARCH_CONSOLE_STEP_TITLE);
+    assert.match(seo.recommend.body, /will not edit the website/);
+    assert.match(seo.recommend.body, /buy ads/);
   });
 
   it("asks to connect an existing website and never to move it", () => {
