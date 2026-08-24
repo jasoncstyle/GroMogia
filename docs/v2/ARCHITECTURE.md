@@ -652,7 +652,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Your work Open the page opens Next step for those owner loops. Saving I’ll do this no longer names a different page. Matching charges still names Bookings. Leave-alone still names the module page. GroovGro does not execute.
 
-### 65. Next step is first after Dashboard in the nav (this slice)
+### 65. Next step is first after Dashboard in the nav
 
 **Reason:** Next step sat in the Grow group after Offers, Website, Leads, and Bookings. The owner had to hunt for the one page that already holds the owner-assistance buttons.
 
@@ -661,6 +661,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step is the first signed-in nav item after Dashboard. Offers, Website, Leads, and Bookings stay below it. GroovGro does not execute.
+
+### 66. Intelligence people observations open Next step when that is the loop (this slice)
+
+**Reason:** Intelligence still sent People in the workspace to Leads even when follow-up or adding a person already lives on Next step.
+
+**Affected:** Intelligence observations.
+
+**Migration risk:** None.
+
+**Current functionality:** If there are open leads, or no person has been captured yet, People in the workspace opens Next step. If people are already in the workspace and none are open leads, it still opens Leads. Matching charges still names Bookings. GroovGro does not email anyone.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -718,7 +728,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Remaining owner pages offer Next step is parked.** Growth review, Intelligence, Decisions, Settings, Brand, Team, Media, Integrations, Marketing, Analytics, Notifications, and Audit have Open Next step. Do not execute.
 - **Confirm drafts, review site, owner work, and wait stay on Next step is parked.** Those coordinator loops name Next step. Intelligence website and Stripe connect observations open Next step. Matching charges still names Bookings. Do not execute.
 - **Your work Open the page stays on Next step is parked.** Approved specialist, SEO, website, and brand-voice work open Next step. Saving I’ll do this does not name a different page. Leave-alone still names the module page. Do not execute.
-- **Next step is first after Dashboard in the nav (this slice).** Next step sits under Dashboard. Offers, Website, Leads, and Bookings stay below it. Do not execute.
+- **Next step is first after Dashboard in the nav is parked.** Next step sits under Dashboard. Offers, Website, Leads, and Bookings stay below it. Do not execute.
+- **Intelligence people observations open Next step when that is the loop (this slice).** Open leads or no person captured yet open Next step. A filled pipeline with no open leads still opens Leads. Matching charges still names Bookings. Do not email anyone.
 
 ## DESIGN FOR LATER
 
@@ -856,7 +867,8 @@ Organization
 57. **Remaining owner pages offer Next step** — Growth review, Intelligence, Decisions, Settings, Brand, Team, Media, Integrations, Marketing, Analytics, Notifications, and Audit have Open Next step. Done.
 58. **Confirm drafts, review site, owner work, and wait stay on Next step** — those coordinator loops name Next step; Intelligence website and Stripe connect observations open Next step. Done.
 59. **Your work Open the page stays on Next step** — approved specialist, SEO, website, and brand-voice work open Next step. Done.
-60. **Next step is first after Dashboard in the nav** — Next step sits under Dashboard; Offers, Website, Leads, and Bookings stay below it. This slice.
-61. **Guarded automation** — only after the above is trusted.
+60. **Next step is first after Dashboard in the nav** — Next step sits under Dashboard; Offers, Website, Leads, and Bookings stay below it. Done.
+61. **Intelligence people observations open Next step when that is the loop** — open leads or no person captured yet open Next step. This slice.
+62. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

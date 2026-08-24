@@ -38,6 +38,8 @@ describe("intelligence observe", () => {
       brief.recommendations.some((item) => /email them/i.test(item.body)),
       true,
     );
+    const people = brief.observations.find((item) => item.title === "People in the workspace");
+    assert.equal(people?.href, "/app/next-step");
   });
 
   it("does not invent revenue when financials are hidden", () => {
@@ -129,5 +131,21 @@ describe("intelligence observe", () => {
     );
     assert.equal(website?.href, "/app/next-step");
     assert.equal(stripe?.href, "/app/next-step");
+  });
+
+  it("sends people observations to Next step when follow-up or adding a person lives there", () => {
+    const empty = buildIntelligenceBrief(facts({ contactCount: 0, openLeadCount: 0 }));
+    const peopleEmpty = empty.observations.find(
+      (item) => item.title === "People in the workspace",
+    );
+    assert.equal(peopleEmpty?.href, "/app/next-step");
+
+    const browsing = buildIntelligenceBrief(
+      facts({ contactCount: 4, customerCount: 2, openLeadCount: 0 }),
+    );
+    const peopleBrowse = browsing.observations.find(
+      (item) => item.title === "People in the workspace",
+    );
+    assert.equal(peopleBrowse?.href, "/app/crm");
   });
 });

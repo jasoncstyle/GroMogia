@@ -82,7 +82,10 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     title: "People in the workspace",
     body: `${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"}, ${facts.customerCount} customer${facts.customerCount === 1 ? "" : "s"}, and ${facts.contactCount} contact${facts.contactCount === 1 ? "" : "s"}.`,
     evidence: ["lead_records", "customers", "contacts"],
-    href: "/app/crm",
+    href:
+      facts.openLeadCount > 0 || facts.contactCount === 0
+        ? "/app/next-step"
+        : "/app/crm",
   });
 
   if (facts.showFinancials && topRevenue && topRevenue.revenueCents > 0) {
