@@ -189,6 +189,7 @@ export default async function NextStepPage({
                       actionId={action.id}
                       href={hrefForGrowthAction(action)}
                       canUpdate={canUpdateWork}
+                      showOpenPage={false}
                     />
                   </div>
                 ))
@@ -208,9 +209,6 @@ export default async function NextStepPage({
                     defaultUrl={dashboard?.website?.publicUrl ?? ""}
                     canSave={canManageWebsite}
                   />
-                  <Button asChild variant="outline">
-                    <Link href="/app/website">Open Website</Link>
-                  </Button>
                 </>
               ) : step.primary.title === REVIEW_SITE_STEP_TITLE ? (
                 <>
@@ -219,9 +217,6 @@ export default async function NextStepPage({
                     disabled={!canManageWebsite && !canManageOffers}
                   />
                   <ReviewConnectedDataButton disabled={!session.organizationId} />
-                  <Button asChild variant="outline">
-                    <Link href="/app/website">Open Website</Link>
-                  </Button>
                 </>
               ) : isPasteSnippetNextStep(step.primary.title) ? (
                 <>
@@ -233,17 +228,9 @@ export default async function NextStepPage({
                       GroovGro does not replace the live site.
                     </p>
                   )}
-                  <Button asChild variant="outline">
-                    <Link href="/app/website">Open Website</Link>
-                  </Button>
                 </>
               ) : step.primary.title === RUN_SEO_STEP_TITLE ? (
-                <div className="flex flex-wrap gap-2">
-                  <RunHomepageSeoButton disabled={!canManageSeo} />
-                  <Button asChild variant="outline">
-                    <Link href="/app/seo">Open SEO</Link>
-                  </Button>
-                </div>
+                <RunHomepageSeoButton disabled={!canManageSeo} />
               ) : isSearchConsoleNextStep(step.primary.title) ? (
                 <>
                   {searchConsole ? (
@@ -255,13 +242,10 @@ export default async function NextStepPage({
                     />
                   ) : (
                     <p className="text-sm text-muted-foreground">
-                      Open SEO to finish Search Console. GroovGro will not
-                      edit the website.
+                      Search Console is not ready on this page yet. GroovGro
+                      will not edit the website.
                     </p>
                   )}
-                  <Button asChild variant="outline">
-                    <Link href="/app/seo">Open SEO</Link>
-                  </Button>
                 </>
               ) : isSeoDraftNextStep(step.primary.title) ? (
                 <>
@@ -287,12 +271,7 @@ export default async function NextStepPage({
                       />
                     </FoldableSample>
                   ))}
-                  <div className="flex flex-wrap gap-2">
-                    <DraftSeoImprovementsButton disabled={!canManageSeo} />
-                    <Button asChild variant="outline">
-                      <Link href="/app/seo">Open SEO</Link>
-                    </Button>
-                  </div>
+                  <DraftSeoImprovementsButton disabled={!canManageSeo} />
                 </>
               ) : isReviewScheduleNextStep(step.primary.title) ? (
                 <>
@@ -320,9 +299,6 @@ export default async function NextStepPage({
                     goals={links.goals}
                     disabled={!canManageEvents}
                   />
-                  <Button asChild variant="outline">
-                    <Link href="/app/events">Open Events</Link>
-                  </Button>
                 </>
               ) : isFollowUpLeadsNextStep(step.primary.title) ? (
                 <>
@@ -347,9 +323,6 @@ export default async function NextStepPage({
                       />
                     </div>
                   ))}
-                  <Button asChild variant="outline">
-                    <Link href="/app/crm">Open Leads & customers</Link>
-                  </Button>
                 </>
               ) : isShareLeadFormNextStep(step.primary.title) ? (
                 <>
@@ -357,8 +330,8 @@ export default async function NextStepPage({
                     <CopyLink url={leadFormUrl} />
                   ) : (
                     <p className="text-sm text-muted-foreground">
-                      Open Leads & customers to copy the public form. GroovGro
-                      will not email anyone.
+                      The public lead form is not ready on this page yet.
+                      GroovGro will not email anyone.
                     </p>
                   )}
                   <p className="text-sm font-medium">
@@ -369,9 +342,6 @@ export default async function NextStepPage({
                     goals={links.goals}
                     disabled={!canManageLeads}
                   />
-                  <Button asChild variant="outline">
-                    <Link href="/app/crm">Open Leads & customers</Link>
-                  </Button>
                 </>
               ) : isSaveBrandNextStep(step.primary.title) ? (
                 <>
@@ -380,9 +350,6 @@ export default async function NextStepPage({
                     organizationName={session.organizationName}
                     disabled={!canManageBrand}
                   />
-                  <Button asChild variant="outline">
-                    <Link href="/app/settings/brand">Open Brand</Link>
-                  </Button>
                 </>
               ) : isSaveBusinessNextStep(step.primary.title) ? (
                 <>
@@ -390,16 +357,10 @@ export default async function NextStepPage({
                     brain={brain}
                     disabled={!canManageSettings}
                   />
-                  <Button asChild variant="outline">
-                    <Link href="/app/business">Open Business</Link>
-                  </Button>
                 </>
               ) : isSaveProgressNextStep(step.primary.title) ? (
                 <>
                   <SaveConnectedProgressButton disabled={!canDraftPlan} />
-                  <Button asChild variant="outline">
-                    <Link href="/app/goals">Open Goals</Link>
-                  </Button>
                 </>
               ) : isStripeReadCopyNextStep(step.primary.title) ? (
                 <>
@@ -414,9 +375,6 @@ export default async function NextStepPage({
                         : "sync"
                     }
                   />
-                  <Button asChild variant="outline">
-                    <Link href="/app/commerce">Open Bookings & payments</Link>
-                  </Button>
                 </>
               ) : isSaveReviewScheduleNextStep(step.primary.title) ? (
                 <>
@@ -424,37 +382,22 @@ export default async function NextStepPage({
                     settings={growthSettings}
                     disabled={!canManageSettings}
                   />
-                  <Button asChild variant="outline">
-                    <Link href="/app/goals">Open Goals</Link>
-                  </Button>
                 </>
               ) : isSaveBrandVoiceNextStep(step.primary.title) ? (
                 <>
                   <BrandVoiceProfileForm disabled={!canManageBrand} />
-                  <Button asChild variant="outline">
-                    <Link href="/app/brand-voice">Open Brand voice</Link>
-                  </Button>
                 </>
               ) : isAddBrandVoiceExampleNextStep(step.primary.title) ? (
                 <>
                   <BrandVoiceExampleForm disabled={!canManageBrand} />
-                  <Button asChild variant="outline">
-                    <Link href="/app/brand-voice">Open Brand voice</Link>
-                  </Button>
                 </>
               ) : isDraftBrandVoiceNextStep(step.primary.title) ? (
                 <>
                   <BrandVoiceDraftForm disabled={!canManageBrand} />
-                  <Button asChild variant="outline">
-                    <Link href="/app/brand-voice">Open Brand voice</Link>
-                  </Button>
                 </>
               ) : isAddOfferNextStep(step.primary.title) ? (
                 <>
                   <OfferCreateForm disabled={!canManageOffers} />
-                  <Button asChild variant="outline">
-                    <Link href="/app/offers">Open Offers</Link>
-                  </Button>
                 </>
               ) : isAddGoalNextStep(step.primary.title) ? (
                 <>
@@ -462,9 +405,6 @@ export default async function NextStepPage({
                     offers={links.offers}
                     disabled={!canCreateGoal}
                   />
-                  <Button asChild variant="outline">
-                    <Link href="/app/goals">Open Goals</Link>
-                  </Button>
                 </>
               ) : isReadGoalNextStep(step.primary.title) ? (
                 <>
@@ -491,13 +431,15 @@ export default async function NextStepPage({
                       ) : null}
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">
-                      The Goal number is on Goals. GroovGro will not add spend.
-                    </p>
+                    <>
+                      <p className="text-sm text-muted-foreground">
+                        The Goal number is on Goals. GroovGro will not add spend.
+                      </p>
+                      <Button asChild variant="outline">
+                        <Link href="/app/goals">Open Goals</Link>
+                      </Button>
+                    </>
                   )}
-                  <Button asChild variant="outline">
-                    <Link href="/app/goals">Open Goals</Link>
-                  </Button>
                 </>
               ) : openPageLabel ? (
                 <OpenPageNextStepButtons
@@ -513,9 +455,6 @@ export default async function NextStepPage({
                     canSave={canDecide}
                     nothingYet
                   />
-                  <Button asChild variant="outline">
-                    <Link href="/app/growth-review">Open Growth review</Link>
-                  </Button>
                 </div>
               ) : dedicatedVisible ? null : hasDedicatedNextStepControls(step.primary.title) ? (
                 <OpenPageNextStepButtons
@@ -528,11 +467,11 @@ export default async function NextStepPage({
                   kind={step.primary.kind}
                   href={step.primary.href}
                 />
-              ) : (
+              ) : step.primary.href !== "/app/next-step" ? (
                 <Button asChild variant="outline">
                   <Link href={step.primary.href}>Open the page</Link>
                 </Button>
-              )}
+              ) : null}
               {canCreateGoal &&
               step.primary.title === GOAL_REACHED_STEP_TITLE &&
               step.primary.goalId ? (
@@ -625,7 +564,7 @@ export default async function NextStepPage({
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-wrap gap-2">
-              <Button asChild>
+              <Button asChild variant="outline">
                 <Link href="/app/goals">Open Goals</Link>
               </Button>
               <Button asChild variant="outline">

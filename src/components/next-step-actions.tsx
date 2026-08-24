@@ -76,9 +76,11 @@ export function NextStepResponseButtons({
           <SaveButton pendingLabel="Saving…">Save “nothing yet”</SaveButton>
         </SaveForm>
       )}
-      <Button asChild variant="outline">
-        <Link href={href}>Open the page</Link>
-      </Button>
+      {href !== "/app/next-step" ? (
+        <Button asChild variant="outline">
+          <Link href={href}>Open the page</Link>
+        </Button>
+      ) : null}
     </div>
   );
 }

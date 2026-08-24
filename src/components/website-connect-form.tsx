@@ -24,7 +24,7 @@ export function WebsiteConnectForm({
   return (
     <SaveForm
       action={saveWebsiteConnection}
-      successMessage="Website saved. Open Website to copy the tracking snippet. GroovGro did not move the live site."
+      successMessage="Website saved. Copy the tracking snippet on Next step next. GroovGro did not move the live site."
       className="space-y-3"
     >
       <div className="space-y-2">

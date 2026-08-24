@@ -52,7 +52,7 @@ export default async function OwnerWorkPage() {
         <CardHeader>
           <CardTitle>Ready for you</CardTitle>
           <CardDescription>
-            Open the page, do the work, then click I did this. GroovGro only
+            Open Next step, do the work, then click I did this. GroovGro only
             records that you did it.
           </CardDescription>
         </CardHeader>

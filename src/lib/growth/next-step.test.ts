@@ -507,7 +507,7 @@ describe("coordinated next step", () => {
     }
   });
 
-  it("puts Open the page, I did this, and Skip on Next step for approved work", () => {
+  it("puts I did this and Skip on Next step for approved work", () => {
     const source = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
       "utf8",
@@ -515,6 +515,7 @@ describe("coordinated next step", () => {
     assert.match(source, /OwnerWorkButtons/);
     assert.match(source, /OWNER_WORK_STEP_TITLE/);
     assert.match(source, /hrefForGrowthAction/);
+    assert.match(source, /showOpenPage=\{false\}/);
   });
 
   it("puts Check what changed on Next step for finished work", () => {
@@ -1588,5 +1589,35 @@ describe("coordinated next step", () => {
       source,
       /growth_next[\s\S]*?<Button asChild>\s*<Link href="\/app\/next-step">Next step<\/Link>/,
     );
+  });
+
+  it("keeps the owner on Next step instead of a second Open Website or Open SEO button", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const connectForm = readFileSync(
+      join(process.cwd(), "src/components/website-connect-form.tsx"),
+      "utf8",
+    );
+    const actions = readFileSync(
+      join(process.cwd(), "src/components/next-step-actions.tsx"),
+      "utf8",
+    );
+    const workButtons = readFileSync(
+      join(process.cwd(), "src/components/owner-work-actions.tsx"),
+      "utf8",
+    );
+    assert.doesNotMatch(page, /<Link href="\/app\/website">Open Website<\/Link>/);
+    assert.doesNotMatch(page, /<Link href="\/app\/seo">Open SEO<\/Link>/);
+    assert.doesNotMatch(page, /<Link href="\/app\/crm">Open Leads/);
+    assert.doesNotMatch(page, /<Link href="\/app\/events">Open Events<\/Link>/);
+    assert.doesNotMatch(page, /<Link href="\/app\/commerce">Open Bookings/);
+    assert.doesNotMatch(page, /Open SEO to finish Search Console/);
+    assert.doesNotMatch(page, /Open Leads & customers to copy the public form/);
+    assert.match(page, /showOpenPage=\{false\}/);
+    assert.match(connectForm, /Copy the tracking snippet on Next step next/);
+    assert.match(actions, /href !== "\/app\/next-step"/);
+    assert.match(workButtons, /Open Next step/);
   });
 });
