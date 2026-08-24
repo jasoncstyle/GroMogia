@@ -5,10 +5,14 @@ import { join } from "node:path";
 
 import {
   alreadyDraftedNextGoal,
+  canActivateDraftGoal,
   canDraftNextGoal,
   draftNextGoalFromReached,
+  findActivateCandidate,
+  isNextGoalDraft,
   nextGoalTarget,
   reachedGoalSource,
+  sourceGoalIdFromInferred,
 } from "./next-goal";
 
 describe("next Goal after a reached Goal", () => {
@@ -64,6 +68,29 @@ describe("next Goal after a reached Goal", () => {
       true,
     );
     assert.equal(alreadyDraftedNextGoal([{ inferredFrom: "" }], "goal-1"), false);
+  });
+
+  it("activates only a reviewed draft Goal", () => {
+    assert.equal(canActivateDraftGoal({ status: "draft" }), true);
+    assert.equal(canActivateDraftGoal({ status: "draft", discoveryStatus: "confirmed" }), true);
+    assert.equal(canActivateDraftGoal({ status: "draft", discoveryStatus: "inferred" }), false);
+    assert.equal(canActivateDraftGoal({ status: "draft", discoveryStatus: "rejected" }), false);
+    assert.equal(canActivateDraftGoal({ status: "active" }), false);
+    assert.equal(canActivateDraftGoal({ status: "achieved" }), false);
+  });
+
+  it("finds a next Goal draft from a reached Goal", () => {
+    assert.equal(sourceGoalIdFromInferred(reachedGoalSource("goal-1")), "goal-1");
+    assert.equal(sourceGoalIdFromInferred("website"), null);
+    assert.equal(isNextGoalDraft({ status: "draft", inferredFrom: reachedGoalSource("goal-1") }), true);
+    assert.equal(isNextGoalDraft({ status: "active", inferredFrom: reachedGoalSource("goal-1") }), false);
+    const picked = findActivateCandidate([
+      { status: "draft", inferredFrom: "website", discoveryStatus: "inferred" },
+      { status: "draft", inferredFrom: reachedGoalSource("goal-1"), discoveryStatus: "confirmed" },
+      { status: "draft", inferredFrom: "", discoveryStatus: "confirmed" },
+    ]);
+    assert.equal(picked?.inferredFrom, reachedGoalSource("goal-1"));
+    assert.equal(findActivateCandidate([{ status: "draft", inferredFrom: "", discoveryStatus: "confirmed" }]), null);
   });
 
   it("does not bake industry-specific words into next-goal helpers", () => {

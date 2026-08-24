@@ -21,6 +21,7 @@ import {
   seoAudits,
 } from "@/lib/db/schema";
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
+import { findActivateCandidate } from "@/lib/growth/next-goal";
 import { coordinateNextStep } from "@/lib/growth/next-step";
 import { isOpenOwnerWork } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
@@ -348,6 +349,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
   if (!snapshot) return null;
 
   const learned = snapshot.decisions.find((row) => row.outcome);
+  const activate = findActivateCandidate(snapshot.goals);
   return coordinateNextStep({
     inferredDraftCount:
       snapshot.inferredOffers.length + snapshot.inferredGoals.length,
@@ -367,5 +369,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
       : "",
     latestLearningOutcome: learned?.outcome ?? "",
     latestLearningGoalId: learned?.goalId ?? null,
+    activateGoalId: activate?.id ?? null,
+    activateGoalTitle: activate?.title ?? "",
   });
 }

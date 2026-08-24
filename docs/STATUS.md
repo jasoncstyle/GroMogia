@@ -6,7 +6,7 @@ Last updated: 24 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-next-goal-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-activate-goal-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** The website builder is paused. The path so far is on `main`. This branch drafts the next Goal after one is reached. The owner reviews it. GroovGro does not execute. Do not start ads, execution, or autonomy.
+**V2 growth foundation is on `main`.** The website builder is paused. Drafting the next Goal is on `main`. This branch lets the owner make a draft Goal active with one button. GroovGro does not execute. Do not start ads, execution, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
@@ -80,7 +80,11 @@ Next step uses Your work and what changed. Confirming drafts still comes first. 
 
 Dashboard and Decisions show Goal, plan, work, what changed, and the next step. GroovGro does not execute.
 
-**First build slice (this branch):** When a Goal is reached, GroovGro can draft the next Goal with a new target. It stays a draft until the owner sets it to Active. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
+**Parked: Next Goal (24 August 2026)**
+
+Draft the next Goal after one is reached is on `main`. The new target is the current number plus the previous target size. It stays a draft. GroovGro does not execute.
+
+**First build slice (this branch):** A draft Goal can be made the active Goal with one button. If it was drafted from a reached Goal, that older Goal is marked achieved. Other active Goals are paused so there is one active Goal. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
 
 ## Stripe (do not mix, do not replace)
 
@@ -108,7 +112,8 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Phones get a Menu button that opens the same app navigation as the desktop sidebar.
 - Next step: one coordinated recommendation from drafts, Your work, what changed, specialists, and connected data. The owner accepts it or leaves it alone. Proposed actions can be approved or rejected. Nothing runs. Ads, email, and social stay left alone.
 - The path so far: Dashboard and Decisions show Goal, plan, work, what changed, and the next step in one place. GroovGro does not execute.
-- Next Goal: when a Goal is reached, GroovGro can draft the next one. It stays a draft until the owner sets it Active. Nothing runs.
+- Next Goal: when a Goal is reached, GroovGro can draft the next one. It stays a draft until the owner makes it active. Nothing runs.
+- Make this the active Goal: one button on a reviewed draft. If it came from a reached Goal, that older Goal is marked achieved. Other active Goals are paused. Nothing runs.
 - Growth Plan: GroovGro can draft a versioned plan from a Goal. Approve or reject. Approving does not execute.
 - Growth Actions from an approved plan: GroovGro can propose the first actions. Approve or reject. Nothing runs. Ads, email, and social stay left alone.
 - Your work: approved actions the owner does. I did this or Skip for now. GroovGro records it and does not execute.
