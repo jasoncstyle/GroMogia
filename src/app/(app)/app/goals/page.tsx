@@ -138,8 +138,9 @@ export default async function GoalsPage() {
           <CardTitle>Growth review schedule</CardTitle>
           <CardDescription>
             This is when routine reviews are presented. It does not force
-            GroovGro to change the business on that day. Open Growth review
-            to read the current weekly and monthly summary.
+            GroovGro to change the business on that day. Open Next step to
+            read this week’s look. Open Growth review for the monthly
+            summary.
           </CardDescription>
         </CardHeader>
         <CardContent>

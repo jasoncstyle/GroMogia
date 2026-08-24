@@ -185,7 +185,7 @@ export default async function BusinessBrainPage() {
         <Stat
           label="Active goals"
           value={String(snapshot?.activeGoals.length ?? 0)}
-          href="/app/goals"
+          href="/app/next-step"
         />
       </div>
 

@@ -842,7 +842,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Activate, draft, approve, propose, waiting actions, and a reached Goal name Next step. If the signed-in person cannot use the dedicated button, they stay here. GroovGro does not execute.
 
-### 84. Next step shows this week’s look (this slice)
+### 84. Next step shows this week’s look
 
 **Reason:** Next step still sent the owner to Growth review to read this week’s look. The weekly write-up can stay on Next step.
 
@@ -851,6 +851,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step shows this week’s look. It does not send the owner to Growth review from the footer. GroovGro does not change the business from that look.
+
+### 85. Business Active goals and Goals weekly copy stay on Next step (this slice)
+
+**Reason:** Business still sent Active goals to Goals. Goals still told the owner to open Growth review to read this week’s look. Both already live on Next step.
+
+**Affected:** Business Active goals and Goals schedule copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Business Active goals opens Next step. Goals schedule copy names Next step for this week’s look. GroovGro does not start marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -927,7 +937,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Next step shows the Goal number is parked.** Next step shows the current Goal. The path so far opens Next step to read it. Do not start marketing.
 - **Next step footer and Dashboard wait stay on Next step is parked.** Next step does not send the owner to Goals from the footer. Dashboard wait names Next step. Do not start marketing.
 - **Goal and plan loops stay on Next step is parked.** Activate, draft, approve, propose, waiting actions, and a reached Goal name Next step. Do not execute.
-- **Next step shows this week’s look (this slice).** Next step shows this week’s look. It does not send the owner to Growth review from the footer. Do not change the business from that look.
+- **Next step shows this week’s look is parked.** Next step shows this week’s look. It does not send the owner to Growth review from the footer. Do not change the business from that look.
+- **Business Active goals and Goals weekly copy stay on Next step (this slice).** Business Active goals opens Next step. Goals schedule copy names Next step for this week’s look. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -1084,7 +1095,8 @@ Organization
 76. **Next step shows the Goal number** — Next step shows the current Goal; the path so far opens Next step to read it. Done.
 77. **Next step footer and Dashboard wait stay on Next step** — Next step does not send the owner to Goals from the footer; Dashboard wait names Next step. Done.
 78. **Goal and plan loops stay on Next step** — activate, draft, approve, propose, waiting actions, and a reached Goal name Next step. Done.
-79. **Next step shows this week’s look** — Next step shows this week’s look; it does not send the owner to Growth review from the footer. This slice.
-80. **Guarded automation** — only after the above is trusted.
+79. **Next step shows this week’s look** — Next step shows this week’s look; it does not send the owner to Growth review from the footer. Done.
+80. **Business Active goals and Goals weekly copy stay on Next step** — Business Active goals opens Next step; Goals schedule copy names Next step for this week’s look. This slice.
+81. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
