@@ -45,7 +45,7 @@ export default async function NextStepPage() {
               <CardDescription>
                 {step.primary.kind === "no_change_yet"
                   ? "No change is the recommendation."
-                  : `${labelFor(step.primary.classification)} · from ${step.primary.source === "drafts" ? "Business drafts" : step.primary.source === "specialist" ? "a specialist" : "the growth review"}`}
+                  : `${labelFor(step.primary.classification)} · from ${step.primary.source === "drafts" ? "Business drafts" : step.primary.source === "specialist" ? "a specialist" : step.primary.source === "owner_work" ? "Your work" : step.primary.source === "learning" ? "what changed" : "the growth review"}`}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

@@ -22,6 +22,8 @@ import {
 } from "@/lib/db/schema";
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { coordinateNextStep } from "@/lib/growth/next-step";
+import { isOpenOwnerWork } from "@/lib/growth/owner-work";
+import { learningKindFromOutcome } from "@/lib/growth/work-learning";
 import { generateGrowthReview } from "@/lib/growth/review";
 import {
   buildSpecialistReports,
@@ -345,6 +347,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
   ]);
   if (!snapshot) return null;
 
+  const learned = snapshot.decisions.find((row) => row.outcome);
   return coordinateNextStep({
     inferredDraftCount:
       snapshot.inferredOffers.length + snapshot.inferredGoals.length,
@@ -356,5 +359,13 @@ export async function getCoordinatedNextStep(organizationId: string) {
       status: action.status,
       risk: action.risk,
     })),
+    openWorkCount: snapshot.actions.filter((action) =>
+      isOpenOwnerWork(action.status),
+    ).length,
+    latestLearningKind: learned
+      ? (learningKindFromOutcome(learned.outcome) ?? "")
+      : "",
+    latestLearningOutcome: learned?.outcome ?? "",
+    latestLearningGoalId: learned?.goalId ?? null,
   });
 }

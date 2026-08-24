@@ -7,6 +7,7 @@ import {
   daysBetween,
   encodeWorkBaseline,
   learnFromOwnerWork,
+  learningKindFromOutcome,
   parseWorkBaseline,
 } from "./work-learning";
 
@@ -88,6 +89,20 @@ describe("owner work learning", () => {
     const to = new Date("2026-08-08T09:00:00.000Z");
     assert.equal(daysBetween(from, to), 6);
     assert.equal(daysBetween(to, from), 0);
+  });
+
+  it("reads the learning kind back from the written outcome", () => {
+    const tooSoon = learnFromOwnerWork({
+      goalTitle: "More people get in touch",
+      hasGoal: true,
+      baselineValue: 2,
+      currentValue: 3,
+      targetValue: 10,
+      unit: "leads",
+      daysSinceDone: 1,
+    });
+    assert.equal(learningKindFromOutcome(tooSoon.outcome), "too_soon");
+    assert.equal(learningKindFromOutcome(""), null);
   });
 
   it("does not bake industry-specific words into learning helpers", () => {
