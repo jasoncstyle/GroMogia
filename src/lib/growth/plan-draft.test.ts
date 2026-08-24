@@ -7,6 +7,8 @@ import {
   ACTIVATE_GOAL_STEP_TITLE,
   ADD_GOAL_STEP_TITLE,
   CONNECT_SEARCH_CONSOLE_STEP_TITLE,
+  CONNECT_WEBSITE_STEP_TITLE,
+  PASTE_SNIPPET_STEP_TITLE,
   draftGrowthPlanSummary,
   draftPlanExcerpt,
   findDraftPlanToApprove,
@@ -17,6 +19,7 @@ import {
   goalNeedsPlanDraft,
   hasDedicatedNextStepControls,
   IMPROVE_SEO_STEP_TITLE,
+  isPasteSnippetNextStep,
   isSearchConsoleNextStep,
   isSeoDraftNextStep,
   openPageLabelForNextStep,
@@ -443,6 +446,8 @@ describe("growth plan draft", () => {
     assert.equal(isSeoDraftNextStep(IMPROVE_SEO_STEP_TITLE), true);
     assert.equal(isSearchConsoleNextStep(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);
     assert.equal(isSearchConsoleNextStep(FIX_SEO_STEP_TITLE), false);
+    assert.equal(isPasteSnippetNextStep(PASTE_SNIPPET_STEP_TITLE), true);
+    assert.equal(isPasteSnippetNextStep(CONNECT_WEBSITE_STEP_TITLE), false);
     assert.equal(openPageLabelForNextStep(REVIEW_SCHEDULE_STEP_TITLE), "Open Events");
     assert.equal(openPageLabelForNextStep(READ_GOAL_STEP_TITLE), "Open Goals");
     assert.equal(openPageLabelForNextStep(ADD_GOAL_STEP_TITLE), "Open Goals");
@@ -472,6 +477,7 @@ describe("growth plan draft", () => {
     assert.equal(skipsDuplicateNextStepAction(RUN_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(FIX_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(PASTE_SNIPPET_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(GOAL_REACHED_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction("Nothing should change yet"), false);
   });

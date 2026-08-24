@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -43,6 +43,7 @@ export type SpecialistFacts = {
   seoCheckedAt: Date | null
   searchConsoleConnected: boolean
   openLeadCount: number
+  recordedVisitCount: number
   upcomingEventCount: number
   evidenceSample: EvidenceSample
   advertisingConnected: boolean
@@ -248,17 +249,30 @@ function websiteReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Spe
     mode: "read_analyze_recommend",
     available: true,
     relatedGoal: goal ? { id: goal.id, title: goal.title, goalType: goal.goalType } : null,
-    read: `The connected website is ${facts.websiteUrl}. GroovGro records visits. It does not replace that site.`,
+    read: `The connected website is ${facts.websiteUrl}. ${
+      facts.recordedVisitCount > 0
+        ? "GroovGro has recorded visits."
+        : "GroovGro has not recorded visits yet."
+    } It does not replace that site.`,
     analyze: `${goalLine} Website and conversion changes wait ${policy.minElapsedDays} days and ${policy.minObservations} observations. ${
       verdict === "no_change_yet"
         ? "That threshold is not met."
         : "The threshold is met, which still does not mean the site should be redesigned."
     }`,
-    recommend: leaveAlone(
-      "/app/website",
-      "Leave the website alone",
-      "Keep the snippet in place. Do not rebuild or overwrite the connected website from GroovGro.",
-    ),
+    recommend:
+      facts.recordedVisitCount > 0
+        ? leaveAlone(
+            "/app/website",
+            "Leave the website alone",
+            "Keep the snippet in place. Do not rebuild or overwrite the connected website from GroovGro.",
+          )
+        : {
+            kind: "recommend",
+            classification: "optimization",
+            title: PASTE_SNIPPET_STEP_TITLE,
+            body: "Copy the tracking snippet here and paste it on the site you already have. GroovGro does not replace that site.",
+            href: "/app/website",
+          },
     executeAllowed: false,
   };
 }

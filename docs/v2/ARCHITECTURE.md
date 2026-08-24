@@ -322,7 +322,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If Next step is fix blocking SEO items or improve the page, the owner can draft, copy, approve, or reject homepage SEO copy there. GroovGro does not paste that copy onto the live site.
 
-### 32. Connect Search Console from Next step (this slice)
+### 32. Connect Search Console from Next step
 
 **Reason:** After a homepage check, Search Console still lived only on SEO. Put Connect Search Console on Next step when it is not connected. GroovGro must stay read-only.
 
@@ -331,6 +331,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If a homepage check is saved, blocking items are clear, and Search Console is not connected, Next step asks the owner to connect it there. GroovGro only reads search numbers.
+
+### 33. Paste the tracking snippet from Next step (this slice)
+
+**Reason:** After a website is connected, the owner still had to open Website to copy the tracking snippet. Put Copy snippet on Next step when no visits are recorded yet. GroovGro must not replace the live site.
+
+**Affected:** Next step. Reuses `TrackingSnippet`. Does not change the connected website.
+
+**Migration risk:** None.
+
+**Current functionality:** If a website is connected and GroovGro has not recorded visits yet, Next step shows the tracking snippet to copy. Open leads still come first. GroovGro does not replace the live site.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -355,7 +365,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Open SEO or Events from Next step is parked.** Ask the owner to open the named page. Do not execute.
 - **Keep one button on Next step is parked.** Do not show I’ll do this next to the real button. Do not execute.
 - **Draft and approve SEO copy from Next step is parked.** Ask the owner to draft and approve homepage SEO copy. Do not edit the live site.
-- **Connect Search Console from Next step (this slice).** Ask the owner to connect Search Console read-only. Do not edit the live site.
+- **Connect Search Console from Next step is parked.** Ask the owner to connect Search Console read-only. Do not edit the live site.
+- **Paste the tracking snippet from Next step (this slice).** Ask the owner to copy the snippet. Do not replace the live site.
 
 ## DESIGN FOR LATER
 
@@ -460,7 +471,8 @@ Organization
 24. **Open SEO or Events from Next step** — open the named page instead of I’ll do this. Done.
 25. **Keep one button on Next step** — do not show I’ll do this next to the real button. Done.
 26. **Draft and approve SEO copy from Next step** — draft and approve homepage SEO copy on Next step. Done.
-27. **Connect Search Console from Next step** — connect Search Console read-only from Next step. This slice.
-28. **Guarded automation** — only after the above is trusted.
+27. **Connect Search Console from Next step** — connect Search Console read-only from Next step. Done.
+28. **Paste the tracking snippet from Next step** — copy the snippet on Next step when visits are not recorded yet. This slice.
+29. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

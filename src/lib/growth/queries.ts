@@ -351,6 +351,10 @@ export async function getSpecialistReports(organizationId: string) {
     websiteConnected: Boolean(dashboard.website?.publicUrl),
     websiteUrl: dashboard.website?.publicUrl ?? "",
     openLeadCount: dashboard.openLeadCount,
+    recordedVisitCount: dashboard.topChannels.reduce(
+      (total, row) => total + row.count,
+      0,
+    ),
     upcomingEventCount: dashboard.upcomingEvents.length,
     evidenceSample: defaultCheck?.sample ?? {
       elapsedDays: 0,

@@ -7,6 +7,7 @@ import { NextStepResponseButtons, OpenPageNextStepButtons, WaitingActionButtons 
 import { OwnerWorkButtons, CheckWhatChangedButton } from "@/components/owner-work-actions";
 import { DraftSeoImprovementsButton, RunHomepageSeoButton, SeoDraftDecisionButtons } from "@/components/seo-actions";
 import { FoldableSample } from "@/components/foldable-sample";
+import { TrackingSnippet } from "@/components/tracking-snippet";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,9 +18,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
+import { appUrl } from "@/lib/env";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isSearchConsoleNextStep, isSeoDraftNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isPasteSnippetNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -54,6 +56,9 @@ export default async function NextStepPage() {
         planId: step.primary.planId,
       })
     : false;
+  const snippet = dashboard?.website?.trackingId
+    ? `<script src="${appUrl()}/t.js" data-groovgro-id="${dashboard.website.trackingId}" data-gromogia-id="${dashboard.website.trackingId}" async></script>`
+    : "";
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -155,6 +160,20 @@ export default async function NextStepPage() {
                   <ReviewConnectedDataButton disabled={!session.organizationId} />
                   <Button asChild variant="outline">
                     <Link href="/app/website">Find pages on Website</Link>
+                  </Button>
+                </>
+              ) : isPasteSnippetNextStep(step.primary.title) ? (
+                <>
+                  {snippet ? (
+                    <TrackingSnippet snippet={snippet} />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Save the website address first, then copy the snippet.
+                      GroovGro does not replace the live site.
+                    </p>
+                  )}
+                  <Button asChild variant="outline">
+                    <Link href="/app/website">Open Website</Link>
                   </Button>
                 </>
               ) : step.primary.title === RUN_SEO_STEP_TITLE ? (

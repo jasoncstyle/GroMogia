@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -29,6 +29,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     seoCheckedAt: null,
     searchConsoleConnected: true,
     openLeadCount: 0,
+    recordedVisitCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
     advertisingConnected: false,
@@ -147,6 +148,25 @@ describe("growth specialists", () => {
     assert.ok(website);
     assert.match(website.recommend.body, /Do not move the site/);
     assert.equal(website.recommend.href, "/app/website");
+  });
+
+  it("asks to paste the tracking snippet when a site is connected but no visits are recorded", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          websiteConnected: true,
+          recordedVisitCount: 0,
+          openLeadCount: 0,
+          searchConsoleConnected: true,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "optimization");
+    assert.equal(website.recommend.title, PASTE_SNIPPET_STEP_TITLE);
+    assert.match(website.recommend.body, /does not replace that site/);
   });
 
   it("follows up open leads without sending email", () => {

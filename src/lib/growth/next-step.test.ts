@@ -24,6 +24,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     seoCheckedAt: now,
     searchConsoleConnected: true,
     openLeadCount: 0,
+    recordedVisitCount: 1,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
     advertisingConnected: false,
@@ -619,6 +620,48 @@ describe("coordinated next step", () => {
     assert.match(step.primary.body, /will not edit the website/);
     assert.match(page, /isSearchConsoleNextStep/);
     assert.match(page, /\/api\/google\/start/);
+  });
+
+  it("puts the tracking snippet on Next step when a site is connected but no visits are recorded", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          recordedVisitCount: 0,
+          openLeadCount: 0,
+          searchConsoleConnected: true,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Paste the tracking snippet");
+    assert.equal(step.primary.classification, "optimization");
+    assert.match(step.primary.body, /does not replace that site/);
+    assert.match(page, /isPasteSnippetNextStep/);
+    assert.match(page, /TrackingSnippet/);
+  });
+
+  it("keeps follow-up of open leads ahead of pasting the tracking snippet", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          recordedVisitCount: 0,
+          openLeadCount: 3,
+          searchConsoleConnected: true,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Follow up open leads");
   });
 
   it("asks the Dashboard to propose first actions on Next step", () => {
