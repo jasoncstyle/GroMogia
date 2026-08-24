@@ -2176,6 +2176,37 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("keeps Choose when you look at growth on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          growthScheduleSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsSaveReviewSchedule, true);
+    assert.match(page, /needsSaveReviewSchedule/);
+    assert.match(page, /!isSaveReviewScheduleNextStep/);
+    assert.match(
+      readFileSync(
+        join(process.cwd(), "src/app/(app)/app/growth-review/page.tsx"),
+        "utf8",
+      ),
+      /GrowthSettingsForm/,
+    );
+  });
+
   it("keeps connecting payments ahead of choosing when you look at growth", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,

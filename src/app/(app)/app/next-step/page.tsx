@@ -113,7 +113,10 @@ export default async function NextStepPage({
       ? await getBusinessBrainForm(session.organizationId)
       : null;
   const growthSettings =
-    session.organizationId && step && isSaveReviewScheduleNextStep(step.primary.title)
+    session.organizationId &&
+    step &&
+    (isSaveReviewScheduleNextStep(step.primary.title) ||
+      step.needsSaveReviewSchedule)
       ? await getGrowthSettingsForm(session.organizationId)
       : null;
   const discoveredPages =
@@ -863,6 +866,25 @@ export default async function NextStepPage({
               </CardHeader>
               <CardContent>
                 <BrandVoiceDraftForm disabled={!canManageBrand} />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSaveReviewSchedule &&
+          !isSaveReviewScheduleNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Choose when you look at growth</CardTitle>
+                <CardDescription>
+                  Save the day and time you want to read this week&apos;s
+                  numbers here. GroovGro will not change the business then.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <GrowthSettingsForm
+                  settings={growthSettings}
+                  disabled={!canManageSettings}
+                />
               </CardContent>
             </Card>
           ) : null}
