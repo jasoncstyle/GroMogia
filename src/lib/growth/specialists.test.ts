@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "./plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -33,6 +33,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     openLeadCount: 0,
     contactCount: 1,
     recordedVisitCount: 1,
+    brandVoiceSaved: true,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
     advertisingConnected: false,
@@ -250,6 +251,39 @@ describe("growth specialists", () => {
     assert.equal(crm.recommend.title, SHARE_LEAD_FORM_STEP_TITLE);
     assert.match(crm.recommend.body, /Copy the public lead form here/);
     assert.match(crm.recommend.body, /will not email anyone/);
+  });
+
+  it("asks to save brand voice when visits are recorded but no profile exists", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, SAVE_BRAND_VOICE_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/brand-voice");
+    assert.match(website.recommend.body, /will not send email/);
+    assert.match(website.recommend.body, /edit the live website/);
+  });
+
+  it("keeps pasting the tracking snippet ahead of saving brand voice", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 0,
+          brandVoiceSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, PASTE_SNIPPET_STEP_TITLE);
   });
 
   it("notices a far-behind availability Goal only after enough evidence", () => {

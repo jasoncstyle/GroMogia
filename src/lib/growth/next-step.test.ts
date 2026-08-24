@@ -28,6 +28,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     openLeadCount: 0,
     contactCount: 1,
     recordedVisitCount: 1,
+    brandVoiceSaved: true,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
     advertisingConnected: false,
@@ -900,6 +901,73 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.title, "Paste the tracking snippet");
   });
 
+  it("puts Save your brand voice on Next step when visits are recorded but no profile exists", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          brandVoiceSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Save your brand voice");
+    assert.equal(step.primary.classification, "strategic");
+    assert.match(step.primary.body, /will not send email/);
+    assert.match(step.primary.body, /edit the live website/);
+    assert.match(page, /isSaveBrandVoiceNextStep/);
+    assert.match(page, /BrandVoiceProfileForm/);
+    assert.match(
+      readFileSync(
+        join(process.cwd(), "src/app/(app)/app/brand-voice/page.tsx"),
+        "utf8",
+      ),
+      /BrandVoiceProfileForm/,
+    );
+  });
+
+  it("keeps sharing the lead form ahead of saving brand voice", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          brandVoiceSaved: false,
+          recordedVisitCount: 1,
+          openLeadCount: 0,
+          contactCount: 0,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Share the public lead form");
+  });
+
+  it("keeps follow-up of open leads ahead of saving brand voice", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          brandVoiceSaved: false,
+          recordedVisitCount: 1,
+          openLeadCount: 3,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Follow up open leads");
+  });
+
   it("puts Add event on Next step when the schedule needs a review", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
@@ -930,6 +998,7 @@ describe("coordinated next step", () => {
           openLeadCount: 0,
           searchConsoleConnected: true,
           recordedVisitCount: 1,
+          brandVoiceSaved: false,
         }),
       ),
       waitingActions: [],

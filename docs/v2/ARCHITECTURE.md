@@ -402,7 +402,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If Next step is read the Goal before changing course, the owner can see the current number there. GroovGro does not add spend.
 
-### 40. Share the public lead form from Next step (this slice)
+### 40. Share the public lead form from Next step
 
 **Reason:** When no person has been captured yet, the public lead form still lived only on Leads & customers. Put Copy link on Next step. GroovGro must not email anyone.
 
@@ -411,6 +411,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If the website is connected and GroovGro has not captured a person yet, Next step asks the owner to copy the public lead form. Open leads and the tracking snippet still come first. GroovGro does not email anyone.
+
+### 41. Save brand voice from Next step (this slice)
+
+**Reason:** How the business sounds still lived only on Brand voice. Put Save voice on Next step when visits are recorded and no profile exists yet. GroovGro must not send email, post, or edit the live website.
+
+**Affected:** Next step. Reuses `BrandVoiceProfileForm`. Does not publish.
+
+**Migration risk:** None.
+
+**Current functionality:** If the website is connected, visits are recorded, and no brand voice is saved, Next step asks the owner to save how the business sounds. Open leads, the tracking snippet, and the public lead form still come first. GroovGro does not send email, post to social, or edit the live website.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -443,7 +453,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Refresh Search Console from Next step is parked.** Ask the owner to refresh Search Console numbers. Do not edit the live site.
 - **Add a Goal from Next step is parked.** Ask the owner to save a Goal when work was not tied to one. Do not start marketing.
 - **Read the Goal from Next step is parked.** Ask the owner to read the Goal number when it is lower. Do not add spend.
-- **Share the public lead form from Next step (this slice).** Ask the owner to copy the public form when no person has been captured yet. Do not email anyone.
+- **Share the public lead form from Next step is parked.** Ask the owner to copy the public form when no person has been captured yet. Do not email anyone.
+- **Save brand voice from Next step (this slice).** Ask the owner to save how the business sounds when visits are recorded and no profile exists yet. Do not send email, post, or edit the live website.
 
 ## DESIGN FOR LATER
 
@@ -556,7 +567,8 @@ Organization
 32. **Refresh Search Console from Next step** — refresh Search Console numbers on Next step when none are stored yet. Done.
 33. **Add a Goal from Next step** — save a Goal on Next step when work was not tied to one. Done.
 34. **Read the Goal from Next step** — read the Goal number on Next step when it is lower. Done.
-35. **Share the public lead form from Next step** — copy the public form on Next step when no person has been captured yet. This slice.
-36. **Guarded automation** — only after the above is trusted.
+35. **Share the public lead form from Next step** — copy the public form on Next step when no person has been captured yet. Done.
+36. **Save brand voice from Next step** — save how the business sounds on Next step when visits are recorded and no profile exists yet. This slice.
+37. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

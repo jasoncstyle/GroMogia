@@ -67,6 +67,7 @@ export const CONNECT_WEBSITE_STEP_TITLE = "Connect the existing website";
 export const REVIEW_SITE_STEP_TITLE = "Review the connected website";
 export const FOLLOW_UP_LEADS_STEP_TITLE = "Follow up open leads";
 export const SHARE_LEAD_FORM_STEP_TITLE = "Share the public lead form";
+export const SAVE_BRAND_VOICE_STEP_TITLE = "Save your brand voice";
 export const RUN_SEO_STEP_TITLE = "Run an SEO check";
 export const FIX_SEO_STEP_TITLE = "Fix blocking SEO items";
 export const IMPROVE_SEO_STEP_TITLE = "Improve the page when you have time";
@@ -85,6 +86,7 @@ export function skipsDuplicateNextStepAction(title: string): boolean {
   return (
     text === FOLLOW_UP_LEADS_STEP_TITLE ||
     text === SHARE_LEAD_FORM_STEP_TITLE ||
+    text === SAVE_BRAND_VOICE_STEP_TITLE ||
     text === RUN_SEO_STEP_TITLE ||
     text === FIX_SEO_STEP_TITLE ||
     text === IMPROVE_SEO_STEP_TITLE ||
@@ -165,6 +167,10 @@ export function isFollowUpLeadsNextStep(title: string): boolean {
 
 export function isShareLeadFormNextStep(title: string): boolean {
   return clean(title) === SHARE_LEAD_FORM_STEP_TITLE;
+}
+
+export function isSaveBrandVoiceNextStep(title: string): boolean {
+  return clean(title) === SAVE_BRAND_VOICE_STEP_TITLE;
 }
 
 export function isAddGoalNextStep(title: string): boolean {

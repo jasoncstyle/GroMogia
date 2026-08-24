@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -47,6 +47,7 @@ export type SpecialistFacts = {
   openLeadCount: number
   contactCount: number
   recordedVisitCount: number
+  brandVoiceSaved: boolean
   upcomingEventCount: number
   evidenceSample: EvidenceSample
   advertisingConnected: boolean
@@ -285,19 +286,27 @@ function websiteReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Spe
         : "The threshold is met, which still does not mean the site should be redesigned."
     }`,
     recommend:
-      facts.recordedVisitCount > 0
-        ? leaveAlone(
-            "/app/website",
-            "Leave the website alone",
-            "Keep the snippet in place. Do not rebuild or overwrite the connected website from GroovGro.",
-          )
-        : {
+      facts.recordedVisitCount === 0
+        ? {
             kind: "recommend",
             classification: "optimization",
             title: PASTE_SNIPPET_STEP_TITLE,
             body: "Copy the tracking snippet here and paste it on the site you already have. GroovGro does not replace that site.",
             href: "/app/website",
-          },
+          }
+        : facts.brandVoiceSaved
+          ? leaveAlone(
+              "/app/website",
+              "Leave the website alone",
+              "Keep the snippet in place. Do not rebuild or overwrite the connected website from GroovGro.",
+            )
+          : {
+              kind: "recommend",
+              classification: "strategic",
+              title: SAVE_BRAND_VOICE_STEP_TITLE,
+              body: "Save how this business sounds here. GroovGro uses this for drafts. It will not send email, post to social, or edit the live website.",
+              href: "/app/brand-voice",
+            },
     executeAllowed: false,
   };
 }

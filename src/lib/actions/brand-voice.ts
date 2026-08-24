@@ -66,6 +66,7 @@ const exampleSchema = z.object({
 
 function revalidateVoice() {
   revalidatePath("/app/brand-voice");
+  revalidatePath("/app/next-step");
 }
 
 export async function saveBrandVoiceProfile(formData: FormData): Promise<ActionResult> {
