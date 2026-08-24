@@ -4,7 +4,10 @@ import { proposeGrowthAction, recordDecision } from "@/lib/actions/growth";
 import { WaitingActionButtons } from "@/components/next-step-actions";
 import { hasPermission } from "@/lib/permissions";
 import { getAppSession } from "@/lib/auth/session";
-import { getGrowthSnapshot } from "@/lib/growth/queries";
+import { GrowthStoryCard } from "@/components/growth-story";
+import { getCoordinatedNextStep, getGrowthSnapshot } from "@/lib/growth/queries";
+import { partitionOwnerWork } from "@/lib/growth/owner-work";
+import { buildGrowthStory, storyFactsFromWorkspace } from "@/lib/growth/story";
 import { DECISION_TYPES, labelFor } from "@/lib/growth/types";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Button } from "@/components/ui/button";
@@ -27,11 +30,35 @@ export default async function DecisionsPage() {
   const snapshot = session.organizationId
     ? await getGrowthSnapshot(session.organizationId)
     : null;
+  const nextStep = session.organizationId
+    ? await getCoordinatedNextStep(session.organizationId)
+    : null;
   const goals = snapshot?.goals ?? [];
   const decisions = snapshot?.decisions ?? [];
   const actions = snapshot?.actions ?? [];
   const policies = snapshot?.policies ?? [];
   const canApprove = hasPermission(session.permissions, "approve_actions");
+  const ownerWork = partitionOwnerWork(snapshot?.actions ?? []);
+  const approvedPlan = snapshot?.plans.find(
+    (plan) => plan.status === "approved" || plan.status === "active",
+  );
+  const storyBeats = buildGrowthStory(
+    storyFactsFromWorkspace({
+      businessName: session.organizationName ?? "",
+      goal: snapshot?.activeGoals[0] ?? null,
+      plan: approvedPlan ?? null,
+      openWorkCount: ownerWork.open.length,
+      finishedWorkCount: ownerWork.finished.length,
+      latestLearning: snapshot?.decisions.find((row) => row.outcome)?.outcome ?? "",
+      nextStep: nextStep
+        ? {
+            title: nextStep.primary.title,
+            body: nextStep.primary.body,
+            href: nextStep.primary.href,
+          }
+        : null,
+    }),
+  );
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
@@ -49,6 +76,8 @@ export default async function DecisionsPage() {
           </Button>
         </div>
       </div>
+
+      {session.organizationId ? <GrowthStoryCard beats={storyBeats} /> : null}
 
       <Card>
         <CardHeader>

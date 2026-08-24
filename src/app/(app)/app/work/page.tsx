@@ -148,6 +148,9 @@ export default async function OwnerWorkPage() {
           </Button>
         )}
         <Button asChild variant="outline">
+          <Link href="/app">The path so far</Link>
+        </Button>
+        <Button asChild variant="outline">
           <Link href="/app/next-step">Next step</Link>
         </Button>
         <Button asChild variant="outline">

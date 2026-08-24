@@ -6,7 +6,7 @@ Last updated: 24 August 2026.
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-next-step-learning-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-growth-story-a329`.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** The website builder is paused. Next step, Growth Plan, proposed actions, Your work, and what changed are on `main`. This branch feeds that learning back into Next step. GroovGro does not execute. Do not start ads, execution, or autonomy.
+**V2 growth foundation is on `main`.** The website builder is paused. Next step now uses Your work and what changed. This branch shows the path so far — Goal, plan, work, what changed, next step — in one place. GroovGro does not execute. Do not start ads, execution, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
@@ -72,7 +72,11 @@ Your work is on `main`. Approved actions are a list the owner does. I did this o
 
 Check what changed is on `main`. After the owner marks work done, GroovGro compares the Goal number and writes a plain-English outcome. It does not change the plan or execute.
 
-**First build slice (this branch):** Next step uses Your work and what changed. If approved work is waiting, it sends the owner there. If learning says wait, the Goal moved, or the target was reached, that is the next step. Confirming drafts still comes first. GroovGro does not execute, start ads, send email, charge a card, or change the live website.
+**Parked: Next step learning (24 August 2026)**
+
+Next step uses Your work and what changed. Confirming drafts still comes first. GroovGro does not execute.
+
+**First build slice (this branch):** Dashboard and Decisions show **The path so far**: Goal, plan, work, what changed, and the next step. GroovGro does not execute, start ads, send email, charge a card, or change the live website.
 
 ## Stripe (do not mix, do not replace)
 
@@ -99,6 +103,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Website page checklist: Find pages lists what GroovGro can see. Home, program, calendar, event, and public booking pages start checked. About, login, and legal stay unchecked. You can add a missing URL. Review connected data then reads only the checked pages. Event detail URLs sit under Calendar so they are not 40 separate boxes.
 - Phones get a Menu button that opens the same app navigation as the desktop sidebar.
 - Next step: one coordinated recommendation from drafts, Your work, what changed, specialists, and connected data. The owner accepts it or leaves it alone. Proposed actions can be approved or rejected. Nothing runs. Ads, email, and social stay left alone.
+- The path so far: Dashboard and Decisions show Goal, plan, work, what changed, and the next step in one place. GroovGro does not execute.
 - Growth Plan: GroovGro can draft a versioned plan from a Goal. Approve or reject. Approving does not execute.
 - Growth Actions from an approved plan: GroovGro can propose the first actions. Approve or reject. Nothing runs. Ads, email, and social stay left alone.
 - Your work: approved actions the owner does. I did this or Skip for now. GroovGro records it and does not execute.
