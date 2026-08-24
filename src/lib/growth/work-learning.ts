@@ -164,6 +164,19 @@ export function workLearningFromResult(result: string): string {
   return clean(parts[1] ?? "");
 }
 
+export function learningKindFromOutcome(outcome: string): WorkLearningKind | null {
+  const text = clean(outcome);
+  if (!text) return null;
+  if (/reached its target/i.test(text)) return "target_reached";
+  if (/is lower/i.test(text)) return "declined";
+  if (/improved/i.test(text)) return "improved";
+  if (/has not moved yet/i.test(text)) return "same";
+  if (/starting point/i.test(text)) return "need_baseline";
+  if (/Wait before changing course/i.test(text)) return "too_soon";
+  if (/not tied to a Goal/i.test(text)) return "no_goal";
+  return null;
+}
+
 export function daysBetween(from: Date, to: Date): number {
   const ms = to.getTime() - from.getTime();
   if (!Number.isFinite(ms) || ms <= 0) return 0;

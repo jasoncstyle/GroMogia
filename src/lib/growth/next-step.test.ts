@@ -90,6 +90,59 @@ describe("coordinated next step", () => {
     assert.equal(step.executeAllowed, false);
   });
 
+  it("sends the owner to approved work before specialist follow-up", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts({ openLeadCount: 3 })),
+      waitingActions: [],
+      openWorkCount: 2,
+    });
+    assert.equal(step.primary.href, "/app/work");
+    assert.equal(step.primary.source, "owner_work");
+    assert.match(step.primary.body, /will not run/);
+    assert.equal(step.executeAllowed, false);
+  });
+
+  it("keeps draft confirm ahead of approved work", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 1 })),
+      waitingActions: [],
+      openWorkCount: 2,
+    });
+    assert.equal(step.primary.href, "/app/business");
+    assert.equal(step.primary.source, "drafts");
+  });
+
+  it("uses what changed to wait instead of starting a new channel", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts({ openLeadCount: 3 })),
+      waitingActions: [],
+      openWorkCount: 0,
+      latestLearningKind: "too_soon",
+      latestLearningOutcome: "Wait before changing course. Do not change the plan, start ads, send email, or change the live website.",
+    });
+    assert.equal(step.primary.kind, "no_change_yet");
+    assert.equal(step.primary.source, "learning");
+    assert.match(step.primary.body, /Wait before changing course/);
+    assert.doesNotMatch(step.primary.body, /buy ads/i);
+  });
+
+  it("points at Goals when learning says the target was reached", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      latestLearningKind: "target_reached",
+      latestLearningOutcome: "The Goal reached its target. GroovGro will not start a new campaign.",
+      latestLearningGoalId: "goal-1",
+    });
+    assert.equal(step.primary.href, "/app/goals");
+    assert.equal(step.primary.source, "learning");
+    assert.match(step.primary.body, /will not start a new campaign/);
+  });
+
   it("does not bake industry-specific words into the coordinator", () => {
     const source = readFileSync(join(process.cwd(), "src/lib/growth/next-step.ts"), "utf8");
     for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk", "electrician"]) {

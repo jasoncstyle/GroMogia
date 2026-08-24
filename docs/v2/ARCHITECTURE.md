@@ -122,7 +122,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Your work lists approved actions with Open the page, I did this, and Skip for now. GroovGro records the owner’s mark and writes Decision History. It does not execute, start ads, send email, charge a card, or change the live website.
 
-### 12. What changed after owner work (this slice)
+### 12. What changed after owner work
 
 **Reason:** Doing work is not the same as knowing whether the Goal moved. GroovGro should compare the number and say wait when evidence is thin. It must not change course on its own.
 
@@ -132,14 +132,24 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** I did this stores today’s Goal number. Check what changed compares that number to now. Outcomes: too soon, improved, same, declined, target reached, or no Goal. GroovGro does not change the plan, start ads, send email, charge a card, or change the live website.
 
+### 13. Next step uses Your work and what changed (this slice)
+
+**Reason:** Next step was coordinating specialists and drafts only. After the owner approves work and checks what changed, the next recommendation must use that, or GroovGro will keep suggesting the same disconnected follow-up.
+
+**Affected:** `src/lib/growth/next-step.ts`, `getCoordinatedNextStep`, Next step screen.
+
+**Migration risk:** None. Reads existing actions and decision outcomes.
+
+**Current functionality:** Next step priority is (1) confirm drafts, (2) do approved work on Your work, (3) use the latest what-changed outcome, (4) specialist recommend, (5) wait. Ads, email, and social stay left alone. GroovGro does not execute.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
-- **Next step is parked.** Coordination stays approval-first and does not execute.
 - **Growth Plan is parked.** Versioned write-up from a Goal. Approve or reject. Do not execute.
 - **Plan actions are parked.** Propose first actions from an approved plan. Approve or reject. Do not execute.
 - **Owner work is parked.** The owner does approved actions and marks them. GroovGro does not execute.
-- **What changed (this slice).** Compare the Goal number after owner work. Do not execute. Do not start ads.
+- **What changed is parked.** Compare the Goal number after owner work. Do not execute.
+- **Next step learning (this slice).** Coordinate drafts, Your work, and what changed. Do not execute. Do not start ads.
 
 ## DESIGN FOR LATER
 
@@ -227,7 +237,8 @@ Organization
 7. **Growth Plan** — versioned draft from a Goal; owner approves or rejects. Done for draft/approve.
 8. **Actions from an approved plan** — proposed only. Done for propose/approve.
 9. **Owner work** — owner does approved actions and marks them. Done for I did this / Skip.
-10. **What changed** — compare the Goal number after owner work. This slice.
-11. **Guarded automation** — only after the above is trusted.
+10. **What changed** — compare the Goal number after owner work. Done for check/compare.
+11. **Next step uses learning** — drafts, Your work, then what changed. This slice.
+12. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

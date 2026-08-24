@@ -1,10 +1,11 @@
+import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
 export type NextStepKind = "no_change_yet" | "recommend";
 export type NextStepClass = "operational" | "optimization" | "strategic";
-export type NextStepSource = "drafts" | "specialist" | "review";
+export type NextStepSource = "drafts" | "specialist" | "review" | "owner_work" | "learning";
 
 export type NextStepCandidate = {
   kind: NextStepKind
@@ -29,6 +30,10 @@ export type NextStepInput = {
   inferredDraftCount: number
   reports: SpecialistReport[]
   waitingActions: WaitingAction[]
+  openWorkCount?: number
+  latestLearningKind?: WorkLearningKind | ""
+  latestLearningOutcome?: string
+  latestLearningGoalId?: string | null
 };
 
 export type CoordinatedNextStep = {
@@ -72,6 +77,85 @@ function fromReport(report: SpecialistReport): NextStepCandidate {
   };
 }
 
+function ownerWorkCandidate(count: number): NextStepCandidate | null {
+  if (count <= 0) return null;
+  return {
+    kind: "recommend",
+    classification: "operational",
+    title: "Do the work you already approved",
+    body: `${count} approved action${count === 1 ? "" : "s"} ${count === 1 ? "is" : "are"} ready on Your work. You do ${count === 1 ? "it" : "them"}. GroovGro will not run ${count === 1 ? "it" : "them"}.`,
+    href: "/app/work",
+    source: "owner_work",
+    specialistId: null,
+    goalId: null,
+  };
+}
+
+function learningCandidate(input: NextStepInput): NextStepCandidate | null {
+  const kind = input.latestLearningKind;
+  if (!kind) return null;
+  const outcome = (input.latestLearningOutcome ?? "").replace(/\s+/g, " ").trim();
+  const goalId = input.latestLearningGoalId ?? null;
+  const leaveAlone =
+    " GroovGro will not start ads, send email, or change the live website.";
+
+  if (kind === "target_reached") {
+    return {
+      kind: "recommend",
+      classification: "operational",
+      title: "This Goal is reached",
+      body:
+        outcome ||
+        `The Goal number reached its target. Open Goals to set the next measurable outcome.${leaveAlone}`,
+      href: "/app/goals",
+      source: "learning",
+      specialistId: null,
+      goalId,
+    };
+  }
+  if (kind === "declined") {
+    return {
+      kind: "recommend",
+      classification: "operational",
+      title: "Read the Goal before changing course",
+      body:
+        outcome ||
+        `The Goal number is lower than when you did the work. Do not add spend.${leaveAlone}`,
+      href: "/app/goals",
+      source: "learning",
+      specialistId: null,
+      goalId,
+    };
+  }
+  if (kind === "no_goal") {
+    return {
+      kind: "recommend",
+      classification: "operational",
+      title: "Add a Goal so GroovGro can compare a number",
+      body:
+        outcome ||
+        `That work was not tied to a Goal. Open Goals and write a measurable outcome.${leaveAlone}`,
+      href: "/app/goals",
+      source: "learning",
+      specialistId: null,
+      goalId,
+    };
+  }
+
+  return {
+    kind: "no_change_yet",
+    classification: "optimization",
+    title: "Nothing should change yet",
+    body:
+      outcome ||
+      `Keep collecting evidence. Do not change course yet.${leaveAlone}`,
+    href: "/app/work",
+    source: "learning",
+    specialistId: null,
+    goalId,
+  };
+}
+
 function nothingYet(): NextStepCandidate {
   return {
     kind: "no_change_yet",
@@ -94,6 +178,8 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     isWaitingActionStatus(action.status),
   );
   const drafts = draftsCandidate(input.inferredDraftCount);
+  const ownerWork = ownerWorkCandidate(input.openWorkCount ?? 0);
+  const learning = learningCandidate(input);
   const usable = input.reports.filter((report) => !DISCONNECTED_CHANNELS.has(report.id));
   const leftAlone = [
     ...input.reports.filter((report) => DISCONNECTED_CHANNELS.has(report.id)).map(fromReport),
@@ -101,12 +187,11 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   ];
 
   const ranked = [
-    ...(drafts ? [drafts] : []),
     ...usable.filter((report) => report.recommend.kind === "recommend").map(fromReport),
   ].sort((a, b) => score(b) - score(a));
 
   return {
-    primary: ranked[0] ?? nothingYet(),
+    primary: drafts ?? ownerWork ?? learning ?? ranked[0] ?? nothingYet(),
     leftAlone,
     waitingActions,
     executeAllowed: false,
