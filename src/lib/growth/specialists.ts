@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -42,6 +42,7 @@ export type SpecialistFacts = {
   seoWarnCount: number
   seoCheckedAt: Date | null
   searchConsoleConnected: boolean
+  searchConsoleProperty: boolean
   openLeadCount: number
   recordedVisitCount: number
   upcomingEventCount: number
@@ -151,7 +152,13 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
     : "No visibility or traffic Goal is active yet.";
 
   const read = facts.seoCheckedAt
-    ? `Last SEO check scored ${facts.seoScore} out of 100${facts.seoSummary ? ` — ${facts.seoSummary}` : "."} ${facts.seoFailCount} blocking item${facts.seoFailCount === 1 ? "" : "s"}, ${facts.seoWarnCount} item${facts.seoWarnCount === 1 ? "" : "s"} to improve. Search Console is ${facts.searchConsoleConnected ? "connected (read-only)" : "not connected"}.`
+    ? `Last SEO check scored ${facts.seoScore} out of 100${facts.seoSummary ? ` — ${facts.seoSummary}` : "."} ${facts.seoFailCount} blocking item${facts.seoFailCount === 1 ? "" : "s"}, ${facts.seoWarnCount} item${facts.seoWarnCount === 1 ? "" : "s"} to improve. Search Console is ${
+        !facts.searchConsoleConnected
+          ? "not connected"
+          : facts.searchConsoleProperty
+            ? "connected (read-only)"
+            : "connected, but no property is chosen yet"
+      }.`
     : "No SEO check has been saved yet. GroovGro has not changed any page.";
 
   let analyze = `${goalLine} SEO waits ${policy.minElapsedDays} days and enough outcomes before an optimization change.`;
@@ -193,6 +200,14 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
       classification: "optimization",
       title: CONNECT_SEARCH_CONSOLE_STEP_TITLE,
       body: "Connect Search Console here so GroovGro can read search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
+      href: "/app/seo",
+    };
+  } else if (facts.searchConsoleConnected && !facts.searchConsoleProperty) {
+    recommend = {
+      kind: "recommend",
+      classification: "optimization",
+      title: PICK_SEARCH_CONSOLE_STEP_TITLE,
+      body: "Google is connected. Choose the Search Console property here so GroovGro can read search numbers. GroovGro will not edit the website, submit a sitemap, or buy ads.",
       href: "/app/seo",
     };
   } else {

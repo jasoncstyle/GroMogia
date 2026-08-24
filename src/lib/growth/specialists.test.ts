@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -28,6 +28,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     seoWarnCount: 0,
     seoCheckedAt: null,
     searchConsoleConnected: true,
+    searchConsoleProperty: true,
     openLeadCount: 0,
     recordedVisitCount: 1,
     upcomingEventCount: 0,
@@ -138,6 +139,30 @@ describe("growth specialists", () => {
     assert.equal(seo.recommend.title, CONNECT_SEARCH_CONSOLE_STEP_TITLE);
     assert.match(seo.recommend.body, /will not edit the website/);
     assert.match(seo.recommend.body, /buy ads/);
+  });
+
+  it("asks to choose the Search Console property when Google is connected but none is saved", () => {
+    const seo = specialistById(
+      buildSpecialistReports(
+        facts({
+          seoScore: 88,
+          seoSummary: "Looks complete.",
+          seoCheckedAt: now,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          searchConsoleConnected: true,
+          searchConsoleProperty: false,
+          openLeadCount: 0,
+        }),
+      ),
+      "seo",
+    );
+    assert.ok(seo);
+    assert.equal(seo.recommend.kind, "recommend");
+    assert.equal(seo.recommend.classification, "optimization");
+    assert.equal(seo.recommend.title, PICK_SEARCH_CONSOLE_STEP_TITLE);
+    assert.match(seo.recommend.body, /Choose the Search Console property here/);
+    assert.match(seo.recommend.body, /will not edit the website/);
   });
 
   it("asks to connect an existing website and never to move it", () => {

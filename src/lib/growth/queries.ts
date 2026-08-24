@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
 
+import { readGoogleSecret } from "@/lib/actions/search-console";
 import { getDb } from "@/lib/db";
 import {
   availabilityConstraints,
@@ -350,6 +351,7 @@ async function getLatestSeoSummary(organizationId: string) {
       seoWarnCount: 0,
       seoCheckedAt: null as Date | null,
       searchConsoleConnected: false,
+      searchConsoleProperty: false,
     };
   }
 
@@ -374,6 +376,10 @@ async function getLatestSeoSummary(organizationId: string) {
 
   const audit = audits.find((row) => !row.builderSiteId) ?? audits[0] ?? null;
   const findings = audit?.findings ?? [];
+  const searchConsoleConnected = googleRows[0]?.status === "connected";
+  const secret = searchConsoleConnected
+    ? await readGoogleSecret(organizationId)
+    : null;
 
   return {
     seoScore: audit?.score ?? null,
@@ -381,7 +387,8 @@ async function getLatestSeoSummary(organizationId: string) {
     seoFailCount: findings.filter((item) => item.severity === "fail").length,
     seoWarnCount: findings.filter((item) => item.severity === "warn").length,
     seoCheckedAt: audit?.createdAt ?? null,
-    searchConsoleConnected: googleRows[0]?.status === "connected",
+    searchConsoleConnected,
+    searchConsoleProperty: Boolean(secret?.siteUrl),
   };
 }
 

@@ -352,7 +352,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If Next step is review the schedule, the owner can see upcoming items and add a calendar item there. GroovGro does not change ads or the website.
 
-### 35. Follow up open leads from Next step (this slice)
+### 35. Follow up open leads from Next step
 
 **Reason:** Following up open leads still sent the owner to Leads & customers to move a person. Put Move and Mark customer on Next step. GroovGro must not email anyone.
 
@@ -361,6 +361,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If Next step is follow up open leads, the owner can move a person or mark them as a customer there, and copy the public lead form. GroovGro does not email anyone.
+
+### 36. Choose the Search Console property from Next step (this slice)
+
+**Reason:** After Connect Search Console, Google sign-in still landed on SEO to pick the property. Put the property list on Next step and send Google back there. GroovGro must stay read-only.
+
+**Affected:** Next step, Google start/callback. Reuses `selectSearchConsoleProperty`. Does not edit the website, submit a sitemap, or buy ads.
+
+**Migration risk:** None.
+
+**Current functionality:** If Google is connected but no property is saved, Next step asks the owner to choose it there. After Google sign-in, GroovGro returns to Next step. Open leads still come first. GroovGro only reads search numbers.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -388,7 +398,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Connect Search Console from Next step is parked.** Ask the owner to connect Search Console read-only. Do not edit the live site.
 - **Paste the tracking snippet from Next step is parked.** Ask the owner to copy the snippet. Do not replace the live site.
 - **Review the schedule from Next step is parked.** Ask the owner to add a calendar item. Do not change ads or the website.
-- **Follow up open leads from Next step (this slice).** Ask the owner to move a person or mark them as a customer. Do not email anyone.
+- **Follow up open leads from Next step is parked.** Ask the owner to move a person or mark them as a customer. Do not email anyone.
+- **Choose the Search Console property from Next step (this slice).** Ask the owner to pick the property after Google sign-in. Do not edit the live site.
 
 ## DESIGN FOR LATER
 
@@ -496,7 +507,8 @@ Organization
 27. **Connect Search Console from Next step** — connect Search Console read-only from Next step. Done.
 28. **Paste the tracking snippet from Next step** — copy the snippet on Next step when visits are not recorded yet. Done.
 29. **Review the schedule from Next step** — add a calendar item on Next step. Done.
-30. **Follow up open leads from Next step** — move a person or mark them as a customer on Next step. This slice.
-31. **Guarded automation** — only after the above is trusted.
+30. **Follow up open leads from Next step** — move a person or mark them as a customer on Next step. Done.
+31. **Choose the Search Console property from Next step** — pick the property after Google sign-in on Next step. This slice.
+32. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

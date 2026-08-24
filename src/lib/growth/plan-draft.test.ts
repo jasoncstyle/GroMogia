@@ -9,6 +9,7 @@ import {
   CONNECT_SEARCH_CONSOLE_STEP_TITLE,
   CONNECT_WEBSITE_STEP_TITLE,
   PASTE_SNIPPET_STEP_TITLE,
+  PICK_SEARCH_CONSOLE_STEP_TITLE,
   draftGrowthPlanSummary,
   draftPlanExcerpt,
   findDraftPlanToApprove,
@@ -448,6 +449,7 @@ describe("growth plan draft", () => {
     assert.equal(isSeoDraftNextStep(FIX_SEO_STEP_TITLE), true);
     assert.equal(isSeoDraftNextStep(IMPROVE_SEO_STEP_TITLE), true);
     assert.equal(isSearchConsoleNextStep(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);
+    assert.equal(isSearchConsoleNextStep(PICK_SEARCH_CONSOLE_STEP_TITLE), true);
     assert.equal(isSearchConsoleNextStep(FIX_SEO_STEP_TITLE), false);
     assert.equal(isPasteSnippetNextStep(PASTE_SNIPPET_STEP_TITLE), true);
     assert.equal(isPasteSnippetNextStep(CONNECT_WEBSITE_STEP_TITLE), false);
@@ -481,6 +483,7 @@ describe("growth plan draft", () => {
     assert.equal(skipsDuplicateNextStepAction(RUN_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(FIX_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(CONNECT_SEARCH_CONSOLE_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction(PICK_SEARCH_CONSOLE_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(PASTE_SNIPPET_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(GOAL_REACHED_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction("Nothing should change yet"), false);

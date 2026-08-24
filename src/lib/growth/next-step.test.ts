@@ -23,6 +23,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     seoWarnCount: 0,
     seoCheckedAt: now,
     searchConsoleConnected: true,
+    searchConsoleProperty: true,
     openLeadCount: 0,
     recordedVisitCount: 1,
     upcomingEventCount: 0,
@@ -641,7 +642,67 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.classification, "optimization");
     assert.match(step.primary.body, /will not edit the website/);
     assert.match(page, /isSearchConsoleNextStep/);
-    assert.match(page, /\/api\/google\/start/);
+    assert.match(page, /SearchConsolePanel/);
+  });
+
+  it("puts Choose the Search Console property on Next step after Google sign-in", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const start = readFileSync(
+      join(process.cwd(), "src/app/api/google/start/route.ts"),
+      "utf8",
+    );
+    const callback = readFileSync(
+      join(process.cwd(), "src/app/api/google/callback/route.ts"),
+      "utf8",
+    );
+    const complete = readFileSync(
+      join(process.cwd(), "src/lib/actions/search-console.ts"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          searchConsoleConnected: true,
+          searchConsoleProperty: false,
+          openLeadCount: 0,
+          seoScore: 88,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          seoCheckedAt: now,
+        }),
+      ),
+      waitingActions: [],
+    });
+    assert.equal(step.primary.title, "Choose the Search Console property");
+    assert.equal(step.primary.classification, "optimization");
+    assert.match(step.primary.body, /Choose the Search Console property here/);
+    assert.match(page, /SearchConsolePanel/);
+    assert.match(start, /\/app\/next-step\?/);
+    assert.match(callback, /\/app\/next-step\?/);
+    assert.match(complete, /\/app\/next-step\?gsc=pick/);
+  });
+
+  it("keeps follow-up of open leads ahead of choosing a Search Console property", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          searchConsoleConnected: true,
+          searchConsoleProperty: false,
+          openLeadCount: 3,
+          seoScore: 88,
+          seoFailCount: 0,
+          seoWarnCount: 0,
+          seoCheckedAt: now,
+        }),
+      ),
+      waitingActions: [],
+    });
+    assert.equal(step.primary.title, "Follow up open leads");
   });
 
   it("puts the tracking snippet on Next step when a site is connected but no visits are recorded", () => {

@@ -10,6 +10,7 @@ import { FoldableSample } from "@/components/foldable-sample";
 import { EventCreateForm } from "@/components/event-create-form";
 import { LeadFollowUpButtons } from "@/components/lead-follow-up";
 import { CopyLink } from "@/components/copy-link";
+import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { TrackingSnippet } from "@/components/tracking-snippet";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
 import { Button } from "@/components/ui/button";
@@ -23,6 +24,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
 import { getCoordinatedNextStep, getGrowthLinkOptions } from "@/lib/growth/queries";
+import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
@@ -30,7 +32,12 @@ import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 
-export default async function NextStepPage() {
+export default async function NextStepPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ gsc?: string; error?: string }>
+}) {
+  const params = await searchParams;
   const session = await getAppSession();
   const [step, dashboard, links, slug] = session.organizationId
     ? await Promise.all([
@@ -69,6 +76,11 @@ export default async function NextStepPage() {
     ? `<script src="${appUrl()}/t.js" data-groovgro-id="${dashboard.website.trackingId}" data-gromogia-id="${dashboard.website.trackingId}" async></script>`
     : "";
   const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
+  const gscNotice = searchConsoleNotice(params.gsc, params.error);
+  const searchConsole =
+    session.organizationId && step && isSearchConsoleNextStep(step.primary.title)
+      ? (await getSeoPageData(session.organizationId)).searchConsole
+      : null;
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -98,6 +110,9 @@ export default async function NextStepPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-sm">{step.primary.body}</p>
+              {gscNotice && !isSearchConsoleNextStep(step.primary.title) ? (
+                <p className="text-sm text-muted-foreground">{gscNotice}</p>
+              ) : null}
               {step.primary.title === CONFIRM_DRAFTS_STEP_TITLE ? (
                 step.inferredDrafts.map((draft) => (
                   <div key={draft.id} className="space-y-2 rounded-lg border p-4 text-sm">
@@ -194,18 +209,24 @@ export default async function NextStepPage() {
                   </Button>
                 </div>
               ) : isSearchConsoleNextStep(step.primary.title) ? (
-                <div className="flex flex-wrap gap-2">
-                  {canConnectSearchConsole ? (
-                    <Button asChild>
-                      <Link href="/api/google/start">Connect Search Console</Link>
-                    </Button>
+                <>
+                  {searchConsole ? (
+                    <SearchConsolePanel
+                      searchConsole={searchConsole}
+                      notice={gscNotice}
+                      embedded
+                      canManage={canConnectSearchConsole}
+                    />
                   ) : (
-                    <Button disabled>Connect Search Console</Button>
+                    <p className="text-sm text-muted-foreground">
+                      Open SEO to finish Search Console. GroovGro will not
+                      edit the website.
+                    </p>
                   )}
                   <Button asChild variant="outline">
                     <Link href="/app/seo">Open SEO</Link>
                   </Button>
-                </div>
+                </>
               ) : isSeoDraftNextStep(step.primary.title) ? (
                 <>
                   {step.seoDrafts.length === 0 ? (

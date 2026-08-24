@@ -157,12 +157,12 @@ export async function completeGoogleOAuth(input: {
       organizationId: input.organizationId,
       userId: input.userId,
     } as OrgSession);
-    return "/app/seo?gsc=connected";
+    return "/app/next-step?gsc=connected";
   }
   if (match.candidates.length > 0) {
-    return "/app/seo?gsc=pick";
+    return "/app/next-step?gsc=pick";
   }
-  return "/app/seo?gsc=missing";
+  return "/app/next-step?gsc=missing";
 }
 
 async function refreshSearchConsoleForOrganization(

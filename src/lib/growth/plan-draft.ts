@@ -70,6 +70,7 @@ export const RUN_SEO_STEP_TITLE = "Run an SEO check";
 export const FIX_SEO_STEP_TITLE = "Fix blocking SEO items";
 export const IMPROVE_SEO_STEP_TITLE = "Improve the page when you have time";
 export const CONNECT_SEARCH_CONSOLE_STEP_TITLE = "Connect Search Console";
+export const PICK_SEARCH_CONSOLE_STEP_TITLE = "Choose the Search Console property";
 export const PASTE_SNIPPET_STEP_TITLE = "Paste the tracking snippet";
 export const REVIEW_SCHEDULE_STEP_TITLE = "Review the schedule or how people find it";
 export const GOAL_REACHED_STEP_TITLE = "This Goal is reached";
@@ -85,6 +86,7 @@ export function skipsDuplicateNextStepAction(title: string): boolean {
     text === FIX_SEO_STEP_TITLE ||
     text === IMPROVE_SEO_STEP_TITLE ||
     text === CONNECT_SEARCH_CONSOLE_STEP_TITLE ||
+    text === PICK_SEARCH_CONSOLE_STEP_TITLE ||
     text === PASTE_SNIPPET_STEP_TITLE ||
     text === REVIEW_SCHEDULE_STEP_TITLE ||
     text === GOAL_REACHED_STEP_TITLE ||
@@ -139,7 +141,8 @@ export function isSeoDraftNextStep(title: string): boolean {
 }
 
 export function isSearchConsoleNextStep(title: string): boolean {
-  return clean(title) === CONNECT_SEARCH_CONSOLE_STEP_TITLE;
+  const text = clean(title);
+  return text === CONNECT_SEARCH_CONSOLE_STEP_TITLE || text === PICK_SEARCH_CONSOLE_STEP_TITLE;
 }
 
 export function isPasteSnippetNextStep(title: string): boolean {
