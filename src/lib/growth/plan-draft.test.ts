@@ -20,6 +20,7 @@ import {
   hasDedicatedNextStepControls,
   IMPROVE_SEO_STEP_TITLE,
   isPasteSnippetNextStep,
+  isReviewScheduleNextStep,
   isSearchConsoleNextStep,
   isSeoDraftNextStep,
   openPageLabelForNextStep,
@@ -448,7 +449,8 @@ describe("growth plan draft", () => {
     assert.equal(isSearchConsoleNextStep(FIX_SEO_STEP_TITLE), false);
     assert.equal(isPasteSnippetNextStep(PASTE_SNIPPET_STEP_TITLE), true);
     assert.equal(isPasteSnippetNextStep(CONNECT_WEBSITE_STEP_TITLE), false);
-    assert.equal(openPageLabelForNextStep(REVIEW_SCHEDULE_STEP_TITLE), "Open Events");
+    assert.equal(openPageLabelForNextStep(REVIEW_SCHEDULE_STEP_TITLE), null);
+    assert.equal(isReviewScheduleNextStep(REVIEW_SCHEDULE_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(READ_GOAL_STEP_TITLE), "Open Goals");
     assert.equal(openPageLabelForNextStep(ADD_GOAL_STEP_TITLE), "Open Goals");
     assert.equal(openPageLabelForNextStep(RUN_SEO_STEP_TITLE), null);

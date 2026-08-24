@@ -7,6 +7,7 @@ import { NextStepResponseButtons, OpenPageNextStepButtons, WaitingActionButtons 
 import { OwnerWorkButtons, CheckWhatChangedButton } from "@/components/owner-work-actions";
 import { DraftSeoImprovementsButton, RunHomepageSeoButton, SeoDraftDecisionButtons } from "@/components/seo-actions";
 import { FoldableSample } from "@/components/foldable-sample";
+import { EventCreateForm } from "@/components/event-create-form";
 import { TrackingSnippet } from "@/components/tracking-snippet";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
 import { Button } from "@/components/ui/button";
@@ -19,21 +20,22 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
-import { getCoordinatedNextStep } from "@/lib/growth/queries";
+import { getCoordinatedNextStep, getGrowthLinkOptions } from "@/lib/growth/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isPasteSnippetNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isPasteSnippetNextStep, isReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 
 export default async function NextStepPage() {
   const session = await getAppSession();
-  const [step, dashboard] = session.organizationId
+  const [step, dashboard, links] = session.organizationId
     ? await Promise.all([
         getCoordinatedNextStep(session.organizationId),
         getDashboardSnapshot(session.organizationId),
+        getGrowthLinkOptions(session.organizationId),
       ])
-    : [null, null];
+    : [null, null, { offers: [], goals: [] }];
   const canDecide = hasPermission(session.permissions, "view_decision_history");
   const canCheck = canDecide;
   const canApprove = hasPermission(session.permissions, "approve_actions");
@@ -43,6 +45,7 @@ export default async function NextStepPage() {
   const canUpdateWork = canDraftPlan;
   const canApprovePlan = hasPermission(session.permissions, "approve_plans");
   const canManageWebsite = hasPermission(session.permissions, "manage_website");
+  const canManageEvents = hasPermission(session.permissions, "manage_events");
   const canManageSeo = hasPermission(session.permissions, "manage_seo");
   const canConnectSearchConsole =
     canManageSeo || hasPermission(session.permissions, "manage_integrations");
@@ -226,6 +229,36 @@ export default async function NextStepPage() {
                       <Link href="/app/seo">Open SEO</Link>
                     </Button>
                   </div>
+                </>
+              ) : isReviewScheduleNextStep(step.primary.title) ? (
+                <>
+                  {dashboard?.upcomingEvents.length ? (
+                    <ul className="space-y-2 text-sm">
+                      {dashboard.upcomingEvents.map((event) => (
+                        <li key={event.id}>
+                          <span className="font-medium">{event.title}</span>
+                          <span className="text-muted-foreground">
+                            {event.startsAt
+                              ? ` · ${event.startsAt.toLocaleString()}`
+                              : " · Date not set"}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No upcoming calendar items yet. Add one here if that is
+                      how this business sells.
+                    </p>
+                  )}
+                  <EventCreateForm
+                    offers={links.offers}
+                    goals={links.goals}
+                    disabled={!canManageEvents}
+                  />
+                  <Button asChild variant="outline">
+                    <Link href="/app/events">Open Events</Link>
+                  </Button>
                 </>
               ) : openPageLabel ? (
                 <OpenPageNextStepButtons

@@ -87,6 +87,7 @@ export async function createEvent(formData: FormData): Promise<ActionResult> {
     });
 
     revalidatePath("/app/events");
+    revalidatePath("/app/next-step");
     revalidatePath("/app");
     return "Event saved";
   });

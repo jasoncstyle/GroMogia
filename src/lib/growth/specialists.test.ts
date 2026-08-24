@@ -204,6 +204,7 @@ describe("growth specialists", () => {
       "availability",
     );
     assert.equal(enough?.recommend.classification, "optimization");
+    assert.match(enough?.recommend.body ?? "", /Review upcoming items here/);
     assert.match(enough?.recommend.body ?? "", /will not change ads or the website/);
   });
 

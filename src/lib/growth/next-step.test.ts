@@ -664,6 +664,47 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.title, "Follow up open leads");
   });
 
+  it("puts Add event on Next step when the schedule needs a review", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const eventsPage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/events/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          goals: [
+            {
+              id: "g-util",
+              title: "Fill upcoming scheduled spots",
+              status: "active",
+              goalType: "utilization",
+              liveCurrentValue: 0,
+              targetValue: 12,
+              progressPercent: 0,
+              liveNote: "0 of 12 upcoming spots are filled.",
+            },
+          ],
+          upcomingEventCount: 2,
+          evidenceSample: { elapsedDays: 30, observations: 40, conversions: 12 },
+          openLeadCount: 0,
+          searchConsoleConnected: true,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+    });
+    assert.equal(step.primary.title, "Review the schedule or how people find it");
+    assert.match(step.primary.body, /Review upcoming items here/);
+    assert.match(page, /isReviewScheduleNextStep/);
+    assert.match(page, /EventCreateForm/);
+    assert.match(eventsPage, /EventCreateForm/);
+  });
+
   it("asks the Dashboard to propose first actions on Next step", () => {
     const source = readFileSync(
       join(process.cwd(), "src/app/(app)/app/page.tsx"),

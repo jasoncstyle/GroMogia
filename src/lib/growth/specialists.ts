@@ -335,7 +335,7 @@ function availabilityReport(
       kind: "recommend",
       classification: "optimization",
       title: REVIEW_SCHEDULE_STEP_TITLE,
-      body: `${goal?.title ?? "The Goal"} is well short of its target. Review upcoming items and the related Offer. GroovGro will not change ads or the website.`,
+      body: `${goal?.title ?? "The Goal"} is well short of its target. Review upcoming items here. Add a calendar item if that is how this business sells. GroovGro will not change ads or the website.`,
       href: "/app/events",
     };
   } else {
