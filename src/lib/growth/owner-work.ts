@@ -10,18 +10,21 @@ const HREF_BY_TYPE: Record<string, string> = {
   do_next_step: "/app/next-step",
   watch_progress: "/app/next-step",
   next_step: "/app/next-step",
+  specialist_recommend: "/app/next-step",
+  brand_voice_draft: "/app/next-step",
+  observe_recommend: "/app/next-step",
 };
 
 const HREF_BY_MODULE: Record<string, string> = {
-  crm: "/app/crm",
-  website: "/app/website",
-  website_connect: "/app/website",
-  offers: "/app/business",
-  business: "/app/business",
+  crm: "/app/next-step",
+  website: "/app/next-step",
+  website_connect: "/app/next-step",
+  offers: "/app/next-step",
+  business: "/app/next-step",
   growth_next: "/app/next-step",
-  growth_goals: "/app/goals",
-  seo: "/app/seo",
-  intelligence: "/app/intelligence",
+  growth_goals: "/app/next-step",
+  seo: "/app/next-step",
+  intelligence: "/app/next-step",
 };
 
 export const OWNER_DONE_STATUS = "completed_by_owner";
@@ -43,7 +46,7 @@ export function hrefForGrowthAction(action: {
 }): string {
   if (LEFT_ALONE_MODULES.has(action.module)) return "/app/next-step";
   if (HREF_BY_TYPE[action.actionType]) return HREF_BY_TYPE[action.actionType];
-  return HREF_BY_MODULE[action.module] ?? "/app/goals";
+  return HREF_BY_MODULE[action.module] ?? "/app/next-step";
 }
 
 export function isOpenOwnerWork(status: string): boolean {

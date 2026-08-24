@@ -29,6 +29,22 @@ describe("owner work", () => {
       hrefForGrowthAction({ actionType: "watch_progress", module: "growth_goals" }),
       "/app/next-step",
     );
+    assert.equal(
+      hrefForGrowthAction({ actionType: "specialist_recommend", module: "seo" }),
+      "/app/next-step",
+    );
+    assert.equal(
+      hrefForGrowthAction({ actionType: "specialist_recommend", module: "website" }),
+      "/app/next-step",
+    );
+    assert.equal(
+      hrefForGrowthAction({ actionType: "brand_voice_draft", module: "brand_voice" }),
+      "/app/next-step",
+    );
+    assert.equal(
+      hrefForGrowthAction({ actionType: "observe_recommend", module: "intelligence" }),
+      "/app/next-step",
+    );
   });
 
   it("does not send ads, email, or social work to an execution page", () => {
@@ -44,6 +60,20 @@ describe("owner work", () => {
       hrefForGrowthAction({ actionType: "post_social", module: "social" }),
       "/app/next-step",
     );
+  });
+
+  it("keeps Your work Open the page on Next step for owner loops that already live there", () => {
+    const source = readFileSync(join(process.cwd(), "src/lib/growth/owner-work.ts"), "utf8");
+    assert.doesNotMatch(source, /"\/app\/crm"/);
+    assert.doesNotMatch(source, /"\/app\/website"/);
+    assert.doesNotMatch(source, /"\/app\/business"/);
+    assert.doesNotMatch(source, /"\/app\/seo"/);
+    assert.doesNotMatch(source, /"\/app\/goals"/);
+    const saved = readFileSync(
+      join(process.cwd(), "src/lib/actions/next-step.ts"),
+      "utf8",
+    );
+    assert.doesNotMatch(saved, /linked page/);
   });
 
   it("treats approved actions as open work and owner marks as finished", () => {

@@ -103,7 +103,7 @@ export async function saveNextStepResponse(
     revalidateNextStep();
     return leaveAlone
       ? "GroovGro recorded that nothing should change yet. It did not execute anything."
-      : "Next step saved. GroovGro will not execute it. Open the linked page when you are ready.";
+      : "Next step saved. GroovGro will not execute it.";
   });
 }
 
