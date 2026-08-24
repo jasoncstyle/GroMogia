@@ -1,6 +1,6 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
-import { APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_PLAN_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -45,6 +45,10 @@ export type NextStepInput = {
   approvePlanGoalTitle?: string
   approvePlanVersion?: number
   approvePlanExcerpt?: string
+  proposePlanId?: string | null
+  proposePlanGoalId?: string | null
+  proposePlanGoalTitle?: string
+  proposePlanVersion?: number
   activeGoalIds?: string[]
 };
 
@@ -143,6 +147,25 @@ function approvePlanCandidate(input: NextStepInput): NextStepCandidate | null {
     specialistId: null,
     goalId: input.approvePlanGoalId ?? null,
     planId: input.approvePlanId,
+  };
+}
+
+function proposeActionsCandidate(input: NextStepInput): NextStepCandidate | null {
+  if (!input.proposePlanId) return null;
+  const name =
+    (input.proposePlanGoalTitle ?? "").replace(/\s+/g, " ").trim() || "this Goal";
+  const version = input.proposePlanVersion;
+  const versionLabel = version != null ? ` v${version}` : "";
+  return {
+    kind: "recommend",
+    classification: "operational",
+    title: PROPOSE_ACTIONS_STEP_TITLE,
+    body: `“${name}” has approved plan${versionLabel}. Propose the first actions so you can review them. GroovGro will not run them.`,
+    href: "/app/goals",
+    source: "goals",
+    specialistId: null,
+    goalId: input.proposePlanGoalId ?? null,
+    planId: input.proposePlanId,
   };
 }
 
@@ -256,6 +279,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   const activate = activateGoalCandidate(input.activateGoalId, input.activateGoalTitle);
   const draftPlan = draftPlanCandidate(input.planGoalId, input.planGoalTitle);
   const approvePlan = approvePlanCandidate(input);
+  const proposeActions = proposeActionsCandidate(input);
   const learning = learningCandidate(input);
   const usable = input.reports.filter((report) => !DISCONNECTED_CHANNELS.has(report.id));
   const leftAlone = [
@@ -268,7 +292,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   ].sort((a, b) => score(b) - score(a));
 
   return {
-    primary: drafts ?? ownerWork ?? activate ?? draftPlan ?? approvePlan ?? learning ?? ranked[0] ?? nothingYet(),
+    primary: drafts ?? ownerWork ?? activate ?? draftPlan ?? approvePlan ?? proposeActions ?? learning ?? ranked[0] ?? nothingYet(),
     leftAlone,
     waitingActions,
     executeAllowed: false,

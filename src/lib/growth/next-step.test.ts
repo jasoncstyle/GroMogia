@@ -226,6 +226,39 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.title, "Draft a plan for this Goal");
   });
 
+  it("asks the owner to propose first actions after a plan is approved", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts({ openLeadCount: 3 })),
+      waitingActions: [],
+      proposePlanId: "plan-2",
+      proposePlanGoalId: "goal-2",
+      proposePlanGoalTitle: "Next: More people get in touch",
+      proposePlanVersion: 2,
+    });
+    assert.equal(step.primary.title, "Propose the first actions");
+    assert.equal(step.primary.planId, "plan-2");
+    assert.equal(step.primary.goalId, "goal-2");
+    assert.equal(step.primary.source, "goals");
+    assert.match(step.primary.body, /will not run them/);
+    assert.equal(step.executeAllowed, false);
+  });
+
+  it("keeps approving a draft plan ahead of proposing actions", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      approvePlanId: "plan-1",
+      approvePlanGoalId: "goal-1",
+      approvePlanGoalTitle: "More people get in touch",
+      proposePlanId: "plan-2",
+      proposePlanGoalId: "goal-2",
+      proposePlanGoalTitle: "Next: More people get in touch",
+    });
+    assert.equal(step.primary.title, "Approve this plan");
+  });
+
   it("points at Goals when learning says the target was reached", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,

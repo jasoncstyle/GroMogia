@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { draftActionsFromApprovedPlan } from "./plan-actions";
+import { draftActionsFromApprovedPlan, findPlanNeedingActions } from "./plan-actions";
 
 describe("growth plan actions", () => {
   it("proposes follow-up and the next step without starting marketing", () => {
@@ -76,6 +76,55 @@ describe("growth plan actions", () => {
       inferredOfferCount: 3,
     });
     assert.equal(actions.length, 3);
+  });
+
+  it("finds an approved plan on the active Goal that has no actions yet", () => {
+    const picked = findPlanNeedingActions(
+      [
+        { id: "goal-1", title: "Old Goal", status: "achieved" },
+        { id: "goal-2", title: "Next: More people get in touch", status: "active" },
+      ],
+      [
+        { id: "plan-old", goalId: "goal-1", status: "approved", version: 1 },
+        { id: "plan-1", goalId: "goal-2", status: "approved", version: 1 },
+        { id: "plan-2", goalId: "goal-2", status: "approved", version: 2 },
+      ],
+      [{ planId: "plan-1" }],
+    );
+    assert.equal(picked?.plan.id, "plan-2");
+    assert.equal(picked?.goal.id, "goal-2");
+    assert.equal(
+      findPlanNeedingActions(
+        [{ id: "goal-2", title: "Next: More people get in touch", status: "active" }],
+        [{ id: "plan-2", goalId: "goal-2", status: "approved", version: 2 }],
+        [{ planId: "plan-2" }],
+      ),
+      null,
+    );
+    assert.equal(
+      findPlanNeedingActions(
+        [{ id: "goal-2", title: "Next: More people get in touch", status: "active" }],
+        [{ id: "plan-2", goalId: "goal-2", status: "draft", version: 2 }],
+        [],
+      ),
+      null,
+    );
+  });
+
+  it("does not copy the propose-actions next step back into action text", () => {
+    const actions = draftActionsFromApprovedPlan({
+      goalTitle: "More people get in touch",
+      nextStepTitle: "Propose the first actions",
+      nextStepBody: "Propose the first actions so you can review them.",
+      nextStepKind: "recommend",
+      websiteConnected: true,
+      openLeadCount: 0,
+      confirmedOfferCount: 1,
+      inferredOfferCount: 0,
+    });
+    assert.equal(actions.length, 1);
+    assert.equal(actions[0]?.actionType, "watch_progress");
+    assert.doesNotMatch(actions.map((action) => action.description).join(" "), /Propose the first actions/);
   });
 
   it("does not bake industry-specific words into action helpers", () => {

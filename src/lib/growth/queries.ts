@@ -22,6 +22,7 @@ import {
 } from "@/lib/db/schema";
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
+import { findPlanNeedingActions } from "@/lib/growth/plan-actions";
 import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal } from "@/lib/growth/plan-draft";
 import { coordinateNextStep } from "@/lib/growth/next-step";
 import { isOpenOwnerWork } from "@/lib/growth/owner-work";
@@ -359,6 +360,11 @@ export async function getCoordinatedNextStep(organizationId: string) {
     snapshot.plans,
   );
   const approve = findDraftPlanToApprove(snapshot.activeGoals, snapshot.plans);
+  const propose = findPlanNeedingActions(
+    snapshot.activeGoals,
+    snapshot.plans,
+    snapshot.actions,
+  );
   return coordinateNextStep({
     inferredDraftCount:
       snapshot.inferredOffers.length + snapshot.inferredGoals.length,
@@ -387,6 +393,10 @@ export async function getCoordinatedNextStep(organizationId: string) {
     approvePlanGoalTitle: approve?.goal.title ?? "",
     approvePlanVersion: approve?.plan.version,
     approvePlanExcerpt: approve ? draftPlanExcerpt(approve.plan.strategySummary) : "",
+    proposePlanId: propose?.plan.id ?? null,
+    proposePlanGoalId: propose?.goal.id ?? null,
+    proposePlanGoalTitle: propose?.goal.title ?? "",
+    proposePlanVersion: propose?.plan.version,
     activeGoalIds: snapshot.activeGoals.map((goal) => goal.id),
   });
 }
