@@ -116,7 +116,8 @@ describe("growth review", () => {
     );
 
     assert.equal(review.primary.classification, "operational");
-    assert.match(review.primary.recommendation, /Confirm or reject/);
+    assert.match(review.primary.recommendation, /Open Next step to confirm or reject/);
+    assert.match(review.whatNeedsAttention, /Open Next step to confirm or reject/);
     assert.match(review.headline, /Do not change marketing yet/);
     assert.equal(
       review.recommendations.some((row) => row.kind === "no_change_yet"),
@@ -158,6 +159,7 @@ describe("growth review", () => {
 
     assert.equal(review.primary.classification, "strategic");
     assert.match(review.primary.recommendation, /looks reached/);
+    assert.match(review.primary.recommendation, /Open Next step/);
     assert.match(review.primary.recommendation, /Do not start ads/);
     assert.match(review.strategyNote, /Active Goals/);
   });
@@ -227,6 +229,16 @@ describe("growth review", () => {
     assert.equal(sample.observations, 2);
     assert.equal(sample.conversions, 2);
     assert.ok(sample.elapsedDays >= 21);
+  });
+
+  it("asks Growth review to name Next step when there is no Goal yet", () => {
+    const weekly = generateGrowthReview(baseInput({ goals: [], offers: [] }));
+    assert.match(weekly.primary.recommendation, /Open Next step to add a measurable Goal/);
+    assert.match(weekly.whatNeedsAttention, /Open Next step to add one/);
+    const monthly = generateGrowthReview(
+      baseInput({ kind: "monthly", goals: [], offers: [] }),
+    );
+    assert.match(monthly.strategyNote, /Open Next step to confirm or add a Goal first/);
   });
 
   it("asks the owner to set a review day on Next step", () => {

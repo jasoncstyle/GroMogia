@@ -59,6 +59,9 @@ export default async function GrowthReviewPage() {
           />
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="outline" size="sm">
+              <Link href="/app/next-step">Open Next step</Link>
+            </Button>
+            <Button asChild variant="outline" size="sm">
               <Link href="/app/decisions">Open Decision History</Link>
             </Button>
             <Button asChild variant="outline" size="sm">

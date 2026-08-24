@@ -1638,6 +1638,7 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.match(page, /GrowthSettingsForm/);
+    assert.match(page, /href="\/app\/next-step">Open Next step/);
     assert.doesNotMatch(page, /Change the schedule/);
     assert.doesNotMatch(page, /href="\/app\/goals"/);
   });

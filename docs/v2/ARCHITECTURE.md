@@ -762,7 +762,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Website says to open Next step to find pages and review. Business says to save the address on Next step first. GroovGro does not change the live site.
 
-### 76. Empty Goal copy stays on Next step (this slice)
+### 76. Empty Goal copy stays on Next step
 
 **Reason:** Dashboard and the path so far still named Goals as a second place to write the first Goal or draft a plan, even though those buttons are on Next step.
 
@@ -771,6 +771,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Empty Goal and no-plan copy name Next step. A Growth Plan names Next step for open leads and draft offers. Growth review asks to set a look day on Next step. Reading an existing Goal or approved plan still opens Goals. GroovGro does not start marketing.
+
+### 77. Growth review copy names Next step (this slice)
+
+**Reason:** Growth review still told the owner to confirm drafts or add a Goal without naming Next step, where those buttons already live.
+
+**Affected:** Growth review copy and the When to look buttons.
+
+**Migration risk:** None.
+
+**Current functionality:** Confirm drafts, add a Goal, and a reached Goal name Next step. Growth review’s When to look row also has Open Next step. GroovGro does not start marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -839,7 +849,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Add a Goal and Dashboard empty lists stay on Next step is parked.** Add a Goal stays on Next step. Empty lead and calendar lists on the Dashboard name Next step. Do not email anyone.
 - **Unread website status alerts open Next step is parked.** The amber unread-website alert has Open Next step. Do not change the live site.
 - **Website review copy opens Next step is parked.** After saving a website address, Website names Next step instead of Business. Do not change the live site.
-- **Empty Goal copy stays on Next step (this slice).** Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. Reading an existing Goal or approved plan still opens Goals. Do not start marketing.
+- **Empty Goal copy stays on Next step is parked.** Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. Reading an existing Goal or approved plan still opens Goals. Do not start marketing.
+- **Growth review copy names Next step (this slice).** Confirm drafts, add a Goal, and a reached Goal name Next step. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -988,7 +999,8 @@ Organization
 68. **Add a Goal and Dashboard empty lists stay on Next step** — Add a Goal stays on Next step; empty lead and calendar lists on the Dashboard name Next step. Done.
 69. **Unread website status alerts open Next step** — the unread-website alert has Open Next step. Done.
 70. **Website review copy opens Next step** — after saving a website address, Website names Next step instead of Business. Done.
-71. **Empty Goal copy stays on Next step** — Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. This slice.
-72. **Guarded automation** — only after the above is trusted.
+71. **Empty Goal copy stays on Next step** — Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. Done.
+72. **Growth review copy names Next step** — confirm drafts, add a Goal, and a reached Goal name Next step. This slice.
+73. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

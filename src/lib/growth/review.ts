@@ -333,7 +333,7 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
       kind: "recommend",
       classification: "operational",
       title: "Confirm or reject drafts",
-      recommendation: `Confirm or reject ${draftCount} suggested offer${draftCount === 1 ? "" : "s or goals"}. Nothing becomes active until you do.`,
+      recommendation: `Open Next step to confirm or reject ${draftCount} suggested offer${draftCount === 1 ? "" : "s or goals"}. Nothing becomes active until you do.`,
       rationale:
         "GroovGro drafted these from connected data. It will not activate them or change marketing for you.",
       evidence: `${inferredOffers.length} suggested offer${inferredOffers.length === 1 ? "" : "s"} and ${inferredGoals.length} suggested goal${inferredGoals.length === 1 ? "" : "s"} are waiting.`,
@@ -349,7 +349,7 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
       classification: "operational",
       title: "Name a Goal",
       recommendation:
-        "Add a measurable Goal so weekly and monthly reviews have something to compare against.",
+        "Open Next step to add a measurable Goal so weekly and monthly reviews have something to compare against.",
       rationale:
         "Without an active Goal, GroovGro can report activity but cannot judge progress.",
       evidence: "No active Growth Goal is recorded.",
@@ -365,7 +365,7 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
       kind: "recommend",
       classification: "strategic",
       title: "A Goal looks reached",
-      recommendation: `${goal.title} looks reached. Confirm that and choose the next outcome. Do not start ads or automation from this review.`,
+      recommendation: `${goal.title} looks reached. Open Next step to confirm that and choose the next outcome. Do not start ads or automation from this review.`,
       rationale:
         "A monthly review is the right time to ask whether the objective is done, not to change channels.",
       evidence: `${goal.liveCurrentValue}${goal.targetValue != null ? ` / ${goal.targetValue}` : ""}${goal.liveNote ? ` · ${goal.liveNote}` : ""}`,
@@ -449,15 +449,15 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
           )
           .join(" ")
       : inferredGoals.length > 0
-        ? "Suggested Goals are waiting for you to confirm. None are active yet."
+        ? "Suggested Goals are waiting. Open Next step to confirm them. None are active yet."
         : "No active Goal, so this review can only describe activity, not progress.";
 
   const attentionParts: string[] = [];
   if (draftCount > 0) {
-    attentionParts.push("Suggested Offers or Goals are waiting for confirm or reject.");
+    attentionParts.push("Suggested Offers or Goals are waiting. Open Next step to confirm or reject.");
   }
   if (activeGoals.length === 0 && inferredGoals.length === 0) {
-    attentionParts.push("There is no active Goal.");
+    attentionParts.push("There is no active Goal. Open Next step to add one.");
   }
   if (behind.length > 0) {
     attentionParts.push(`${behind[0].title} is far behind its target.`);
@@ -504,7 +504,7 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
     input.kind === "monthly"
       ? activeGoals.length > 0
         ? `Active Goals to keep or replace: ${activeGoals.map((goal) => goal.title).join("; ")}.`
-        : "A monthly review without an active Goal cannot judge strategy. Confirm or add a Goal first."
+        : "A monthly review without an active Goal cannot judge strategy. Open Next step to confirm or add a Goal first."
       : "Weekly reviews stay operational. Use the monthly review to ask whether the Goals themselves are still right.";
 
   return {
