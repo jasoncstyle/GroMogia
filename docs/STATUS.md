@@ -140,8 +140,8 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Phones get a Menu button that opens the same app navigation as the desktop sidebar.
 - Next step: one coordinated recommendation from drafts, Your work, what changed, specialists, and connected data. The owner accepts it or leaves it alone. Proposed actions can be approved or rejected. Approved work can be done there. Nothing runs. Ads, email, and social stay left alone.
 - The path so far: Next step shows Goal, plan, work, what changed, and the next step in one place. Dashboard and Decisions name Next step for that story. GroovGro does not execute.
-- Next Goal: when a Goal is reached, GroovGro can draft the next one. It stays a draft until the owner makes it active. Nothing runs.
-- Make this the active Goal: one button on a reviewed draft. If it came from a reached Goal, that older Goal is marked achieved. Other active Goals are paused. Nothing runs.
+- Next Goal: when a Goal is reached, GroovGro can draft the next one on Next step. Goals lists a reached Goal and names Next step. It stays a draft until the owner makes it active. Nothing runs.
+- Make this the active Goal: one button on Next step for a reviewed draft. Goals lists that draft and names Next step. If it came from a reached Goal, that older Goal is marked achieved. Other active Goals are paused. Nothing runs.
 - Draft a plan from Next step: when the active Goal has no plan yet, Next step asks the owner to draft one. The same button is on Next step. Nothing runs.
 - Approve a plan from Next step: when the active Goal has a draft plan, Next step asks the owner to approve or reject it. Goals lists draft plans and names Next step. Approving does not run marketing.
 - Propose first actions from Next step: when the approved plan has no actions yet, Next step asks the owner to propose them. Goals lists approved plans and names Next step. Nothing runs.

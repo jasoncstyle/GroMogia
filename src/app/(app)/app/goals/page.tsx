@@ -6,7 +6,6 @@ import {
 } from "@/lib/actions/growth";
 import { InferredBadge } from "@/components/growth-review";
 import { DraftGrowthPlanButton } from "@/components/growth-plan-actions";
-import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { GoalCreateForm } from "@/components/goal-create-form";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import {
@@ -72,13 +71,13 @@ export default async function GoalsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Goals</h1>
         <p className="text-muted-foreground">
           A Goal is a measurable outcome. A draft stays a draft until you
-          click Make this the active Goal. GroovGro can then draft a plan.
-          Approve or reject that plan on Next step. Approving does not run
-          marketing. Approve or reject proposed actions on Next step. Do
-          approved work on Next step or Your work. Confirm or reject
-          suggested goals on Next step. They stay drafts until you do.
-          Review connected data on Next step when GroovGro asks, or on
-          Business if you want to run it again.
+          make it the active Goal on Next step. GroovGro can then draft a
+          plan. Approve or reject that plan on Next step. Approving does
+          not run marketing. Approve or reject proposed actions on Next
+          step. Do approved work on Next step or Your work. Confirm or
+          reject suggested goals on Next step. They stay drafts until you
+          do. Review connected data on Next step when GroovGro asks, or
+          on Business if you want to run it again.
         </p>
       </div>
 
@@ -266,9 +265,10 @@ export default async function GoalsPage() {
                   </SaveButton>
                 </SaveForm>
                 {canDraftPlan && canActivateDraftGoal(goal) ? (
-                  <div className="mt-3">
-                    <ActivateGoalButton goalId={goal.id} />
-                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Make this the active Goal on Next step. GroovGro will not
+                    start marketing.
+                  </p>
                 ) : null}
                 {canDraftPlan ? (
                   <div className="mt-3">
@@ -282,9 +282,10 @@ export default async function GoalsPage() {
                   targetValue: goal.targetValue,
                 }) &&
                 !alreadyDraftedNextGoal(snapshot?.goals ?? [], goal.id) ? (
-                  <div className="mt-3">
-                    <DraftNextGoalButton goalId={goal.id} />
-                  </div>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Draft the next Goal on Next step. It stays a draft until
+                    you make it active. GroovGro will not start marketing.
+                  </p>
                 ) : null}
                 {goal.progressHistory.length > 0 ? (
                   <div className="mt-3">
