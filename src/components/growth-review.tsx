@@ -19,6 +19,34 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+export function SaveGrowthReviewButton({
+  kind,
+  canSave,
+  nothingYet = false,
+  variant = "default",
+}: {
+  kind: "weekly" | "monthly"
+  canSave: boolean
+  nothingYet?: boolean
+  variant?: "default" | "outline"
+}) {
+  return (
+    <SaveForm
+      action={saveGrowthReview}
+      successMessage={
+        nothingYet
+          ? "Review saved. GroovGro recorded that nothing should change yet."
+          : "Review saved to Decision History. GroovGro will not execute it."
+      }
+    >
+      <input type="hidden" name="kind" value={kind} />
+      <SaveButton type="submit" disabled={!canSave} pendingLabel="Saving…" variant={variant}>
+        Save this review to Decision History
+      </SaveButton>
+    </SaveForm>
+  );
+}
+
 export function ReviewConnectedDataButton({ disabled }: { disabled?: boolean }) {
   return (
     <SaveForm
@@ -232,19 +260,12 @@ export function GrowthReviewCard({
           ))}
         </div>
 
-        <SaveForm
-          action={saveGrowthReview}
-          successMessage={
-            review.primary.kind === "no_change_yet"
-              ? "Review saved. GroovGro recorded that nothing should change yet."
-              : "Review saved to Decision History. GroovGro will not execute it."
-          }
-        >
-          <input type="hidden" name="kind" value={review.kind} />
-          <SaveButton type="submit" disabled={!canSave} variant="outline">
-            Save this review to Decision History
-          </SaveButton>
-        </SaveForm>
+        <SaveGrowthReviewButton
+          kind={review.kind}
+          canSave={canSave}
+          nothingYet={review.primary.kind === "no_change_yet"}
+          variant="outline"
+        />
       </CardContent>
     </Card>
   );

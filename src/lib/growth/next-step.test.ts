@@ -76,7 +76,7 @@ describe("coordinated next step", () => {
       waitingActions: [],
     });
     assert.equal(step.primary.href, "/app/crm");
-    assert.match(step.primary.title, /leads/i);
+    assert.equal(step.primary.title, "Follow up open leads");
     assert.equal(
       step.leftAlone.some((item) => /ads/i.test(item.title) || /advertising/i.test(item.body)),
       true,
@@ -90,6 +90,7 @@ describe("coordinated next step", () => {
       waitingActions: [],
     });
     assert.equal(step.primary.kind, "no_change_yet");
+    assert.equal(step.primary.source, "review");
     assert.match(step.primary.body, /will not start ads/);
   });
 
@@ -481,5 +482,51 @@ describe("coordinated next step", () => {
     );
     assert.match(source, /ReviewConnectedDataButton/);
     assert.match(source, /REVIEW_SITE_STEP_TITLE/);
+  });
+
+  it("opens Leads & customers from Next step without I’ll do this", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const buttons = readFileSync(
+      join(process.cwd(), "src/components/next-step-actions.tsx"),
+      "utf8",
+    );
+    assert.match(page, /FOLLOW_UP_LEADS_STEP_TITLE/);
+    assert.match(page, /FollowUpLeadsButtons/);
+    const followUp = buttons.slice(
+      buttons.indexOf("FollowUpLeadsButtons"),
+      buttons.indexOf("NextStepResponseButtons"),
+    );
+    assert.match(followUp, /Open Leads/);
+    assert.equal(followUp.includes("do_this"), false);
+    assert.equal(followUp.includes("I’ll do this"), false);
+  });
+
+  it("saves this week’s growth review on Next step when the wait is from the review", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(page, /SaveGrowthReviewButton/);
+    assert.match(page, /source === "review"/);
+  });
+
+  it("keeps Save nothing yet after Check what changed when the outcome is wait", () => {
+    const buttons = readFileSync(
+      join(process.cwd(), "src/components/next-step-actions.tsx"),
+      "utf8",
+    );
+    assert.match(buttons, /Save “nothing yet”/);
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts({ openLeadCount: 3 })),
+      waitingActions: [],
+      latestLearningKind: "too_soon",
+      latestLearningOutcome: "Wait before changing course.",
+    });
+    assert.equal(step.primary.kind, "no_change_yet");
+    assert.equal(step.primary.source, "learning");
   });
 });

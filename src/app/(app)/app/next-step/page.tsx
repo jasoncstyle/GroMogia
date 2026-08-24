@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-import { ConfirmRejectButtons, InferredBadge, ReviewConnectedDataButton } from "@/components/growth-review";
+import { ConfirmRejectButtons, InferredBadge, ReviewConnectedDataButton, SaveGrowthReviewButton } from "@/components/growth-review";
 import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
-import { NextStepResponseButtons, WaitingActionButtons } from "@/components/next-step-actions";
+import { FollowUpLeadsButtons, NextStepResponseButtons, WaitingActionButtons } from "@/components/next-step-actions";
 import { OwnerWorkButtons, CheckWhatChangedButton } from "@/components/owner-work-actions";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -142,6 +142,23 @@ export default async function NextStepPage() {
                     <Link href="/app/website">Find pages on Website</Link>
                   </Button>
                 </>
+              ) : step.primary.title === FOLLOW_UP_LEADS_STEP_TITLE ? (
+                <FollowUpLeadsButtons
+                  href={step.primary.href}
+                  canDecide={canDecide}
+                />
+              ) : step.primary.source === "review" &&
+                step.primary.kind === "no_change_yet" ? (
+                <div className="flex flex-wrap gap-2">
+                  <SaveGrowthReviewButton
+                    kind="weekly"
+                    canSave={canDecide}
+                    nothingYet
+                  />
+                  <Button asChild variant="outline">
+                    <Link href="/app/growth-review">Open Growth review</Link>
+                  </Button>
+                </div>
               ) : canDecide ? (
                 <NextStepResponseButtons
                   kind={step.primary.kind}
@@ -238,7 +255,8 @@ export default async function NextStepPage() {
               <CardDescription>
                 Next step is one thing to do now. If GroovGro asks you to
                 confirm drafts, connect the existing website, review the
-                connected website, draft a plan, approve it, propose the first
+                connected website, follow up open leads, save this week&apos;s
+                review, draft a plan, approve it, propose the first
                 actions, approve those actions, do work you already approved,
                 or check what changed, use the buttons above. A Growth Plan is a versioned write-up for a
                 Goal. After you approve a plan, GroovGro can propose the first

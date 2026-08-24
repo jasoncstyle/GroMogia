@@ -10,6 +10,33 @@ import {
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Button } from "@/components/ui/button";
 
+export function FollowUpLeadsButtons({
+  href,
+  canDecide,
+}: {
+  href: string
+  canDecide: boolean
+}) {
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button asChild>
+        <Link href={href}>Open Leads & customers</Link>
+      </Button>
+      {canDecide ? (
+        <SaveForm
+          action={saveNextStepResponse}
+          successMessage="GroovGro recorded that nothing should change yet."
+        >
+          <input type="hidden" name="response" value="leave_alone" />
+          <SaveButton variant="outline" pendingLabel="Saving…">
+            Leave this alone
+          </SaveButton>
+        </SaveForm>
+      ) : null}
+    </div>
+  );
+}
+
 export function NextStepResponseButtons({
   kind,
   href,

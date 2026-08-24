@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** The website builder is paused. Checking what changed from Next step is in the previous slice. This branch asks the owner to confirm or reject Business drafts on Next step. GroovGro does not execute. Do not start ads, execution, or autonomy.
+**V2 growth foundation is on `main`.** The website builder is paused. Checking what changed from Next step is in the previous slice. This branch keeps owner-assistance buttons on Next step. GroovGro does not execute. Do not start ads, execution, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 
@@ -112,7 +112,7 @@ When approved actions are ready, Next step lists them with Open the page, I did 
 
 When the owner has marked work done, Next step asks them to compare the Goal number. GroovGro does not change the plan.
 
-**First build slice (this branch):** Next step can confirm or reject suggested offers and goals, and can save the existing website address when that is the recommendation. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
+**First build slice (this branch):** Next step can confirm or reject suggested offers and goals, save the existing website address, review a connected website that has not been read yet, open Leads & customers when that is the recommendation, and save this week’s growth review when the recommendation is wait. GroovGro does not start marketing, send email, buy ads, charge a card, or change the live website.
 
 ## Stripe (do not mix, do not replace)
 

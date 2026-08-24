@@ -1,3 +1,4 @@
+import { FOLLOW_UP_LEADS_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { formatMoney } from "@/lib/money";
 
 export type IntelligenceSource = {
@@ -135,7 +136,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   if (facts.openLeadCount > 0) {
     recommendations.push({
       kind: "recommendation",
-      title: "Follow up open leads",
+      title: FOLLOW_UP_LEADS_STEP_TITLE,
       body: "Open Leads & customers and give each open lead a next step. GroovGro will not email them for you.",
       evidence: ["open lead_records"],
       href: "/app/crm",

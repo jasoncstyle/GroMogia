@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
+import { FOLLOW_UP_LEADS_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -128,6 +129,7 @@ describe("growth specialists", () => {
       "crm",
     );
     assert.ok(crm);
+    assert.equal(crm.recommend.title, FOLLOW_UP_LEADS_STEP_TITLE);
     assert.match(crm.recommend.body, /will not email them/);
     assert.equal(crm.recommend.href, "/app/crm");
   });

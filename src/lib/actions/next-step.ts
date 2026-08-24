@@ -9,6 +9,7 @@ import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import { decisionRecords, growthActions } from "@/lib/db/schema";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
+import { FOLLOW_UP_LEADS_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
@@ -67,7 +68,11 @@ export async function saveNextStepResponse(
       createdBy: session.userId,
     });
 
-    if (!leaveAlone && hasPermission(session.permissions, "modify_goals")) {
+    if (
+      !leaveAlone &&
+      hasPermission(session.permissions, "modify_goals") &&
+      primary.title !== FOLLOW_UP_LEADS_STEP_TITLE
+    ) {
       const already = coordinated.waitingActions.some(
         (action) =>
           action.description === primary.body &&

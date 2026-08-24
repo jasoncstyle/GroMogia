@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_WEBSITE_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_WEBSITE_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -270,7 +270,7 @@ function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
         ? {
             kind: "recommend",
             classification: "operational",
-            title: "Follow up open leads",
+            title: FOLLOW_UP_LEADS_STEP_TITLE,
             body: "Open Leads & customers and give each open lead a next step. GroovGro will not email them.",
             href: "/app/crm",
           }

@@ -140,7 +140,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None. Reads existing actions and decision outcomes.
 
-**Current functionality:** Next step priority is (1) confirm drafts, (2) do approved work on Next step, (3) check what changed on Next step, (4) make a drafted next Goal active, (5) draft a plan for an active Goal that has none, (6) approve a draft plan for the active Goal, (7) propose first actions from an approved plan that has none, (8) approve or reject proposed actions, (9) use the latest what-changed outcome, (10) specialist recommend, (11) wait. Ads, email, and social stay left alone. GroovGro does not execute.
+**Current functionality:** Next step priority is (1) confirm drafts, (2) do approved work on Next step, (3) check what changed on Next step, (4) review a connected website that has not been read, (5) make a drafted next Goal active, (6) draft a plan for an active Goal that has none, (7) approve a draft plan for the active Goal, (8) propose first actions from an approved plan that has none, (9) approve or reject proposed actions, (10) use the latest what-changed outcome, (11) specialist recommend, (12) wait. Ads, email, and social stay left alone. GroovGro does not execute.
 
 ### 14. The path so far
 
@@ -232,7 +232,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If finished work has no stored what-changed note yet, Next step asks the owner to check what changed in the main recommendation. Doing approved work still comes first. GroovGro does not execute.
 
-### 23. Confirm Business drafts from Next step (this slice)
+### 23. Confirm Business drafts from Next step
 
 **Reason:** Confirming drafts is the first Next step, but Confirm and Reject still lived only on Business. The owner needs those buttons in the main recommendation. Confirming must not start marketing.
 
@@ -241,6 +241,46 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If suggested offers or goals are waiting, Next step lists them with Confirm and Reject. Nothing becomes active until the owner confirms. GroovGro does not execute.
+
+### 24. Connect the existing website from Next step
+
+**Reason:** When Next step is connect the existing website, the owner still had to open Website to paste the address. Put Save website on Next step. GroovGro must not overwrite the live site.
+
+**Affected:** Next step. Reuses `saveWebsiteConnection`. Does not crawl or replace the site.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is connect the existing website, the owner can paste the live address and save it there. GroovGro does not change the live site.
+
+### 25. Review the connected website from Next step
+
+**Reason:** After a site address is saved, GroovGro still asked the owner to leave Next step to read pages. Put Review connected data on Next step when the site has not been read.
+
+**Affected:** `src/lib/growth/next-step.ts`, Next step. Reuses `reviewConnectedBusiness`. Does not change the live site.
+
+**Migration risk:** None.
+
+**Current functionality:** If a website is saved but unread, Next step asks the owner to review it there. GroovGro does not change the live site.
+
+### 26. Follow up open leads from Next step
+
+**Reason:** I’ll do this created a second proposed action for work that is already “open Leads & customers.” Put that open button on Next step and do not create a duplicate action.
+
+**Affected:** Next step. Reuses the CRM page. Does not email leads.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is follow up open leads, the owner opens Leads & customers from that page. GroovGro does not email anyone.
+
+### 27. Save this week’s growth review from Next step (this slice)
+
+**Reason:** When the coordinated next step is wait from the weekly review, the owner still had to open Growth review to save it. Put that save on Next step.
+
+**Affected:** Next step. Reuses `saveGrowthReview`. Does not execute marketing.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is wait from the review, the owner can save this week’s review to Decision History there. After Check what changed, a wait still uses Save nothing yet. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -259,7 +299,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Approve proposed actions from Next step is parked.** Ask the owner to approve or reject proposed actions. Do not execute.
 - **Do owner work from Next step is parked.** Ask the owner to do approved work on Next step. Do not execute.
 - **Check what changed from Next step is parked.** Ask the owner to compare the Goal number after work. Do not execute.
-- **Confirm Business drafts from Next step (this slice).** Ask the owner to confirm or reject suggested offers and goals. Do not execute. Do not start ads.
+- **Confirm Business drafts from Next step is parked.** Ask the owner to confirm or reject suggested offers and goals. Do not execute. Do not start ads.
+- **Save this week’s growth review from Next step (this slice).** Ask the owner to save the weekly wait to Decision History. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -358,7 +399,8 @@ Organization
 18. **Approve proposed actions from Next step** — ask the owner to approve or reject proposed actions. Done.
 19. **Do owner work from Next step** — ask the owner to do approved work on Next step. Done.
 20. **Check what changed from Next step** — ask the owner to compare the Goal number after work. Done.
-21. **Confirm Business drafts from Next step** — ask the owner to confirm or reject suggested offers and goals. This slice.
-22. **Guarded automation** — only after the above is trusted.
+21. **Confirm Business drafts from Next step** — ask the owner to confirm or reject suggested offers and goals. Done.
+22. **Connect, review, follow up, and save wait from Next step** — keep those owner buttons on Next step. This slice.
+23. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
