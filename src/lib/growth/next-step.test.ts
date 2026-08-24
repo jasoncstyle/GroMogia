@@ -1602,6 +1602,8 @@ describe("coordinated next step", () => {
       source,
       /growth_next[\s\S]*?<Button asChild>\s*<Link href="\/app\/next-step">Next step<\/Link>/,
     );
+    assert.match(source, /href="\/app\/intelligence">Intelligence<\/Link>/);
+    assert.doesNotMatch(source, /Intelligence and specialists/);
   });
 
   it("keeps the owner on Next step instead of a second Open Website or Open SEO button", () => {
@@ -1669,6 +1671,20 @@ describe("coordinated next step", () => {
     assert.match(work, /href="\/app\/next-step">Open Next step/);
     assert.doesNotMatch(work, /href="\/app\/decisions"/);
     assert.doesNotMatch(work, /The path so far/);
+  });
+
+  it("asks Intelligence and empty Goals plans to name Next step for specialists and drafting", () => {
+    const intelligence = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/intelligence/page.tsx"),
+      "utf8",
+    );
+    const goals = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/goals/page.tsx"),
+      "utf8",
+    );
+    assert.match(intelligence, /Read specialists and save them on Next/);
+    assert.doesNotMatch(intelligence, /now including specialists linked to/);
+    assert.match(goals, /Open Next step when it asks you to draft a plan/);
   });
 
   it("offers Next step from Website, Leads, Bookings, and the other owner pages", () => {

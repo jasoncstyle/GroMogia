@@ -392,8 +392,8 @@ export default async function GoalsPage() {
 
           {plans.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No plans yet. Open a Goal above and click Draft a plan for this
-              Goal.
+              No plans yet. Open Next step when it asks you to draft a plan,
+              or open a Goal above and click Draft a plan for this Goal.
             </p>
           ) : (
             <div className="space-y-4">

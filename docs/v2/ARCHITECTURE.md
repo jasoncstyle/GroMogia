@@ -902,7 +902,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step shows The path so far. It does not send the owner to the Dashboard from the footer. GroovGro does not run marketing.
 
-### 90. Goals, Growth review, and Your work stay on Next step for that content (this slice)
+### 90. Goals, Growth review, and Your work stay on Next step for that content
 
 **Reason:** Those pages still sent the owner to Intelligence, Decisions, or the Dashboard for specialists, Decision History, and The path so far. That content already lives on Next step.
 
@@ -911,6 +911,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Goals keeps Open Next step and Open growth review for the monthly write-up. Growth review and Your work keep Open Next step. GroovGro does not execute.
+
+### 91. Dashboard and Intelligence name Next step for specialists (this slice)
+
+**Reason:** The Dashboard still labeled Intelligence as specialists. Empty Goals plan copy did not name Next step. Specialists and drafting a plan already live on Next step.
+
+**Affected:** Dashboard Intelligence button, Intelligence copy, and Goals empty-plan copy.
+
+**Migration risk:** None.
+
+**Current functionality:** Dashboard Intelligence is Intelligence. Intelligence names Next step for specialists. Empty Goals plans name Next step. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -993,7 +1003,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Next step shows specialist reports is parked.** Next step shows specialist reports and Save to Decision History. It does not send the owner to Intelligence from the footer. Leave-alone still names the module page. Do not execute.
 - **Next step shows Decision History is parked.** Next step shows recent Decision History. It does not send the owner to Decisions from the footer. Do not run those decisions.
 - **Next step shows The path so far is parked.** Next step shows The path so far. It does not send the owner to the Dashboard from the footer. Do not run marketing.
-- **Goals, Growth review, and Your work stay on Next step for that content (this slice).** Goals keeps Open Next step and Open growth review for the monthly write-up. Growth review and Your work keep Open Next step. Do not execute.
+- **Goals, Growth review, and Your work stay on Next step for that content is parked.** Goals keeps Open Next step and Open growth review for the monthly write-up. Growth review and Your work keep Open Next step. Do not execute.
+- **Dashboard and Intelligence name Next step for specialists (this slice).** Dashboard Intelligence is Intelligence. Intelligence names Next step for specialists. Empty Goals plans name Next step. Do not execute.
 
 ## DESIGN FOR LATER
 

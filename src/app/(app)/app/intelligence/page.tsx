@@ -42,8 +42,8 @@ export default async function IntelligencePage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Intelligence</h1>
         <p className="text-muted-foreground">
-          Observe and recommend only, now including specialists linked to
-          Goals. GroovGro will not send email, change ads, edit a website, or
+          Observe and recommend only. Read specialists and save them on Next
+          step. GroovGro will not send email, change ads, edit a website, or
           take a payment. Live checkout stays on the existing Stripe
           destination.
         </p>
