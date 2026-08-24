@@ -78,7 +78,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "no_goal",
       changeCourse: false,
       outcome: clip(
-        `This work is not tied to a Goal number, so GroovGro cannot compare progress.${leaveAlone} Open Goals if you want a measurable outcome.`,
+        `This work is not tied to a Goal number, so GroovGro cannot compare progress.${leaveAlone} Add a Goal here so GroovGro can compare a number.`,
         2000,
       ),
     };

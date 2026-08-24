@@ -372,7 +372,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** If Google is connected but no property is saved, Next step asks the owner to choose it there. After Google sign-in, GroovGro returns to Next step. Open leads still come first. GroovGro only reads search numbers.
 
-### 37. Refresh Search Console from Next step (this slice)
+### 37. Refresh Search Console from Next step
 
 **Reason:** After a Search Console property is saved, Refresh still lived only on SEO. Put Refresh on Next step when no numbers have been stored yet. GroovGro must stay read-only.
 
@@ -381,6 +381,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** If Search Console is connected and a property is saved, but GroovGro has no stored numbers yet, Next step asks the owner to refresh there. Open leads still come first. GroovGro only reads search numbers.
+
+### 38. Add a Goal from Next step (this slice)
+
+**Reason:** When Check what changed found work that was not tied to a Goal, Next step only opened Goals. Put Save goal on Next step. GroovGro must not start marketing.
+
+**Affected:** Next step. Reuses `createGoal`. Does not execute, send email, or buy ads.
+
+**Migration risk:** None.
+
+**Current functionality:** If Next step is add a Goal so GroovGro can compare a number, the owner can save a Goal there. GroovGro does not start marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -410,7 +420,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Review the schedule from Next step is parked.** Ask the owner to add a calendar item. Do not change ads or the website.
 - **Follow up open leads from Next step is parked.** Ask the owner to move a person or mark them as a customer. Do not email anyone.
 - **Choose the Search Console property from Next step is parked.** Ask the owner to pick the property after Google sign-in. Do not edit the live site.
-- **Refresh Search Console from Next step (this slice).** Ask the owner to refresh Search Console numbers. Do not edit the live site.
+- **Refresh Search Console from Next step is parked.** Ask the owner to refresh Search Console numbers. Do not edit the live site.
+- **Add a Goal from Next step (this slice).** Ask the owner to save a Goal when work was not tied to one. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -520,7 +531,8 @@ Organization
 29. **Review the schedule from Next step** — add a calendar item on Next step. Done.
 30. **Follow up open leads from Next step** — move a person or mark them as a customer on Next step. Done.
 31. **Choose the Search Console property from Next step** — pick the property after Google sign-in on Next step. Done.
-32. **Refresh Search Console from Next step** — refresh Search Console numbers on Next step when none are stored yet. This slice.
-33. **Guarded automation** — only after the above is trusted.
+32. **Refresh Search Console from Next step** — refresh Search Console numbers on Next step when none are stored yet. Done.
+33. **Add a Goal from Next step** — save a Goal on Next step when work was not tied to one. This slice.
+34. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -336,7 +336,7 @@ function learningCandidate(input: NextStepInput): NextStepCandidate | null {
       title: ADD_GOAL_STEP_TITLE,
       body:
         outcome ||
-        `That work was not tied to a Goal. Open Goals and write a measurable outcome.${leaveAlone}`,
+        `That work was not tied to a Goal. Add a Goal here so GroovGro can compare a number.${leaveAlone}`,
       href: "/app/goals",
       source: "learning",
       specialistId: null,

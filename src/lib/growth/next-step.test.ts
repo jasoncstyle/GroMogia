@@ -431,6 +431,31 @@ describe("coordinated next step", () => {
     assert.match(step.primary.body, /will not start a new campaign/);
   });
 
+  it("puts Add a Goal on Next step when work was not tied to a Goal", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const goalsPage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/goals/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      latestLearningKind: "no_goal",
+      latestLearningOutcome:
+        "This work is not tied to a Goal number, so GroovGro cannot compare progress. Add a Goal here so GroovGro can compare a number.",
+    });
+    assert.equal(step.primary.title, "Add a Goal so GroovGro can compare a number");
+    assert.equal(step.primary.href, "/app/goals");
+    assert.match(step.primary.body, /Add a Goal here/);
+    assert.match(page, /isAddGoalNextStep/);
+    assert.match(page, /GoalCreateForm/);
+    assert.match(goalsPage, /GoalCreateForm/);
+  });
+
   it("does not bake industry-specific words into the coordinator", () => {
     const source = readFileSync(join(process.cwd(), "src/lib/growth/next-step.ts"), "utf8");
     for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk", "electrician"]) {

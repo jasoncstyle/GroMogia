@@ -21,6 +21,7 @@ import {
   goalNeedsPlanDraft,
   hasDedicatedNextStepControls,
   IMPROVE_SEO_STEP_TITLE,
+  isAddGoalNextStep,
   isFollowUpLeadsNextStep,
   isPasteSnippetNextStep,
   isReviewScheduleNextStep,
@@ -458,7 +459,8 @@ describe("growth plan draft", () => {
     assert.equal(openPageLabelForNextStep(REVIEW_SCHEDULE_STEP_TITLE), null);
     assert.equal(isReviewScheduleNextStep(REVIEW_SCHEDULE_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(READ_GOAL_STEP_TITLE), "Open Goals");
-    assert.equal(openPageLabelForNextStep(ADD_GOAL_STEP_TITLE), "Open Goals");
+    assert.equal(openPageLabelForNextStep(ADD_GOAL_STEP_TITLE), null);
+    assert.equal(isAddGoalNextStep(ADD_GOAL_STEP_TITLE), true);
     assert.equal(openPageLabelForNextStep(RUN_SEO_STEP_TITLE), null);
     assert.equal(hasDedicatedNextStepControls(GOAL_REACHED_STEP_TITLE), true);
     assert.equal(hasDedicatedNextStepControls(ACTIVATE_GOAL_STEP_TITLE), true);

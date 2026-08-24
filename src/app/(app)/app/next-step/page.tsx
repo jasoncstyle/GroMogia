@@ -8,6 +8,7 @@ import { OwnerWorkButtons, CheckWhatChangedButton } from "@/components/owner-wor
 import { DraftSeoImprovementsButton, RunHomepageSeoButton, SeoDraftDecisionButtons } from "@/components/seo-actions";
 import { FoldableSample } from "@/components/foldable-sample";
 import { EventCreateForm } from "@/components/event-create-form";
+import { GoalCreateForm } from "@/components/goal-create-form";
 import { LeadFollowUpButtons } from "@/components/lead-follow-up";
 import { CopyLink } from "@/components/copy-link";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
@@ -27,7 +28,7 @@ import { getCoordinatedNextStep, getGrowthLinkOptions } from "@/lib/growth/queri
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddGoalNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -313,6 +314,16 @@ export default async function NextStepPage({
                   ))}
                   <Button asChild variant="outline">
                     <Link href="/app/crm">Open Leads & customers</Link>
+                  </Button>
+                </>
+              ) : isAddGoalNextStep(step.primary.title) ? (
+                <>
+                  <GoalCreateForm
+                    offers={links.offers}
+                    disabled={!canCreateGoal}
+                  />
+                  <Button asChild variant="outline">
+                    <Link href="/app/goals">Open Goals</Link>
                   </Button>
                 </>
               ) : openPageLabel ? (

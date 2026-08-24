@@ -133,7 +133,7 @@ export function showsDedicatedNextStepControl(
 
 export function openPageLabelForNextStep(title: string): string | null {
   const text = clean(title);
-  if (text === READ_GOAL_STEP_TITLE || text === ADD_GOAL_STEP_TITLE) return "Open Goals";
+  if (text === READ_GOAL_STEP_TITLE) return "Open Goals";
   return null;
 }
 
@@ -161,6 +161,10 @@ export function isReviewScheduleNextStep(title: string): boolean {
 
 export function isFollowUpLeadsNextStep(title: string): boolean {
   return clean(title) === FOLLOW_UP_LEADS_STEP_TITLE;
+}
+
+export function isAddGoalNextStep(title: string): boolean {
+  return clean(title) === ADD_GOAL_STEP_TITLE;
 }
 
 function isPlanLoopNextStep(title: string): boolean {
