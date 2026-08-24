@@ -21,6 +21,7 @@ import {
   draftPlanExcerpt,
   findDraftPlanToApprove,
   findPlanDraftGoal,
+  findReadableGrowthPlan,
   FIX_SEO_STEP_TITLE,
   FOLLOW_UP_LEADS_STEP_TITLE,
   SHARE_LEAD_FORM_STEP_TITLE,
@@ -224,6 +225,67 @@ describe("growth plan draft", () => {
       null,
     );
     assert.match(draftPlanExcerpt("Keep collecting evidence. GroovGro will not run this."), /will not run this/);
+  });
+
+  it("lets the owner read the current Growth Plan without leaving Next step", () => {
+    const approved = findReadableGrowthPlan(
+      [
+        { id: "goal-1", title: "Old Goal", status: "achieved" },
+        { id: "goal-2", title: "More people get in touch", status: "active" },
+      ],
+      [
+        {
+          id: "plan-old",
+          goalId: "goal-1",
+          status: "approved",
+          version: 4,
+          strategySummary: "Old write-up.",
+        },
+        {
+          id: "plan-1",
+          goalId: "goal-2",
+          status: "approved",
+          version: 1,
+          strategySummary: "Follow up open leads. GroovGro will not run this.",
+        },
+        {
+          id: "plan-2",
+          goalId: "goal-2",
+          status: "approved",
+          version: 2,
+          strategySummary: "Keep collecting evidence. GroovGro will not start marketing.",
+        },
+      ],
+    );
+    assert.equal(approved?.plan.id, "plan-2");
+    assert.equal(approved?.goal.id, "goal-2");
+    const draftFirst = findReadableGrowthPlan(
+      [{ id: "goal-2", title: "More people get in touch", status: "active" }],
+      [
+        {
+          id: "plan-approved",
+          goalId: "goal-2",
+          status: "approved",
+          version: 1,
+          strategySummary: "Approved write-up.",
+        },
+        {
+          id: "plan-draft",
+          goalId: "goal-2",
+          status: "draft",
+          version: 2,
+          strategySummary: "Draft write-up. GroovGro will not run this.",
+        },
+      ],
+    );
+    assert.equal(draftFirst?.plan.id, "plan-draft");
+    assert.equal(
+      findReadableGrowthPlan(
+        [{ id: "goal-2", title: "More people get in touch", status: "active", discoveryStatus: "inferred" }],
+        [{ id: "plan-1", goalId: "goal-2", status: "approved", version: 1, strategySummary: "Nope." }],
+      ),
+      null,
+    );
   });
 
   it("does not copy the draft-plan next step back into the plan text", () => {

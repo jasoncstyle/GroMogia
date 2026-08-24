@@ -553,16 +553,29 @@ export default async function NextStepPage({
               <CardTitle>Write it as a plan</CardTitle>
               <CardDescription>
                 Next step is one thing to do now. Use the buttons above. A
-                Growth Plan is a versioned write-up for a Goal. After you
-                approve a plan, GroovGro can propose the first actions.
-                Nothing runs until you say so, and even then GroovGro does
-                not execute.
+                Growth Plan is a versioned write-up for a Goal. Read it here.
+                After you approve a plan, GroovGro can propose the first
+                actions. Nothing runs until you say so, and even then GroovGro
+                does not execute.
               </CardDescription>
             </CardHeader>
-            <CardContent className="flex flex-wrap gap-2">
-              <Button asChild variant="outline">
-                <Link href="/app/goals">Open Goals</Link>
-              </Button>
+            <CardContent className="space-y-3">
+              {step.readablePlan ? (
+                <div className="space-y-2 rounded-lg border p-4">
+                  <p className="font-medium">
+                    {step.readablePlan.goalTitle} · v{step.readablePlan.version}{" "}
+                    · {labelFor(step.readablePlan.status)}
+                  </p>
+                  <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+                    {step.readablePlan.strategySummary}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No plan is written yet. Use the buttons above when Next step
+                  asks you to draft one. GroovGro will not run it.
+                </p>
+              )}
             </CardContent>
           </Card>
 

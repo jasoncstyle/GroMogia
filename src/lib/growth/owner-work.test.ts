@@ -142,10 +142,8 @@ describe("owner work", () => {
       page,
       /<Button asChild>\s*<Link href="\/app\/next-step">Open Next step<\/Link>/,
     );
-    assert.match(
-      page,
-      /variant="outline">\s*<Link href="\/app\/goals">Open the approved plan<\/Link>/,
-    );
+    assert.doesNotMatch(page, /Open the approved plan/);
+    assert.doesNotMatch(page, /href="\/app\/goals"/);
     assert.doesNotMatch(page, /Draft or approve a plan/);
   });
 

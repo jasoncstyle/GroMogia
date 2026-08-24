@@ -1710,9 +1710,36 @@ describe("coordinated next step", () => {
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
       "utf8",
     );
-    assert.match(page, /href="\/app\/goals">Open Goals/);
+    assert.doesNotMatch(page, /href="\/app\/goals">Open Goals/);
     assert.doesNotMatch(page, /href="\/app\/work"/);
     assert.doesNotMatch(page, /Open Your work/);
+  });
+
+  it("lets the owner read the Growth Plan on Next step", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      readablePlan: {
+        id: "plan-2",
+        goalId: "goal-2",
+        goalTitle: "More people get in touch",
+        version: 2,
+        status: "approved",
+        strategySummary: "Follow up open leads. GroovGro will not run this.",
+      },
+    });
+    assert.equal(step.readablePlan?.id, "plan-2");
+    assert.equal(step.readablePlan?.goalTitle, "More people get in touch");
+    assert.match(step.readablePlan?.strategySummary ?? "", /will not run this/);
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(page, /step\.readablePlan/);
+    assert.match(page, /strategySummary/);
+    assert.match(page, /Read it here/);
+    assert.doesNotMatch(page, /href="\/app\/goals">Open Goals/);
   });
 
   it("refreshes Next step after someone submits the public lead form", () => {

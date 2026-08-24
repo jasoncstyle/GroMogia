@@ -792,7 +792,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Connecting the website from a plan names Next step. A far-behind Goal names Next step. GroovGro does not start marketing or change the live site.
 
-### 79. Next step does not send the owner to Your work (this slice)
+### 79. Next step does not send the owner to Your work
 
 **Reason:** Next step still had Open Your work. Your work then says to open Next step, so the owner bounced between the two pages.
 
@@ -800,7 +800,17 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Migration risk:** None.
 
-**Current functionality:** Next step keeps Open Goals so the owner can read a plan write-up. It does not send the owner to Your work. GroovGro does not execute.
+**Current functionality:** Next step does not send the owner to Your work. GroovGro does not execute.
+
+### 80. Next step shows the Growth Plan write-up (this slice)
+
+**Reason:** Next step still sent the owner to Goals to read the plan. Your work and the path so far did the same. The write-up can stay on Next step.
+
+**Affected:** Next step, the path so far, and Your work.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows the current Growth Plan. The path so far opens Next step to read an approved plan. Your work no longer sends the owner to Goals to read it. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -869,10 +879,11 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Add a Goal and Dashboard empty lists stay on Next step is parked.** Add a Goal stays on Next step. Empty lead and calendar lists on the Dashboard name Next step. Do not email anyone.
 - **Unread website status alerts open Next step is parked.** The amber unread-website alert has Open Next step. Do not change the live site.
 - **Website review copy opens Next step is parked.** After saving a website address, Website names Next step instead of Business. Do not change the live site.
-- **Empty Goal copy stays on Next step is parked.** Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. Reading an existing Goal or approved plan still opens Goals. Do not start marketing.
+- **Empty Goal copy stays on Next step is parked.** Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. Reading an existing Goal still opens Goals. Do not start marketing.
 - **Growth review copy names Next step is parked.** Confirm drafts, add a Goal, and a reached Goal name Next step. Do not start marketing.
 - **Growth Plan and far-behind review name Next step is parked.** Connecting the website from a plan, and a far-behind Goal, name Next step. Do not start marketing or change the live site.
-- **Next step does not send the owner to Your work (this slice).** Next step keeps Open Goals to read a plan. It does not send the owner to Your work. Do not execute.
+- **Next step does not send the owner to Your work is parked.** Next step does not send the owner to Your work. Do not execute.
+- **Next step shows the Growth Plan write-up (this slice).** Next step shows the current Growth Plan. The path so far opens Next step to read an approved plan. Your work no longer sends the owner to Goals to read it. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -1024,7 +1035,8 @@ Organization
 71. **Empty Goal copy stays on Next step** — Dashboard and the path so far name Next step when there is no Goal yet, or when a plan still needs drafting. Done.
 72. **Growth review copy names Next step** — confirm drafts, add a Goal, and a reached Goal name Next step. Done.
 73. **Growth Plan and far-behind review name Next step** — connecting the website from a plan, and a far-behind Goal, name Next step. Done.
-74. **Next step does not send the owner to Your work** — Next step keeps Open Goals to read a plan; it does not send the owner to Your work. This slice.
-75. **Guarded automation** — only after the above is trusted.
+74. **Next step does not send the owner to Your work** — Next step does not send the owner to Your work. Done.
+75. **Next step shows the Growth Plan write-up** — Next step shows the current Growth Plan; the path so far opens Next step to read an approved plan; Your work no longer sends the owner to Goals to read it. This slice.
+76. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

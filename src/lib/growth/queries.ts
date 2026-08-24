@@ -32,7 +32,7 @@ import {
 import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
 import { findPlanNeedingActions } from "@/lib/growth/plan-actions";
-import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal } from "@/lib/growth/plan-draft";
+import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal, findReadableGrowthPlan } from "@/lib/growth/plan-draft";
 import { coordinateNextStep } from "@/lib/growth/next-step";
 import { isOpenOwnerWork, needsWhatChangedCheck } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
@@ -623,6 +623,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
     snapshot.plans,
   );
   const approve = findDraftPlanToApprove(snapshot.activeGoals, snapshot.plans);
+  const readable = findReadableGrowthPlan(snapshot.activeGoals, snapshot.plans);
   const propose = findPlanNeedingActions(
     snapshot.activeGoals,
     snapshot.plans,
@@ -711,6 +712,16 @@ export async function getCoordinatedNextStep(organizationId: string) {
             progressPercent: goal.progressPercent,
           };
         })()
+      : null,
+    readablePlan: readable
+      ? {
+          id: readable.plan.id,
+          goalId: readable.goal.id,
+          goalTitle: readable.goal.title,
+          version: readable.plan.version,
+          status: readable.plan.status,
+          strategySummary: readable.plan.strategySummary,
+        }
       : null,
   });
 }

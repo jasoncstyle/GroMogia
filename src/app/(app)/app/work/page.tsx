@@ -33,9 +33,6 @@ export default async function OwnerWorkPage() {
   const canUpdate = hasPermission(session.permissions, "modify_goals");
   const canApprove = hasPermission(session.permissions, "approve_actions");
   const canCheck = hasPermission(session.permissions, "view_decision_history");
-  const approvedPlan = snapshot?.plans.find(
-    (plan) => plan.status === "approved" || plan.status === "active",
-  );
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -143,11 +140,6 @@ export default async function OwnerWorkPage() {
         <Button asChild>
           <Link href="/app/next-step">Open Next step</Link>
         </Button>
-        {approvedPlan ? (
-          <Button asChild variant="outline">
-            <Link href="/app/goals">Open the approved plan</Link>
-          </Button>
-        ) : null}
         <Button asChild variant="outline">
           <Link href="/app">The path so far</Link>
         </Button>

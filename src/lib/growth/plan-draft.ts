@@ -287,6 +287,20 @@ export function findPlanDraftGoal<
   return goals.find((goal) => goalNeedsPlanDraft(goal, plans)) ?? null;
 }
 
+function activeConfirmedGoalIds<
+  G extends { id: string; status: string; discoveryStatus?: string },
+>(goals: G[]): Set<string> {
+  return new Set(
+    goals
+      .filter((goal) => {
+        if (goal.status !== "active") return false;
+        const discovery = goal.discoveryStatus ?? "confirmed";
+        return discovery !== "inferred" && discovery !== "rejected";
+      })
+      .map((goal) => goal.id),
+  );
+}
+
 export function findDraftPlanToApprove<
   G extends {
     id: string
@@ -302,19 +316,43 @@ export function findDraftPlanToApprove<
     strategySummary: string
   },
 >(goals: G[], plans: P[]): { plan: P; goal: G } | null {
-  const activeIds = new Set(
-    goals
-      .filter((goal) => {
-        if (goal.status !== "active") return false;
-        const discovery = goal.discoveryStatus ?? "confirmed";
-        return discovery !== "inferred" && discovery !== "rejected";
-      })
-      .map((goal) => goal.id),
-  );
+  const activeIds = activeConfirmedGoalIds(goals);
   const drafts = plans
     .filter((plan) => plan.status === "draft" && activeIds.has(plan.goalId))
     .sort((a, b) => b.version - a.version);
   const plan = drafts[0];
+  if (!plan) return null;
+  const goal = goals.find((row) => row.id === plan.goalId);
+  if (!goal) return null;
+  return { plan, goal };
+}
+
+export function findReadableGrowthPlan<
+  G extends {
+    id: string
+    title: string
+    status: string
+    discoveryStatus?: string
+  },
+  P extends {
+    id: string
+    goalId: string
+    status: string
+    version: number
+    strategySummary: string
+  },
+>(goals: G[], plans: P[]): { plan: P; goal: G } | null {
+  const draft = findDraftPlanToApprove(goals, plans);
+  if (draft) return draft;
+  const activeIds = activeConfirmedGoalIds(goals);
+  const readable = plans
+    .filter(
+      (plan) =>
+        (plan.status === "approved" || plan.status === "active") &&
+        activeIds.has(plan.goalId),
+    )
+    .sort((a, b) => b.version - a.version);
+  const plan = readable[0];
   if (!plan) return null;
   const goal = goals.find((row) => row.id === plan.goalId);
   if (!goal) return null;

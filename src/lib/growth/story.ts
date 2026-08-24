@@ -60,7 +60,7 @@ function goalLine(facts: GrowthStoryFacts): string {
 function planLine(facts: GrowthStoryFacts): string {
   if (facts.hasApprovedPlan) {
     const version = facts.planVersion != null ? ` v${facts.planVersion}` : "";
-    return `An approved Growth Plan${version} is the current write-up. Approving it did not run marketing.`;
+    return `An approved Growth Plan${version} is the current write-up. Read it on Next step. Approving it did not run marketing.`;
   }
   if (clean(facts.goalTitle)) {
     return "There is a Goal, but no approved plan yet. Draft or approve a plan on Next step. GroovGro will not run it.";
@@ -137,7 +137,7 @@ export function buildGrowthStory(facts: GrowthStoryFacts): GrowthStoryBeat[] {
     {
       title: "The plan",
       body: clip(planLine(facts), 500),
-      href: facts.hasApprovedPlan ? "/app/goals" : "/app/next-step",
+      href: "/app/next-step",
     },
     {
       title: "The work",

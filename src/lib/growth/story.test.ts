@@ -29,8 +29,9 @@ describe("growth story", () => {
     assert.match(beats[0]?.body ?? "", /More people get in touch/);
     assert.match(beats[0]?.body ?? "", /2 leads of 10 leads/);
     assert.match(beats[1]?.body ?? "", /v2/);
+    assert.match(beats[1]?.body ?? "", /Read it on Next step/);
     assert.equal(beats[0]?.href, "/app/goals");
-    assert.equal(beats[1]?.href, "/app/goals");
+    assert.equal(beats[1]?.href, "/app/next-step");
     assert.match(beats[2]?.body ?? "", /will not run/);
     assert.match(beats[2]?.body ?? "", /Next step/);
     assert.equal(beats[2]?.href, "/app/next-step");
