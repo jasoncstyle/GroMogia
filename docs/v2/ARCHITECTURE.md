@@ -582,7 +582,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Growth review has Save schedule on that page. It does not send the owner to Goals to change the day and time. GroovGro does not change the business then. Next step still asks to choose the schedule when it has never been saved.
 
-### 58. Your work filled button is Next step (this slice)
+### 58. Your work filled button is Next step
 
 **Reason:** Your work still had a filled Open the approved plan or Draft or approve a plan button that sent the owner to Goals. Draft, approve, propose, and do the work already live on Next step. Reading an approved plan can stay on Goals as outline.
 
@@ -591,6 +591,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Your work’s filled button is Open Next step. If an approved plan exists, Open the approved plan is outline so the owner can read it on Goals. GroovGro does not execute.
+
+### 59. What changed and next-Goal copy name Next step (this slice)
+
+**Reason:** After a Goal was reached, what changed still said Open Goals. Drafting the next Goal twice still said Open Goals. SEO still sent Connect website to Website. Those owner buttons already live on Next step.
+
+**Affected:** Work learning copy, next-Goal toast, SEO connect button.
+
+**Migration risk:** None.
+
+**Current functionality:** If a Goal reached its target, what changed says to read the history on Next step. If a next Goal was already drafted, the toast says Open Next step. If SEO has no connected website, Connect website opens Next step. GroovGro does not start marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -641,7 +651,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Next step does not also send the owner to the module page is parked.** Do not show a second Open Website or Open SEO button. Your work names Next step. Do not execute.
 - **The path so far, specialists, and Intelligence name Next step is parked.** Missing Goal or plan, and the work beat, open Next step. Specialists and Intelligence say Open Next step when that is the related page. Do not execute.
 - **Growth review can change the schedule here is parked.** Save the day and time on Growth review. Do not send the owner to Goals. Do not change the business then.
-- **Your work filled button is Next step (this slice).** Open Next step is the filled button. Open the approved plan stays outline so the owner can read it. Do not execute.
+- **Your work filled button is Next step is parked.** Open Next step is the filled button. Open the approved plan stays outline so the owner can read it. Do not execute.
+- **What changed and next-Goal copy name Next step (this slice).** Read the history and review a drafted next Goal on Next step. SEO Connect website opens Next step. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -772,7 +783,8 @@ Organization
 50. **Next step does not also send the owner to the module page** — no second Open Website or Open SEO button when the work is already here. Done.
 51. **The path so far, specialists, and Intelligence name Next step** — missing Goal or plan, and the work beat, open Next step. Done.
 52. **Growth review can change the schedule here** — save the day and time on Growth review instead of sending the owner to Goals. Done.
-53. **Your work filled button is Next step** — Open Next step is the filled button; Open the approved plan stays outline so the owner can read it. This slice.
-54. **Guarded automation** — only after the above is trusted.
+53. **Your work filled button is Next step** — Open Next step is the filled button; Open the approved plan stays outline so the owner can read it. Done.
+54. **What changed and next-Goal copy name Next step** — read the history and review a drafted next Goal on Next step; SEO Connect website opens Next step. This slice.
+55. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -67,7 +67,9 @@ describe("owner work learning", () => {
     });
     assert.equal(learning.kind, "target_reached");
     assert.match(learning.outcome, /reached its target/);
+    assert.match(learning.outcome, /Read the history on Next step/);
     assert.match(learning.outcome, /will not start a new campaign/);
+    assert.doesNotMatch(learning.outcome, /Open Goals/);
   });
 
   it("asks for a baseline when none was stored", () => {
@@ -110,5 +112,20 @@ describe("owner work learning", () => {
     for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk", "electrician"]) {
       assert.equal(source.toLowerCase().includes(banned), false, banned);
     }
+  });
+
+  it("names Next step when a Goal is reached or a next Goal is already drafted", () => {
+    const nextGoal = readFileSync(
+      join(process.cwd(), "src/lib/actions/next-goal.ts"),
+      "utf8",
+    );
+    const seo = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
+      "utf8",
+    );
+    assert.match(nextGoal, /Open Next step to review it/);
+    assert.doesNotMatch(nextGoal, /Open Goals to review it/);
+    assert.match(seo, /href="\/app\/next-step">Connect website/);
+    assert.doesNotMatch(seo, /href="\/app\/website">Connect website/);
   });
 });

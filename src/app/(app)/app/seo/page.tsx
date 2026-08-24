@@ -140,7 +140,7 @@ export default async function SeoPage({
                 </>
               ) : (
                 <Button asChild>
-                  <Link href="/app/website">Connect website</Link>
+                  <Link href="/app/next-step">Connect website</Link>
                 </Button>
               )}
             </CardContent>

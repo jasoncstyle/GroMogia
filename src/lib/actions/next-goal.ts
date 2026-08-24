@@ -57,7 +57,7 @@ export async function draftNextGoalFromReachedGoal(
       throw new Error("That Goal has not reached its target yet.");
     }
     if (alreadyDraftedNextGoal(snapshot.goals, goal.id)) {
-      return "A next Goal was already drafted from this one. Open Goals to review it. GroovGro did not start marketing.";
+      return "A next Goal was already drafted from this one. Open Next step to review it. GroovGro did not start marketing.";
     }
 
     const draft = draftNextGoalFromReached({

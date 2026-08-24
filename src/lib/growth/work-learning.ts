@@ -110,7 +110,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "target_reached",
       changeCourse: false,
       outcome: clip(
-        `After you did this work, “${goal}” reached its target (${withUnit(current, facts.unit)}). ${moved} Open Goals to read the history. GroovGro will not start a new campaign.${leaveAlone}`,
+        `After you did this work, “${goal}” reached its target (${withUnit(current, facts.unit)}). ${moved} Read the history on Next step. GroovGro will not start a new campaign.${leaveAlone}`,
         2000,
       ),
     };
