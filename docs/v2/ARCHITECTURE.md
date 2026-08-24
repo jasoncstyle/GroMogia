@@ -942,7 +942,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step shows the full weekly write-up. Growth review is the monthly look. GroovGro does not change the business from that look.
 
-### 94. Keep specialists on Next step (this slice)
+### 94. Keep specialists on Next step
 
 **Reason:** Intelligence still showed the specialist cards after Next step already had them. The owner could save specialists from Intelligence instead of staying on Next step.
 
@@ -951,6 +951,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step shows specialists and Save to Decision History. Intelligence is the briefing from connected data. Leave-alone still names the module page. GroovGro does not execute.
+
+### 95. Keep The path so far on Next step (this slice)
+
+**Reason:** Dashboard and Decisions still showed The path so far after Next step already had it. The owner could read that story from those pages instead of staying on Next step.
+
+**Affected:** Dashboard and Decisions story cards.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step shows The path so far. Dashboard and Decisions name Next step for that story. GroovGro does not run marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1037,7 +1047,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Dashboard and Intelligence name Next step for specialists is parked.** Dashboard Intelligence is Intelligence. Intelligence names Next step for specialists. Empty Goals plans name Next step. Do not execute.
 - **Save this week’s look from Next step is parked.** Next step can save this week’s look to Decision History. Growth review names Next step for the weekly look. The monthly write-up stays on Growth review. Do not change the business from that look.
 - **Keep the weekly write-up on Next step is parked.** Next step shows the full weekly write-up. Growth review is the monthly look. Do not change the business from that look.
-- **Keep specialists on Next step (this slice).** Next step shows specialists and Save to Decision History. Intelligence is the briefing from connected data. Leave-alone still names the module page. Do not execute.
+- **Keep specialists on Next step is parked.** Next step shows specialists and Save to Decision History. Intelligence is the briefing from connected data. Leave-alone still names the module page. Do not execute.
+- **Keep The path so far on Next step (this slice).** Next step shows The path so far. Dashboard and Decisions name Next step for that story. Do not run marketing.
 
 ## DESIGN FOR LATER
 
@@ -1204,7 +1215,8 @@ Organization
 86. **Dashboard and Intelligence name Next step for specialists** — Dashboard Intelligence is Intelligence; Intelligence names Next step for specialists. Done.
 87. **Save this week’s look from Next step** — Next step can save this week’s look to Decision History. Done.
 88. **Keep the weekly write-up on Next step** — Next step shows the full weekly write-up; Growth review is the monthly look. Done.
-89. **Keep specialists on Next step** — Next step shows specialists and Save to Decision History; Intelligence is the briefing from connected data. This slice.
-90. **Guarded automation** — only after the above is trusted.
+89. **Keep specialists on Next step** — Next step shows specialists and Save to Decision History; Intelligence is the briefing from connected data. Done.
+90. **Keep The path so far on Next step** — Next step shows The path so far; Dashboard and Decisions name Next step for that story. This slice.
+91. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

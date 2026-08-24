@@ -1604,6 +1604,8 @@ describe("coordinated next step", () => {
     );
     assert.match(source, /href="\/app\/intelligence">Intelligence<\/Link>/);
     assert.doesNotMatch(source, /Intelligence and specialists/);
+    assert.match(source, /Read\s+the path so far on Next step/);
+    assert.doesNotMatch(source, /GrowthStoryCard/);
   });
 
   it("keeps the owner on Next step instead of a second Open Website or Open SEO button", () => {
@@ -1753,6 +1755,8 @@ describe("coordinated next step", () => {
     assert.match(decisions, /Save this week/);
     assert.match(decisions, /from Next step/);
     assert.match(decisions, /Recent decisions also appear on Next step/);
+    assert.match(decisions, /Read the path so far on\s+Next step/);
+    assert.doesNotMatch(decisions, /GrowthStoryCard/);
     assert.doesNotMatch(decisions, /saved\s+here from Growth review/);
   });
 
@@ -1985,6 +1989,16 @@ describe("coordinated next step", () => {
     assert.doesNotMatch(page, /href="\/app">The path so far/);
     assert.match(story, /hideNextStepLink/);
     assert.match(story, /The path so far/);
+    const dashboard = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      "utf8",
+    );
+    const decisions = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/decisions/page.tsx"),
+      "utf8",
+    );
+    assert.doesNotMatch(dashboard, /GrowthStoryCard/);
+    assert.doesNotMatch(decisions, /GrowthStoryCard/);
   });
 
   it("refreshes Next step after someone submits the public lead form", () => {
