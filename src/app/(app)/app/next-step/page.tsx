@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { DraftNextGoalButton } from "@/components/next-goal-actions";
+import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import { NextStepResponseButtons, WaitingActionButtons } from "@/components/next-step-actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,6 +23,7 @@ export default async function NextStepPage() {
   const canDecide = hasPermission(session.permissions, "view_decision_history");
   const canApprove = hasPermission(session.permissions, "approve_actions");
   const canCreateGoal = hasPermission(session.permissions, "create_goals");
+  const canActivateGoal = hasPermission(session.permissions, "modify_goals");
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -47,7 +48,7 @@ export default async function NextStepPage() {
               <CardDescription>
                 {step.primary.kind === "no_change_yet"
                   ? "No change is the recommendation."
-                  : `${labelFor(step.primary.classification)} · from ${step.primary.source === "drafts" ? "Business drafts" : step.primary.source === "specialist" ? "a specialist" : step.primary.source === "owner_work" ? "Your work" : step.primary.source === "learning" ? "what changed" : "the growth review"}`}
+                  : `${labelFor(step.primary.classification)} · from ${step.primary.source === "drafts" ? "Business drafts" : step.primary.source === "specialist" ? "a specialist" : step.primary.source === "owner_work" ? "Your work" : step.primary.source === "learning" ? "what changed" : step.primary.source === "goals" ? "Goals" : "the growth review"}`}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -66,6 +67,11 @@ export default async function NextStepPage() {
               step.primary.title === "This Goal is reached" &&
               step.primary.goalId ? (
                 <DraftNextGoalButton goalId={step.primary.goalId} />
+              ) : null}
+              {canActivateGoal &&
+              step.primary.title === "Make this the active Goal" &&
+              step.primary.goalId ? (
+                <ActivateGoalButton goalId={step.primary.goalId} />
               ) : null}
             </CardContent>
           </Card>

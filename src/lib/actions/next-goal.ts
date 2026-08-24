@@ -3,14 +3,18 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { and, eq, ne } from "drizzle-orm";
+
 import { recordAudit } from "@/lib/audit";
 import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import { decisionRecords, growthGoals } from "@/lib/db/schema";
 import {
   alreadyDraftedNextGoal,
+  canActivateDraftGoal,
   canDraftNextGoal,
   draftNextGoalFromReached,
+  sourceGoalIdFromInferred,
 } from "@/lib/growth/next-goal";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { hasPermission } from "@/lib/permissions";
@@ -116,5 +120,114 @@ export async function draftNextGoalFromReachedGoal(
     });
     revalidateGoals();
     return `Drafted “${draft.title}.” It is a draft. Set it to Active when you want it. GroovGro did not start marketing.`;
+  });
+}
+
+export async function activateDraftGoal(
+  formData: FormData,
+): Promise<ActionResult> {
+  return runAction("Could not make that the active Goal.", async () => {
+    const session = await requireOrgSession();
+    if (!hasPermission(session.permissions, "modify_goals")) {
+      throw new Error("You do not have permission to change a Goal.");
+    }
+    const db = getDb();
+    if (!db) throw new Error("Database is not configured");
+    const goalId = z.string().uuid().parse(formData.get("goalId"));
+    const snapshot = await getGrowthSnapshot(session.organizationId);
+    if (!snapshot) throw new Error("Sign in to change a Goal.");
+
+    const goal = snapshot.goals.find((row) => row.id === goalId);
+    if (!goal || goal.organizationId !== session.organizationId) {
+      throw new Error("That Goal was not found.");
+    }
+    if (goal.status === "active") {
+      return `“${goal.title}” is already the active Goal. GroovGro did not start marketing.`;
+    }
+    if (!canActivateDraftGoal(goal)) {
+      throw new Error("Only a draft Goal you have reviewed can be made active this way.");
+    }
+
+    const now = new Date();
+    const parsedSource = z
+      .string()
+      .uuid()
+      .safeParse(sourceGoalIdFromInferred(goal.inferredFrom) ?? "");
+    const source = parsedSource.success
+      ? snapshot.goals.find((row) => row.id === parsedSource.data)
+      : null;
+
+    if (
+      source &&
+      source.organizationId === session.organizationId &&
+      source.status !== "achieved"
+    ) {
+      await db
+        .update(growthGoals)
+        .set({
+          status: "achieved",
+          completedAt: source.completedAt ?? now,
+          updatedAt: now,
+        })
+        .where(
+          and(
+            eq(growthGoals.id, source.id),
+            eq(growthGoals.organizationId, session.organizationId),
+          ),
+        );
+    }
+
+    await db
+      .update(growthGoals)
+      .set({
+        status: "paused",
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(growthGoals.organizationId, session.organizationId),
+          eq(growthGoals.status, "active"),
+          ne(growthGoals.id, goal.id),
+        ),
+      );
+
+    await db
+      .update(growthGoals)
+      .set({
+        status: "active",
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(growthGoals.id, goal.id),
+          eq(growthGoals.organizationId, session.organizationId),
+        ),
+      );
+
+    await db.insert(decisionRecords).values({
+      organizationId: session.organizationId,
+      goalId: goal.id,
+      decisionType: "recommend",
+      recommendation: `Made “${goal.title}” the active Goal`,
+      rationale: source
+        ? `The owner chose the next Goal after “${source.title}.” GroovGro will not start marketing.`
+        : "The owner made this draft the active Goal. GroovGro will not start marketing.",
+      evidenceWindow: "owner choice",
+      userResponse: "activated",
+      approvalStatus: "approved",
+      resultingAction: "none",
+      createdBy: session.userId,
+    });
+
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "growth_goal.activated",
+      targetType: "growth_goal",
+      targetId: goal.id,
+      metadata: { fromGoalId: source?.id ?? null, executeAllowed: false },
+    });
+    revalidateGoals();
+    return `“${goal.title}” is now the active Goal. Draft a plan when you want one. GroovGro did not start marketing.`;
   });
 }

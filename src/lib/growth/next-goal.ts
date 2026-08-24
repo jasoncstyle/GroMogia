@@ -74,6 +74,41 @@ export function alreadyDraftedNextGoal(
   return goals.some((goal) => goal.inferredFrom === source);
 }
 
+export function sourceGoalIdFromInferred(inferredFrom: string): string | null {
+  if (!inferredFrom.startsWith(REACHED_GOAL_SOURCE)) return null;
+  const id = inferredFrom.slice(REACHED_GOAL_SOURCE.length).trim();
+  return id || null;
+}
+
+export function isNextGoalDraft(goal: {
+  status: string
+  inferredFrom: string
+}): boolean {
+  return goal.status === "draft" && sourceGoalIdFromInferred(goal.inferredFrom) != null;
+}
+
+export function canActivateDraftGoal(goal: {
+  status: string
+  discoveryStatus?: string
+}): boolean {
+  if (goal.status !== "draft") return false;
+  const discovery = goal.discoveryStatus ?? "confirmed";
+  return discovery !== "inferred" && discovery !== "rejected";
+}
+
+export function findActivateCandidate<
+  T extends {
+    status: string
+    inferredFrom: string
+    discoveryStatus?: string
+  },
+>(goals: T[]): T | null {
+  return (
+    goals.find((goal) => canActivateDraftGoal(goal) && isNextGoalDraft(goal)) ??
+    null
+  );
+}
+
 export function draftNextGoalFromReached(goal: ReachedGoalInput): NextGoalDraft {
   const title = baseTitle(goal.title) || "this Goal";
   const current = goal.currentValue;

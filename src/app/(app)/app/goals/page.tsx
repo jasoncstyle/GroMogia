@@ -19,9 +19,10 @@ import {
 } from "@/components/growth-plan-actions";
 import { WaitingActionButtons } from "@/components/next-step-actions";
 import { OwnerWorkButtons } from "@/components/owner-work-actions";
-import { DraftNextGoalButton } from "@/components/next-goal-actions";
+import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
 import {
   alreadyDraftedNextGoal,
+  canActivateDraftGoal,
   canDraftNextGoal,
 } from "@/lib/growth/next-goal";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
@@ -88,9 +89,10 @@ export default async function GoalsPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Goals</h1>
         <p className="text-muted-foreground">
-          A Goal is a measurable outcome. GroovGro can draft a plan for a
-          confirmed Goal. Approving that plan does not run marketing.
-          Suggested goals stay drafts until you confirm them.
+          A Goal is a measurable outcome. A draft stays a draft until you
+          click Make this the active Goal. GroovGro can then draft a plan.
+          Approving that plan does not run marketing. Suggested goals stay
+          drafts until you confirm them.
         </p>
         <div className="mt-3">
           <ReviewConnectedDataButton disabled={!session.organizationId} />
@@ -436,6 +438,11 @@ export default async function GoalsPage() {
                     Update
                   </SaveButton>
                 </SaveForm>
+                {canDraftPlan && canActivateDraftGoal(goal) ? (
+                  <div className="mt-3">
+                    <ActivateGoalButton goalId={goal.id} />
+                  </div>
+                ) : null}
                 {canDraftPlan ? (
                   <div className="mt-3">
                     <DraftGrowthPlanButton goalId={goal.id} />

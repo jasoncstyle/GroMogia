@@ -5,7 +5,7 @@ const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "so
 
 export type NextStepKind = "no_change_yet" | "recommend";
 export type NextStepClass = "operational" | "optimization" | "strategic";
-export type NextStepSource = "drafts" | "specialist" | "review" | "owner_work" | "learning";
+export type NextStepSource = "drafts" | "specialist" | "review" | "owner_work" | "learning" | "goals";
 
 export type NextStepCandidate = {
   kind: NextStepKind
@@ -34,6 +34,8 @@ export type NextStepInput = {
   latestLearningKind?: WorkLearningKind | ""
   latestLearningOutcome?: string
   latestLearningGoalId?: string | null
+  activateGoalId?: string | null
+  activateGoalTitle?: string
 };
 
 export type CoordinatedNextStep = {
@@ -74,6 +76,24 @@ function fromReport(report: SpecialistReport): NextStepCandidate {
     source: "specialist",
     specialistId: report.id,
     goalId: report.relatedGoal?.id ?? null,
+  };
+}
+
+function activateGoalCandidate(
+  goalId: string | null | undefined,
+  title: string | undefined,
+): NextStepCandidate | null {
+  if (!goalId) return null;
+  const name = (title ?? "").replace(/\s+/g, " ").trim() || "the next Goal";
+  return {
+    kind: "recommend",
+    classification: "operational",
+    title: "Make this the active Goal",
+    body: `“${name}” is a draft. Make it the active Goal when you want GroovGro to follow it. GroovGro will not start marketing.`,
+    href: "/app/goals",
+    source: "goals",
+    specialistId: null,
+    goalId,
   };
 }
 
@@ -179,6 +199,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   );
   const drafts = draftsCandidate(input.inferredDraftCount);
   const ownerWork = ownerWorkCandidate(input.openWorkCount ?? 0);
+  const activate = activateGoalCandidate(input.activateGoalId, input.activateGoalTitle);
   const learning = learningCandidate(input);
   const usable = input.reports.filter((report) => !DISCONNECTED_CHANNELS.has(report.id));
   const leftAlone = [
@@ -191,7 +212,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   ].sort((a, b) => score(b) - score(a));
 
   return {
-    primary: drafts ?? ownerWork ?? learning ?? ranked[0] ?? nothingYet(),
+    primary: drafts ?? ownerWork ?? activate ?? learning ?? ranked[0] ?? nothingYet(),
     leftAlone,
     waitingActions,
     executeAllowed: false,
