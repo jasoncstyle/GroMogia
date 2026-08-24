@@ -495,6 +495,7 @@ describe("coordinated next step", () => {
     );
     assert.match(page, /openPageLabelForNextStep/);
     assert.match(page, /OpenPageNextStepButtons/);
+    assert.match(page, /hasDedicatedNextStepControls/);
     const openPage = buttons.slice(
       buttons.indexOf("OpenPageNextStepButtons"),
       buttons.indexOf("NextStepResponseButtons"),

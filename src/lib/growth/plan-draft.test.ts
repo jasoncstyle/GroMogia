@@ -4,15 +4,20 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
+  ACTIVATE_GOAL_STEP_TITLE,
+  ADD_GOAL_STEP_TITLE,
   draftGrowthPlanSummary,
   draftPlanExcerpt,
   findDraftPlanToApprove,
   findPlanDraftGoal,
   FIX_SEO_STEP_TITLE,
   FOLLOW_UP_LEADS_STEP_TITLE,
+  GOAL_REACHED_STEP_TITLE,
   goalNeedsPlanDraft,
+  hasDedicatedNextStepControls,
   IMPROVE_SEO_STEP_TITLE,
   openPageLabelForNextStep,
+  READ_GOAL_STEP_TITLE,
   REVIEW_SCHEDULE_STEP_TITLE,
   RUN_SEO_STEP_TITLE,
   skipsDuplicateNextStepAction,
@@ -431,11 +436,17 @@ describe("growth plan draft", () => {
     assert.equal(openPageLabelForNextStep(FIX_SEO_STEP_TITLE), "Open SEO");
     assert.equal(openPageLabelForNextStep(IMPROVE_SEO_STEP_TITLE), "Open SEO");
     assert.equal(openPageLabelForNextStep(REVIEW_SCHEDULE_STEP_TITLE), "Open Events");
+    assert.equal(openPageLabelForNextStep(READ_GOAL_STEP_TITLE), "Open Goals");
+    assert.equal(openPageLabelForNextStep(ADD_GOAL_STEP_TITLE), "Open Goals");
     assert.equal(openPageLabelForNextStep(RUN_SEO_STEP_TITLE), null);
+    assert.equal(hasDedicatedNextStepControls(GOAL_REACHED_STEP_TITLE), true);
+    assert.equal(hasDedicatedNextStepControls(ACTIVATE_GOAL_STEP_TITLE), true);
+    assert.equal(hasDedicatedNextStepControls(FOLLOW_UP_LEADS_STEP_TITLE), false);
     assert.equal(skipsDuplicateNextStepAction(FOLLOW_UP_LEADS_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(RUN_SEO_STEP_TITLE), true);
     assert.equal(skipsDuplicateNextStepAction(FIX_SEO_STEP_TITLE), true);
-    assert.equal(skipsDuplicateNextStepAction("Draft a plan for this Goal"), false);
+    assert.equal(skipsDuplicateNextStepAction(GOAL_REACHED_STEP_TITLE), true);
+    assert.equal(skipsDuplicateNextStepAction("Nothing should change yet"), false);
   });
 
   it("does not bake industry-specific words into plan helpers", () => {

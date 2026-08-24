@@ -70,6 +70,10 @@ export const RUN_SEO_STEP_TITLE = "Run an SEO check";
 export const FIX_SEO_STEP_TITLE = "Fix blocking SEO items";
 export const IMPROVE_SEO_STEP_TITLE = "Improve the page when you have time";
 export const REVIEW_SCHEDULE_STEP_TITLE = "Review the schedule or how people find it";
+export const GOAL_REACHED_STEP_TITLE = "This Goal is reached";
+export const ACTIVATE_GOAL_STEP_TITLE = "Make this the active Goal";
+export const READ_GOAL_STEP_TITLE = "Read the Goal before changing course";
+export const ADD_GOAL_STEP_TITLE = "Add a Goal so GroovGro can compare a number";
 
 export function skipsDuplicateNextStepAction(title: string): boolean {
   const text = clean(title);
@@ -78,7 +82,25 @@ export function skipsDuplicateNextStepAction(title: string): boolean {
     text === RUN_SEO_STEP_TITLE ||
     text === FIX_SEO_STEP_TITLE ||
     text === IMPROVE_SEO_STEP_TITLE ||
-    text === REVIEW_SCHEDULE_STEP_TITLE
+    text === REVIEW_SCHEDULE_STEP_TITLE ||
+    text === GOAL_REACHED_STEP_TITLE ||
+    text === ACTIVATE_GOAL_STEP_TITLE ||
+    text === DRAFT_PLAN_STEP_TITLE ||
+    text === APPROVE_PLAN_STEP_TITLE ||
+    text === PROPOSE_ACTIONS_STEP_TITLE ||
+    text === READ_GOAL_STEP_TITLE ||
+    text === ADD_GOAL_STEP_TITLE
+  );
+}
+
+export function hasDedicatedNextStepControls(title: string): boolean {
+  const text = clean(title);
+  return (
+    text === GOAL_REACHED_STEP_TITLE ||
+    text === ACTIVATE_GOAL_STEP_TITLE ||
+    text === DRAFT_PLAN_STEP_TITLE ||
+    text === APPROVE_PLAN_STEP_TITLE ||
+    text === PROPOSE_ACTIONS_STEP_TITLE
   );
 }
 
@@ -87,6 +109,7 @@ export function openPageLabelForNextStep(title: string): string | null {
   if (text === FOLLOW_UP_LEADS_STEP_TITLE) return "Open Leads & customers";
   if (text === FIX_SEO_STEP_TITLE || text === IMPROVE_SEO_STEP_TITLE) return "Open SEO";
   if (text === REVIEW_SCHEDULE_STEP_TITLE) return "Open Events";
+  if (text === READ_GOAL_STEP_TITLE || text === ADD_GOAL_STEP_TITLE) return "Open Goals";
   return null;
 }
 

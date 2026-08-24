@@ -18,7 +18,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { getCoordinatedNextStep } from "@/lib/growth/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -170,7 +170,7 @@ export default async function NextStepPage() {
                     <Link href="/app/growth-review">Open Growth review</Link>
                   </Button>
                 </div>
-              ) : canDecide ? (
+              ) : hasDedicatedNextStepControls(step.primary.title) ? null : canDecide ? (
                 <NextStepResponseButtons
                   kind={step.primary.kind}
                   href={step.primary.href}
@@ -181,12 +181,12 @@ export default async function NextStepPage() {
                 </Button>
               )}
               {canCreateGoal &&
-              step.primary.title === "This Goal is reached" &&
+              step.primary.title === GOAL_REACHED_STEP_TITLE &&
               step.primary.goalId ? (
                 <DraftNextGoalButton goalId={step.primary.goalId} />
               ) : null}
               {canActivateGoal &&
-              step.primary.title === "Make this the active Goal" &&
+              step.primary.title === ACTIVATE_GOAL_STEP_TITLE &&
               step.primary.goalId ? (
                 <ActivateGoalButton goalId={step.primary.goalId} />
               ) : null}

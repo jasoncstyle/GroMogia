@@ -1,6 +1,6 @@
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
-import { APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, ADD_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, GOAL_REACHED_STEP_TITLE, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, READ_GOAL_STEP_TITLE, REVIEW_SITE_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -151,7 +151,7 @@ function activateGoalCandidate(
   return {
     kind: "recommend",
     classification: "operational",
-    title: "Make this the active Goal",
+    title: ACTIVATE_GOAL_STEP_TITLE,
     body: `“${name}” is a draft. Make it the active Goal when you want GroovGro to follow it. GroovGro will not start marketing.`,
     href: "/app/goals",
     source: "goals",
@@ -277,7 +277,7 @@ function learningCandidate(input: NextStepInput): NextStepCandidate | null {
     return {
       kind: "recommend",
       classification: "operational",
-      title: "This Goal is reached",
+      title: GOAL_REACHED_STEP_TITLE,
       body:
         outcome ||
         `The Goal number reached its target. Draft the next Goal, then set it to Active when you want it.${leaveAlone}`,
@@ -291,7 +291,7 @@ function learningCandidate(input: NextStepInput): NextStepCandidate | null {
     return {
       kind: "recommend",
       classification: "operational",
-      title: "Read the Goal before changing course",
+      title: READ_GOAL_STEP_TITLE,
       body:
         outcome ||
         `The Goal number is lower than when you did the work. Do not add spend.${leaveAlone}`,
@@ -305,7 +305,7 @@ function learningCandidate(input: NextStepInput): NextStepCandidate | null {
     return {
       kind: "recommend",
       classification: "operational",
-      title: "Add a Goal so GroovGro can compare a number",
+      title: ADD_GOAL_STEP_TITLE,
       body:
         outcome ||
         `That work was not tied to a Goal. Open Goals and write a measurable outcome.${leaveAlone}`,
