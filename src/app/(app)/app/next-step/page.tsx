@@ -800,6 +800,22 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.needsAddOffer &&
+          !isAddOfferNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Add an offer</CardTitle>
+                <CardDescription>
+                  Name something this business promotes or wants a customer
+                  to do. GroovGro will not start marketing.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <OfferCreateForm disabled={!canManageOffers} />
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.activateGoalId &&
           step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
             <Card>

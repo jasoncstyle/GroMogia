@@ -1586,6 +1586,34 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("keeps Add an offer on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          confirmedOfferCount: 0,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsAddOffer, true);
+    assert.match(page, /needsAddOffer/);
+    assert.match(page, /!isAddOfferNextStep/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/offers/page.tsx"), "utf8"),
+      /OfferCreateForm/,
+    );
+  });
+
   it("keeps sharing the lead form ahead of adding an offer", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,
