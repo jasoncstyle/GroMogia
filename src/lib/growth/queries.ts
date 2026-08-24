@@ -376,9 +376,15 @@ export async function getCoordinatedNextStep(organizationId: string) {
       status: action.status,
       risk: action.risk,
     })),
-    openWorkCount: snapshot.actions.filter((action) =>
-      isOpenOwnerWork(action.status),
-    ).length,
+    openWork: snapshot.actions
+      .filter((action) => isOpenOwnerWork(action.status))
+      .map((action) => ({
+        id: action.id,
+        description: action.description,
+        module: action.module,
+        actionType: action.actionType,
+        risk: action.risk,
+      })),
     latestLearningKind: learned
       ? (learningKindFromOutcome(learned.outcome) ?? "")
       : "",

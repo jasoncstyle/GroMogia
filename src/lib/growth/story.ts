@@ -70,7 +70,7 @@ function planLine(facts: GrowthStoryFacts): string {
 
 function workLine(facts: GrowthStoryFacts): string {
   if (facts.openWorkCount > 0) {
-    return `${facts.openWorkCount} approved action${facts.openWorkCount === 1 ? "" : "s"} ${facts.openWorkCount === 1 ? "is" : "are"} ready on Your work. You do ${facts.openWorkCount === 1 ? "it" : "them"}. GroovGro will not run ${facts.openWorkCount === 1 ? "it" : "them"}.`;
+    return `${facts.openWorkCount} approved action${facts.openWorkCount === 1 ? "" : "s"} ${facts.openWorkCount === 1 ? "is" : "are"} ready on Next step. You do ${facts.openWorkCount === 1 ? "it" : "them"}. GroovGro will not run ${facts.openWorkCount === 1 ? "it" : "them"}.`;
   }
   if (facts.finishedWorkCount > 0) {
     return `You already marked ${facts.finishedWorkCount} action${facts.finishedWorkCount === 1 ? "" : "s"}. Check what changed on Your work. GroovGro did not execute ${facts.finishedWorkCount === 1 ? "it" : "them"}.`;

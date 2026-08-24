@@ -30,6 +30,7 @@ describe("growth story", () => {
     assert.match(beats[0]?.body ?? "", /2 leads of 10 leads/);
     assert.match(beats[1]?.body ?? "", /v2/);
     assert.match(beats[2]?.body ?? "", /will not run/);
+    assert.match(beats[2]?.body ?? "", /Next step/);
     assert.equal(beats[2]?.href, "/app/work");
     assert.match(beats[4]?.body ?? "", /left alone/);
     assert.doesNotMatch(beats.map((beat) => beat.body).join(" "), /buy ads|TODO|lorem/i);

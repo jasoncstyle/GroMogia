@@ -143,6 +143,22 @@ describe("growth plan actions", () => {
     assert.doesNotMatch(actions.map((action) => action.description).join(" "), /Approve or reject these actions/);
   });
 
+  it("does not copy the owner-work next step back into action text", () => {
+    const actions = draftActionsFromApprovedPlan({
+      goalTitle: "More people get in touch",
+      nextStepTitle: "Do the work you already approved",
+      nextStepBody: "Do it here. GroovGro will not run it.",
+      nextStepKind: "recommend",
+      websiteConnected: true,
+      openLeadCount: 0,
+      confirmedOfferCount: 1,
+      inferredOfferCount: 0,
+    });
+    assert.equal(actions.length, 1);
+    assert.equal(actions[0]?.actionType, "watch_progress");
+    assert.doesNotMatch(actions.map((action) => action.description).join(" "), /Do the work you already approved/);
+  });
+
   it("does not bake industry-specific words into action helpers", () => {
     const source = readFileSync(join(process.cwd(), "src/lib/growth/plan-actions.ts"), "utf8");
     for (const banned of ["seat", "boat", "student", "ticket", "sailing", "bunk", "electrician"]) {
