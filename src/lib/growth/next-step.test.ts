@@ -1702,4 +1702,15 @@ describe("coordinated next step", () => {
     assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
     assert.match(source, /revalidatePath\("\/app"\)/);
   });
+
+  it("refreshes Next step after GroovGro records a new Stripe payment copy", () => {
+    const source = readFileSync(
+      join(process.cwd(), "src/app/api/stripe/webhook/route.ts"),
+      "utf8",
+    );
+    assert.match(source, /result\.created/);
+    assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
+    assert.match(source, /revalidatePath\("\/app\/crm"\)/);
+    assert.doesNotMatch(source, /stripe-osa/);
+  });
 });

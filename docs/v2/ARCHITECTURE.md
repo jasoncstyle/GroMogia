@@ -702,7 +702,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** After a public form submission, Next step and Leads refresh so follow-up can appear. GroovGro does not email anyone.
 
-### 70. A first recorded website visit refreshes Next step (this slice)
+### 70. A first recorded website visit refreshes Next step
 
 **Reason:** After the tracking snippet records its first visit, Next step could still ask to paste the snippet until the cached page expired.
 
@@ -711,6 +711,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** The first recorded visit refreshes Next step, the path so far, Analytics, and Website so the snippet ask can clear. Later visits do not keep refreshing those pages. GroovGro does not replace the live site.
+
+### 71. A new Stripe payment copy refreshes Next step (this slice)
+
+**Reason:** When GroovGro records a new Stripe charge copy, Next step could still list a lead that is now a customer, or show a stale Goal number, until the cached page expired.
+
+**Affected:** GroovGro Stripe read-copy webhook.
+
+**Migration risk:** None.
+
+**Current functionality:** After a new payment row is stored, Next step, Leads, Bookings, and the path so far refresh. Duplicate events do not keep refreshing. GroovGro still does not charge a card or change checkout. Live checkout and stripe-osa are unchanged.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -773,7 +783,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Phone header offers Next step is parked.** Phones show Next step next to Menu. Do not execute.
 - **Saving a specialist recommendation refreshes Next step is parked.** After save, Next step and Your work refresh. Approving from Next step also refreshes Your work. Do not execute.
 - **A public lead form submission refreshes Next step is parked.** After someone submits the public form, Next step and Leads refresh so follow-up can appear. Do not email anyone.
-- **A first recorded website visit refreshes Next step (this slice).** After the snippet records its first visit, Next step refreshes so it can stop asking to paste the snippet. Do not replace the live site.
+- **A first recorded website visit refreshes Next step is parked.** After the snippet records its first visit, Next step refreshes so it can stop asking to paste the snippet. Do not replace the live site.
+- **A new Stripe payment copy refreshes Next step (this slice).** After GroovGro stores a new payment row, Next step refreshes so follow-up and Goal numbers can update. Do not charge a card or change checkout.
 
 ## DESIGN FOR LATER
 
@@ -916,7 +927,8 @@ Organization
 62. **Phone header offers Next step** — phones show Next step next to Menu. Done.
 63. **Saving a specialist recommendation refreshes Next step** — Next step and Your work refresh after save. Done.
 64. **A public lead form submission refreshes Next step** — Next step and Leads refresh after a public form submission. Done.
-65. **A first recorded website visit refreshes Next step** — Next step refreshes after the snippet records its first visit. This slice.
-66. **Guarded automation** — only after the above is trusted.
+65. **A first recorded website visit refreshes Next step** — Next step refreshes after the snippet records its first visit. Done.
+66. **A new Stripe payment copy refreshes Next step** — Next step refreshes after GroovGro stores a new payment row. This slice. GroovGro does not charge a card or change checkout.
+67. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

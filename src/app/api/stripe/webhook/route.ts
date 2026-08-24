@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 import { getDb } from "@/lib/db";
 import { ensureSchema } from "@/lib/db/ensure-schema";
 import {
@@ -57,6 +59,12 @@ export async function POST(request: Request) {
     return Response.json({ ok: true, ignored: true, reason: "no_organization" });
   }
 
-  await ingestStripeEvent(organizationId, event.type, object);
+  const result = await ingestStripeEvent(organizationId, event.type, object);
+  if (result.created) {
+    revalidatePath("/app/next-step");
+    revalidatePath("/app/crm");
+    revalidatePath("/app/commerce");
+    revalidatePath("/app");
+  }
   return Response.json({ ok: true });
 }
