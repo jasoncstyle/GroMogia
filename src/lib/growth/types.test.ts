@@ -86,6 +86,7 @@ describe("growth foundation", () => {
       "utf8",
     );
     assert.match(source, /Open to read this draft/);
+    assert.match(source, /Confirm or reject it on Next step/);
     assert.match(source, /offer.description/);
     assert.match(source, /Page GroovGro read/);
     assert.match(source, /goal.successDefinition/);

@@ -84,9 +84,9 @@ export default async function BusinessBrainPage() {
           <CardDescription>
             Saving a website address is not enough. Find pages, check the
             important ones, then click Review connected data so GroovGro can
-            read events, bookings, payments, and those checked pages. Drafts
-            stay inactive until you confirm. It will not guess an industry,
-            change the website, or start marketing.
+            read events, bookings, payments, and those checked pages. Confirm
+            or reject suggested drafts on Next step. It will not guess an
+            industry, change the website, or start marketing.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -113,7 +113,7 @@ export default async function BusinessBrainPage() {
           {(snapshot?.inferredOffers.length ?? 0) > 0 ? (
             <FoldableSample
               title={draftToggleTitle("offer", snapshot?.inferredOffers.length ?? 0)}
-              subtitle="Open the list, then open each name to read it. Drafts stay inactive."
+              subtitle="Open the list, then open each name to read it. Confirm or reject on Next step."
             >
               {snapshot?.inferredOffers.map((offer) => (
                 <InferredOfferDraft key={offer.id} offer={offer} />
@@ -123,7 +123,7 @@ export default async function BusinessBrainPage() {
           {(snapshot?.inferredGoals.length ?? 0) > 0 ? (
             <FoldableSample
               title={draftToggleTitle("goal", snapshot?.inferredGoals.length ?? 0)}
-              subtitle="Open the list, then open each name to read it. Drafts stay inactive."
+              subtitle="Open the list, then open each name to read it. Confirm or reject on Next step."
             >
               {snapshot?.inferredGoals.map((goal) => (
                 <InferredGoalDraft key={goal.id} goal={goal} />

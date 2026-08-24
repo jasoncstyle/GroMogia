@@ -1684,6 +1684,12 @@ describe("coordinated next step", () => {
     assert.match(offers, /Confirm or reject suggested offers on Next step/);
     assert.match(offers, /Confirm or reject this on Next step/);
     assert.doesNotMatch(offers, /ConfirmRejectButtons/);
+    const drafts = readFileSync(
+      join(process.cwd(), "src/components/growth-review.tsx"),
+      "utf8",
+    );
+    assert.match(drafts, /Confirm or reject this on Next step/);
+    assert.doesNotMatch(drafts, /ConfirmRejectButtons id=/);
     assert.doesNotMatch(goals, /href="\/app\/intelligence"/);
     assert.doesNotMatch(goals, /href="\/app\/decisions"/);
     assert.doesNotMatch(goals, /Read the path so far/);
@@ -1756,6 +1762,9 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.match(business, /Save a website address on Next step first/);
+    assert.match(business, /Confirm or reject suggested drafts on Next step/);
+    assert.match(business, /Confirm or reject on Next step/);
+    assert.doesNotMatch(business, /ConfirmRejectButtons/);
     assert.doesNotMatch(business, /on Website first/);
     assert.doesNotMatch(business, /href="\/app\/goals"/);
     const goalsPage = readFileSync(

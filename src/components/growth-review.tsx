@@ -122,7 +122,7 @@ export function InferredOfferDraft({
   return (
     <FoldableSample
       title={offer.name}
-      subtitle="Open to read this draft, then confirm or reject."
+      subtitle="Open to read this draft. Confirm or reject it on Next step."
     >
       <div className="space-y-3">
         <p className="text-sm whitespace-pre-wrap">
@@ -151,7 +151,10 @@ export function InferredOfferDraft({
           </p>
         ) : null}
         <InferredBadge source={offer.inferredFrom} confidence={offer.confidence} />
-        <ConfirmRejectButtons id={offer.id} kind="offer" />
+        <p className="text-xs text-muted-foreground">
+          Confirm or reject this on Next step. Confirming makes it
+          active. GroovGro will not start marketing.
+        </p>
       </div>
     </FoldableSample>
   );
@@ -173,7 +176,7 @@ export function InferredGoalDraft({
   return (
     <FoldableSample
       title={goal.title}
-      subtitle="Open to read this draft, then confirm or reject."
+      subtitle="Open to read this draft. Confirm or reject it on Next step."
     >
       <div className="space-y-3">
         <p className="text-sm whitespace-pre-wrap">
@@ -191,7 +194,10 @@ export function InferredGoalDraft({
           </p>
         ) : null}
         <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
-        <ConfirmRejectButtons id={goal.id} kind="goal" />
+        <p className="text-xs text-muted-foreground">
+          Confirm or reject this on Next step. Confirming makes it
+          active. GroovGro will not start marketing.
+        </p>
       </div>
     </FoldableSample>
   );
