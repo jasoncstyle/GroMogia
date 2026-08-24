@@ -101,7 +101,9 @@ export default async function NextStepPage({
       ? (await getSeoPageData(session.organizationId)).searchConsole
       : null;
   const brand =
-    session.organizationId && step && isSaveBrandNextStep(step.primary.title)
+    session.organizationId &&
+    step &&
+    (isSaveBrandNextStep(step.primary.title) || step.needsSaveBrand)
       ? await getBrandSettingsForm(session.organizationId)
       : null;
   const brain =
@@ -750,6 +752,27 @@ export default async function NextStepPage({
                       ? "connect"
                       : "sync"
                   }
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {step.needsSaveBrand &&
+          !isSaveBrandNextStep(step.primary.title) ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Save your brand</CardTitle>
+                <CardDescription>
+                  Save the business name, what it does, and who it serves
+                  here. GroovGro will not start marketing, send email, or
+                  edit the live website.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BrandSettingsForm
+                  brand={brand}
+                  organizationName={session.organizationName}
+                  disabled={!canManageBrand}
                 />
               </CardContent>
             </Card>

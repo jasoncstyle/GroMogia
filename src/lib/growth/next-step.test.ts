@@ -1636,6 +1636,37 @@ describe("coordinated next step", () => {
     );
   });
 
+  it("keeps Save your brand on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(
+        facts({
+          inferredDraftCount: 1,
+          brandSettingsSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.needsSaveBrand, true);
+    assert.match(page, /needsSaveBrand/);
+    assert.match(page, /!isSaveBrandNextStep/);
+    assert.match(
+      readFileSync(
+        join(process.cwd(), "src/app/(app)/app/settings/brand/page.tsx"),
+        "utf8",
+      ),
+      /BrandSettingsForm/,
+    );
+  });
+
   it("keeps sharing the lead form ahead of saving the brand", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,
