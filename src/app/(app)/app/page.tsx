@@ -191,7 +191,7 @@ export default async function DashboardPage() {
                 ]
                   .filter(Boolean)
                   .join(" ")
-              : "No active Growth Goal yet. Open Next step or Goals to write the first measurable outcome."
+              : "No active Growth Goal yet. Open Next step to write the first measurable outcome."
           }
         />
         <QuestionCard title="How are we doing?" body={happening} />

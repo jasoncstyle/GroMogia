@@ -58,8 +58,11 @@ describe("growth story", () => {
       nextStepHref: "",
     });
     assert.match(beats[0]?.body ?? "", /No active Goal/);
+    assert.match(beats[0]?.body ?? "", /Open Next step and write/);
+    assert.doesNotMatch(beats[0]?.body ?? "", /or Goals/);
     assert.equal(beats[0]?.href, "/app/next-step");
-    assert.match(beats[1]?.body ?? "", /Open Next step or Goals first/);
+    assert.match(beats[1]?.body ?? "", /Open Next step first/);
+    assert.doesNotMatch(beats[1]?.body ?? "", /or Goals/);
     assert.equal(beats[1]?.href, "/app/next-step");
     assert.equal(beats[2]?.href, "/app/next-step");
     assert.equal(beats[4]?.href, "/app/next-step");
@@ -109,6 +112,28 @@ describe("growth story", () => {
     assert.equal(beats[4]?.href, "/app/next-step");
     assert.equal(beats[2]?.href, "/app/next-step");
     assert.match(beats[4]?.body ?? "", /Follow up open leads/);
+  });
+
+  it("keeps empty Goal and no-plan copy on Next step", () => {
+    const beats = buildGrowthStory({
+      businessName: "Harbor Workshops",
+      goalTitle: "More people get in touch",
+      goalCurrent: 2,
+      goalTarget: 10,
+      goalUnit: "leads",
+      goalProgressPercent: 20,
+      hasApprovedPlan: false,
+      planVersion: null,
+      openWorkCount: 0,
+      finishedWorkCount: 0,
+      latestLearning: "",
+      nextStepTitle: "Draft a plan for this Goal",
+      nextStepBody: "Draft a plan so GroovGro can propose the first actions.",
+      nextStepHref: "/app/goals",
+    });
+    assert.match(beats[1]?.body ?? "", /Draft or approve a plan on Next step/);
+    assert.doesNotMatch(beats[1]?.body ?? "", /or Goals/);
+    assert.equal(beats[1]?.href, "/app/next-step");
   });
 
   it("names Next step on the path, specialists, and Intelligence", () => {

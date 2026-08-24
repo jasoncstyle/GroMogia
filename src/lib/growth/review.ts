@@ -262,7 +262,7 @@ export function scheduledReviewLabel(
   now: Date,
 ): string {
   if (!settings) {
-    return "Set a review day on Goals if you want a reminder of when to look. GroovGro will not change the business on that day.";
+    return "Set a review day on Next step if you want a reminder of when to look. GroovGro will not change the business on that day.";
   }
   const next = nextScheduledReview(settings, now);
   const when = next

@@ -75,7 +75,7 @@ describe("growth plan draft", () => {
       },
       offers: [{ name: "Weekend Workshop", description: "A two-day starter session." }],
       nextStepTitle: "Follow up open leads",
-      nextStepBody: "Open Leads & customers and give each open lead a next step.",
+      nextStepBody: "Give each open lead a next step here. GroovGro will not email them.",
       nextStepKind: "recommend",
       leftAlone: ["Do not start ads.", "Leave email alone."],
       websiteConnected: true,
@@ -86,7 +86,9 @@ describe("growth plan draft", () => {
     assert.match(summary, /Harbor Workshops/);
     assert.match(summary, /Weekend Workshop/);
     assert.match(summary, /Follow up open leads/);
+    assert.match(summary, /on Next step/);
     assert.match(summary, /will not email/);
+    assert.doesNotMatch(summary, /Leads & customers/);
     assert.match(summary, /Do not start ads/);
     assert.match(summary, /Stripe/);
     assert.doesNotMatch(summary, /your own words|TODO|lorem/i);
@@ -117,6 +119,8 @@ describe("growth plan draft", () => {
     });
     assert.match(summary, /wait|Keep collecting/i);
     assert.match(summary, /No confirmed offers/);
+    assert.match(summary, /on Next step before promoting/);
+    assert.doesNotMatch(summary, /on Business before promoting/);
   });
 
   it("asks to connect the existing website instead of building a new one", () => {

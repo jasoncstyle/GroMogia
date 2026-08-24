@@ -335,7 +335,7 @@ export function draftGrowthPlanSummary(facts: PlanDraftFacts): string {
   }
   if (facts.openLeadCount > 0) {
     doNow.push(
-      `Follow up ${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"} in Leads & customers. GroovGro will not email them.`,
+      `Follow up ${facts.openLeadCount} open lead${facts.openLeadCount === 1 ? "" : "s"} on Next step. GroovGro will not email them.`,
     );
   }
   if (!facts.websiteConnected) {
@@ -362,7 +362,7 @@ export function draftGrowthPlanSummary(facts: PlanDraftFacts): string {
     `Where we are: ${progressLine(goal)}`,
     offers.length > 0
       ? `Confirmed offers this plan can talk about: ${listPhrase(offers)}.`
-      : "No confirmed offers yet. Confirm or reject drafts on Business before promoting anything.",
+      : "No confirmed offers yet. Confirm or reject drafts on Next step before promoting anything.",
     `What we will do now: ${doNow.join(" ")}`,
     `What we will not do: ${leaveLine} This plan does not charge a card or change Stripe checkout.`,
     "How we will know it is working: compare the Goal’s saved progress to the target. If evidence is thin, the right move is to wait.",

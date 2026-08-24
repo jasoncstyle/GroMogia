@@ -10,6 +10,7 @@ import {
   generateGrowthReview,
   nextScheduledReview,
   reviewPeriod,
+  scheduledReviewLabel,
   type ReviewInput,
 } from "./review";
 
@@ -226,6 +227,11 @@ describe("growth review", () => {
     assert.equal(sample.observations, 2);
     assert.equal(sample.conversions, 2);
     assert.ok(sample.elapsedDays >= 21);
+  });
+
+  it("asks the owner to set a review day on Next step", () => {
+    assert.match(scheduledReviewLabel(null, now), /on Next step/);
+    assert.doesNotMatch(scheduledReviewLabel(null, now), /on Goals/);
   });
 
   it("finds the next scheduled look after now", () => {

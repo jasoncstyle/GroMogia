@@ -1581,6 +1581,8 @@ describe("coordinated next step", () => {
     );
     assert.match(source, /Propose the first actions on Next step/);
     assert.match(source, /Open Next step to do it/);
+    assert.match(source, /Open Next step to write the first measurable outcome/);
+    assert.doesNotMatch(source, /Open Next step or Goals/);
     assert.doesNotMatch(source, /Propose the first actions there/);
     assert.match(source, /Open Next step to connect so GroovGro can read a copy of payments/);
     assert.match(source, /Open Next step to confirm or reject what GroovGro drafted/);
