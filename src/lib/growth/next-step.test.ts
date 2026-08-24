@@ -525,6 +525,35 @@ describe("coordinated next step", () => {
     assert.match(source, /showOpenPage=\{false\}/);
   });
 
+  it("keeps I did this on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 1 })),
+      waitingActions: [],
+      openWork: [
+        {
+          id: "w1",
+          description: "Follow up open leads.",
+          module: "crm",
+          actionType: "follow_up_leads",
+          risk: "operational",
+        },
+      ],
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.openWork.length, 1);
+    assert.match(page, /openWork\.length > 0/);
+    assert.match(page, /primary\.title !== OWNER_WORK_STEP_TITLE/);
+    assert.match(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/work/page.tsx"), "utf8"),
+      /OwnerWorkButtons/,
+    );
+  });
+
   it("puts Check what changed on Next step for finished work", () => {
     const source = readFileSync(
       join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),

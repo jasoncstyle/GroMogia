@@ -534,6 +534,36 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.openWork.length > 0 &&
+          step.primary.title !== OWNER_WORK_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Ready for you</CardTitle>
+                <CardDescription>
+                  These are actions you approved. You do them here. GroovGro
+                  will not run them.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {step.openWork.map((action) => (
+                  <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
+                    <p className="font-medium">{action.description}</p>
+                    <p className="text-muted-foreground">
+                      {labelFor(action.risk)}
+                      {action.module ? ` · ${labelFor(action.module)}` : ""}
+                    </p>
+                    <OwnerWorkButtons
+                      actionId={action.id}
+                      href={hrefForGrowthAction(action)}
+                      canUpdate={canUpdateWork}
+                      showOpenPage={false}
+                    />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.uncheckedWork.length > 0 &&
           step.primary.title !== CHECK_CHANGED_STEP_TITLE ? (
             <Card>

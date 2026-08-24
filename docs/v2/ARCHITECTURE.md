@@ -1142,7 +1142,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can save today's Goal number with the current Goal after the first save. Goals still has that button and the Current box. GroovGro does not start marketing.
 
-### 114. Keep Check what changed on Next step when it is not the main ask (this slice)
+### 114. Keep Check what changed on Next step when it is not the main ask
 
 **Reason:** When drafts or approved work outranked Check what changed, that button only lived on Your work. The path so far still said to check on Next step. The owner had to leave Next step to compare the Goal number.
 
@@ -1151,6 +1151,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can check what changed even when that is not the main ask. Your work still has that button. GroovGro does not change the plan.
+
+### 115. Keep I did this on Next step when it is not the main ask (this slice)
+
+**Reason:** When drafts outranked approved work, I did this only lived on Your work. The path so far still said those actions were ready on Next step. The owner had to leave Next step to mark them done.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can mark approved work done even when that is not the main ask. Your work still has those buttons. GroovGro does not execute.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1257,7 +1267,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Goal history on Next step is parked.** Next step shows the saved Goal numbers with the current Goal. Goals still lists the full history and the Current box. Do not execute.
 - **Keep website review click-by-click on Next step is parked.** Setup click-by-click finds pages and reviews on Next step. Website still saves the address and shows the tracking snippet. Business still has Review to run it again. Do not change the live site.
 - **Keep saving today's Goal number on Next step is parked.** Next step can save today's Goal number with the current Goal after the first save. Goals still has that button and the Current box. Do not start marketing.
-- **Keep Check what changed on Next step when it is not the main ask (this slice).** Next step can check what changed even when that is not the main ask. Your work still has that button. Do not change the plan.
+- **Keep Check what changed on Next step when it is not the main ask is parked.** Next step can check what changed even when that is not the main ask. Your work still has that button. Do not change the plan.
+- **Keep I did this on Next step when it is not the main ask (this slice).** Next step can mark approved work done even when that is not the main ask. Your work still has those buttons. Do not execute.
 
 ## DESIGN FOR LATER
 
@@ -1444,7 +1455,8 @@ Organization
 106. **Keep Goal history on Next step** — Next step shows the saved Goal numbers with the current Goal; Goals still lists the full history and the Current box. Done.
 107. **Keep website review click-by-click on Next step** — setup click-by-click finds pages and reviews on Next step; Business still has Review to run it again. Done.
 108. **Keep saving today's Goal number on Next step** — Next step can save today's Goal number with the current Goal after the first save; Goals still has that button and the Current box. Done.
-109. **Keep Check what changed on Next step when it is not the main ask** — Next step can check what changed even when that is not the main ask; Your work still has that button. This slice.
-110. **Guarded automation** — only after the above is trusted.
+109. **Keep Check what changed on Next step when it is not the main ask** — Next step can check what changed even when that is not the main ask; Your work still has that button. Done.
+110. **Keep I did this on Next step when it is not the main ask** — Next step can mark approved work done even when that is not the main ask; Your work still has those buttons. This slice.
+111. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
