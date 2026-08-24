@@ -1757,6 +1757,8 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.match(website, /open Next step to find\s+pages/);
+    assert.match(website, /Find pages and check the important ones on Next step/);
+    assert.doesNotMatch(website, /WebsitePageChecklist/);
     assert.doesNotMatch(website, /open Business and click Review/);
     const business = readFileSync(
       join(process.cwd(), "src/app/(app)/app/business/page.tsx"),

@@ -1052,7 +1052,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step and Website can find pages and check the important ones. Business keeps Review connected data and names Next step to find pages. GroovGro does not change the live site.
 
-### 105. Keep the review schedule on Next step (this slice)
+### 105. Keep the review schedule on Next step
 
 **Reason:** Goals still showed the day-and-time form after Next step and Growth review already had it. The owner could change the schedule from Goals instead of staying on Next step.
 
@@ -1061,6 +1061,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can save when you look at this week’s numbers. Growth review can change that day later. Goals names Next step. GroovGro does not change the business from that schedule.
+
+### 106. Keep Website find-pages on Next step (this slice)
+
+**Reason:** Website still showed the Find pages checklist after Next step already had that loop, and after Website copy already named Next step. The owner could finish an unread-site review from Website instead of staying on Next step.
+
+**Affected:** Website pages card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can find pages and check the important ones. Website keeps the address and tracking snippet, and names Next step to find pages. GroovGro does not change the live site.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1158,7 +1168,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Business confirm drafts on Next step is parked.** Next step can confirm or reject suggested offers and goals. Business lists them and names Next step. Do not execute.
 - **Keep dedicated Next step buttons from creating duplicate actions is parked.** I’ll do this on confirm drafts, connect website, review site, approve actions, owner work, and check what changed does not also save a duplicate proposed action. Do not execute.
 - **Keep find-pages on Next step is parked.** Next step and Website can find pages. Business keeps Review connected data and names Next step to find pages. Do not change the live site.
-- **Keep the review schedule on Next step (this slice).** Next step can save when you look at this week’s numbers. Growth review can change that day later. Goals names Next step. Do not change the business from that schedule.
+- **Keep the review schedule on Next step is parked.** Next step can save when you look at this week’s numbers. Growth review can change that day later. Goals names Next step. Do not change the business from that schedule.
+- **Keep Website find-pages on Next step (this slice).** Next step can find pages. Website keeps the address and tracking snippet, and names Next step to find pages. Do not change the live site.
 
 ## DESIGN FOR LATER
 
@@ -1336,7 +1347,8 @@ Organization
 97. **Keep Business confirm drafts on Next step** — Next step can confirm or reject suggested offers and goals; Business lists them and names Next step. Done.
 98. **Keep dedicated Next step buttons from creating duplicate actions** — I’ll do this on dedicated loops does not also save a duplicate proposed action. Done.
 99. **Keep find-pages on Next step** — Next step and Website can find pages; Business keeps Review connected data and names Next step. Done.
-100. **Keep the review schedule on Next step** — Next step can save when you look at this week’s numbers; Growth review can change that day later; Goals names Next step. This slice.
-101. **Guarded automation** — only after the above is trusted.
+100. **Keep the review schedule on Next step** — Next step can save when you look at this week’s numbers; Growth review can change that day later; Goals names Next step. Done.
+101. **Keep Website find-pages on Next step** — Next step can find pages; Website keeps the address and snippet, and names Next step. This slice.
+102. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
