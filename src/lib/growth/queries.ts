@@ -6,6 +6,7 @@ import {
   availabilityConstraints,
   bookings,
   brandSettings,
+  brandVoiceExamples,
   brandVoiceProfiles,
   businessBrains,
   contacts,
@@ -401,23 +402,33 @@ async function getLatestSeoSummary(organizationId: string) {
   };
 }
 
-async function hasBrandVoiceProfile(organizationId: string) {
+async function getBrandVoiceFacts(organizationId: string) {
   const db = getDb();
-  if (!db) return false;
-  const rows = await db
-    .select({ organizationId: brandVoiceProfiles.organizationId })
-    .from(brandVoiceProfiles)
-    .where(eq(brandVoiceProfiles.organizationId, organizationId))
-    .limit(1);
-  return rows.length > 0;
+  if (!db) return { brandVoiceSaved: false, brandVoiceExampleSaved: false };
+  const [profileRows, exampleRows] = await Promise.all([
+    db
+      .select({ organizationId: brandVoiceProfiles.organizationId })
+      .from(brandVoiceProfiles)
+      .where(eq(brandVoiceProfiles.organizationId, organizationId))
+      .limit(1),
+    db
+      .select({ id: brandVoiceExamples.id })
+      .from(brandVoiceExamples)
+      .where(eq(brandVoiceExamples.organizationId, organizationId))
+      .limit(1),
+  ]);
+  return {
+    brandVoiceSaved: profileRows.length > 0,
+    brandVoiceExampleSaved: exampleRows.length > 0,
+  };
 }
 
 export async function getSpecialistReports(organizationId: string) {
-  const [snapshot, dashboard, seo, brandVoiceSaved] = await Promise.all([
+  const [snapshot, dashboard, seo, brandVoice] = await Promise.all([
     getGrowthSnapshot(organizationId),
     getDashboardSnapshot(organizationId),
     getLatestSeoSummary(organizationId),
-    hasBrandVoiceProfile(organizationId),
+    getBrandVoiceFacts(organizationId),
   ]);
   if (!snapshot) return [];
 
@@ -447,7 +458,8 @@ export async function getSpecialistReports(organizationId: string) {
       (total, row) => total + row.count,
       0,
     ),
-    brandVoiceSaved,
+    brandVoiceSaved: brandVoice.brandVoiceSaved,
+    brandVoiceExampleSaved: brandVoice.brandVoiceExampleSaved,
     upcomingEventCount: dashboard.upcomingEvents.length,
     evidenceSample: defaultCheck?.sample ?? {
       elapsedDays: 0,

@@ -1,11 +1,11 @@
 import {
-  addBrandVoiceExample,
   generateBrandVoiceDraft,
   removeBrandVoiceExample,
 } from "@/lib/actions/brand-voice";
 import { getAppSession } from "@/lib/auth/session";
 import { purposeLabel } from "@/lib/brand-voice/draft";
 import { getBrandVoicePageData, readDraftOutput } from "@/lib/phase5/queries";
+import { BrandVoiceExampleForm } from "@/components/brand-voice-example-form";
 import { BrandVoiceProfileForm } from "@/components/brand-voice-profile-form";
 import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -16,7 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -71,34 +70,7 @@ export default async function BrandVoicePage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <SaveForm
-                  action={addBrandVoiceExample}
-                  successMessage="Example saved"
-                  resetOnSuccess
-                  className="space-y-3"
-                >
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Short name</Label>
-                    <Input id="title" name="title" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="direction">This example is</Label>
-                    <select
-                      id="direction"
-                      name="direction"
-                      className={selectClassName}
-                      defaultValue="more_like_this"
-                    >
-                      <option value="more_like_this">More like this</option>
-                      <option value="less_like_this">Less like this</option>
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="body">The writing</Label>
-                    <Textarea id="body" name="body" rows={5} required />
-                  </div>
-                  <SaveButton>Save example</SaveButton>
-                </SaveForm>
+                <BrandVoiceExampleForm />
               </CardContent>
             </Card>
 

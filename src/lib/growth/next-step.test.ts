@@ -29,6 +29,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     contactCount: 1,
     recordedVisitCount: 1,
     brandVoiceSaved: true,
+    brandVoiceExampleSaved: true,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
     advertisingConnected: false,
@@ -966,6 +967,56 @@ describe("coordinated next step", () => {
       websiteRead: true,
     });
     assert.equal(step.primary.title, "Follow up open leads");
+  });
+
+  it("puts Add a brand voice example on Next step after the profile is saved", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          brandVoiceSaved: true,
+          brandVoiceExampleSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Add a brand voice example");
+    assert.equal(step.primary.classification, "strategic");
+    assert.match(step.primary.body, /Paste writing you already like here/);
+    assert.match(step.primary.body, /will not send email/);
+    assert.match(page, /isAddBrandVoiceExampleNextStep/);
+    assert.match(page, /BrandVoiceExampleForm/);
+    assert.match(
+      readFileSync(
+        join(process.cwd(), "src/app/(app)/app/brand-voice/page.tsx"),
+        "utf8",
+      ),
+      /BrandVoiceExampleForm/,
+    );
+  });
+
+  it("keeps saving the brand voice profile ahead of adding an example", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(
+        facts({
+          brandVoiceSaved: false,
+          brandVoiceExampleSaved: false,
+          recordedVisitCount: 1,
+        }),
+      ),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+    });
+    assert.equal(step.primary.title, "Save your brand voice");
   });
 
   it("puts Add event on Next step when the schedule needs a review", () => {

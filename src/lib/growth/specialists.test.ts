@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { DEFAULT_EVIDENCE_POLICIES } from "./types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "./plan-draft";
+import { ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, CONNECT_SEARCH_CONSOLE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "./plan-draft";
 import {
   buildSpecialistReports,
   relatedGoalFor,
@@ -34,6 +34,7 @@ function facts(overrides: Partial<SpecialistFacts> = {}): SpecialistFacts {
     contactCount: 1,
     recordedVisitCount: 1,
     brandVoiceSaved: true,
+    brandVoiceExampleSaved: true,
     upcomingEventCount: 0,
     evidenceSample: { elapsedDays: 2, observations: 3, conversions: 0 },
     advertisingConnected: false,
@@ -270,6 +271,41 @@ describe("growth specialists", () => {
     assert.equal(website.recommend.href, "/app/brand-voice");
     assert.match(website.recommend.body, /will not send email/);
     assert.match(website.recommend.body, /edit the live website/);
+  });
+
+  it("asks to add a brand voice example after the profile is saved", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceSaved: true,
+          brandVoiceExampleSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.kind, "recommend");
+    assert.equal(website.recommend.classification, "strategic");
+    assert.equal(website.recommend.title, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE);
+    assert.equal(website.recommend.href, "/app/brand-voice");
+    assert.match(website.recommend.body, /Paste writing you already like here/);
+    assert.match(website.recommend.body, /will not send email/);
+  });
+
+  it("keeps saving the brand voice profile ahead of adding an example", () => {
+    const website = specialistById(
+      buildSpecialistReports(
+        facts({
+          recordedVisitCount: 1,
+          brandVoiceSaved: false,
+          brandVoiceExampleSaved: false,
+        }),
+      ),
+      "website",
+    );
+    assert.ok(website);
+    assert.equal(website.recommend.title, SAVE_BRAND_VOICE_STEP_TITLE);
   });
 
   it("keeps pasting the tracking snippet ahead of saving brand voice", () => {

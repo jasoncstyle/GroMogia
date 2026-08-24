@@ -1,6 +1,6 @@
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
-import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE } from "@/lib/growth/plan-draft";
 
 export const SPECIALIST_IDS = [
   "seo",
@@ -48,6 +48,7 @@ export type SpecialistFacts = {
   contactCount: number
   recordedVisitCount: number
   brandVoiceSaved: boolean
+  brandVoiceExampleSaved: boolean
   upcomingEventCount: number
   evidenceSample: EvidenceSample
   advertisingConnected: boolean
@@ -242,6 +243,41 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
   };
 }
 
+function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
+  if (facts.recordedVisitCount === 0) {
+    return {
+      kind: "recommend",
+      classification: "optimization",
+      title: PASTE_SNIPPET_STEP_TITLE,
+      body: "Copy the tracking snippet here and paste it on the site you already have. GroovGro does not replace that site.",
+      href: "/app/website",
+    };
+  }
+  if (!facts.brandVoiceSaved) {
+    return {
+      kind: "recommend",
+      classification: "strategic",
+      title: SAVE_BRAND_VOICE_STEP_TITLE,
+      body: "Save how this business sounds here. GroovGro uses this for drafts. It will not send email, post to social, or edit the live website.",
+      href: "/app/brand-voice",
+    };
+  }
+  if (!facts.brandVoiceExampleSaved) {
+    return {
+      kind: "recommend",
+      classification: "strategic",
+      title: ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE,
+      body: "Paste writing you already like here. GroovGro uses this for drafts. It will not send email, post to social, or edit the live website.",
+      href: "/app/brand-voice",
+    };
+  }
+  return leaveAlone(
+    "/app/website",
+    "Leave the website alone",
+    "Keep the snippet in place. Do not rebuild or overwrite the connected website from GroovGro.",
+  );
+}
+
 function websiteReport(facts: SpecialistFacts, goal: SpecialistGoal | null): SpecialistReport {
   const policy = policyFor(facts.policies, "website");
   const verdict = evidenceRecommendation(sampleFor(facts, "website"), policy);
@@ -285,28 +321,7 @@ function websiteReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Spe
         ? "That threshold is not met."
         : "The threshold is met, which still does not mean the site should be redesigned."
     }`,
-    recommend:
-      facts.recordedVisitCount === 0
-        ? {
-            kind: "recommend",
-            classification: "optimization",
-            title: PASTE_SNIPPET_STEP_TITLE,
-            body: "Copy the tracking snippet here and paste it on the site you already have. GroovGro does not replace that site.",
-            href: "/app/website",
-          }
-        : facts.brandVoiceSaved
-          ? leaveAlone(
-              "/app/website",
-              "Leave the website alone",
-              "Keep the snippet in place. Do not rebuild or overwrite the connected website from GroovGro.",
-            )
-          : {
-              kind: "recommend",
-              classification: "strategic",
-              title: SAVE_BRAND_VOICE_STEP_TITLE,
-              body: "Save how this business sounds here. GroovGro uses this for drafts. It will not send email, post to social, or edit the live website.",
-              href: "/app/brand-voice",
-            },
+    recommend: websiteRecommend(facts),
     executeAllowed: false,
   };
 }
