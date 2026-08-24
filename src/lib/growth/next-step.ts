@@ -198,6 +198,8 @@ export type CoordinatedNextStep = {
   finishedWorkCount: number
   latestLearning: string
   needsWebsiteReview: boolean
+  activateGoalId: string | null
+  activateGoalTitle: string
   executeAllowed: false
 };
 
@@ -516,6 +518,8 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     finishedWorkCount: input.finishedWorkCount ?? 0,
     latestLearning: input.latestLearning ?? "",
     needsWebsiteReview: Boolean(reviewSite),
+    activateGoalId: activate?.goalId ?? null,
+    activateGoalTitle: (input.activateGoalTitle ?? "").replace(/\s+/g, " ").trim(),
     executeAllowed: false,
   };
 }

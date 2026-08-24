@@ -1162,7 +1162,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can mark approved work done even when that is not the main ask. Your work still has those buttons. GroovGro does not execute.
 
-### 116. Keep website review on Next step when it is not the main ask (this slice)
+### 116. Keep website review on Next step when it is not the main ask
 
 **Reason:** When drafts, approved work, or Check what changed outranked an unread website, Find pages and Review only lived in the main recommendation. Website no longer lists pages. Business still has Review to run it again. The owner had to leave Next step to do the first review.
 
@@ -1171,6 +1171,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None.
 
 **Current functionality:** Next step can find pages, check the important ones, then review even when that is not the main ask. Business still has Review to run it again. GroovGro does not change the live site.
+
+### 117. Keep Activate Goal on Next step when it is not the main ask (this slice)
+
+**Reason:** When drafts, approved work, Check what changed, or an unread website outranked a draft Goal, Make this the active Goal only lived in the main recommendation. Goals no longer has that button. The owner had to finish the other ask first, or leave Next step with no way to activate.
+
+**Affected:** Next step secondary card.
+
+**Migration risk:** None.
+
+**Current functionality:** Next step can make a draft the active Goal even when that is not the main ask. Goals lists that draft and names Next step. GroovGro does not start marketing.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1279,7 +1289,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep saving today's Goal number on Next step is parked.** Next step can save today's Goal number with the current Goal after the first save. Goals still has that button and the Current box. Do not start marketing.
 - **Keep Check what changed on Next step when it is not the main ask is parked.** Next step can check what changed even when that is not the main ask. Your work still has that button. Do not change the plan.
 - **Keep I did this on Next step when it is not the main ask is parked.** Next step can mark approved work done even when that is not the main ask. Your work still has those buttons. Do not execute.
-- **Keep website review on Next step when it is not the main ask (this slice).** Next step can find pages, check the important ones, then review even when that is not the main ask. Business still has Review to run it again. Do not change the live site.
+- **Keep website review on Next step when it is not the main ask is parked.** Next step can find pages, check the important ones, then review even when that is not the main ask. Business still has Review to run it again. Do not change the live site.
+- **Keep Activate Goal on Next step when it is not the main ask (this slice).** Next step can make a draft the active Goal even when that is not the main ask. Goals lists that draft and names Next step. Do not start marketing.
 
 ## DESIGN FOR LATER
 
@@ -1468,7 +1479,8 @@ Organization
 108. **Keep saving today's Goal number on Next step** — Next step can save today's Goal number with the current Goal after the first save; Goals still has that button and the Current box. Done.
 109. **Keep Check what changed on Next step when it is not the main ask** — Next step can check what changed even when that is not the main ask; Your work still has that button. Done.
 110. **Keep I did this on Next step when it is not the main ask** — Next step can mark approved work done even when that is not the main ask; Your work still has those buttons. Done.
-111. **Keep website review on Next step when it is not the main ask** — Next step can find pages, check the important ones, then review even when that is not the main ask; Business still has Review to run it again. This slice.
-112. **Guarded automation** — only after the above is trusted.
+111. **Keep website review on Next step when it is not the main ask** — Next step can find pages, check the important ones, then review even when that is not the main ask; Business still has Review to run it again. Done.
+112. **Keep Activate Goal on Next step when it is not the main ask** — Next step can make a draft the active Goal even when that is not the main ask; Goals lists that draft and names Next step. This slice.
+113. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

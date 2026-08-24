@@ -293,6 +293,29 @@ describe("coordinated next step", () => {
     assert.equal(step.primary.href, "/app/next-step");
   });
 
+  it("keeps Activate Goal on Next step when it is not the main ask", () => {
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    const step = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 1 })),
+      waitingActions: [],
+      activateGoalId: "goal-2",
+      activateGoalTitle: "Next: More people get in touch",
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.activateGoalId, "goal-2");
+    assert.equal(step.activateGoalTitle, "Next: More people get in touch");
+    assert.match(page, /activateGoalId/);
+    assert.match(page, /primary\.title !== ACTIVATE_GOAL_STEP_TITLE/);
+    assert.doesNotMatch(
+      readFileSync(join(process.cwd(), "src/app/(app)/app/goals/page.tsx"), "utf8"),
+      /ActivateGoalButton/,
+    );
+  });
+
   it("asks the owner to draft a plan for an active Goal after moving on", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,

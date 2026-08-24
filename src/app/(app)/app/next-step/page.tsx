@@ -609,6 +609,26 @@ export default async function NextStepPage({
             </Card>
           ) : null}
 
+          {step.activateGoalId &&
+          step.primary.title !== ACTIVATE_GOAL_STEP_TITLE ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Make this the active Goal</CardTitle>
+                <CardDescription>
+                  “{step.activateGoalTitle || "the next Goal"}” is a draft.
+                  Make it the active Goal when you want GroovGro to follow
+                  it. GroovGro will not start marketing.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ActivateGoalButton
+                  goalId={step.activateGoalId}
+                  disabled={!canActivateGoal}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
+
           {step.reports.length > 0 ? (
             <SpecialistReports
               reports={step.reports}
