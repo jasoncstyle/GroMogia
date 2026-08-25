@@ -1423,6 +1423,9 @@ describe("coordinated next step", () => {
     assert.match(page, /isShareLeadFormNextStep/);
     assert.match(page, /CopyLink/);
     assert.match(page, /LeadCreateForm/);
+    assert.match(page, /NamedShareHint/);
+    assert.match(page, /href="\/app\/marketing"/);
+    assert.doesNotMatch(page, /NamedLeadFormLink/);
     assert.match(
       readFileSync(join(process.cwd(), "src/app/(app)/app/crm/page.tsx"), "utf8"),
       /LeadCreateForm/,

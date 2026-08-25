@@ -86,6 +86,7 @@ export default async function MarketingPage() {
               baseUrl={websiteUrl}
               idPrefix="website-utm"
               openLabel="Open page"
+              copyAriaLabel="Copy named website link"
             />
           ) : (
             <p className="text-sm text-muted-foreground">

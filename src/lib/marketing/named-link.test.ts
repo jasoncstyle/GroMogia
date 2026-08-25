@@ -87,6 +87,7 @@ describe("named campaign lead form links", () => {
     assert.match(page, /NamedLeadFormLink/);
     assert.match(page, /Name a campaign on a website link/);
     assert.match(page, /idPrefix="website-utm"/);
+    assert.match(page, /copyAriaLabel="Copy named website link"/);
     assert.match(page, /Share name/);
     assert.match(page, /row\.campaign/);
     assert.match(page, /will not buy ads/);
@@ -136,6 +137,9 @@ describe("named campaign lead form links", () => {
     );
     assert.match(nextStep, /leadOriginSuffix/);
     assert.match(nextStep, /formatLeadOrigin/);
+    assert.match(nextStep, /NamedShareHint/);
+    assert.match(nextStep, /href="\/app\/marketing"/);
+    assert.doesNotMatch(nextStep, /NamedLeadFormLink/);
 
     const crm = readFileSync(
       join(process.cwd(), "src/app/(app)/app/crm/page.tsx"),
@@ -145,6 +149,7 @@ describe("named campaign lead form links", () => {
     assert.match(crm, /lead\.campaignId/);
     assert.match(crm, /firstCampaignByContact/);
     assert.match(crm, /customer\.marketingSource/);
+    assert.match(crm, /href="\/app\/marketing"/);
 
     const dashboard = readFileSync(
       join(process.cwd(), "src/app/(app)/app/page.tsx"),

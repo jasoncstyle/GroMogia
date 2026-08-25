@@ -11,10 +11,12 @@ export function NamedLeadFormLink({
   baseUrl,
   idPrefix = "utm",
   openLabel = "Open form",
+  copyAriaLabel = "Copy public lead form link",
 }: {
   baseUrl: string
   idPrefix?: string
   openLabel?: string
+  copyAriaLabel?: string
 }) {
   const [source, setSource] = useState("");
   const [campaign, setCampaign] = useState("");
@@ -49,7 +51,12 @@ export function NamedLeadFormLink({
           />
         </div>
       </div>
-      <CopyLink key={url} url={url} openLabel={openLabel} />
+      <CopyLink
+        key={url}
+        url={url}
+        openLabel={openLabel}
+        copyAriaLabel={copyAriaLabel}
+      />
     </div>
   );
 }

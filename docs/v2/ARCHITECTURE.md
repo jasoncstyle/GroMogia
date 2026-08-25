@@ -1492,6 +1492,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Intelligence names the share next to the place for the top lead and revenue source. GroovGro will not buy ads.
 
+### 149. Point Next step at Marketing for named shares
+
+**Reason:** Next step still copies the unnamed public form when no person has been captured yet. Naming a share already lives on Marketing. Without a pointer, the owner shared an unnamed link and Intelligence later asked them to name it.
+
+**Affected:** Next step share-form cards. Leads public-form card. Named website Copy link label.
+
+**Migration risk:** None. The unnamed form still copies. The copyable named-link fields stay on Marketing.
+
+**Current functionality:** Next step and Leads name Marketing for naming a share. GroovGro will not buy ads or email anyone.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
@@ -1632,6 +1642,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Point Analytics at Marketing for share names.** Analytics names Marketing for the share name instead of saying campaign detail expands later. Do not buy ads.
 - **Show the share name on Customers.** Customers show the share name from the first lead next to the source. Do not email anyone or buy ads.
 - **Show the share name in Intelligence.** Intelligence names the share next to the place for the top lead and revenue source. Do not buy ads.
+- **Point Next step at Marketing for named shares.** Next step and Leads name Marketing for naming a share. The copyable named-link fields stay on Marketing. Do not buy ads.
 
 ## DESIGN FOR LATER
 
@@ -1853,6 +1864,7 @@ Organization
 141. **Point Analytics at Marketing for share names** — Analytics names Marketing for the share name. This slice. Do not buy ads.
 142. **Show the share name on Customers** — Customers show the share name from the first lead. This slice. Do not email anyone or buy ads.
 143. **Show the share name in Intelligence** — Intelligence names the share next to the place for the top lead and revenue source. This slice. Do not buy ads.
-144. **Guarded automation** — only after the above is trusted.
+144. **Point Next step at Marketing for named shares** — Next step and Leads name Marketing for naming a share. This slice. Do not buy ads.
+145. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -87,7 +87,11 @@ export default async function WebsitePage() {
             <CardDescription>
               This is a GroovGro page customers can open without signing in.
               Copy the link, open it in a private window, and send a test lead
-              with an email that is not yours.
+              with an email that is not yours. To name a share, open{" "}
+              <Link href="/app/marketing" className="underline">
+                Marketing
+              </Link>
+              . GroovGro will not buy ads.
             </CardDescription>
           </CardHeader>
           <CardContent>

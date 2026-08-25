@@ -370,6 +370,7 @@ export default async function NextStepPage({
                       GroovGro will not email anyone.
                     </p>
                   )}
+                  <NamedShareHint />
                   <p className="text-sm font-medium">
                     Or add someone you already know
                   </p>
@@ -716,6 +717,7 @@ export default async function NextStepPage({
                     GroovGro will not email anyone.
                   </p>
                 )}
+                <NamedShareHint />
                 <p className="text-sm font-medium">
                   Or add someone you already know
                 </p>
@@ -1235,6 +1237,18 @@ export default async function NextStepPage({
         </>
       )}
     </div>
+  );
+}
+
+function NamedShareHint() {
+  return (
+    <p className="text-sm text-muted-foreground">
+      To name a share of this form, open{" "}
+      <Link href="/app/marketing" className="underline">
+        Marketing
+      </Link>
+      . GroovGro will not buy ads.
+    </p>
   );
 }
 

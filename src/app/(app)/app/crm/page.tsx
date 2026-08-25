@@ -1,4 +1,5 @@
 import { desc, eq } from "drizzle-orm";
+import Link from "next/link";
 
 import { convertLeadToCustomer, moveLead } from "@/lib/actions/crm";
 import { getAppSession } from "@/lib/auth/session";
@@ -108,7 +109,11 @@ export default async function CrmPage() {
             <CardTitle>Public lead form</CardTitle>
             <CardDescription>
               Customers fill this in without signing in. Open it in a private
-              window to send a test lead.
+              window to send a test lead. To name a share, open{" "}
+              <Link href="/app/marketing" className="underline">
+                Marketing
+              </Link>
+              . GroovGro will not buy ads.
             </CardDescription>
           </CardHeader>
           <CardContent>

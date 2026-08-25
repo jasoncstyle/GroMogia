@@ -8,9 +8,11 @@ import { Button } from "@/components/ui/button";
 export function CopyLink({
   url,
   openLabel = "Open form",
+  copyAriaLabel = "Copy public lead form link",
 }: {
   url: string
   openLabel?: string
+  copyAriaLabel?: string
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -30,7 +32,7 @@ export function CopyLink({
     <div className="space-y-3">
       <p className="break-all font-mono text-sm">{url}</p>
       <div className="flex flex-wrap gap-2">
-        <Button type="button" onClick={copy} aria-label="Copy public lead form link">
+        <Button type="button" onClick={copy} aria-label={copyAriaLabel}>
           {copied ? "Copied" : "Copy link"}
         </Button>
         <Button type="button" variant="outline" asChild>
