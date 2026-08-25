@@ -156,5 +156,13 @@ describe("named campaign lead form links", () => {
     );
     assert.match(website, /href="\/app\/marketing"/);
     assert.match(website, /will not buy ads/);
+
+    const analytics = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/analytics/page.tsx"),
+      "utf8",
+    );
+    assert.match(analytics, /href="\/app\/marketing"/);
+    assert.match(analytics, /share name/);
+    assert.doesNotMatch(analytics, /expands later/);
   });
 });
