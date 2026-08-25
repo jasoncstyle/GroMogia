@@ -143,6 +143,13 @@ describe("named campaign lead form links", () => {
     assert.match(crm, /Share name/);
     assert.match(crm, /lead\.campaignId/);
 
+    const dashboard = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      "utf8",
+    );
+    assert.match(dashboard, /formatLeadOrigin/);
+    assert.doesNotMatch(dashboard, /· \{lead\.source\}/);
+
     const website = readFileSync(
       join(process.cwd(), "src/app/(app)/app/website/page.tsx"),
       "utf8",

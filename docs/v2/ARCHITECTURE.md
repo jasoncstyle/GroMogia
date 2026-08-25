@@ -1452,6 +1452,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Marketing can type where the owner will share the existing website and a name, then copy that URL. GroovGro will not buy ads or change the live website.
 
+### 145. Show the share name on Dashboard recent leads
+
+**Reason:** Named leads store the share name. Marketing, Next step, and Leads already show it. Dashboard recent leads still showed only the place.
+
+**Affected:** Dashboard recent leads list.
+
+**Migration risk:** None. Leads with no share name still show the place only.
+
+**Current functionality:** Dashboard recent leads show the share name next to the place. GroovGro will not email anyone or buy ads.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
@@ -1588,6 +1598,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Show the share name on Marketing (this slice).** Marketing shows the share name next to the source so two named links from the same place stay separate. Do not buy ads.
 - **Show the share name on Leads and Next step.** Next step follow-up and Leads show the share name next to the place. Do not email anyone or buy ads.
 - **Name a campaign on a website link (this slice).** Marketing can name a share of the existing website the same way as the public form. Do not buy ads or change the live website.
+- **Show the share name on Dashboard recent leads.** Dashboard recent leads show the share name next to the place. Do not email anyone or buy ads.
 
 ## DESIGN FOR LATER
 
@@ -1805,6 +1816,7 @@ Organization
 137. **Show the share name on Marketing** — Marketing shows the share name next to the source. This slice. Do not buy ads.
 138. **Show the share name on Leads and Next step** — Next step follow-up and Leads show the share name next to the place. This slice. Do not email anyone or buy ads.
 139. **Name a campaign on a website link** — Marketing can name a share of the existing website. This slice. Do not buy ads or change the live website.
-140. **Guarded automation** — only after the above is trusted.
+140. **Show the share name on Dashboard recent leads** — Dashboard recent leads show the share name next to the place. This slice. Do not email anyone or buy ads.
+141. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
