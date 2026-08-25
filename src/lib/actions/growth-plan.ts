@@ -67,6 +67,7 @@ export async function draftGrowthPlanForGoal(
         unit: goal.unit ?? "",
         liveNote: goal.liveNote,
         shareNote: goal.shareNote,
+        shareRows: goal.shareRows,
         progressPercent: goal.progressPercent,
       },
       offers: confirmedOffers.map((offer) => ({

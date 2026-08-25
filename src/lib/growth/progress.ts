@@ -19,6 +19,12 @@ export type GoalShareAttribution = {
   rows: GoalShareRow[]
 };
 
+export function extraShareClause(rows?: GoalShareRow[] | null): string {
+  const extra = (rows ?? []).slice(1);
+  if (extra.length === 0) return "";
+  return ` Other named shares: ${extra.map((row) => `${row.origin} (${row.count})`).join(", ")}.`;
+}
+
 export type ProgressBooking = {
   createdAt: Date
   offerId: string | null

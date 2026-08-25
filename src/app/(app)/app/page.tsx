@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl, missingFoundationServices } from "@/lib/env";
+import { extraShareClause } from "@/lib/growth/progress";
 import { getCoordinatedNextStep, getGrowthSnapshot } from "@/lib/growth/queries";
 import {
   buildStatusAlerts,
@@ -44,7 +45,8 @@ export default async function DashboardPage() {
     ? `${snapshot.openLeadCount} open lead${snapshot.openLeadCount === 1 ? "" : "s"}, ${snapshot.customerCount} customer${snapshot.customerCount === 1 ? "" : "s"}, and ${formatMoney(snapshot.paymentTotalCents)} in payments this month.`
     : "Sign in to see live counts for this organization.";
 
-  const goalShare = (growth?.activeGoals ?? []).find((goal) => goal.shareNote)?.shareNote;
+  const goalWithShare = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
+  const goalShare = goalWithShare?.shareNote;
   const why = snapshot
     ? [
         snapshot.topChannels.length > 0
@@ -53,7 +55,7 @@ export default async function DashboardPage() {
             ? "A website is connected, but GroovGro has not recorded visits or campaign clicks yet. Add the tracking snippet and share the lead form."
             : "No website visits or campaign sources yet. Connect the existing website to start attributing leads.",
         goalShare
-          ? `${goalShare} Read the Goal on Next step.`
+          ? `${goalShare}${extraShareClause(goalWithShare?.shareRows)} Read the Goal on Next step.`
           : "",
       ]
         .filter(Boolean)

@@ -2798,6 +2798,8 @@ describe("coordinated next step", () => {
     );
     assert.match(learning, /shareClause/);
     assert.match(learning, /shareNote/);
+    assert.match(learning, /shareRows/);
+    assert.match(learning, /extraShareClause/);
   });
 
   it("lets the owner read this week’s look on Next step", () => {

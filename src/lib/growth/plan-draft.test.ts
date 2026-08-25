@@ -131,6 +131,39 @@ describe("growth plan draft", () => {
       "utf8",
     );
     assert.match(action, /shareNote: goal\.shareNote/);
+    assert.match(action, /shareRows: goal\.shareRows/);
+  });
+
+  it("names extra shares in a drafted plan", () => {
+    const summary = draftGrowthPlanSummary({
+      businessName: "Harbor Workshops",
+      description: "Hands-on classes for beginners.",
+      targetCustomers: "people who want practical skills",
+      goal: {
+        title: "More people get in touch",
+        goalType: "lead_generation",
+        status: "active",
+        liveCurrentValue: 3,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "3 leads in the connected window.",
+        shareNote: "2 of 3 in this Goal number came from instagram · spring-open-house.",
+        shareRows: [
+          { origin: "instagram · spring-open-house", count: 2 },
+          { origin: "instagram · summer-open-house", count: 1 },
+        ],
+        progressPercent: 30,
+      },
+      offers: [{ name: "Weekend Workshop", description: "A two-day starter session." }],
+      nextStepTitle: "Follow up open leads",
+      nextStepBody: "Give each open lead a next step here. GroovGro will not email them.",
+      nextStepKind: "recommend",
+      leftAlone: ["Do not start ads."],
+      websiteConnected: true,
+      openLeadCount: 2,
+    });
+    assert.match(summary, /instagram · spring-open-house/);
+    assert.match(summary, /Other named shares: instagram · summer-open-house \(1\)/);
   });
 
   it("says to wait when there is no operational next step", () => {

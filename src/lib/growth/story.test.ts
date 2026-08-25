@@ -63,6 +63,32 @@ describe("growth story", () => {
     assert.match(beats[0]?.body ?? "", /instagram · spring-open-house/);
   });
 
+  it("names extra shares on the path so far", () => {
+    const beats = buildGrowthStory({
+      businessName: "Harbor Workshops",
+      goalTitle: "More people get in touch",
+      goalCurrent: 3,
+      goalTarget: 10,
+      goalUnit: "leads",
+      goalProgressPercent: 30,
+      shareNote: "2 of 3 in this Goal number came from instagram · spring-open-house.",
+      shareRows: [
+        { origin: "instagram · spring-open-house", count: 2 },
+        { origin: "instagram · summer-open-house", count: 1 },
+      ],
+      hasApprovedPlan: true,
+      planVersion: 1,
+      openWorkCount: 0,
+      finishedWorkCount: 0,
+      latestLearning: "",
+      nextStepTitle: "Wait",
+      nextStepBody: "Keep collecting evidence.",
+      nextStepHref: "/app/next-step",
+    });
+    assert.match(beats[0]?.body ?? "", /instagram · spring-open-house/);
+    assert.match(beats[0]?.body ?? "", /Other named shares: instagram · summer-open-house \(1\)/);
+  });
+
   it("tells the owner to start with a Goal when nothing exists yet", () => {
     const beats = buildGrowthStory({
       businessName: "North Desk",

@@ -1,4 +1,5 @@
 import { FOLLOW_UP_LEADS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { extraShareClause } from "@/lib/growth/progress";
 import { formatLeadOrigin } from "@/lib/marketing/named-link";
 import { formatMoney } from "@/lib/money";
 
@@ -43,12 +44,6 @@ export type IntelligenceBrief = {
   observations: InsightItem[]
   recommendations: InsightItem[]
 };
-
-function extraShareClause(rows?: { origin: string; count: number }[]): string {
-  const extra = (rows ?? []).slice(1);
-  if (extra.length === 0) return "";
-  return ` ${extra.map((row) => `${row.origin}: ${row.count}`).join(". ")}.`;
-}
 
 const GENERIC_SOURCES = new Set([
   "direct",

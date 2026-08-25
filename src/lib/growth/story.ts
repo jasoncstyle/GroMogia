@@ -1,3 +1,5 @@
+import { extraShareClause, type GoalShareRow } from "@/lib/growth/progress";
+
 export type GrowthStoryBeat = {
   title: string
   body: string
@@ -12,6 +14,7 @@ export type GrowthStoryFacts = {
   goalUnit: string
   goalProgressPercent: number | null
   shareNote?: string
+  shareRows?: GoalShareRow[]
   hasApprovedPlan: boolean
   planVersion: number | null
   openWorkCount: number
@@ -56,7 +59,7 @@ function goalLine(facts: GrowthStoryFacts): string {
   }
   parts.push("Read it on Next step. GroovGro will not change that Goal by itself.");
   const share = clean(facts.shareNote ?? "");
-  if (share) parts.push(share);
+  if (share) parts.push(`${share}${extraShareClause(facts.shareRows)}`);
   return parts.join(" ");
 }
 
@@ -105,6 +108,7 @@ export function storyFactsFromWorkspace(input: {
     unit: string | null
     progressPercent: number | null
     shareNote?: string
+    shareRows?: GoalShareRow[]
   } | null
   plan?: { version: number } | null
   openWorkCount: number
@@ -120,6 +124,7 @@ export function storyFactsFromWorkspace(input: {
     goalUnit: input.goal?.unit ?? "",
     goalProgressPercent: input.goal?.progressPercent ?? null,
     shareNote: input.goal?.shareNote ?? "",
+    shareRows: input.goal?.shareRows ?? [],
     hasApprovedPlan: Boolean(input.plan),
     planVersion: input.plan?.version ?? null,
     openWorkCount: input.openWorkCount,

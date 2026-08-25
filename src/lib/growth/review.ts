@@ -1,3 +1,4 @@
+import { extraShareClause, type GoalShareRow } from "@/lib/growth/progress";
 import {
   evidenceRecommendation,
   labelFor,
@@ -18,6 +19,7 @@ export type ReviewGoal = {
   progressPercent: number | null
   liveNote: string
   shareNote?: string
+  shareRows?: GoalShareRow[]
   discoveryStatus: string
 };
 
@@ -106,6 +108,12 @@ export type GrowthReview = {
 };
 
 const MS_DAY = 24 * 60 * 60 * 1000;
+
+function shareText(goal: Pick<ReviewGoal, "shareNote" | "shareRows">): string {
+  const note = (goal.shareNote ?? "").trim();
+  if (!note) return "";
+  return `${note}${extraShareClause(goal.shareRows)}`;
+}
 
 export function reviewPeriod(kind: ReviewKind, now: Date) {
   const days = kind === "monthly" ? 30 : 7;
@@ -369,7 +377,7 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
       recommendation: `${goal.title} looks reached. Open Next step to confirm that and choose the next outcome. Do not start ads or automation from this review.`,
       rationale:
         "A monthly review is the right time to ask whether the objective is done, not to change channels.",
-      evidence: `${goal.liveCurrentValue}${goal.targetValue != null ? ` / ${goal.targetValue}` : ""}${goal.liveNote ? ` · ${goal.liveNote}` : ""}${goal.shareNote ? ` · ${goal.shareNote}` : ""}`,
+      evidence: `${goal.liveCurrentValue}${goal.targetValue != null ? ` / ${goal.targetValue}` : ""}${goal.liveNote ? ` · ${goal.liveNote}` : ""}${shareText(goal) ? ` · ${shareText(goal)}` : ""}`,
       evidenceWindow: period.periodLabel,
       confidence: 75,
       goalId: goal.id,
@@ -386,7 +394,7 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
       rationale:
         "There is enough connected evidence to notice the gap. Noticing is not the same as executing a marketing change.",
       evidence:
-        [goal.liveNote, goal.shareNote].filter(Boolean).join(" · ") ||
+        [goal.liveNote, shareText(goal)].filter(Boolean).join(" · ") ||
         `${goal.liveCurrentValue} toward ${goal.targetValue}`,
       evidenceWindow: period.periodLabel,
       confidence: 60,
@@ -447,8 +455,8 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
       ? activeGoals
           .map((goal) =>
             goal.progressPercent != null
-              ? `${goal.title} is at ${goal.liveCurrentValue}${goal.targetValue != null ? ` of ${goal.targetValue}` : ""} (${goal.progressPercent}%).${goal.shareNote ? ` ${goal.shareNote}` : ""}`
-              : `${goal.title}: ${goal.liveNote || "progress is recorded by hand."}${goal.shareNote ? ` ${goal.shareNote}` : ""}`,
+              ? `${goal.title} is at ${goal.liveCurrentValue}${goal.targetValue != null ? ` of ${goal.targetValue}` : ""} (${goal.progressPercent}%).${shareText(goal) ? ` ${shareText(goal)}` : ""}`
+              : `${goal.title}: ${goal.liveNote || "progress is recorded by hand."}${shareText(goal) ? ` ${shareText(goal)}` : ""}`,
           )
           .join(" ")
       : inferredGoals.length > 0

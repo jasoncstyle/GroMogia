@@ -236,6 +236,7 @@ export async function checkWhatChanged(
       unit: goal?.unit || stored?.unit || "",
       daysSinceDone: daysBetween(action.updatedAt, new Date()),
       shareNote: goal?.shareNote,
+      shareRows: goal?.shareRows,
     });
 
     const nextResult = stored

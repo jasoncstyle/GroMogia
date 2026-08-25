@@ -175,6 +175,7 @@ describe("named campaign lead form links", () => {
     assert.match(dashboard, /goal\.shareNote/);
     assert.match(dashboard, /goal\.shareRows/);
     assert.match(dashboard, /Read the Goal on Next step/);
+    assert.match(dashboard, /extraShareClause/);
     assert.doesNotMatch(dashboard, /· \{lead\.source\}/);
 
     const website = readFileSync(

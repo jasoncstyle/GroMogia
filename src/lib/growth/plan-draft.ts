@@ -1,4 +1,5 @@
 import { canDraftNextGoal } from "@/lib/growth/next-goal";
+import { extraShareClause, type GoalShareRow } from "@/lib/growth/progress";
 import { labelFor } from "@/lib/growth/types";
 
 export type PlanDraftGoal = {
@@ -10,6 +11,7 @@ export type PlanDraftGoal = {
   unit: string
   liveNote: string
   shareNote?: string
+  shareRows?: GoalShareRow[]
   progressPercent: number | null
 };
 
@@ -45,18 +47,24 @@ function listPhrase(values: string[]): string {
   return `${items.slice(0, -1).join(", ")}, and ${items[items.length - 1]}`;
 }
 
+function shareText(goal: PlanDraftGoal): string {
+  const note = clean(goal.shareNote ?? "");
+  if (!note) return "";
+  return `${note}${extraShareClause(goal.shareRows)}`;
+}
+
 function progressLine(goal: PlanDraftGoal): string {
   const unit = clean(goal.unit);
   const current = unit ? `${goal.liveCurrentValue} ${unit}` : String(goal.liveCurrentValue);
   if (goal.targetValue == null) {
-    return [goal.liveNote || `Current number: ${current}.`, goal.shareNote]
+    return [goal.liveNote || `Current number: ${current}.`, shareText(goal)]
       .filter(Boolean)
       .join(" ");
   }
   const target = unit ? `${goal.targetValue} ${unit}` : String(goal.targetValue);
   const percent =
     goal.progressPercent != null ? ` That is ${goal.progressPercent}% of the target.` : "";
-  return [ `${current} of ${target}.${percent}`, goal.liveNote, goal.shareNote ]
+  return [ `${current} of ${target}.${percent}`, goal.liveNote, shareText(goal) ]
     .filter(Boolean)
     .join(" ");
 }

@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 
 import {
   connectedProgressFacts,
+  extraShareClause,
   goalShareAttribution,
   liveGoalProgress,
   planProgressSnapshot,
@@ -151,6 +152,12 @@ describe("live goal progress", () => {
     );
     assert.equal(share?.rows[0]?.origin, "instagram · spring-open-house");
     assert.equal(share?.rows[0]?.count, 2);
+    assert.match(
+      extraShareClause(share?.rows),
+      /Other named shares: instagram · fall-open-house \(1\)/,
+    );
+    assert.equal(extraShareClause([{ origin: "instagram · spring-open-house", count: 3 }]), "");
+    assert.equal(extraShareClause([]), "");
     assert.equal(
       goalShareAttribution({ ...goal, goalType: "custom" }, facts),
       null,

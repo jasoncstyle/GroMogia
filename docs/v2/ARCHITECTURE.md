@@ -1536,11 +1536,11 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Reason:** Marketing already stores the share name on people and payments. A connected Goal still showed only a total, so the owner could not see which named share moved that number.
 
-**Affected:** Goal progress helper, Goals page, Next step Goal readout, Dashboard Goal card, Check what changed, Your work, the path so far, Intelligence briefing.
+**Affected:** Goal progress helper, Goals page, Next step Goal readout, Dashboard Goal card, Dashboard why card, Check what changed, Your work, drafted Growth Plan, specialists, the path so far, Intelligence briefing.
 
 **Migration risk:** None. The Goal number is unchanged. Naming a share stays on Marketing. Matching charges stays on Bookings. Hand-updated Goals stay unexplained.
 
-**Current functionality:** Goals, Next step, Dashboard, Check what changed, Your work, the path so far, and Intelligence name the share that moved a connected Goal number. GroovGro will not buy ads.
+**Current functionality:** Goals, Next step, Dashboard, Check what changed, Your work, drafted plans, specialists, the path so far, and Intelligence name the share that moved a connected Goal number, including extra named shares. GroovGro will not buy ads.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1912,7 +1912,7 @@ Organization
 145. **Refresh Marketing when a named share lands a person** — Marketing refreshes when a person is added, converted, or matched to a payment copy. Done. Do not buy ads or change checkout.
 146. **Refresh Marketing when a named website share records a visit** — Marketing refreshes the first time that named share records a visit. Done. Do not buy ads or change the live site.
 147. **Point Dashboard at Marketing for share names** — Dashboard names Marketing for the share name. Done. Do not buy ads.
-148. **Show which named share moved a Goal** — Goals, Next step, Dashboard, Check what changed, Your work, the path so far, and Intelligence name the share that moved a connected Goal number (leads, payments, and bookings). This slice. Do not buy ads.
+148. **Show which named share moved a Goal** — Goals, Next step, Dashboard, Check what changed, Your work, drafted plans, specialists, the path so far, and Intelligence name the share that moved a connected Goal number (leads, payments, and bookings), including extra named shares. This slice. Do not buy ads.
 149. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

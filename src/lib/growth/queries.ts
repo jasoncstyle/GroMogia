@@ -170,6 +170,7 @@ export async function getGrowthSnapshot(organizationId: string) {
       progressPercent: goal.progressPercent,
       liveNote: goal.liveNote,
       shareNote: goal.shareNote,
+      shareRows: goal.shareRows,
       discoveryStatus: goal.discoveryStatus,
     })),
     offers: offerRows.map((offer) => ({
@@ -563,6 +564,7 @@ export async function getSpecialistReports(organizationId: string) {
       progressPercent: goal.progressPercent,
       liveNote: goal.liveNote,
       shareNote: goal.shareNote,
+      shareRows: goal.shareRows,
     })),
     inferredDraftCount:
       snapshot.inferredOffers.length + snapshot.inferredGoals.length,

@@ -272,7 +272,7 @@ describe("intelligence observe", () => {
       (item) => item.title === "Goal number and share",
     );
     assert.match(goalShare?.body ?? "", /instagram · spring-open-house/);
-    assert.match(goalShare?.body ?? "", /instagram · summer-open-house: 1/);
+    assert.match(goalShare?.body ?? "", /Other named shares: instagram · summer-open-house \(1\)/);
   });
 
   it("sends people observations to Next step when follow-up or adding a person lives there", () => {

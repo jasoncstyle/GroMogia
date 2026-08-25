@@ -1,3 +1,4 @@
+import { extraShareClause, type GoalShareRow } from "@/lib/growth/progress";
 import { isGoalAchieved } from "@/lib/growth/types";
 
 export const WORK_LEARNING_WAIT_DAYS = 7;
@@ -21,6 +22,7 @@ export type WorkLearningFacts = {
   unit: string
   daysSinceDone: number
   shareNote?: string
+  shareRows?: GoalShareRow[]
 };
 
 export type WorkLearning = {
@@ -50,9 +52,10 @@ function withUnit(value: number, unit: string): string {
   return label ? `${value} ${label}` : String(value);
 }
 
-function shareClause(shareNote?: string): string {
+function shareClause(shareNote?: string, shareRows?: GoalShareRow[]): string {
   const share = clean(shareNote ?? "");
-  return share ? ` ${share}` : "";
+  if (!share) return "";
+  return ` ${share}${extraShareClause(shareRows)}`;
 }
 
 export function encodeWorkBaseline(baseline: WorkBaseline): string {
@@ -95,7 +98,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "need_baseline",
       changeCourse: false,
       outcome: clip(
-        `GroovGro saved today’s number for “${goal}” (${withUnit(facts.currentValue, facts.unit)}) as the starting point.${shareClause(facts.shareNote)} Check again later.${leaveAlone}`,
+        `GroovGro saved today’s number for “${goal}” (${withUnit(facts.currentValue, facts.unit)}) as the starting point.${shareClause(facts.shareNote, facts.shareRows)} Check again later.${leaveAlone}`,
         2000,
       ),
     };
@@ -111,7 +114,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
         ? `The number moved from ${withUnit(baseline, facts.unit)} to ${withUnit(current, facts.unit)}.`
         : `The number is ${withUnit(current, facts.unit)}, down from ${withUnit(baseline, facts.unit)} when you marked this done.`;
 
-  const share = shareClause(facts.shareNote);
+  const share = shareClause(facts.shareNote, facts.shareRows);
 
   if (isGoalAchieved(current, facts.targetValue)) {
     return {

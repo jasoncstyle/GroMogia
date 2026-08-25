@@ -123,6 +123,26 @@ describe("owner work learning", () => {
     assert.match(learning.outcome, /2 leads to 5 leads/);
   });
 
+  it("names extra shares that also moved the Goal after work", () => {
+    const learning = learnFromOwnerWork({
+      goalTitle: "More people get in touch",
+      hasGoal: true,
+      baselineValue: 2,
+      currentValue: 5,
+      targetValue: 10,
+      unit: "leads",
+      daysSinceDone: 8,
+      shareNote: "2 of 3 in this Goal number came from instagram · spring-open-house.",
+      shareRows: [
+        { origin: "instagram · spring-open-house", count: 2 },
+        { origin: "instagram · summer-open-house", count: 1 },
+      ],
+    });
+    assert.equal(learning.kind, "improved");
+    assert.match(learning.outcome, /instagram · spring-open-house/);
+    assert.match(learning.outcome, /Other named shares: instagram · summer-open-house \(1\)/);
+  });
+
   it("keeps the same kind when a share name is present", () => {
     const tooSoon = learnFromOwnerWork({
       goalTitle: "More people get in touch",
@@ -144,6 +164,7 @@ describe("owner work learning", () => {
       "utf8",
     );
     assert.match(source, /shareNote: goal\?\.shareNote/);
+    assert.match(source, /shareRows: goal\?\.shareRows/);
   });
 
   it("does not bake industry-specific words into learning helpers", () => {
