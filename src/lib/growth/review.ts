@@ -17,6 +17,7 @@ export type ReviewGoal = {
   targetValue: number | null
   progressPercent: number | null
   liveNote: string
+  shareNote?: string
   discoveryStatus: string
 };
 
@@ -368,7 +369,7 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
       recommendation: `${goal.title} looks reached. Open Next step to confirm that and choose the next outcome. Do not start ads or automation from this review.`,
       rationale:
         "A monthly review is the right time to ask whether the objective is done, not to change channels.",
-      evidence: `${goal.liveCurrentValue}${goal.targetValue != null ? ` / ${goal.targetValue}` : ""}${goal.liveNote ? ` · ${goal.liveNote}` : ""}`,
+      evidence: `${goal.liveCurrentValue}${goal.targetValue != null ? ` / ${goal.targetValue}` : ""}${goal.liveNote ? ` · ${goal.liveNote}` : ""}${goal.shareNote ? ` · ${goal.shareNote}` : ""}`,
       evidenceWindow: period.periodLabel,
       confidence: 75,
       goalId: goal.id,
@@ -384,7 +385,9 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
       recommendation: `${goal.title} is well short of its target. Open Next step to review the offer, the schedule, or how people find it. GroovGro will not change ads, email, or the website.`,
       rationale:
         "There is enough connected evidence to notice the gap. Noticing is not the same as executing a marketing change.",
-      evidence: goal.liveNote || `${goal.liveCurrentValue} toward ${goal.targetValue}`,
+      evidence:
+        [goal.liveNote, goal.shareNote].filter(Boolean).join(" · ") ||
+        `${goal.liveCurrentValue} toward ${goal.targetValue}`,
       evidenceWindow: period.periodLabel,
       confidence: 60,
       goalId: goal.id,
@@ -444,8 +447,8 @@ export function generateGrowthReview(input: ReviewInput): GrowthReview {
       ? activeGoals
           .map((goal) =>
             goal.progressPercent != null
-              ? `${goal.title} is at ${goal.liveCurrentValue}${goal.targetValue != null ? ` of ${goal.targetValue}` : ""} (${goal.progressPercent}%).`
-              : `${goal.title}: ${goal.liveNote || "progress is recorded by hand."}`,
+              ? `${goal.title} is at ${goal.liveCurrentValue}${goal.targetValue != null ? ` of ${goal.targetValue}` : ""} (${goal.progressPercent}%).${goal.shareNote ? ` ${goal.shareNote}` : ""}`
+              : `${goal.title}: ${goal.liveNote || "progress is recorded by hand."}${goal.shareNote ? ` ${goal.shareNote}` : ""}`,
           )
           .join(" ")
       : inferredGoals.length > 0

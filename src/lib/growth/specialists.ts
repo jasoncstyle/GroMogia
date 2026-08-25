@@ -23,7 +23,23 @@ export type SpecialistGoal = {
   targetValue: number | null
   progressPercent: number | null
   liveNote: string
+  shareNote?: string
 };
+
+function relatedGoalLine(
+  goal: SpecialistGoal | null,
+  empty: string,
+  detail?: "paren" | "dash",
+): string {
+  if (!goal) return empty;
+  const core =
+    detail === "paren"
+      ? `This relates to “${goal.title}” (${goal.liveNote || `${goal.liveCurrentValue}${goal.targetValue != null ? ` / ${goal.targetValue}` : ""}`}).`
+      : detail === "dash"
+        ? `This relates to “${goal.title}” — ${goal.liveNote || `${goal.liveCurrentValue} of ${goal.targetValue ?? "—"}`}.`
+        : `This relates to “${goal.title}.”`;
+  return goal.shareNote ? `${core} ${goal.shareNote}` : core;
+}
 
 export type SpecialistPolicy = EvidencePolicy & {
   channel: string
@@ -177,9 +193,10 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
   const policy = policyFor(facts.policies, "seo");
   const sample = sampleFor(facts, "seo");
   const verdict = evidenceRecommendation(sample, policy);
-  const goalLine = goal
-    ? `This relates to “${goal.title}.”`
-    : "No visibility or traffic Goal is active yet.";
+  const goalLine = relatedGoalLine(
+    goal,
+    "No visibility or traffic Goal is active yet.",
+  );
 
   const read = facts.seoCheckedAt
     ? `Last SEO check scored ${facts.seoScore} out of 100${facts.seoSummary ? ` — ${facts.seoSummary}` : "."} ${facts.seoFailCount} blocking item${facts.seoFailCount === 1 ? "" : "s"}, ${facts.seoWarnCount} item${facts.seoWarnCount === 1 ? "" : "s"} to improve. Search Console is ${
@@ -363,9 +380,10 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
 function websiteReport(facts: SpecialistFacts, goal: SpecialistGoal | null): SpecialistReport {
   const policy = policyFor(facts.policies, "website");
   const verdict = evidenceRecommendation(sampleFor(facts, "website"), policy);
-  const goalLine = goal
-    ? `This relates to “${goal.title}.”`
-    : "No traffic or conversion Goal is active yet.";
+  const goalLine = relatedGoalLine(
+    goal,
+    "No traffic or conversion Goal is active yet.",
+  );
 
   if (!facts.websiteConnected) {
     return {
@@ -409,9 +427,11 @@ function websiteReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Spe
 }
 
 function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): SpecialistReport {
-  const goalLine = goal
-    ? `This relates to “${goal.title}” (${goal.liveNote || `${goal.liveCurrentValue}${goal.targetValue != null ? ` / ${goal.targetValue}` : ""}`}).`
-    : "No lead-generation Goal is active yet.";
+  const goalLine = relatedGoalLine(
+    goal,
+    "No lead-generation Goal is active yet.",
+    "paren",
+  );
 
   return {
     id: "crm",
@@ -476,9 +496,11 @@ function availabilityReport(
     goal.targetValue != null &&
     goal.targetValue > 0 &&
     (goal.progressPercent ?? 0) < 25;
-  const goalLine = goal
-    ? `This relates to “${goal.title}” — ${goal.liveNote || `${goal.liveCurrentValue} of ${goal.targetValue ?? "—"}`}.`
-    : "No utilization or registration Goal is active yet.";
+  const goalLine = relatedGoalLine(
+    goal,
+    "No utilization or registration Goal is active yet.",
+    "dash",
+  );
 
   let recommend: SpecialistRecommend;
   if (facts.upcomingEventCount === 0 && !goal) {

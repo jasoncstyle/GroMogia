@@ -249,6 +249,28 @@ describe("growth review", () => {
     assert.doesNotMatch(scheduledReviewLabel(null, now), /on Goals/);
   });
 
+  it("names the share that moved an active Goal in this week’s look", () => {
+    const review = generateGrowthReview(
+      baseInput({
+        goals: [
+          {
+            id: "g-share",
+            title: "More people get in touch",
+            status: "active",
+            goalType: "lead_generation",
+            liveCurrentValue: 3,
+            targetValue: 10,
+            progressPercent: 30,
+            liveNote: "3 leads in the connected window.",
+            shareNote: "This Goal number is from instagram · spring-open-house.",
+            discoveryStatus: "confirmed",
+          },
+        ],
+      }),
+    );
+    assert.match(review.howWeAreDoing, /instagram · spring-open-house/);
+  });
+
   it("finds the next scheduled look after now", () => {
     const next = nextScheduledReview(
       {

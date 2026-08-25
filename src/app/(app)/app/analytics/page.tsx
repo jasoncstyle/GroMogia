@@ -1,8 +1,10 @@
 import Link from "next/link";
 
 import { getAppSession } from "@/lib/auth/session";
+import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { formatMoney } from "@/lib/money";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
+import { GoalShareNote } from "@/components/goal-share-note";
 import {
   Card,
   CardContent,
@@ -17,6 +19,10 @@ export default async function AnalyticsPage() {
   const snapshot = session.organizationId
     ? await getDashboardSnapshot(session.organizationId)
     : null;
+  const growth = session.organizationId
+    ? await getGrowthSnapshot(session.organizationId)
+    : null;
+  const goalShare = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6">
@@ -24,8 +30,9 @@ export default async function AnalyticsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
         <p className="text-muted-foreground">
           Basic outcomes from connected data. Open Marketing for campaign →
-          lead → customer → revenue, including the share name. GroovGro will
-          not buy ads.
+          lead → customer → revenue, including the share name. Open Next step
+          to read which share moved the Goal number. GroovGro will not buy
+          ads.
         </p>
       </div>
 
@@ -53,6 +60,24 @@ export default async function AnalyticsPage() {
               </CardHeader>
             </Card>
           </div>
+
+          {goalShare ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{goalShare.title}</CardTitle>
+                <CardDescription>
+                  Which named share moved this Goal number. Open Next step to
+                  read the Goal. Naming a share stays on Marketing.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <GoalShareNote
+                  note={goalShare.shareNote}
+                  rows={goalShare.shareRows}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
 
           <Card>
             <CardHeader>

@@ -2776,6 +2776,11 @@ describe("coordinated next step", () => {
     assert.match(page, /GoalShareNote/);
     assert.match(page, /goal\.shareRows/);
     assert.match(goals, /GoalShareNote/);
+    const shareNote = readFileSync(
+      join(process.cwd(), "src/components/goal-share-note.tsx"),
+      "utf8",
+    );
+    assert.match(shareNote, /min-h-11/);
   });
 
   it("lets the owner read this week’s look on Next step", () => {

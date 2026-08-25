@@ -768,6 +768,31 @@ describe("growth specialists", () => {
     }
   });
 
+  it("names the share that moved a related Goal", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          goals: [
+            {
+              id: "g-lead",
+              title: "More people get in touch",
+              status: "active",
+              goalType: "lead_generation",
+              liveCurrentValue: 3,
+              targetValue: 10,
+              progressPercent: 30,
+              liveNote: "3 leads in the connected window.",
+              shareNote: "This Goal number is from instagram · spring-open-house.",
+            },
+          ],
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.match(crm.analyze, /instagram · spring-open-house/);
+  });
+
   it("always stays on read, analyze, and recommend", () => {
     const reports = buildSpecialistReports(facts());
     assert.equal(reports.length, 7);

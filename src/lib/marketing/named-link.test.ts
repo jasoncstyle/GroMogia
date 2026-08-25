@@ -187,6 +187,8 @@ describe("named campaign lead form links", () => {
     );
     assert.match(analytics, /href="\/app\/marketing"/);
     assert.match(analytics, /share name/);
+    assert.match(analytics, /GoalShareNote/);
+    assert.match(analytics, /which share moved the Goal number/);
     assert.doesNotMatch(analytics, /expands later/);
 
     const track = readFileSync(
