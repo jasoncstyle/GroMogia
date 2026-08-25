@@ -101,6 +101,7 @@ export async function matchPaymentToPerson(
     revalidatePath("/app/intelligence");
     revalidatePath("/app/next-step");
     revalidatePath("/app/crm");
+    revalidatePath("/app/marketing");
     revalidatePath("/app");
     return "Payment matched to a person. GroovGro will not charge a card or change checkout.";
   });

@@ -119,6 +119,7 @@ export async function syncStripePayments(): Promise<ActionResult> {
       revalidatePath("/app/crm");
       revalidatePath("/app/analytics");
       revalidatePath("/app/next-step");
+      revalidatePath("/app/marketing");
       revalidatePath("/app");
       return imported
         ? `Imported ${imported} Stripe record${imported === 1 ? "" : "s"}`

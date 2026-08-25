@@ -113,6 +113,18 @@ describe("named campaign lead form links", () => {
     assert.match(action, /revalidatePath\("\/app\/marketing"\)/);
     assert.doesNotMatch(action, /source: parsed\.data\.campaign \? "website_campaign"/);
 
+    const crmAction = readFileSync(
+      join(process.cwd(), "src/lib/actions/crm.ts"),
+      "utf8",
+    );
+    assert.match(crmAction, /revalidatePath\("\/app\/marketing"\)/);
+
+    const commerceAction = readFileSync(
+      join(process.cwd(), "src/lib/actions/commerce.ts"),
+      "utf8",
+    );
+    assert.match(commerceAction, /revalidatePath\("\/app\/marketing"\)/);
+
     const formPage = readFileSync(
       join(process.cwd(), "src/app/l/[orgSlug]/page.tsx"),
       "utf8",

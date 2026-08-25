@@ -1502,6 +1502,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step and Leads name Marketing for naming a share. GroovGro will not buy ads or email anyone.
 
+### 150. Refresh Marketing when a named share lands a person
+
+**Reason:** Marketing already counts customers and revenue by share name. Marking a customer, matching a charge, or recording a Stripe copy did not refresh Marketing, so the share-name table could stay stale.
+
+**Affected:** Lead convert and move. Match charge. Stripe copy ingest and sync.
+
+**Migration risk:** None. Marketing still updates on a public-form submit and the first website visit.
+
+**Current functionality:** Marketing refreshes when a person is added, converted, or matched to a payment copy. GroovGro will not buy ads or change checkout.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
@@ -1643,6 +1653,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Show the share name on Customers.** Customers show the share name from the first lead next to the source. Do not email anyone or buy ads.
 - **Show the share name in Intelligence.** Intelligence names the share next to the place for the top lead and revenue source. Do not buy ads.
 - **Point Next step at Marketing for named shares.** Next step and Leads name Marketing for naming a share. The copyable named-link fields stay on Marketing. Do not buy ads.
+- **Refresh Marketing when a named share lands a person.** Marketing refreshes when a person is added, converted, or matched to a payment copy. Do not buy ads or change checkout.
 
 ## DESIGN FOR LATER
 
@@ -1865,6 +1876,7 @@ Organization
 142. **Show the share name on Customers** — Customers show the share name from the first lead. This slice. Do not email anyone or buy ads.
 143. **Show the share name in Intelligence** — Intelligence names the share next to the place for the top lead and revenue source. This slice. Do not buy ads.
 144. **Point Next step at Marketing for named shares** — Next step and Leads name Marketing for naming a share. This slice. Do not buy ads.
-145. **Guarded automation** — only after the above is trusted.
+145. **Refresh Marketing when a named share lands a person** — Marketing refreshes when a person is added, converted, or matched to a payment copy. This slice. Do not buy ads or change checkout.
+146. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

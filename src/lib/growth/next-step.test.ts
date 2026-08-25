@@ -2953,6 +2953,7 @@ describe("coordinated next step", () => {
     assert.match(source, /result\.created/);
     assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
     assert.match(source, /revalidatePath\("\/app\/crm"\)/);
+    assert.match(source, /revalidatePath\("\/app\/marketing"\)/);
     assert.doesNotMatch(source, /stripe-osa/);
   });
 });
