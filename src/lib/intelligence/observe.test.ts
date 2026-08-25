@@ -97,10 +97,14 @@ describe("intelligence observe", () => {
         ],
       }),
     );
-    assert.equal(
-      brief.recommendations.some((item) => item.title.includes("Name the campaign")),
-      true,
+    const named = brief.recommendations.find((item) =>
+      item.title.includes("Name the campaign"),
     );
+    assert.ok(named);
+    assert.equal(named.href, "/app/marketing");
+    assert.match(named.body, /copy the link/);
+    assert.match(named.body, /will not buy ads/);
+    assert.doesNotMatch(named.body, /google ads/i);
   });
 
   it("never recommends sending email, ads, or replacing checkout", () => {

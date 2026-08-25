@@ -1382,7 +1382,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask. SEO still has that panel. GroovGro does not edit the website, submit a sitemap, or buy ads.
 
-### 138. Keep Add a calendar item on Next step when it is not the main ask (this slice)
+### 138. Keep Add a calendar item on Next step when it is not the main ask
 
 **Reason:** When drafts, approved work, Check what changed, an unread website, or a Goal/plan loop outranked a schedule that is well short of its target, Add a calendar item only lived in the main recommendation. Events still has that form. The owner had to leave Next step to add an item.
 
@@ -1392,7 +1392,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. GroovGro does not change ads or the website.
 
-### 139. Match charges to people on Bookings (this slice)
+### 139. Match charges to people on Bookings
 
 **Reason:** Intelligence asks the owner to match Stripe charge copies that have no person email. That work belongs on Bookings. Bookings listed amounts and Stripe IDs but had no way to attach a person, so Goal numbers and marketing source stayed unattributed.
 
@@ -1401,6 +1401,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None. Existing matched copies keep their person. Unmatched copies stay unmatched until the owner chooses someone.
 
 **Current functionality:** Bookings can match a payment copy to a person already in the workspace. GroovGro does not charge a card, create a Stripe account, or change checkout on the connected website.
+
+### 140. Name a campaign on a shared Marketing link (this slice)
+
+**Reason:** Intelligence asks the owner to name the campaign on shared links so Marketing can show a real channel. Marketing told the owner to add query names by hand and never built a copyable URL. Naming stays on Marketing. GroovGro does not buy ads.
+
+**Affected:** Marketing named-link card. Intelligence recommendation copy.
+
+**Migration risk:** None. Existing public lead form links keep working. Query names are added only when the owner types a place or a share name.
+
+**Current functionality:** Marketing can type where the owner will share and a name for this share, then copy a public lead form URL with those names. GroovGro will not buy ads, send email, or change the live website.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1532,7 +1542,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep SEO drafts on Next step when they are not the main ask is parked.** Next step can draft and approve homepage SEO copy even when that is not the main ask. SEO still has those checks. Do not change the connected website or start ads.
 - **Keep Search Console on Next step when it is not the main ask is parked.** Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask. SEO still has that panel. Do not edit the website, submit a sitemap, or buy ads.
 - **Keep Add a calendar item on Next step when it is not the main ask is parked.** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. Do not change ads or the website.
-- **Match charges to people on Bookings (this slice).** Bookings can match a payment copy to a person when checkout did not include an email. Intelligence still names Bookings for that loop. Do not charge a card or change checkout.
+- **Match charges to people on Bookings is parked.** Bookings can match a payment copy to a person when checkout did not include an email. Intelligence still names Bookings for that loop. Do not charge a card or change checkout.
+- **Name a campaign on a shared Marketing link (this slice).** Marketing can type where the owner will share and a name for this share, then copy the public lead form link. Intelligence still names Marketing for that loop. Do not buy ads, send email, or change the live website.
 
 ## DESIGN FOR LATER
 
@@ -1744,7 +1755,8 @@ Organization
 131. **Keep SEO drafts on Next step when they are not the main ask** — Next step can draft and approve homepage SEO copy even when that is not the main ask; SEO still has those checks. Done.
 132. **Keep Search Console on Next step when it is not the main ask** — Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask; SEO still has that panel. Done.
 133. **Keep Add a calendar item on Next step when it is not the main ask** — Next step can review upcoming items and add a calendar item even when that is not the main ask; Events still has that form. Done.
-134. **Match charges to people on Bookings** — Bookings can match a payment copy to a person; Intelligence still names Bookings. This slice. Do not charge a card or change checkout.
-135. **Guarded automation** — only after the above is trusted.
+134. **Match charges to people on Bookings** — Bookings can match a payment copy to a person; Intelligence still names Bookings. Done. Do not charge a card or change checkout.
+135. **Name a campaign on a shared Marketing link** — Marketing can type where the owner will share and a name for this share, then copy the public lead form link; Intelligence still names Marketing. This slice. Do not buy ads.
+136. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
