@@ -1522,6 +1522,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Marketing refreshes the first time a named website share records a visit. GroovGro will not buy ads or change the live site.
 
+### 152. Point Dashboard at Marketing for share names
+
+**Reason:** Dashboard “what changed, and why?” still named only the place after Marketing already shows the share name. That leftover summary sent the owner looking for work GroovGro already has.
+
+**Affected:** Dashboard why card.
+
+**Migration risk:** None. The channel summary stays. Share-name rows stay on Marketing.
+
+**Current functionality:** Dashboard names Marketing for the share name. GroovGro will not buy ads.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
@@ -1665,6 +1675,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Point Next step at Marketing for named shares.** Next step and Leads name Marketing for naming a share. The copyable named-link fields stay on Marketing. Do not buy ads.
 - **Refresh Marketing when a named share lands a person.** Marketing refreshes when a person is added, converted, or matched to a payment copy. Do not buy ads or change checkout.
 - **Refresh Marketing when a named website share records a visit.** Marketing refreshes the first time that named share records a visit. Do not buy ads or change the live site.
+- **Point Dashboard at Marketing for share names.** Dashboard names Marketing for the share name instead of only listing the place. Do not buy ads.
 
 ## DESIGN FOR LATER
 
@@ -1889,6 +1900,7 @@ Organization
 144. **Point Next step at Marketing for named shares** — Next step and Leads name Marketing for naming a share. This slice. Do not buy ads.
 145. **Refresh Marketing when a named share lands a person** — Marketing refreshes when a person is added, converted, or matched to a payment copy. This slice. Do not buy ads or change checkout.
 146. **Refresh Marketing when a named website share records a visit** — Marketing refreshes the first time that named share records a visit. This slice. Do not buy ads or change the live site.
-147. **Guarded automation** — only after the above is trusted.
+147. **Point Dashboard at Marketing for share names** — Dashboard names Marketing for the share name. This slice. Do not buy ads.
+148. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

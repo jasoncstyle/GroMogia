@@ -45,7 +45,7 @@ export default async function DashboardPage() {
 
   const why = snapshot
     ? snapshot.topChannels.length > 0
-      ? `Recent activity is coming from ${snapshot.topChannels.map((row) => `${row.channel} (${row.count})`).join(", ")}.`
+      ? `Recent activity is coming from ${snapshot.topChannels.map((row) => `${row.channel} (${row.count})`).join(", ")}. Open Marketing to see the share name for each source. GroovGro will not buy ads.`
       : snapshot.website?.publicUrl
         ? "A website is connected, but GroovGro has not recorded visits or campaign clicks yet. Add the tracking snippet and share the lead form."
         : "No website visits or campaign sources yet. Connect the existing website to start attributing leads."

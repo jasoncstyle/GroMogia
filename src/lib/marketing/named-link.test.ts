@@ -168,6 +168,7 @@ describe("named campaign lead form links", () => {
       "utf8",
     );
     assert.match(dashboard, /formatLeadOrigin/);
+    assert.match(dashboard, /Open Marketing to see the share name/);
     assert.doesNotMatch(dashboard, /· \{lead\.source\}/);
 
     const website = readFileSync(
