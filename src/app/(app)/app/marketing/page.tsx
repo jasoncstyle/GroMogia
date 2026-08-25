@@ -35,6 +35,7 @@ export default async function MarketingPage() {
       )
     : "";
   const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
+  const websiteUrl = snapshot?.websiteUrl ?? "";
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -65,6 +66,31 @@ export default async function MarketingPage() {
           ) : (
             <p className="text-sm text-muted-foreground">
               Sign in so GroovGro can build your public lead form link.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Name a campaign on a website link</CardTitle>
+          <CardDescription>
+            Type where you will share the existing website and a name for this
+            share, then copy the link. GroovGro will not buy ads, send email,
+            or change the live website.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {websiteUrl ? (
+            <NamedLeadFormLink
+              baseUrl={websiteUrl}
+              idPrefix="website-utm"
+              openLabel="Open page"
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Save the existing website address on Next step first. GroovGro
+              does not move the live site.
             </p>
           )}
         </CardContent>

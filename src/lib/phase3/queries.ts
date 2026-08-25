@@ -7,6 +7,7 @@ import {
   customers,
   leadRecords,
   payments,
+  websites,
 } from "@/lib/db/schema";
 
 export async function getMarketingSnapshot(organizationId: string) {
@@ -15,8 +16,15 @@ export async function getMarketingSnapshot(organizationId: string) {
     return {
       rows: [] as ReturnType<typeof mergeAttributionRows>,
       unattributedRevenueCents: 0,
+      websiteUrl: "",
     };
   }
+
+  const [website] = await db
+    .select({ publicUrl: websites.publicUrl })
+    .from(websites)
+    .where(eq(websites.organizationId, organizationId))
+    .limit(1);
 
   const visitRows = await db
     .select({
@@ -127,5 +135,6 @@ export async function getMarketingSnapshot(organizationId: string) {
       revenue,
     }),
     unattributedRevenueCents,
+    websiteUrl: website?.publicUrl ?? "",
   };
 }

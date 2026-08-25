@@ -17,6 +17,10 @@ describe("named campaign lead form links", () => {
       namedLeadFormUrl("https://www.groovgro.com/l/demo", "Instagram", "Spring Open House"),
       "https://www.groovgro.com/l/demo?utm_source=instagram&utm_campaign=spring-open-house",
     );
+    assert.equal(
+      namedLeadFormUrl("https://www.example.com/", "Instagram", "Spring Open House"),
+      "https://www.example.com/?utm_source=instagram&utm_campaign=spring-open-house",
+    );
   });
 
   it("leaves the public form unchanged when the source is empty", () => {
@@ -81,6 +85,8 @@ describe("named campaign lead form links", () => {
       "utf8",
     );
     assert.match(page, /NamedLeadFormLink/);
+    assert.match(page, /Name a campaign on a website link/);
+    assert.match(page, /idPrefix="website-utm"/);
     assert.match(page, /Share name/);
     assert.match(page, /row\.campaign/);
     assert.match(page, /will not buy ads/);
@@ -136,5 +142,12 @@ describe("named campaign lead form links", () => {
     );
     assert.match(crm, /Share name/);
     assert.match(crm, /lead\.campaignId/);
+
+    const website = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/website/page.tsx"),
+      "utf8",
+    );
+    assert.match(website, /href="\/app\/marketing"/);
+    assert.match(website, /will not buy ads/);
   });
 });

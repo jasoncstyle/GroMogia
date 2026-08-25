@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import Link from "next/link";
 
 import { saveWebsiteConnection } from "@/lib/actions/website";
 import { getAppSession } from "@/lib/auth/session";
@@ -156,6 +157,13 @@ export default async function WebsitePage() {
           </CardHeader>
           <CardContent>
             <TrackingSnippet snippet={snippet} />
+            <p className="mt-4 text-sm text-muted-foreground">
+              To name a share of this website, open{" "}
+              <Link href="/app/marketing" className="underline">
+                Marketing
+              </Link>
+              . GroovGro will not buy ads or change the live site.
+            </p>
           </CardContent>
         </Card>
       ) : null}
