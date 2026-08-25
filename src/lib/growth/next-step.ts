@@ -90,6 +90,7 @@ export type LearningGoal = {
   unit: string
   liveNote: string
   shareNote?: string
+  shareRows?: { origin: string; count: number }[]
   progressPercent: number | null
   liveComputable?: boolean
   progressHistory?: GoalProgressRow[]

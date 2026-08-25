@@ -771,6 +771,7 @@ function toReadableGoal(goal: {
   unit: string
   liveNote: string
   shareNote?: string
+  shareRows?: { origin: string; count: number }[]
   progressPercent: number | null
   liveComputable?: boolean
   progressHistory?: {
@@ -789,6 +790,7 @@ function toReadableGoal(goal: {
     unit: goal.unit,
     liveNote: goal.liveNote,
     shareNote: goal.shareNote ?? "",
+    shareRows: goal.shareRows ?? [],
     progressPercent: goal.progressPercent,
     liveComputable: Boolean(goal.liveComputable),
     progressHistory: (goal.progressHistory ?? []).map((row) => ({

@@ -1268,6 +1268,7 @@ function GoalReadout({
     unit: string
     liveNote: string
     shareNote?: string
+    shareRows?: { origin: string; count: number }[]
     progressPercent: number | null
     progressHistory?: {
       id: string
@@ -1301,7 +1302,7 @@ function GoalReadout({
         {goal.liveNote ? (
           <p className="text-muted-foreground">{goal.liveNote}</p>
         ) : null}
-        <GoalShareNote note={goal.shareNote ?? ""} />
+        <GoalShareNote note={goal.shareNote ?? ""} rows={goal.shareRows} />
       </div>
       {history.length > 0 ? (
         <FoldableSample

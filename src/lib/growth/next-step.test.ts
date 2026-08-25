@@ -2772,7 +2772,9 @@ describe("coordinated next step", () => {
     assert.match(queries, /toReadableGoal/);
     assert.match(queries, /progressHistory/);
     assert.match(queries, /shareNote/);
+    assert.match(queries, /shareRows/);
     assert.match(page, /GoalShareNote/);
+    assert.match(page, /goal\.shareRows/);
     assert.match(goals, /GoalShareNote/);
   });
 
