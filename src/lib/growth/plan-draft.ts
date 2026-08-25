@@ -9,6 +9,7 @@ export type PlanDraftGoal = {
   targetValue: number | null
   unit: string
   liveNote: string
+  shareNote?: string
   progressPercent: number | null
 };
 
@@ -48,12 +49,16 @@ function progressLine(goal: PlanDraftGoal): string {
   const unit = clean(goal.unit);
   const current = unit ? `${goal.liveCurrentValue} ${unit}` : String(goal.liveCurrentValue);
   if (goal.targetValue == null) {
-    return goal.liveNote || `Current number: ${current}.`;
+    return [goal.liveNote || `Current number: ${current}.`, goal.shareNote]
+      .filter(Boolean)
+      .join(" ");
   }
   const target = unit ? `${goal.targetValue} ${unit}` : String(goal.targetValue);
   const percent =
     goal.progressPercent != null ? ` That is ${goal.progressPercent}% of the target.` : "";
-  return `${current} of ${target}.${percent}${goal.liveNote ? ` ${goal.liveNote}` : ""}`;
+  return [ `${current} of ${target}.${percent}`, goal.liveNote, goal.shareNote ]
+    .filter(Boolean)
+    .join(" ");
 }
 
 export const DRAFT_PLAN_STEP_TITLE = "Draft a plan for this Goal";

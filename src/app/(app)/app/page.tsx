@@ -161,9 +161,14 @@ export default async function DashboardPage() {
               ? [
                   growth.activeGoals
                     .map((goal) =>
-                      goal.progressPercent != null
-                        ? `${goal.title} (${goal.liveCurrentValue}/${goal.targetValue ?? "—"}, ${goal.progressPercent}% )`
-                        : goal.title,
+                      [
+                        goal.progressPercent != null
+                          ? `${goal.title} (${goal.liveCurrentValue}/${goal.targetValue ?? "—"}, ${goal.progressPercent}% )`
+                          : goal.title,
+                        goal.shareNote,
+                      ]
+                        .filter(Boolean)
+                        .join(" "),
                     )
                     .join(" · "),
                   growth.plans.find(

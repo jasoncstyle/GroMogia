@@ -101,6 +101,38 @@ describe("growth plan draft", () => {
     assert.doesNotMatch(summary, /your own words|TODO|lorem/i);
   });
 
+  it("names the share that moved the Goal in a drafted plan", () => {
+    const summary = draftGrowthPlanSummary({
+      businessName: "Harbor Workshops",
+      description: "Hands-on classes for beginners.",
+      targetCustomers: "people who want practical skills",
+      goal: {
+        title: "More people get in touch",
+        goalType: "lead_generation",
+        status: "active",
+        liveCurrentValue: 2,
+        targetValue: 10,
+        unit: "leads",
+        liveNote: "2 leads in the connected window.",
+        shareNote: "This Goal number is from instagram · spring-open-house.",
+        progressPercent: 20,
+      },
+      offers: [{ name: "Weekend Workshop", description: "A two-day starter session." }],
+      nextStepTitle: "Follow up open leads",
+      nextStepBody: "Give each open lead a next step here. GroovGro will not email them.",
+      nextStepKind: "recommend",
+      leftAlone: ["Do not start ads."],
+      websiteConnected: true,
+      openLeadCount: 2,
+    });
+    assert.match(summary, /instagram · spring-open-house/);
+    const action = readFileSync(
+      join(process.cwd(), "src/lib/actions/growth-plan.ts"),
+      "utf8",
+    );
+    assert.match(action, /shareNote: goal\.shareNote/);
+  });
+
   it("says to wait when there is no operational next step", () => {
     const summary = draftGrowthPlanSummary({
       businessName: "North Desk",
