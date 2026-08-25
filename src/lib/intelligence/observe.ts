@@ -37,7 +37,15 @@ export type IntelligenceBrief = {
   recommendations: InsightItem[]
 };
 
-const GENERIC_SOURCES = new Set(["direct", "website", "stripe", "unattributed", "manual"]);
+const GENERIC_SOURCES = new Set([
+  "direct",
+  "website",
+  "stripe",
+  "unattributed",
+  "manual",
+  "website_campaign",
+  "campaign",
+]);
 
 export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBrief {
   const observations: InsightItem[] = [];

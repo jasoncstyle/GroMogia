@@ -7,6 +7,7 @@ import { z } from "zod";
 import { recordAudit } from "@/lib/audit";
 import { getDb } from "@/lib/db";
 import { attributionTouches, leadActivities, leadRecords, leadStages, organizations } from "@/lib/db/schema";
+import { publicLeadAttribution } from "@/lib/marketing/named-link";
 import { findOrCreateContact } from "@/modules/contacts/store";
 
 const publicLeadSchema = z.object({
@@ -17,6 +18,8 @@ const publicLeadSchema = z.object({
   notes: z.string().trim().max(2000).optional().default(""),
   landingPage: z.string().trim().max(500).optional().default(""),
   campaign: z.string().trim().max(120).optional().default(""),
+  utmSource: z.string().trim().max(120).optional().default(""),
+  utmCampaign: z.string().trim().max(120).optional().default(""),
   sessionId: z.string().trim().max(80).optional().default(""),
 });
 
@@ -29,6 +32,8 @@ export async function submitPublicLead(formData: FormData): Promise<{ ok: true }
     notes: formData.get("notes") ?? "",
     landingPage: formData.get("landingPage") ?? "",
     campaign: formData.get("campaign") ?? "",
+    utmSource: formData.get("utmSource") ?? "",
+    utmCampaign: formData.get("utmCampaign") ?? "",
     sessionId: formData.get("sessionId") ?? "",
   });
 
@@ -68,14 +73,19 @@ export async function submitPublicLead(formData: FormData): Promise<{ ok: true }
     return { ok: false, error: "This business is not ready to receive leads yet." };
   }
 
+  const attribution = publicLeadAttribution({
+    utmSource: parsed.data.utmSource,
+    utmCampaign: parsed.data.utmCampaign,
+    campaign: parsed.data.campaign,
+  });
   const leadId = crypto.randomUUID();
   await db.insert(leadRecords).values({
     id: leadId,
     organizationId: organization.id,
     contactId,
     stageId: newStage.id,
-    source: parsed.data.campaign ? "website_campaign" : "website",
-    campaignId: parsed.data.campaign || null,
+    source: attribution.source,
+    campaignId: attribution.campaignId,
     landingPage: parsed.data.landingPage || null,
     formId: "public_lead",
     notes: parsed.data.notes,
@@ -90,10 +100,14 @@ export async function submitPublicLead(formData: FormData): Promise<{ ok: true }
     organizationId: organization.id,
     contactId,
     sessionId: parsed.data.sessionId || null,
-    channel: parsed.data.campaign ? "campaign" : "website",
-    campaignId: parsed.data.campaign || null,
+    channel: attribution.channel,
+    campaignId: attribution.campaignId,
     landingPage: parsed.data.landingPage || null,
-    raw: { form: "public_lead" },
+    raw: {
+      form: "public_lead",
+      utm_source: parsed.data.utmSource || null,
+      utm_campaign: parsed.data.utmCampaign || null,
+    },
   });
 
   await recordAudit({
@@ -106,6 +120,7 @@ export async function submitPublicLead(formData: FormData): Promise<{ ok: true }
 
   revalidatePath("/app/next-step");
   revalidatePath("/app/crm");
+  revalidatePath("/app/marketing");
   revalidatePath("/app");
 
   return { ok: true };

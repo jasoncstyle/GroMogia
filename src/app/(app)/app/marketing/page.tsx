@@ -42,9 +42,10 @@ export default async function MarketingPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Marketing</h1>
         <p className="text-muted-foreground">
           First look at campaign → lead → customer → revenue from the website
-          snippet, the public form, and Stripe. Name a share below so this
-          table can show a real channel instead of direct, website, or stripe.
-          GroovGro will not buy ads.
+          snippet, the public form, and Stripe. Name a share below. When
+          someone uses that named link, the place you typed shows as the
+          source instead of direct, website, or stripe. GroovGro will not buy
+          ads.
         </p>
       </div>
 

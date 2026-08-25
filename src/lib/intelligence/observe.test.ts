@@ -107,6 +107,26 @@ describe("intelligence observe", () => {
     assert.doesNotMatch(named.body, /google ads/i);
   });
 
+  it("still asks to name shared links when the only lead source is website_campaign", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        sources: [
+          {
+            source: "website_campaign",
+            visits: 0,
+            leads: 2,
+            customers: 0,
+            revenueCents: 0,
+          },
+        ],
+      }),
+    );
+    assert.equal(
+      brief.recommendations.some((item) => item.title.includes("Name the campaign")),
+      true,
+    );
+  });
+
   it("never recommends sending email, ads, or replacing checkout", () => {
     const brief = buildIntelligenceBrief(
       facts({

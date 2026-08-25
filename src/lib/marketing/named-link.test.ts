@@ -3,7 +3,11 @@ import { describe, it } from "node:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { namedLeadFormUrl, slugForCampaignPart } from "./named-link";
+import {
+  namedLeadFormUrl,
+  publicLeadAttribution,
+  slugForCampaignPart,
+} from "./named-link";
 
 describe("named campaign lead form links", () => {
   it("turns a place and a name into utm query params", () => {
@@ -32,6 +36,35 @@ describe("named campaign lead form links", () => {
     );
   });
 
+  it("stores the named place as the public-form lead source", () => {
+    assert.deepEqual(
+      publicLeadAttribution({
+        utmSource: "Instagram",
+        utmCampaign: "Spring Open House",
+      }),
+      {
+        source: "instagram",
+        campaignId: "spring-open-house",
+        channel: "instagram",
+      },
+    );
+    assert.deepEqual(publicLeadAttribution({ utmSource: "newsletter" }), {
+      source: "newsletter",
+      campaignId: null,
+      channel: "newsletter",
+    });
+    assert.deepEqual(publicLeadAttribution({ campaign: "website-builder" }), {
+      source: "website_campaign",
+      campaignId: "website-builder",
+      channel: "campaign",
+    });
+    assert.deepEqual(publicLeadAttribution({}), {
+      source: "website",
+      campaignId: null,
+      channel: "website",
+    });
+  });
+
   it("keeps naming a campaign on Marketing and does not start ads", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/marketing/page.tsx"),
@@ -50,5 +83,32 @@ describe("named campaign lead form links", () => {
     assert.match(observe, /href: "\/app\/marketing"/);
     assert.match(observe, /will not buy ads/);
     assert.doesNotMatch(observe, /google ads/i);
+    assert.match(observe, /website_campaign/);
+
+    const action = readFileSync(
+      join(process.cwd(), "src/lib/actions/public-lead.ts"),
+      "utf8",
+    );
+    assert.match(action, /publicLeadAttribution/);
+    assert.match(action, /revalidatePath\("\/app\/marketing"\)/);
+    assert.doesNotMatch(action, /source: parsed\.data\.campaign \? "website_campaign"/);
+
+    const formPage = readFileSync(
+      join(process.cwd(), "src/app/l/[orgSlug]/page.tsx"),
+      "utf8",
+    );
+    assert.match(formPage, /utmSource=\{query\.utm_source/);
+    assert.match(formPage, /utmCampaign=\{query\.utm_campaign/);
+    assert.doesNotMatch(
+      formPage,
+      /campaign=\{query\.utm_campaign \|\| query\.utm_source/,
+    );
+
+    const form = readFileSync(
+      join(process.cwd(), "src/components/public-lead-form.tsx"),
+      "utf8",
+    );
+    assert.match(form, /name="utmSource"/);
+    assert.match(form, /name="utmCampaign"/);
   });
 });

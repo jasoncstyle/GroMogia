@@ -13,14 +13,20 @@ type State = { ok: true } | { ok: false; error: string } | null;
 
 export function PublicLeadForm({
   orgSlug,
-  campaign,
+  campaign = "",
+  utmSource = "",
+  utmCampaign = "",
 }: {
   orgSlug: string
-  campaign: string
+  campaign?: string
+  utmSource?: string
+  utmCampaign?: string
 }) {
   const sessionRef = useRef<HTMLInputElement>(null);
   const landingRef = useRef<HTMLInputElement>(null);
   const campaignRef = useRef<HTMLInputElement>(null);
+  const utmSourceRef = useRef<HTMLInputElement>(null);
+  const utmCampaignRef = useRef<HTMLInputElement>(null);
   const [state, action, pending] = useActionState(
     async (_previous: State, formData: FormData) => {
       const result = await submitPublicLead(formData);
@@ -43,11 +49,28 @@ export function PublicLeadForm({
         window.localStorage.setItem(key, value);
       }
       if (sessionRef.current) sessionRef.current.value = value;
+
+      const params = new URLSearchParams(window.location.search);
+      const sourceFromUrl = params.get("utm_source") || "";
+      const campaignFromUrl = params.get("utm_campaign") || "";
+      if (sourceFromUrl) {
+        window.localStorage.setItem("groovgro_utm_source", sourceFromUrl);
+      }
+      if (campaignFromUrl) {
+        window.localStorage.setItem("groovgro_utm_campaign", campaignFromUrl);
+      }
+
+      if (utmSourceRef.current && !utmSourceRef.current.value) {
+        utmSourceRef.current.value =
+          window.localStorage.getItem("groovgro_utm_source") || "";
+      }
+      if (utmCampaignRef.current && !utmCampaignRef.current.value) {
+        utmCampaignRef.current.value =
+          window.localStorage.getItem("groovgro_utm_campaign") || "";
+      }
       if (campaignRef.current && !campaignRef.current.value) {
         campaignRef.current.value =
-          window.localStorage.getItem("groovgro_utm_campaign") ||
-          window.localStorage.getItem("groovgro_utm_source") ||
-          "";
+          window.localStorage.getItem("groovgro_utm_campaign") || "";
       }
     } catch {
       // Tracking session is optional for the form to submit.
@@ -66,6 +89,13 @@ export function PublicLeadForm({
     <form action={action} className="space-y-4">
       <input type="hidden" name="orgSlug" value={orgSlug} />
       <input ref={campaignRef} type="hidden" name="campaign" defaultValue={campaign} />
+      <input ref={utmSourceRef} type="hidden" name="utmSource" defaultValue={utmSource} />
+      <input
+        ref={utmCampaignRef}
+        type="hidden"
+        name="utmCampaign"
+        defaultValue={utmCampaign}
+      />
       <input ref={sessionRef} type="hidden" name="sessionId" defaultValue="" />
       <input ref={landingRef} type="hidden" name="landingPage" defaultValue="" />
       <div className="space-y-2">

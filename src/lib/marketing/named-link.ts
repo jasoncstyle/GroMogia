@@ -19,3 +19,43 @@ export function namedLeadFormUrl(
   if (camp) url.searchParams.set("utm_campaign", camp);
   return url.toString();
 }
+
+export type PublicLeadAttribution = {
+  source: string
+  campaignId: string | null
+  channel: string
+};
+
+export function publicLeadAttribution(input: {
+  utmSource?: string | null
+  utmCampaign?: string | null
+  campaign?: string | null
+}): PublicLeadAttribution {
+  const source = slugForCampaignPart(input.utmSource ?? "");
+  const campaignId =
+    slugForCampaignPart(input.utmCampaign ?? "") ||
+    slugForCampaignPart(input.campaign ?? "") ||
+    null;
+
+  if (source) {
+    return {
+      source,
+      campaignId,
+      channel: source,
+    };
+  }
+
+  if (campaignId) {
+    return {
+      source: "website_campaign",
+      campaignId,
+      channel: "campaign",
+    };
+  }
+
+  return {
+    source: "website",
+    campaignId: null,
+    channel: "website",
+  };
+}
