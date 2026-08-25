@@ -21,6 +21,7 @@ import { formatMoney } from "@/lib/money";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { isModuleEnabled } from "@/lib/modules/catalog";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
+import { GoalShareNote } from "@/components/goal-share-note";
 import { StatusAlertList } from "@/components/status-alert";
 
 export default async function DashboardPage() {
@@ -154,34 +155,51 @@ export default async function DashboardPage() {
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-2">
-        <QuestionCard
-          title="What are we trying to accomplish?"
-          body={
-            growth && growth.activeGoals.length > 0
-              ? [
-                  growth.activeGoals
-                    .map((goal) =>
-                      [
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">
+              What are we trying to accomplish?
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {growth && growth.activeGoals.length > 0 ? (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  {[
+                    growth.activeGoals
+                      .map((goal) =>
                         goal.progressPercent != null
                           ? `${goal.title} (${goal.liveCurrentValue}/${goal.targetValue ?? "—"}, ${goal.progressPercent}% )`
                           : goal.title,
-                        goal.shareNote,
-                      ]
-                        .filter(Boolean)
-                        .join(" "),
+                      )
+                      .join(" · "),
+                    growth.plans.find(
+                      (plan) =>
+                        plan.status === "approved" || plan.status === "active",
                     )
-                    .join(" · "),
-                  growth.plans.find(
-                    (plan) => plan.status === "approved" || plan.status === "active",
-                  )
-                    ? "An approved Growth Plan is ready. Propose the first actions on Next step. GroovGro will not run them."
-                    : null,
-                ]
-                  .filter(Boolean)
-                  .join(" ")
-              : "No active Growth Goal yet. Open Next step to write the first measurable outcome."
-          }
-        />
+                      ? "An approved Growth Plan is ready. Propose the first actions on Next step. GroovGro will not run them."
+                      : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                </p>
+                {growth.activeGoals.map((goal) =>
+                  goal.shareNote ? (
+                    <GoalShareNote
+                      key={goal.id}
+                      note={goal.shareNote}
+                      rows={goal.shareRows}
+                    />
+                  ) : null,
+                )}
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                No active Growth Goal yet. Open Next step to write the first measurable outcome.
+              </p>
+            )}
+          </CardContent>
+        </Card>
         <QuestionCard title="How are we doing?" body={happening} />
         <QuestionCard
           title="What changed, and why?"

@@ -20,6 +20,7 @@ export type WorkLearningFacts = {
   targetValue: number | null
   unit: string
   daysSinceDone: number
+  shareNote?: string
 };
 
 export type WorkLearning = {
@@ -47,6 +48,11 @@ function clip(value: string, max: number): string {
 function withUnit(value: number, unit: string): string {
   const label = clean(unit);
   return label ? `${value} ${label}` : String(value);
+}
+
+function shareClause(shareNote?: string): string {
+  const share = clean(shareNote ?? "");
+  return share ? ` ${share}` : "";
 }
 
 export function encodeWorkBaseline(baseline: WorkBaseline): string {
@@ -89,7 +95,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "need_baseline",
       changeCourse: false,
       outcome: clip(
-        `GroovGro saved today’s number for “${goal}” (${withUnit(facts.currentValue, facts.unit)}) as the starting point. Check again later.${leaveAlone}`,
+        `GroovGro saved today’s number for “${goal}” (${withUnit(facts.currentValue, facts.unit)}) as the starting point.${shareClause(facts.shareNote)} Check again later.${leaveAlone}`,
         2000,
       ),
     };
@@ -105,12 +111,14 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
         ? `The number moved from ${withUnit(baseline, facts.unit)} to ${withUnit(current, facts.unit)}.`
         : `The number is ${withUnit(current, facts.unit)}, down from ${withUnit(baseline, facts.unit)} when you marked this done.`;
 
+  const share = shareClause(facts.shareNote);
+
   if (isGoalAchieved(current, facts.targetValue)) {
     return {
       kind: "target_reached",
       changeCourse: false,
       outcome: clip(
-        `After you did this work, “${goal}” reached its target (${withUnit(current, facts.unit)}). ${moved} Read the history on Next step. GroovGro will not start a new campaign.${leaveAlone}`,
+        `After you did this work, “${goal}” reached its target (${withUnit(current, facts.unit)}). ${moved}${share} Read the history on Next step. GroovGro will not start a new campaign.${leaveAlone}`,
         2000,
       ),
     };
@@ -121,7 +129,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "too_soon",
       changeCourse: false,
       outcome: clip(
-        `It has been ${Math.max(0, facts.daysSinceDone)} day${facts.daysSinceDone === 1 ? "" : "s"} since you marked this done. ${moved} Wait before changing course.${leaveAlone}`,
+        `It has been ${Math.max(0, facts.daysSinceDone)} day${facts.daysSinceDone === 1 ? "" : "s"} since you marked this done. ${moved}${share} Wait before changing course.${leaveAlone}`,
         2000,
       ),
     };
@@ -132,7 +140,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "improved",
       changeCourse: false,
       outcome: clip(
-        `After you did this work, “${goal}” improved. ${moved} That is not a reason to start ads. Keep collecting evidence.${leaveAlone}`,
+        `After you did this work, “${goal}” improved. ${moved}${share} That is not a reason to start ads. Keep collecting evidence.${leaveAlone}`,
         2000,
       ),
     };
@@ -143,7 +151,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
       kind: "declined",
       changeCourse: false,
       outcome: clip(
-        `After you did this work, “${goal}” is lower. ${moved} Do not add spend. Read the Goal number here.${leaveAlone}`,
+        `After you did this work, “${goal}” is lower. ${moved}${share} Do not add spend. Read the Goal number here.${leaveAlone}`,
         2000,
       ),
     };
@@ -153,7 +161,7 @@ export function learnFromOwnerWork(facts: WorkLearningFacts): WorkLearning {
     kind: "same",
     changeCourse: false,
     outcome: clip(
-      `After you did this work, “${goal}” has not moved yet. ${moved} Keep collecting evidence.${leaveAlone}`,
+      `After you did this work, “${goal}” has not moved yet. ${moved}${share} Keep collecting evidence.${leaveAlone}`,
       2000,
     ),
   };

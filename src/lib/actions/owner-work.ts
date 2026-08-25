@@ -235,6 +235,7 @@ export async function checkWhatChanged(
       targetValue: goal?.targetValue ?? stored?.targetValue ?? null,
       unit: goal?.unit || stored?.unit || "",
       daysSinceDone: daysBetween(action.updatedAt, new Date()),
+      shareNote: goal?.shareNote,
     });
 
     const nextResult = stored

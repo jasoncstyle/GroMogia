@@ -2781,6 +2781,18 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.match(shareNote, /min-h-11/);
+    const dashboard = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      "utf8",
+    );
+    assert.match(dashboard, /GoalShareNote/);
+    assert.match(dashboard, /goal\.shareRows/);
+    const learning = readFileSync(
+      join(process.cwd(), "src/lib/growth/work-learning.ts"),
+      "utf8",
+    );
+    assert.match(learning, /shareClause/);
+    assert.match(learning, /shareNote/);
   });
 
   it("lets the owner read this week’s look on Next step", () => {

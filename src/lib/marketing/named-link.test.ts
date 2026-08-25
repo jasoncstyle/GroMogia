@@ -171,7 +171,9 @@ describe("named campaign lead form links", () => {
     assert.match(dashboard, /formatLeadOrigin/);
     assert.match(dashboard, /Open Marketing to see the share name/);
     assert.match(dashboard, /goalShare/);
+    assert.match(dashboard, /GoalShareNote/);
     assert.match(dashboard, /goal\.shareNote/);
+    assert.match(dashboard, /goal\.shareRows/);
     assert.match(dashboard, /Read the Goal on Next step/);
     assert.doesNotMatch(dashboard, /· \{lead\.source\}/);
 
