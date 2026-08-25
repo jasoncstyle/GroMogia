@@ -1402,7 +1402,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Bookings can match a payment copy to a person already in the workspace. GroovGro does not charge a card, create a Stripe account, or change checkout on the connected website.
 
-### 140. Name a campaign on a shared Marketing link (this slice)
+### 140. Name a campaign on a shared Marketing link
 
 **Reason:** Intelligence asks the owner to name the campaign on shared links so Marketing can show a real channel. Marketing told the owner to add query names by hand and never built a copyable URL. Naming stays on Marketing. GroovGro does not buy ads.
 
@@ -1411,6 +1411,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None. Existing public lead form links keep working. Query names are added only when the owner types a place or a share name.
 
 **Current functionality:** Marketing can type where the owner will share and a name for this share, then copy a public lead form URL with those names. GroovGro will not buy ads, send email, or change the live website.
+
+### 141. Store the named place on public-form leads (this slice)
+
+**Reason:** Named Marketing links already add `utm_source` and `utm_campaign`. Visits from the website snippet already use that place as the channel. Public-form leads still stored `website_campaign`, so the Marketing table could not show the place the owner typed.
+
+**Affected:** Public lead form. Lead source and attribution channel. Intelligence generic-source list.
+
+**Migration risk:** None. Existing `website_campaign` rows stay. New named-link submissions store the place as the source. Builder forms that only send a campaign name still use `website_campaign`.
+
+**Current functionality:** When someone uses a named public lead form link, GroovGro stores the place as the lead source and the share name as the campaign. Marketing can then show that channel. GroovGro will not buy ads.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1543,7 +1553,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Search Console on Next step when it is not the main ask is parked.** Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask. SEO still has that panel. Do not edit the website, submit a sitemap, or buy ads.
 - **Keep Add a calendar item on Next step when it is not the main ask is parked.** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. Do not change ads or the website.
 - **Match charges to people on Bookings is parked.** Bookings can match a payment copy to a person when checkout did not include an email. Intelligence still names Bookings for that loop. Do not charge a card or change checkout.
-- **Name a campaign on a shared Marketing link (this slice).** Marketing can type where the owner will share and a name for this share, then copy the public lead form link. Intelligence still names Marketing for that loop. Do not buy ads, send email, or change the live website.
+- **Name a campaign on a shared Marketing link is parked.** Marketing can type where the owner will share and a name for this share, then copy the public lead form link. Intelligence still names Marketing for that loop. Do not buy ads, send email, or change the live website.
+- **Store the named place on public-form leads (this slice).** Public-form leads from a named link store the place as the source so Marketing can show that channel. Do not buy ads.
 
 ## DESIGN FOR LATER
 
@@ -1756,7 +1767,8 @@ Organization
 132. **Keep Search Console on Next step when it is not the main ask** — Next step can connect Search Console, choose the property, or refresh numbers even when that is not the main ask; SEO still has that panel. Done.
 133. **Keep Add a calendar item on Next step when it is not the main ask** — Next step can review upcoming items and add a calendar item even when that is not the main ask; Events still has that form. Done.
 134. **Match charges to people on Bookings** — Bookings can match a payment copy to a person; Intelligence still names Bookings. Done. Do not charge a card or change checkout.
-135. **Name a campaign on a shared Marketing link** — Marketing can type where the owner will share and a name for this share, then copy the public lead form link; Intelligence still names Marketing. This slice. Do not buy ads.
-136. **Guarded automation** — only after the above is trusted.
+135. **Name a campaign on a shared Marketing link** — Marketing can type where the owner will share and a name for this share, then copy the public lead form link; Intelligence still names Marketing. Done. Do not buy ads.
+136. **Store the named place on public-form leads** — Public-form leads from a named link store the place as the source so Marketing can show that channel. This slice. Do not buy ads.
+137. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

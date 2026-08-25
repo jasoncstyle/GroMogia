@@ -53,7 +53,8 @@ export default async function PublicLeadPage({
       </div>
       <PublicLeadForm
         orgSlug={organization.slug}
-        campaign={query.utm_campaign || query.utm_source || ""}
+        utmSource={query.utm_source || ""}
+        utmCampaign={query.utm_campaign || ""}
       />
     </div>
   );
