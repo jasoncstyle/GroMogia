@@ -1472,6 +1472,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Analytics names Marketing for the share name. GroovGro will not buy ads.
 
+### 147. Show the share name on Customers
+
+**Reason:** Named leads store the share name. Pipeline already shows it. After Mark customer, the Customers table still showed only the place, so the owner lost which named share brought that person in.
+
+**Affected:** Leads & customers Customers table.
+
+**Migration risk:** None. Customers with no first-lead share name still show the source only.
+
+**Current functionality:** Customers show the share name from the first lead next to the source. GroovGro will not email anyone or buy ads.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
@@ -1610,6 +1620,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Name a campaign on a website link (this slice).** Marketing can name a share of the existing website the same way as the public form. Do not buy ads or change the live website.
 - **Show the share name on Dashboard recent leads.** Dashboard recent leads show the share name next to the place. Do not email anyone or buy ads.
 - **Point Analytics at Marketing for share names.** Analytics names Marketing for the share name instead of saying campaign detail expands later. Do not buy ads.
+- **Show the share name on Customers.** Customers show the share name from the first lead next to the source. Do not email anyone or buy ads.
 
 ## DESIGN FOR LATER
 
@@ -1829,6 +1840,7 @@ Organization
 139. **Name a campaign on a website link** — Marketing can name a share of the existing website. This slice. Do not buy ads or change the live website.
 140. **Show the share name on Dashboard recent leads** — Dashboard recent leads show the share name next to the place. This slice. Do not email anyone or buy ads.
 141. **Point Analytics at Marketing for share names** — Analytics names Marketing for the share name. This slice. Do not buy ads.
-142. **Guarded automation** — only after the above is trusted.
+142. **Show the share name on Customers** — Customers show the share name from the first lead. This slice. Do not email anyone or buy ads.
+143. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

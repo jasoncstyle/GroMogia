@@ -142,6 +142,8 @@ describe("named campaign lead form links", () => {
     );
     assert.match(crm, /Share name/);
     assert.match(crm, /lead\.campaignId/);
+    assert.match(crm, /firstCampaignByContact/);
+    assert.match(crm, /customer\.marketingSource/);
 
     const dashboard = readFileSync(
       join(process.cwd(), "src/app/(app)/app/page.tsx"),
