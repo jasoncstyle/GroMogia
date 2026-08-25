@@ -17,7 +17,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** The website builder is paused. Showing the share name on Marketing is in the previous slice. This branch shows which named share moved a connected Goal number (people, payments, and bookings), on Goals, Next step, Dashboard, Check what changed, Your work, the path so far, and Intelligence. Naming a share stays on Marketing. GroovGro does not execute. Do not start ads, execution, or autonomy.
+**V2 growth foundation is on `main`.** The website builder is paused. Showing the share name on Marketing is in the previous slice. This branch shows which named share moved a connected Goal number (people, payments, and bookings), on Goals, Next step, Dashboard, Check what changed, Your work, the path so far, and Intelligence, including extra named shares. Naming a share stays on Marketing. GroovGro does not execute. Do not start ads, execution, or autonomy.
 
 Public groovgro.com homepage stays Coming soon.
 

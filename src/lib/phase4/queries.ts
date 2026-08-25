@@ -42,7 +42,11 @@ export async function getIntelligenceFacts(
     sources: marketing.rows,
     showFinancials: options.showFinancials,
     activeGoalShare: activeGoal
-      ? { title: activeGoal.title, note: activeGoal.shareNote }
+      ? {
+          title: activeGoal.title,
+          note: activeGoal.shareNote,
+          rows: activeGoal.shareRows,
+        }
       : null,
   };
 }

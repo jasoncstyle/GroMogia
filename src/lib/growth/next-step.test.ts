@@ -2787,6 +2787,11 @@ describe("coordinated next step", () => {
     );
     assert.match(dashboard, /GoalShareNote/);
     assert.match(dashboard, /goal\.shareRows/);
+    const intelligencePage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/intelligence/page.tsx"),
+      "utf8",
+    );
+    assert.match(intelligencePage, /GoalShareNote/);
     const learning = readFileSync(
       join(process.cwd(), "src/lib/growth/work-learning.ts"),
       "utf8",

@@ -23,7 +23,11 @@ export type IntelligenceFacts = {
   upcomingEventCount: number
   sources: IntelligenceSource[]
   showFinancials: boolean
-  activeGoalShare?: { title: string; note: string } | null
+  activeGoalShare?: {
+    title: string
+    note: string
+    rows?: { origin: string; count: number }[]
+  } | null
 };
 
 export type InsightItem = {
@@ -39,6 +43,12 @@ export type IntelligenceBrief = {
   observations: InsightItem[]
   recommendations: InsightItem[]
 };
+
+function extraShareClause(rows?: { origin: string; count: number }[]): string {
+  const extra = (rows ?? []).slice(1);
+  if (extra.length === 0) return "";
+  return ` ${extra.map((row) => `${row.origin}: ${row.count}`).join(". ")}.`;
+}
 
 const GENERIC_SOURCES = new Set([
   "direct",
@@ -133,7 +143,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     observations.push({
       kind: "observation",
       title: "Goal number and share",
-      body: `“${facts.activeGoalShare.title}”: ${facts.activeGoalShare.note} Naming a share stays on Marketing. GroovGro will not buy ads.`,
+      body: `“${facts.activeGoalShare.title}”: ${facts.activeGoalShare.note}${extraShareClause(facts.activeGoalShare.rows)} Naming a share stays on Marketing. GroovGro will not buy ads.`,
       evidence: ["growth_goals live progress", "named share"],
       href: "/app/next-step",
     });

@@ -207,5 +207,12 @@ describe("named campaign lead form links", () => {
     );
     assert.match(intelligenceFacts, /getGrowthSnapshot/);
     assert.match(intelligenceFacts, /activeGoalShare/);
+    assert.match(intelligenceFacts, /shareRows/);
+    const intelligencePage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/intelligence/page.tsx"),
+      "utf8",
+    );
+    assert.match(intelligencePage, /GoalShareNote/);
+    assert.match(intelligencePage, /activeGoalShare\.rows/);
   });
 });
