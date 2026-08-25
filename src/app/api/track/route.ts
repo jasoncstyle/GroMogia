@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 import { getDb } from "@/lib/db";
@@ -62,6 +62,8 @@ export async function POST(request: Request) {
     }
   }
 
+  const campaignId = typeof body.utm_campaign === "string" ? body.utm_campaign : null;
+
   const alreadyRecorded = await db
     .select({ id: attributionTouches.id })
     .from(attributionTouches)
@@ -69,26 +71,47 @@ export async function POST(request: Request) {
     .limit(1);
   const firstVisit = alreadyRecorded.length === 0;
 
+  let firstShareVisit = firstVisit;
+  if (!firstVisit) {
+    const alreadyThisShare = await db
+      .select({ id: attributionTouches.id })
+      .from(attributionTouches)
+      .where(
+        and(
+          eq(attributionTouches.organizationId, website.organizationId),
+          eq(attributionTouches.channel, channel),
+          campaignId === null
+            ? isNull(attributionTouches.campaignId)
+            : eq(attributionTouches.campaignId, campaignId),
+        ),
+      )
+      .limit(1);
+    firstShareVisit = alreadyThisShare.length === 0;
+  }
+
   await db.insert(attributionTouches).values({
     organizationId: website.organizationId,
     sessionId: typeof body.sessionId === "string" ? body.sessionId : null,
     channel,
-    campaignId: typeof body.utm_campaign === "string" ? body.utm_campaign : null,
+    campaignId,
     landingPage: typeof body.landingPage === "string" ? body.landingPage : null,
     referrer: referrer || null,
     raw: {
       utm_source: utmSource || null,
       utm_medium: typeof body.utm_medium === "string" ? body.utm_medium : null,
-      utm_campaign: typeof body.utm_campaign === "string" ? body.utm_campaign : null,
+      utm_campaign: campaignId,
     },
   });
 
   if (firstVisit) {
     revalidatePath("/app/next-step");
     revalidatePath("/app");
-    revalidatePath("/app/analytics");
-    revalidatePath("/app/marketing");
     revalidatePath("/app/website");
+  }
+  if (firstShareVisit) {
+    revalidatePath("/app/marketing");
+    revalidatePath("/app/analytics");
+    revalidatePath("/app/intelligence");
   }
 
   return json({ ok: true });

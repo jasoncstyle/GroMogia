@@ -2940,6 +2940,7 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.match(source, /firstVisit/);
+    assert.match(source, /firstShareVisit/);
     assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
     assert.match(source, /revalidatePath\("\/app"\)/);
     assert.match(source, /revalidatePath\("\/app\/marketing"\)/);

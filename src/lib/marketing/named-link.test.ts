@@ -184,5 +184,12 @@ describe("named campaign lead form links", () => {
     assert.match(analytics, /href="\/app\/marketing"/);
     assert.match(analytics, /share name/);
     assert.doesNotMatch(analytics, /expands later/);
+
+    const track = readFileSync(
+      join(process.cwd(), "src/app/api/track/route.ts"),
+      "utf8",
+    );
+    assert.match(track, /firstShareVisit/);
+    assert.match(track, /revalidatePath\("\/app\/marketing"\)/);
   });
 });
