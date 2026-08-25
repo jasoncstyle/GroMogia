@@ -238,6 +238,23 @@ describe("intelligence observe", () => {
     assert.match(revenueSource?.body ?? "", /instagram · spring-open-house/);
   });
 
+  it("names the share that moved the active Goal", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        activeGoalShare: {
+          title: "More people get in touch",
+          note: "This Goal number is from instagram · spring-open-house.",
+        },
+      }),
+    );
+    const goalShare = brief.observations.find(
+      (item) => item.title === "Goal number and share",
+    );
+    assert.match(goalShare?.body ?? "", /instagram · spring-open-house/);
+    assert.equal(goalShare?.href, "/app/next-step");
+    assert.match(goalShare?.body ?? "", /Marketing/);
+  });
+
   it("sends people observations to Next step when follow-up or adding a person lives there", () => {
     const empty = buildIntelligenceBrief(facts({ contactCount: 0, openLeadCount: 0 }));
     const peopleEmpty = empty.observations.find(

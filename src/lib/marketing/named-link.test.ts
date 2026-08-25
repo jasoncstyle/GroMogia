@@ -104,6 +104,7 @@ describe("named campaign lead form links", () => {
     assert.doesNotMatch(observe, /google ads/i);
     assert.match(observe, /website_campaign/);
     assert.match(observe, /formatLeadOrigin/);
+    assert.match(observe, /Goal number and share/);
 
     const action = readFileSync(
       join(process.cwd(), "src/lib/actions/public-lead.ts"),
@@ -169,6 +170,8 @@ describe("named campaign lead form links", () => {
     );
     assert.match(dashboard, /formatLeadOrigin/);
     assert.match(dashboard, /Open Marketing to see the share name/);
+    assert.match(dashboard, /goalShare/);
+    assert.match(dashboard, /Read the Goal on Next step/);
     assert.doesNotMatch(dashboard, /· \{lead\.source\}/);
 
     const website = readFileSync(
@@ -192,5 +195,12 @@ describe("named campaign lead form links", () => {
     );
     assert.match(track, /firstShareVisit/);
     assert.match(track, /revalidatePath\("\/app\/marketing"\)/);
+
+    const intelligenceFacts = readFileSync(
+      join(process.cwd(), "src/lib/phase4/queries.ts"),
+      "utf8",
+    );
+    assert.match(intelligenceFacts, /getGrowthSnapshot/);
+    assert.match(intelligenceFacts, /activeGoalShare/);
   });
 });

@@ -11,6 +11,7 @@ export type GrowthStoryFacts = {
   goalTarget: number | null
   goalUnit: string
   goalProgressPercent: number | null
+  shareNote?: string
   hasApprovedPlan: boolean
   planVersion: number | null
   openWorkCount: number
@@ -54,6 +55,8 @@ function goalLine(facts: GrowthStoryFacts): string {
     }
   }
   parts.push("Read it on Next step. GroovGro will not change that Goal by itself.");
+  const share = clean(facts.shareNote ?? "");
+  if (share) parts.push(share);
   return parts.join(" ");
 }
 
@@ -101,6 +104,7 @@ export function storyFactsFromWorkspace(input: {
     targetValue: number | null
     unit: string | null
     progressPercent: number | null
+    shareNote?: string
   } | null
   plan?: { version: number } | null
   openWorkCount: number
@@ -115,6 +119,7 @@ export function storyFactsFromWorkspace(input: {
     goalTarget: input.goal?.targetValue ?? null,
     goalUnit: input.goal?.unit ?? "",
     goalProgressPercent: input.goal?.progressPercent ?? null,
+    shareNote: input.goal?.shareNote ?? "",
     hasApprovedPlan: Boolean(input.plan),
     planVersion: input.plan?.version ?? null,
     openWorkCount: input.openWorkCount,

@@ -42,6 +42,27 @@ describe("growth story", () => {
     assert.doesNotMatch(beats.map((beat) => beat.body).join(" "), /buy ads|TODO|lorem/i);
   });
 
+  it("names the share that moved the Goal on the path so far", () => {
+    const beats = buildGrowthStory({
+      businessName: "Harbor Workshops",
+      goalTitle: "More people get in touch",
+      goalCurrent: 2,
+      goalTarget: 10,
+      goalUnit: "leads",
+      goalProgressPercent: 20,
+      shareNote: "This Goal number is from instagram · spring-open-house.",
+      hasApprovedPlan: true,
+      planVersion: 1,
+      openWorkCount: 0,
+      finishedWorkCount: 0,
+      latestLearning: "",
+      nextStepTitle: "Wait",
+      nextStepBody: "Keep collecting evidence.",
+      nextStepHref: "/app/next-step",
+    });
+    assert.match(beats[0]?.body ?? "", /instagram · spring-open-house/);
+  });
+
   it("tells the owner to start with a Goal when nothing exists yet", () => {
     const beats = buildGrowthStory({
       businessName: "North Desk",

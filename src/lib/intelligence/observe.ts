@@ -23,6 +23,7 @@ export type IntelligenceFacts = {
   upcomingEventCount: number
   sources: IntelligenceSource[]
   showFinancials: boolean
+  activeGoalShare?: { title: string; note: string } | null
 };
 
 export type InsightItem = {
@@ -125,6 +126,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       body: `${formatMoney(facts.unattributedRevenueCents)} in Stripe charges has no person email yet, so GroovGro cannot attach a marketing source.`,
       evidence: ["payments.contact_id is null"],
       href: "/app/commerce",
+    });
+  }
+
+  if (facts.activeGoalShare?.note) {
+    observations.push({
+      kind: "observation",
+      title: "Goal number and share",
+      body: `“${facts.activeGoalShare.title}”: ${facts.activeGoalShare.note} Naming a share stays on Marketing. GroovGro will not buy ads.`,
+      evidence: ["growth_goals live progress", "named share"],
+      href: "/app/next-step",
     });
   }
 

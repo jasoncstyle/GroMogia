@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  connectedProgressFacts,
   goalShareAttribution,
   liveGoalProgress,
   planProgressSnapshot,
@@ -150,7 +151,130 @@ describe("live goal progress", () => {
     );
     assert.equal(share?.rows[0]?.origin, "instagram · spring-open-house");
     assert.equal(share?.rows[0]?.count, 2);
-    assert.equal(goalShareAttribution({ ...goal, goalType: "revenue" }, facts), null);
+    assert.equal(
+      goalShareAttribution({ ...goal, goalType: "custom" }, facts),
+      null,
+    );
+  });
+
+  it("names the share that moved a revenue Goal from matched payments", () => {
+    const share = goalShareAttribution(
+      {
+        goalType: "revenue",
+        offerId: null,
+        startsOn: new Date("2026-08-01T00:00:00.000Z"),
+        currentValue: 0,
+        targetValue: 1000,
+        unit: "dollars",
+      },
+      {
+        now,
+        leads: [],
+        events: [],
+        bookings: [],
+        payments: [
+          {
+            createdAt: new Date("2026-08-10T00:00:00.000Z"),
+            amountCents: 30000,
+            kind: "charge",
+            offerId: null,
+            source: "instagram",
+            campaign: "spring-open-house",
+          },
+          {
+            createdAt: new Date("2026-08-12T00:00:00.000Z"),
+            amountCents: 17500,
+            kind: "charge",
+            offerId: null,
+            source: "instagram",
+            campaign: "fall-open-house",
+          },
+          {
+            createdAt: new Date("2026-08-12T00:00:00.000Z"),
+            amountCents: 20000,
+            kind: "refund",
+            offerId: null,
+            source: "instagram",
+            campaign: "spring-open-house",
+          },
+        ],
+      },
+    );
+    assert.equal(
+      share?.note,
+      "300 of 475 dollars in this Goal number came from instagram · spring-open-house.",
+    );
+    assert.equal(share?.rows[0]?.count, 300);
+  });
+
+  it("names the share that moved a booking Goal, including through the first named lead", () => {
+    const facts = connectedProgressFacts({
+      now,
+      leads: [
+        {
+          createdAt: new Date("2026-08-02T00:00:00.000Z"),
+          offerId: null,
+          contactId: "c1",
+          source: "instagram",
+          campaignId: "spring-open-house",
+        },
+      ],
+      bookings: [
+        {
+          id: "b1",
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          offerId: null,
+          eventId: "e1",
+          status: "confirmed",
+          contactId: "c1",
+        },
+        {
+          id: "b2",
+          createdAt: new Date("2026-08-11T00:00:00.000Z"),
+          offerId: null,
+          eventId: "e1",
+          status: "confirmed",
+          contactId: "c2",
+        },
+      ],
+      payments: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          amountCents: 12000,
+          kind: "charge",
+          bookingId: "b1",
+          contactId: "c1",
+        },
+      ],
+      events: [],
+    });
+    const bookings = goalShareAttribution(
+      {
+        goalType: "conversions",
+        offerId: null,
+        startsOn: new Date("2026-08-01T00:00:00.000Z"),
+        currentValue: 0,
+        targetValue: 10,
+        unit: "bookings",
+      },
+      facts,
+    );
+    assert.equal(
+      bookings?.note,
+      "1 of 2 in this Goal number came from instagram · spring-open-house.",
+    );
+    const revenue = goalShareAttribution(
+      {
+        goalType: "revenue",
+        offerId: null,
+        startsOn: new Date("2026-08-01T00:00:00.000Z"),
+        currentValue: 0,
+        targetValue: 500,
+        unit: "dollars",
+      },
+      facts,
+    );
+    assert.equal(revenue?.note, "This Goal number is from instagram · spring-open-house.");
   });
 
   it("says when a lead Goal number does not name a share", () => {
