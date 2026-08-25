@@ -102,6 +102,7 @@ describe("named campaign lead form links", () => {
     assert.match(observe, /will not buy ads/);
     assert.doesNotMatch(observe, /google ads/i);
     assert.match(observe, /website_campaign/);
+    assert.match(observe, /formatLeadOrigin/);
 
     const action = readFileSync(
       join(process.cwd(), "src/lib/actions/public-lead.ts"),
