@@ -24,7 +24,13 @@ export async function getDashboardSnapshot(organizationId: string) {
       paymentTotalCents: 0,
       paymentCount: 0,
       upcomingEvents: [] as { id: string; title: string; startsAt: Date | null }[],
-      recentLeads: [] as { id: string; name: string; email: string | null; source: string }[],
+      recentLeads: [] as {
+        id: string
+        name: string
+        email: string | null
+        source: string
+        campaign: string
+      }[],
       recentPayments: [] as { id: string; amountCents: number; currency: string; status: string }[],
       website: null as { publicUrl: string; provider: string; trackingId: string } | null,
       stripeConnected: false,
@@ -103,6 +109,7 @@ export async function getDashboardSnapshot(organizationId: string) {
     .select({
       id: leadRecords.id,
       source: leadRecords.source,
+      campaign: leadRecords.campaignId,
       name: contacts.displayName,
       email: contacts.email,
     })
@@ -158,7 +165,10 @@ export async function getDashboardSnapshot(organizationId: string) {
     paymentTotalCents: Number(paymentAgg?.total ?? 0),
     paymentCount: Number(paymentAgg?.count ?? 0),
     upcomingEvents,
-    recentLeads: leadRows,
+    recentLeads: leadRows.map((row) => ({
+      ...row,
+      campaign: row.campaign ?? "",
+    })),
     recentPayments,
     website: website ?? null,
     stripeConnected: stripe?.status === "connected",

@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import Link from "next/link";
 
 import { saveWebsiteConnection } from "@/lib/actions/website";
 import { getAppSession } from "@/lib/auth/session";
@@ -86,7 +87,11 @@ export default async function WebsitePage() {
             <CardDescription>
               This is a GroovGro page customers can open without signing in.
               Copy the link, open it in a private window, and send a test lead
-              with an email that is not yours.
+              with an email that is not yours. To name a share, open{" "}
+              <Link href="/app/marketing" className="underline">
+                Marketing
+              </Link>
+              . GroovGro will not buy ads.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -156,6 +161,13 @@ export default async function WebsitePage() {
           </CardHeader>
           <CardContent>
             <TrackingSnippet snippet={snippet} />
+            <p className="mt-4 text-sm text-muted-foreground">
+              To name a share of this website, open{" "}
+              <Link href="/app/marketing" className="underline">
+                Marketing
+              </Link>
+              . GroovGro will not buy ads or change the live site.
+            </p>
           </CardContent>
         </Card>
       ) : null}

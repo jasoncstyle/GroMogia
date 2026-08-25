@@ -102,6 +102,7 @@ export async function createLead(formData: FormData): Promise<ActionResult> {
 
   revalidatePath("/app/crm");
   revalidatePath("/app/next-step");
+  revalidatePath("/app/marketing");
   revalidatePath("/app");
     return "Lead saved";
   });
@@ -168,6 +169,8 @@ export async function moveLead(formData: FormData): Promise<ActionResult> {
 
   revalidatePath("/app/crm");
   revalidatePath("/app/next-step");
+  revalidatePath("/app/marketing");
+  revalidatePath("/app/intelligence");
   revalidatePath("/app");
     return "Lead moved";
   });
@@ -209,6 +212,8 @@ export async function convertLeadToCustomer(formData: FormData): Promise<ActionR
 
   revalidatePath("/app/crm");
   revalidatePath("/app/next-step");
+  revalidatePath("/app/marketing");
+  revalidatePath("/app/intelligence");
   revalidatePath("/app");
     return "Marked as customer";
   });

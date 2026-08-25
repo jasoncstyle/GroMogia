@@ -64,6 +64,7 @@ export async function POST(request: Request) {
     revalidatePath("/app/next-step");
     revalidatePath("/app/crm");
     revalidatePath("/app/commerce");
+    revalidatePath("/app/marketing");
     revalidatePath("/app");
   }
   return Response.json({ ok: true });

@@ -181,6 +181,63 @@ describe("intelligence observe", () => {
     assert.match(keep.body, /Open Next step/);
   });
 
+  it("names the share next to the place for lead and revenue sources", () => {
+    const leads = buildIntelligenceBrief(
+      facts({
+        sources: [
+          {
+            source: "instagram",
+            campaign: "spring-open-house",
+            visits: 4,
+            leads: 3,
+            customers: 0,
+            revenueCents: 0,
+          },
+          {
+            source: "instagram",
+            campaign: "fall-sale",
+            visits: 2,
+            leads: 1,
+            customers: 0,
+            revenueCents: 0,
+          },
+        ],
+      }),
+    );
+    const leadSource = leads.observations.find((item) => item.title === "Lead source");
+    assert.match(leadSource?.body ?? "", /instagram · spring-open-house/);
+    assert.doesNotMatch(leadSource?.body ?? "", /fall-sale/);
+
+    const revenue = buildIntelligenceBrief(
+      facts({
+        chargeCountThisMonth: 2,
+        paymentTotalCents: 15_000,
+        sources: [
+          {
+            source: "instagram",
+            campaign: "spring-open-house",
+            visits: 0,
+            leads: 1,
+            customers: 1,
+            revenueCents: 10_000,
+          },
+          {
+            source: "instagram",
+            campaign: "fall-sale",
+            visits: 0,
+            leads: 1,
+            customers: 1,
+            revenueCents: 5_000,
+          },
+        ],
+      }),
+    );
+    const revenueSource = revenue.observations.find(
+      (item) => item.title === "Revenue source",
+    );
+    assert.match(revenueSource?.body ?? "", /instagram · spring-open-house/);
+  });
+
   it("sends people observations to Next step when follow-up or adding a person lives there", () => {
     const empty = buildIntelligenceBrief(facts({ contactCount: 0, openLeadCount: 0 }));
     const peopleEmpty = empty.observations.find(

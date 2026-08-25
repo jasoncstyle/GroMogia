@@ -318,6 +318,7 @@ async function getOpenLeadsAndStages(organizationId: string) {
       stageId: leadStages.id,
       stageName: leadStages.name,
       source: leadRecords.source,
+      campaign: leadRecords.campaignId,
       isWon: leadStages.isWon,
     })
     .from(leadRecords)
@@ -340,6 +341,7 @@ async function getOpenLeadsAndStages(organizationId: string) {
       stageId: row.stageId,
       stageName: row.stageName,
       source: row.source,
+      campaign: row.campaign ?? "",
       isWon: row.isWon,
     })),
     leadStages: stages.map((stage) => ({ id: stage.id, name: stage.name })),

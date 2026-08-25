@@ -1,8 +1,10 @@
 import { FOLLOW_UP_LEADS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { formatLeadOrigin } from "@/lib/marketing/named-link";
 import { formatMoney } from "@/lib/money";
 
 export type IntelligenceSource = {
   source: string
+  campaign?: string
   visits: number
   leads: number
   customers: number
@@ -97,19 +99,21 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   });
 
   if (facts.showFinancials && topRevenue && topRevenue.revenueCents > 0) {
+    const origin = formatLeadOrigin(topRevenue.source, topRevenue.campaign ?? "");
     observations.push({
       kind: "observation",
       title: "Revenue source",
-      body: `Most recorded charge revenue is attributed to “${topRevenue.source}” (${formatMoney(topRevenue.revenueCents)}). Attribution is imperfect, especially when checkout happens on another website.`,
-      evidence: [`source:${topRevenue.source}`, "payments ch_%"],
+      body: `Most recorded charge revenue is attributed to “${origin}” (${formatMoney(topRevenue.revenueCents)}). Attribution is imperfect, especially when checkout happens on another website.`,
+      evidence: [`source:${origin}`, "payments ch_%"],
       href: "/app/marketing",
     });
   } else if (topLeads && topLeads.leads > 0) {
+    const origin = formatLeadOrigin(topLeads.source, topLeads.campaign ?? "");
     observations.push({
       kind: "observation",
       title: "Lead source",
-      body: `Most leads are coming from “${topLeads.source}” (${topLeads.leads}).`,
-      evidence: [`source:${topLeads.source}`, "lead_records"],
+      body: `Most leads are coming from “${origin}” (${topLeads.leads}).`,
+      evidence: [`source:${origin}`, "lead_records"],
       href: "/app/marketing",
     });
   }

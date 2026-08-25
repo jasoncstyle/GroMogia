@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { getAppSession } from "@/lib/auth/session";
 import { formatMoney } from "@/lib/money";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
@@ -22,7 +24,8 @@ export default async function AnalyticsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
         <p className="text-muted-foreground">
           Basic outcomes from connected data. Open Marketing for campaign →
-          lead → customer → revenue.
+          lead → customer → revenue, including the share name. GroovGro will
+          not buy ads.
         </p>
       </div>
 
@@ -55,8 +58,12 @@ export default async function AnalyticsPage() {
             <CardHeader>
               <CardTitle>Traffic and sources</CardTitle>
               <CardDescription>
-                From the website snippet and the public lead form. Campaign
-                detail expands later.
+                From the website snippet and the public lead form. Open{" "}
+                <Link href="/app/marketing" className="underline">
+                  Marketing
+                </Link>{" "}
+                to see the share name for each source. GroovGro will not buy
+                ads.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 text-sm">

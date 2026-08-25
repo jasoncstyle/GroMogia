@@ -16,6 +16,7 @@ import {
   buildStatusAlerts,
   websiteWasRead,
 } from "@/lib/growth/status-alerts";
+import { formatLeadOrigin } from "@/lib/marketing/named-link";
 import { formatMoney } from "@/lib/money";
 import { resolveOrganizationSlug } from "@/lib/org";
 import { isModuleEnabled } from "@/lib/modules/catalog";
@@ -44,7 +45,7 @@ export default async function DashboardPage() {
 
   const why = snapshot
     ? snapshot.topChannels.length > 0
-      ? `Recent activity is coming from ${snapshot.topChannels.map((row) => `${row.channel} (${row.count})`).join(", ")}.`
+      ? `Recent activity is coming from ${snapshot.topChannels.map((row) => `${row.channel} (${row.count})`).join(", ")}. Open Marketing to see the share name for each source. GroovGro will not buy ads.`
       : snapshot.website?.publicUrl
         ? "A website is connected, but GroovGro has not recorded visits or campaign clicks yet. Add the tracking snippet and share the lead form."
         : "No website visits or campaign sources yet. Connect the existing website to start attributing leads."
@@ -211,12 +212,16 @@ export default async function DashboardPage() {
                   person. GroovGro will not email anyone.
                 </p>
               ) : (
-                snapshot.recentLeads.map((lead) => (
+                snapshot.recentLeads.map((lead) => {
+                  const origin = formatLeadOrigin(lead.source, lead.campaign);
+                  return (
                   <p key={lead.id}>
                     <span className="font-medium">{lead.name}</span>
-                    {lead.email ? ` · ${lead.email}` : ""} · {lead.source}
+                    {lead.email ? ` · ${lead.email}` : ""}
+                    {origin ? ` · ${origin}` : ""}
                   </p>
-                ))
+                  );
+                })
               )}
             </CardContent>
           </Card>

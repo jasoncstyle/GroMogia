@@ -1,4 +1,5 @@
 import { desc, eq } from "drizzle-orm";
+import Link from "next/link";
 
 import { convertLeadToCustomer, moveLead } from "@/lib/actions/crm";
 import { getAppSession } from "@/lib/auth/session";
@@ -73,6 +74,13 @@ export default async function CrmPage() {
           .orderBy(desc(customers.firstConvertedAt))
       : [];
 
+  const firstCampaignByContact = new Map<string, string>();
+  for (const { lead } of [...leadRows].reverse()) {
+    if (!firstCampaignByContact.has(lead.contactId)) {
+      firstCampaignByContact.set(lead.contactId, lead.campaignId ?? "");
+    }
+  }
+
   const links = organizationId
     ? await getGrowthLinkOptions(organizationId)
     : { offers: [], goals: [] };
@@ -101,7 +109,11 @@ export default async function CrmPage() {
             <CardTitle>Public lead form</CardTitle>
             <CardDescription>
               Customers fill this in without signing in. Open it in a private
-              window to send a test lead.
+              window to send a test lead. To name a share, open{" "}
+              <Link href="/app/marketing" className="underline">
+                Marketing
+              </Link>
+              . GroovGro will not buy ads.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -143,6 +155,7 @@ export default async function CrmPage() {
                   <TableHead>Person</TableHead>
                   <TableHead>Stage</TableHead>
                   <TableHead>Source</TableHead>
+                  <TableHead>Share name</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -162,6 +175,7 @@ export default async function CrmPage() {
                     </TableCell>
                     <TableCell>{stage.name}</TableCell>
                     <TableCell>{lead.source}</TableCell>
+                    <TableCell>{lead.campaignId || "—"}</TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-2">
                         <SaveForm action={moveLead} successMessage="Lead moved">
@@ -203,7 +217,9 @@ export default async function CrmPage() {
         <CardHeader>
           <CardTitle>Customers</CardTitle>
           <CardDescription>
-            Paying or converted people. Same contact record as the lead.
+            Paying or converted people. Same contact record as the lead. Share
+            name is the name you typed for the first named share that brought
+            this person in.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -218,6 +234,7 @@ export default async function CrmPage() {
                   <TableHead>Person</TableHead>
                   <TableHead>Lifetime value</TableHead>
                   <TableHead>Source</TableHead>
+                  <TableHead>Share name</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -229,6 +246,9 @@ export default async function CrmPage() {
                     </TableCell>
                     <TableCell>{formatMoney(customer.ltvCents)}</TableCell>
                     <TableCell>{customer.marketingSource ?? "—"}</TableCell>
+                    <TableCell>
+                      {firstCampaignByContact.get(customer.contactId) || "—"}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

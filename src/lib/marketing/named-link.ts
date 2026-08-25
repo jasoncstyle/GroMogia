@@ -59,3 +59,10 @@ export function publicLeadAttribution(input: {
     channel: "website",
   };
 }
+
+export function formatLeadOrigin(source: string, campaign = ""): string {
+  const place = source.trim();
+  const share = campaign.trim();
+  if (place && share) return `${place} · ${share}`;
+  return place || share;
+}

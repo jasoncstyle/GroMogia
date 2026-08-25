@@ -102,6 +102,7 @@ describe("coordinated next step", () => {
           stageId: "stage-new",
           stageName: "New",
           source: "website",
+          campaign: "",
           isWon: false,
         },
       ],
@@ -142,6 +143,7 @@ describe("coordinated next step", () => {
           stageId: "stage-new",
           stageName: "New",
           source: "website",
+          campaign: "",
           isWon: false,
         },
       ],
@@ -1421,6 +1423,9 @@ describe("coordinated next step", () => {
     assert.match(page, /isShareLeadFormNextStep/);
     assert.match(page, /CopyLink/);
     assert.match(page, /LeadCreateForm/);
+    assert.match(page, /NamedShareHint/);
+    assert.match(page, /href="\/app\/marketing"/);
+    assert.doesNotMatch(page, /NamedLeadFormLink/);
     assert.match(
       readFileSync(join(process.cwd(), "src/app/(app)/app/crm/page.tsx"), "utf8"),
       /LeadCreateForm/,
@@ -2935,8 +2940,10 @@ describe("coordinated next step", () => {
       "utf8",
     );
     assert.match(source, /firstVisit/);
+    assert.match(source, /firstShareVisit/);
     assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
     assert.match(source, /revalidatePath\("\/app"\)/);
+    assert.match(source, /revalidatePath\("\/app\/marketing"\)/);
   });
 
   it("refreshes Next step after GroovGro records a new Stripe payment copy", () => {
@@ -2947,6 +2954,7 @@ describe("coordinated next step", () => {
     assert.match(source, /result\.created/);
     assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
     assert.match(source, /revalidatePath\("\/app\/crm"\)/);
+    assert.match(source, /revalidatePath\("\/app\/marketing"\)/);
     assert.doesNotMatch(source, /stripe-osa/);
   });
 });

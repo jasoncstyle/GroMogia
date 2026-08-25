@@ -35,6 +35,7 @@ export default async function MarketingPage() {
       )
     : "";
   const leadFormUrl = slug ? `${appUrl()}/l/${slug}` : "";
+  const websiteUrl = snapshot?.websiteUrl ?? "";
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -44,8 +45,8 @@ export default async function MarketingPage() {
           First look at campaign → lead → customer → revenue from the website
           snippet, the public form, and Stripe. Name a share below. When
           someone uses that named link, the place you typed shows as the
-          source instead of direct, website, or stripe. GroovGro will not buy
-          ads.
+          source and the name you typed shows as the share name. GroovGro
+          will not buy ads.
         </p>
       </div>
 
@@ -70,6 +71,32 @@ export default async function MarketingPage() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>Name a campaign on a website link</CardTitle>
+          <CardDescription>
+            Type where you will share the existing website and a name for this
+            share, then copy the link. GroovGro will not buy ads, send email,
+            or change the live website.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {websiteUrl ? (
+            <NamedLeadFormLink
+              baseUrl={websiteUrl}
+              idPrefix="website-utm"
+              openLabel="Open page"
+              copyAriaLabel="Copy named website link"
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Save the existing website address on Next step first. GroovGro
+              does not move the live site.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       {!snapshot ? (
         <p className="text-sm text-muted-foreground">
           Sign in to see marketing attribution.
@@ -82,9 +109,8 @@ export default async function MarketingPage() {
               Visits come from the tracking snippet. Leads come from the public
               form or people you add. Revenue counts Stripe charges only
               (the <code className="text-foreground">ch_</code> rows), so one
-              checkout is not counted three times. Add{" "}
-              a named link when you share the public form. GroovGro will not
-              buy ads.
+              checkout is not counted three times. Share name is the name you
+              typed for that link. GroovGro will not buy ads.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -99,6 +125,7 @@ export default async function MarketingPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Source</TableHead>
+                    <TableHead>Share name</TableHead>
                     <TableHead>Visits</TableHead>
                     <TableHead>Leads</TableHead>
                     <TableHead>Customers</TableHead>
@@ -107,8 +134,9 @@ export default async function MarketingPage() {
                 </TableHeader>
                 <TableBody>
                   {snapshot.rows.map((row) => (
-                    <TableRow key={row.source}>
+                    <TableRow key={`${row.source}::${row.campaign}`}>
                       <TableCell className="font-medium">{row.source}</TableCell>
+                      <TableCell>{row.campaign || "—"}</TableCell>
                       <TableCell>{row.visits}</TableCell>
                       <TableCell>{row.leads}</TableCell>
                       <TableCell>{row.customers}</TableCell>

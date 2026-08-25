@@ -7,21 +7,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { namedLeadFormUrl } from "@/lib/marketing/named-link";
 
-export function NamedLeadFormLink({ baseUrl }: { baseUrl: string }) {
+export function NamedLeadFormLink({
+  baseUrl,
+  idPrefix = "utm",
+  openLabel = "Open form",
+  copyAriaLabel = "Copy public lead form link",
+}: {
+  baseUrl: string
+  idPrefix?: string
+  openLabel?: string
+  copyAriaLabel?: string
+}) {
   const [source, setSource] = useState("");
   const [campaign, setCampaign] = useState("");
   const url = useMemo(
     () => namedLeadFormUrl(baseUrl, source, campaign),
     [baseUrl, source, campaign],
   );
+  const sourceId = `${idPrefix}-source`;
+  const campaignId = `${idPrefix}-campaign`;
 
   return (
     <div className="space-y-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="utm-source">Where you will share this</Label>
+          <Label htmlFor={sourceId}>Where you will share this</Label>
           <Input
-            id="utm-source"
+            id={sourceId}
             value={source}
             onChange={(event) => setSource(event.target.value)}
             placeholder="instagram"
@@ -29,9 +41,9 @@ export function NamedLeadFormLink({ baseUrl }: { baseUrl: string }) {
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="utm-campaign">Name for this share</Label>
+          <Label htmlFor={campaignId}>Name for this share</Label>
           <Input
-            id="utm-campaign"
+            id={campaignId}
             value={campaign}
             onChange={(event) => setCampaign(event.target.value)}
             placeholder="spring-open-house"
@@ -39,7 +51,12 @@ export function NamedLeadFormLink({ baseUrl }: { baseUrl: string }) {
           />
         </div>
       </div>
-      <CopyLink key={url} url={url} />
+      <CopyLink
+        key={url}
+        url={url}
+        openLabel={openLabel}
+        copyAriaLabel={copyAriaLabel}
+      />
     </div>
   );
 }
