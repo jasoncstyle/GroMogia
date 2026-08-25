@@ -21,29 +21,30 @@ export async function getMarketingSnapshot(organizationId: string) {
   const visitRows = await db
     .select({
       source: attributionTouches.channel,
+      campaign: attributionTouches.campaignId,
       count: sql<number>`count(*)::int`,
     })
     .from(attributionTouches)
     .where(eq(attributionTouches.organizationId, organizationId))
-    .groupBy(attributionTouches.channel);
+    .groupBy(attributionTouches.channel, attributionTouches.campaignId);
 
   const leadRows = await db
     .select({
       source: leadRecords.source,
+      campaign: leadRecords.campaignId,
       count: sql<number>`count(*)::int`,
     })
     .from(leadRecords)
     .where(eq(leadRecords.organizationId, organizationId))
-    .groupBy(leadRecords.source);
+    .groupBy(leadRecords.source, leadRecords.campaignId);
 
   const customerRows = await db
     .select({
+      contactId: customers.contactId,
       source: customers.marketingSource,
-      count: sql<number>`count(*)::int`,
     })
     .from(customers)
-    .where(eq(customers.organizationId, organizationId))
-    .groupBy(customers.marketingSource);
+    .where(eq(customers.organizationId, organizationId));
 
   const chargeRows = await db
     .select({
@@ -59,34 +60,38 @@ export async function getMarketingSnapshot(organizationId: string) {
       ),
     );
 
-  const firstLeadByContact = new Map<string, string>();
+  const firstLeadByContact = new Map<string, { source: string; campaign: string }>();
   const leadSources = await db
     .select({
       contactId: leadRecords.contactId,
       source: leadRecords.source,
+      campaign: leadRecords.campaignId,
     })
     .from(leadRecords)
     .where(eq(leadRecords.organizationId, organizationId))
     .orderBy(asc(leadRecords.createdAt));
   for (const lead of leadSources) {
     if (!firstLeadByContact.has(lead.contactId)) {
-      firstLeadByContact.set(lead.contactId, lead.source);
+      firstLeadByContact.set(lead.contactId, {
+        source: lead.source,
+        campaign: lead.campaign ?? "",
+      });
     }
   }
 
   const customerSourceByContact = new Map<string, string | null>();
-  const customerSourceRows = await db
-    .select({
-      contactId: customers.contactId,
-      source: customers.marketingSource,
-    })
-    .from(customers)
-    .where(eq(customers.organizationId, organizationId));
-  for (const customer of customerSourceRows) {
+  const customersForMerge: { source: string; campaign: string; count: number }[] = [];
+  for (const customer of customerRows) {
     customerSourceByContact.set(customer.contactId, customer.source);
+    const fromLead = firstLeadByContact.get(customer.contactId);
+    customersForMerge.push({
+      source: customer.source ?? fromLead?.source ?? "",
+      campaign: fromLead?.campaign ?? "",
+      count: 1,
+    });
   }
 
-  const revenue: { source: string; cents: number }[] = [];
+  const revenue: { source: string; campaign: string; cents: number }[] = [];
   let unattributedRevenueCents = 0;
   for (const charge of chargeRows) {
     const fromLead = charge.contactId
@@ -96,26 +101,29 @@ export async function getMarketingSnapshot(organizationId: string) {
       ? customerSourceByContact.get(charge.contactId)
       : undefined;
     const source = normalizeAttributionSource(
-      fromLead || fromCustomer || (charge.contactId ? "stripe" : ""),
+      fromLead?.source || fromCustomer || (charge.contactId ? "stripe" : ""),
     );
     if (!charge.contactId) unattributedRevenueCents += charge.amountCents;
-    revenue.push({ source, cents: charge.amountCents });
+    revenue.push({
+      source,
+      campaign: fromLead?.campaign ?? "",
+      cents: charge.amountCents,
+    });
   }
 
   return {
     rows: mergeAttributionRows({
       visits: visitRows.map((row) => ({
         source: row.source,
+        campaign: row.campaign,
         count: Number(row.count),
       })),
       leads: leadRows.map((row) => ({
         source: row.source,
+        campaign: row.campaign,
         count: Number(row.count),
       })),
-      customers: customerRows.map((row) => ({
-        source: row.source ?? "",
-        count: Number(row.count),
-      })),
+      customers: customersForMerge,
       revenue,
     }),
     unattributedRevenueCents,

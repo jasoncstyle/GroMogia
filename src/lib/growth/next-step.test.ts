@@ -2937,6 +2937,7 @@ describe("coordinated next step", () => {
     assert.match(source, /firstVisit/);
     assert.match(source, /revalidatePath\("\/app\/next-step"\)/);
     assert.match(source, /revalidatePath\("\/app"\)/);
+    assert.match(source, /revalidatePath\("\/app\/marketing"\)/);
   });
 
   it("refreshes Next step after GroovGro records a new Stripe payment copy", () => {

@@ -71,6 +71,8 @@ describe("named campaign lead form links", () => {
       "utf8",
     );
     assert.match(page, /NamedLeadFormLink/);
+    assert.match(page, /Share name/);
+    assert.match(page, /row\.campaign/);
     assert.match(page, /will not buy ads/);
     assert.doesNotMatch(page, /google ads/i);
     assert.doesNotMatch(page, /Open Website builder/);

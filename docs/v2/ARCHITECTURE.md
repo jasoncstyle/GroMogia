@@ -1412,7 +1412,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Marketing can type where the owner will share and a name for this share, then copy a public lead form URL with those names. GroovGro will not buy ads, send email, or change the live website.
 
-### 141. Store the named place on public-form leads (this slice)
+### 141. Store the named place on public-form leads
 
 **Reason:** Named Marketing links already add `utm_source` and `utm_campaign`. Visits from the website snippet already use that place as the channel. Public-form leads still stored `website_campaign`, so the Marketing table could not show the place the owner typed.
 
@@ -1421,6 +1421,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 **Migration risk:** None. Existing `website_campaign` rows stay. New named-link submissions store the place as the source. Builder forms that only send a campaign name still use `website_campaign`.
 
 **Current functionality:** When someone uses a named public lead form link, GroovGro stores the place as the lead source and the share name as the campaign. Marketing can then show that channel. GroovGro will not buy ads.
+
+### 142. Show the share name on Marketing (this slice)
+
+**Reason:** Named links store both the place and the share name. The Marketing table rolled those up by place only, so two Instagram shares looked like one row. The owner could not see which named link brought someone in.
+
+**Affected:** Marketing source table. Attribution merge. First-visit Marketing refresh.
+
+**Migration risk:** None. Rows with no share name still show. Two shares from the same place become two rows.
+
+**Current functionality:** Marketing shows the share name next to the source. The first website visit also refreshes Marketing. GroovGro will not buy ads.
 
 ## BUILD NEXT (after this slice is tested)
 
@@ -1554,7 +1564,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Keep Add a calendar item on Next step when it is not the main ask is parked.** Next step can review upcoming items and add a calendar item even when that is not the main ask. Events still has that form. Do not change ads or the website.
 - **Match charges to people on Bookings is parked.** Bookings can match a payment copy to a person when checkout did not include an email. Intelligence still names Bookings for that loop. Do not charge a card or change checkout.
 - **Name a campaign on a shared Marketing link is parked.** Marketing can type where the owner will share and a name for this share, then copy the public lead form link. Intelligence still names Marketing for that loop. Do not buy ads, send email, or change the live website.
-- **Store the named place on public-form leads (this slice).** Public-form leads from a named link store the place as the source so Marketing can show that channel. Do not buy ads.
+- **Store the named place on public-form leads is parked.** Public-form leads from a named link store the place as the source so Marketing can show that channel. Do not buy ads.
+- **Show the share name on Marketing (this slice).** Marketing shows the share name next to the source so two named links from the same place stay separate. Do not buy ads.
 
 ## DESIGN FOR LATER
 
@@ -1768,7 +1779,8 @@ Organization
 133. **Keep Add a calendar item on Next step when it is not the main ask** — Next step can review upcoming items and add a calendar item even when that is not the main ask; Events still has that form. Done.
 134. **Match charges to people on Bookings** — Bookings can match a payment copy to a person; Intelligence still names Bookings. Done. Do not charge a card or change checkout.
 135. **Name a campaign on a shared Marketing link** — Marketing can type where the owner will share and a name for this share, then copy the public lead form link; Intelligence still names Marketing. Done. Do not buy ads.
-136. **Store the named place on public-form leads** — Public-form leads from a named link store the place as the source so Marketing can show that channel. This slice. Do not buy ads.
-137. **Guarded automation** — only after the above is trusted.
+136. **Store the named place on public-form leads** — Public-form leads from a named link store the place as the source so Marketing can show that channel. Done. Do not buy ads.
+137. **Show the share name on Marketing** — Marketing shows the share name next to the source. This slice. Do not buy ads.
+138. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

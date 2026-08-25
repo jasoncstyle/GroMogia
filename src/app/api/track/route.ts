@@ -87,6 +87,7 @@ export async function POST(request: Request) {
     revalidatePath("/app/next-step");
     revalidatePath("/app");
     revalidatePath("/app/analytics");
+    revalidatePath("/app/marketing");
     revalidatePath("/app/website");
   }
 
