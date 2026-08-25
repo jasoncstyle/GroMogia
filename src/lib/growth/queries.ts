@@ -29,7 +29,7 @@ import {
   searchConsoleSnapshots,
   websiteDiscoveredPages,
 } from "@/lib/db/schema";
-import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
+import { connectedProgressFacts, goalShareAttribution, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
 import { findPlanNeedingActions } from "@/lib/growth/plan-actions";
 import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal, findReadableGoal, findReadableGrowthPlan } from "@/lib/growth/plan-draft";
@@ -143,11 +143,14 @@ export async function getGrowthSnapshot(organizationId: string) {
 
   const goals = goalRows.map((goal) => {
     const live = liveGoalProgress(goal, facts);
+    const share = goalShareAttribution(goal, facts);
     return {
       ...goal,
       liveCurrentValue: live.currentValue,
       liveNote: live.note,
       liveComputable: live.computable,
+      shareNote: share?.note ?? "",
+      shareRows: share?.rows ?? [],
       progressPercent: live.computable
         ? live.progressPercent
         : goalProgressPercent(goal.currentValue, goal.targetValue),
@@ -767,6 +770,7 @@ function toReadableGoal(goal: {
   targetValue: number | null
   unit: string
   liveNote: string
+  shareNote?: string
   progressPercent: number | null
   liveComputable?: boolean
   progressHistory?: {
@@ -784,6 +788,7 @@ function toReadableGoal(goal: {
     targetValue: goal.targetValue,
     unit: goal.unit,
     liveNote: goal.liveNote,
+    shareNote: goal.shareNote ?? "",
     progressPercent: goal.progressPercent,
     liveComputable: Boolean(goal.liveComputable),
     progressHistory: (goal.progressHistory ?? []).map((row) => ({

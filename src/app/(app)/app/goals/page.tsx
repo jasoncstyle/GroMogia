@@ -6,6 +6,7 @@ import {
 } from "@/lib/actions/growth";
 import { InferredBadge } from "@/components/growth-review";
 import { GoalCreateForm } from "@/components/goal-create-form";
+import { GoalShareNote } from "@/components/goal-share-note";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import {
   alreadyDraftedNextGoal,
@@ -159,6 +160,7 @@ export default async function GoalsPage() {
                   {goal.unit ? ` ${goal.unit}` : ""}
                 </p>
                 <p className="text-sm text-muted-foreground">{goal.liveNote}</p>
+                <GoalShareNote note={goal.shareNote} rows={goal.shareRows} />
                 <InferredBadge source={goal.inferredFrom} confidence={goal.confidence} />
                 <p className="mt-3 text-xs text-muted-foreground">
                   Confirm or reject this on Next step. Confirming makes it
@@ -210,6 +212,7 @@ export default async function GoalsPage() {
                     {goal.liveNote ? (
                       <p className="text-sm text-muted-foreground">{goal.liveNote}</p>
                     ) : null}
+                    <GoalShareNote note={goal.shareNote} rows={goal.shareRows} />
                     {goal.progressRecordedAt ? (
                       <p className="text-sm text-muted-foreground">
                         Last saved: {goal.currentValue}

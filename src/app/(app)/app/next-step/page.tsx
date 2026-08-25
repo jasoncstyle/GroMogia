@@ -7,6 +7,7 @@ import { NextStepResponseButtons, OpenPageNextStepButtons, LeaveAloneNextStepBut
 import { OwnerWorkButtons, CheckWhatChangedButton } from "@/components/owner-work-actions";
 import { DraftSeoImprovementsButton, RunHomepageSeoButton, SeoDraftDecisionButtons } from "@/components/seo-actions";
 import { FoldableSample } from "@/components/foldable-sample";
+import { GoalShareNote } from "@/components/goal-share-note";
 import { EventCreateForm } from "@/components/event-create-form";
 import { BrandVoiceDraftForm } from "@/components/brand-voice-draft-form";
 import { BrandVoiceExampleForm } from "@/components/brand-voice-example-form";
@@ -1266,6 +1267,7 @@ function GoalReadout({
     targetValue: number | null
     unit: string
     liveNote: string
+    shareNote?: string
     progressPercent: number | null
     progressHistory?: {
       id: string
@@ -1299,6 +1301,7 @@ function GoalReadout({
         {goal.liveNote ? (
           <p className="text-muted-foreground">{goal.liveNote}</p>
         ) : null}
+        <GoalShareNote note={goal.shareNote ?? ""} />
       </div>
       {history.length > 0 ? (
         <FoldableSample

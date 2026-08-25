@@ -2771,6 +2771,9 @@ describe("coordinated next step", () => {
     assert.match(goals, /Saved progress/);
     assert.match(queries, /toReadableGoal/);
     assert.match(queries, /progressHistory/);
+    assert.match(queries, /shareNote/);
+    assert.match(page, /GoalShareNote/);
+    assert.match(goals, /GoalShareNote/);
   });
 
   it("lets the owner read this week’s look on Next step", () => {

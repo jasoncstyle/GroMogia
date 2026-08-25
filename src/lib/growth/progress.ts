@@ -1,8 +1,21 @@
+import { formatLeadOrigin } from "@/lib/marketing/named-link";
 import { goalProgressPercent, isGoalAchieved } from "@/lib/growth/types";
 
 export type ProgressLead = {
   createdAt: Date
   offerId: string | null
+  source?: string
+  campaign?: string
+};
+
+export type GoalShareRow = {
+  origin: string
+  count: number
+};
+
+export type GoalShareAttribution = {
+  note: string
+  rows: GoalShareRow[]
 };
 
 export type ProgressBooking = {
@@ -178,6 +191,51 @@ export function liveGoalProgress(
   };
 }
 
+function matchingLeadWindow(goal: ProgressGoal, facts: ProgressFacts): ProgressLead[] {
+  const windowStart = progressWindowStart(goal, facts.now);
+  return facts.leads.filter(
+    (lead) =>
+      matchesOffer(lead.offerId, goal.offerId) &&
+      inWindow(lead.createdAt, windowStart, facts.now),
+  );
+}
+
+export function goalShareAttribution(
+  goal: ProgressGoal,
+  facts: ProgressFacts,
+): GoalShareAttribution | null {
+  if (goal.goalType !== "lead_generation") return null;
+  const matching = matchingLeadWindow(goal, facts);
+  if (matching.length === 0) return null;
+
+  const counts = new Map<string, number>();
+  for (const lead of matching) {
+    const campaign = (lead.campaign ?? "").trim();
+    if (!campaign) continue;
+    const origin = formatLeadOrigin(lead.source ?? "", campaign);
+    if (!origin) continue;
+    counts.set(origin, (counts.get(origin) ?? 0) + 1);
+  }
+  const rows = [...counts.entries()]
+    .map(([origin, count]) => ({ origin, count }))
+    .sort((a, b) => b.count - a.count || a.origin.localeCompare(b.origin))
+    .slice(0, 3);
+
+  if (rows.length === 0) {
+    return {
+      note: "This Goal number does not yet name a share.",
+      rows: [],
+    };
+  }
+
+  const top = rows[0];
+  const note =
+    top.count === matching.length
+      ? `This Goal number is from ${top.origin}.`
+      : `${top.count} of ${matching.length} in this Goal number came from ${top.origin}.`;
+  return { note, rows };
+}
+
 export function progressDayKey(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
@@ -221,7 +279,13 @@ export function storedGoalFieldsFromLive(
 
 export function connectedProgressFacts(input: {
   now: Date
-  leads: { createdAt: Date; offerId: string | null }[]
+  leads: {
+    createdAt: Date
+    offerId: string | null
+    source?: string | null
+    campaignId?: string | null
+    campaign?: string | null
+  }[]
   bookings: {
     id: string
     createdAt: Date
@@ -251,6 +315,8 @@ export function connectedProgressFacts(input: {
     leads: input.leads.map((lead) => ({
       createdAt: lead.createdAt,
       offerId: lead.offerId,
+      source: lead.source ?? "",
+      campaign: lead.campaignId ?? lead.campaign ?? "",
     })),
     bookings: input.bookings.map((booking) => ({
       createdAt: booking.createdAt,

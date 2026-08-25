@@ -1532,9 +1532,20 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Dashboard names Marketing for the share name. GroovGro will not buy ads.
 
+### 153. Show which named share moved a lead Goal
+
+**Reason:** Marketing already stores the share name on people. A lead Goal still showed only a total, so the owner could not see which named share moved that number.
+
+**Affected:** Goal progress helper, Goals page, Next step Goal readout.
+
+**Migration risk:** None. The Goal number is unchanged. Naming a share stays on Marketing. Revenue and booking Goals stay unexplained until a later slice.
+
+**Current functionality:** Goals and Next step name the share that moved a lead Goal number. GroovGro will not buy ads.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
+- **Show the share name on Marketing is parked.** Marketing, Next step, Leads, Dashboard, Customers, and Intelligence show the share name. Naming stays on Marketing. Do not buy ads.
 - **Growth Plan is parked.** Versioned write-up from a Goal. Approve or reject. Do not execute.
 - **Plan actions are parked.** Propose first actions from an approved plan. Approve or reject. Do not execute.
 - **Owner work is parked.** The owner does approved actions and marks them. GroovGro does not execute.
@@ -1719,7 +1730,7 @@ A policy is: minimum elapsed days, observations, and conversions. Helper `eviden
 
 ## What V2 still lacks (important, not in this slice)
 
-- Attribution from campaign all the way to a Goal
+- Attribution from a named share to a revenue or booking Goal
 - Specialist execute path
 - Risk guardrail engine beyond stored fields and permissions
 
@@ -1890,17 +1901,18 @@ Organization
 134. **Match charges to people on Bookings** — Bookings can match a payment copy to a person; Intelligence still names Bookings. Done. Do not charge a card or change checkout.
 135. **Name a campaign on a shared Marketing link** — Marketing can type where the owner will share and a name for this share, then copy the public lead form link; Intelligence still names Marketing. Done. Do not buy ads.
 136. **Store the named place on public-form leads** — Public-form leads from a named link store the place as the source so Marketing can show that channel. Done. Do not buy ads.
-137. **Show the share name on Marketing** — Marketing shows the share name next to the source. This slice. Do not buy ads.
-138. **Show the share name on Leads and Next step** — Next step follow-up and Leads show the share name next to the place. This slice. Do not email anyone or buy ads.
-139. **Name a campaign on a website link** — Marketing can name a share of the existing website. This slice. Do not buy ads or change the live website.
-140. **Show the share name on Dashboard recent leads** — Dashboard recent leads show the share name next to the place. This slice. Do not email anyone or buy ads.
-141. **Point Analytics at Marketing for share names** — Analytics names Marketing for the share name. This slice. Do not buy ads.
-142. **Show the share name on Customers** — Customers show the share name from the first lead. This slice. Do not email anyone or buy ads.
-143. **Show the share name in Intelligence** — Intelligence names the share next to the place for the top lead and revenue source. This slice. Do not buy ads.
-144. **Point Next step at Marketing for named shares** — Next step and Leads name Marketing for naming a share. This slice. Do not buy ads.
-145. **Refresh Marketing when a named share lands a person** — Marketing refreshes when a person is added, converted, or matched to a payment copy. This slice. Do not buy ads or change checkout.
-146. **Refresh Marketing when a named website share records a visit** — Marketing refreshes the first time that named share records a visit. This slice. Do not buy ads or change the live site.
-147. **Point Dashboard at Marketing for share names** — Dashboard names Marketing for the share name. This slice. Do not buy ads.
-148. **Guarded automation** — only after the above is trusted.
+137. **Show the share name on Marketing** — Marketing shows the share name next to the source. Done. Do not buy ads.
+138. **Show the share name on Leads and Next step** — Next step follow-up and Leads show the share name next to the place. Done. Do not email anyone or buy ads.
+139. **Name a campaign on a website link** — Marketing can name a share of the existing website. Done. Do not buy ads or change the live website.
+140. **Show the share name on Dashboard recent leads** — Dashboard recent leads show the share name next to the place. Done. Do not email anyone or buy ads.
+141. **Point Analytics at Marketing for share names** — Analytics names Marketing for the share name. Done. Do not buy ads.
+142. **Show the share name on Customers** — Customers show the share name from the first lead. Done. Do not email anyone or buy ads.
+143. **Show the share name in Intelligence** — Intelligence names the share next to the place for the top lead and revenue source. Done. Do not buy ads.
+144. **Point Next step at Marketing for named shares** — Next step and Leads name Marketing for naming a share. Done. Do not buy ads.
+145. **Refresh Marketing when a named share lands a person** — Marketing refreshes when a person is added, converted, or matched to a payment copy. Done. Do not buy ads or change checkout.
+146. **Refresh Marketing when a named website share records a visit** — Marketing refreshes the first time that named share records a visit. Done. Do not buy ads or change the live site.
+147. **Point Dashboard at Marketing for share names** — Dashboard names Marketing for the share name. Done. Do not buy ads.
+148. **Show which named share moved a lead Goal** — Goals and Next step name the share that moved a lead Goal number. This slice. Do not buy ads.
+149. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
