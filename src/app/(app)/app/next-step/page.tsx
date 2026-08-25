@@ -38,6 +38,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
 import { getBrandSettingsForm, getBusinessBrainForm, getCoordinatedNextStep, getDiscoveredWebsitePages, getGrowthLinkOptions, getGrowthSettingsForm } from "@/lib/growth/queries";
+import { formatLeadOrigin } from "@/lib/marketing/named-link";
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
@@ -346,7 +347,7 @@ export default async function NextStepPage({
                       <p className="text-muted-foreground">
                         {lead.stageName}
                         {lead.email ? ` · ${lead.email}` : ""}
-                        {lead.source ? ` · ${lead.source}` : ""}
+                        {leadOriginSuffix(lead)}
                       </p>
                       <LeadFollowUpButtons
                         leadId={lead.id}
@@ -680,7 +681,7 @@ export default async function NextStepPage({
                     <p className="text-muted-foreground">
                       {lead.stageName}
                       {lead.email ? ` · ${lead.email}` : ""}
-                      {lead.source ? ` · ${lead.source}` : ""}
+                      {leadOriginSuffix(lead)}
                     </p>
                     <LeadFollowUpButtons
                       leadId={lead.id}
@@ -1235,6 +1236,11 @@ export default async function NextStepPage({
       )}
     </div>
   );
+}
+
+function leadOriginSuffix(lead: { source: string; campaign: string }) {
+  const origin = formatLeadOrigin(lead.source, lead.campaign);
+  return origin ? ` · ${origin}` : "";
 }
 
 function GoalReadout({

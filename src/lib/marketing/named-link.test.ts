@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
+  formatLeadOrigin,
   namedLeadFormUrl,
   publicLeadAttribution,
   slugForCampaignPart,
@@ -65,6 +66,15 @@ describe("named campaign lead form links", () => {
     });
   });
 
+  it("shows the place and share name together for follow-up", () => {
+    assert.equal(
+      formatLeadOrigin("instagram", "spring-open-house"),
+      "instagram · spring-open-house",
+    );
+    assert.equal(formatLeadOrigin("instagram", ""), "instagram");
+    assert.equal(formatLeadOrigin("", ""), "");
+  });
+
   it("keeps naming a campaign on Marketing and does not start ads", () => {
     const page = readFileSync(
       join(process.cwd(), "src/app/(app)/app/marketing/page.tsx"),
@@ -112,5 +122,19 @@ describe("named campaign lead form links", () => {
     );
     assert.match(form, /name="utmSource"/);
     assert.match(form, /name="utmCampaign"/);
+
+    const nextStep = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(nextStep, /leadOriginSuffix/);
+    assert.match(nextStep, /formatLeadOrigin/);
+
+    const crm = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/crm/page.tsx"),
+      "utf8",
+    );
+    assert.match(crm, /Share name/);
+    assert.match(crm, /lead\.campaignId/);
   });
 });

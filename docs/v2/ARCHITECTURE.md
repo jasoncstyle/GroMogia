@@ -1432,6 +1432,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** Marketing shows the share name next to the source. The first website visit also refreshes Marketing. GroovGro will not buy ads.
 
+### 143. Show the share name on Leads and Next step
+
+**Reason:** Named public-form leads store the share name. Marketing already shows it. Follow-up on Next step and the Leads pipeline only showed the place, so the owner could not tell which named share brought that person in.
+
+**Affected:** Next step follow-up cards. Leads pipeline.
+
+**Migration risk:** None. Leads with no share name still show the place only.
+
+**Current functionality:** Next step follow-up and Leads show the share name next to the place. GroovGro will not email anyone or buy ads.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
@@ -1566,6 +1576,7 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Name a campaign on a shared Marketing link is parked.** Marketing can type where the owner will share and a name for this share, then copy the public lead form link. Intelligence still names Marketing for that loop. Do not buy ads, send email, or change the live website.
 - **Store the named place on public-form leads is parked.** Public-form leads from a named link store the place as the source so Marketing can show that channel. Do not buy ads.
 - **Show the share name on Marketing (this slice).** Marketing shows the share name next to the source so two named links from the same place stay separate. Do not buy ads.
+- **Show the share name on Leads and Next step.** Next step follow-up and Leads show the share name next to the place. Do not email anyone or buy ads.
 
 ## DESIGN FOR LATER
 
@@ -1781,6 +1792,7 @@ Organization
 135. **Name a campaign on a shared Marketing link** — Marketing can type where the owner will share and a name for this share, then copy the public lead form link; Intelligence still names Marketing. Done. Do not buy ads.
 136. **Store the named place on public-form leads** — Public-form leads from a named link store the place as the source so Marketing can show that channel. Done. Do not buy ads.
 137. **Show the share name on Marketing** — Marketing shows the share name next to the source. This slice. Do not buy ads.
-138. **Guarded automation** — only after the above is trusted.
+138. **Show the share name on Leads and Next step** — Next step follow-up and Leads show the share name next to the place. This slice. Do not email anyone or buy ads.
+139. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

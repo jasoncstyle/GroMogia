@@ -143,6 +143,7 @@ export default async function CrmPage() {
                   <TableHead>Person</TableHead>
                   <TableHead>Stage</TableHead>
                   <TableHead>Source</TableHead>
+                  <TableHead>Share name</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
@@ -162,6 +163,7 @@ export default async function CrmPage() {
                     </TableCell>
                     <TableCell>{stage.name}</TableCell>
                     <TableCell>{lead.source}</TableCell>
+                    <TableCell>{lead.campaignId || "—"}</TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-2">
                         <SaveForm action={moveLead} successMessage="Lead moved">

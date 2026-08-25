@@ -65,6 +65,7 @@ export type OpenLeadItem = {
   stageId: string
   stageName: string
   source: string
+  campaign: string
   isWon: boolean
 };
 
