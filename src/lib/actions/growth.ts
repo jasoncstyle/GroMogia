@@ -24,6 +24,7 @@ import {
   payments,
   websiteDiscoveredPages,
   websites,
+  attributionTouches,
 } from "@/lib/db/schema";
 import { assertSameOrganization } from "@/lib/db/tenant";
 import { discoverFromConnectedData, normalizeOfferKey } from "@/lib/growth/discover";
@@ -168,12 +169,20 @@ async function persistComputableGoalProgress(
   organizationId: string,
 ): Promise<number> {
   const now = new Date();
-  const [goalRows, leadRows, bookingRows, paymentRows, eventRows] = await Promise.all([
+  const [goalRows, leadRows, bookingRows, paymentRows, eventRows, visitRows] = await Promise.all([
     db.select().from(growthGoals).where(eq(growthGoals.organizationId, organizationId)),
     db.select().from(leadRecords).where(eq(leadRecords.organizationId, organizationId)),
     db.select().from(bookings).where(eq(bookings.organizationId, organizationId)),
     db.select().from(payments).where(eq(payments.organizationId, organizationId)),
     db.select().from(events).where(eq(events.organizationId, organizationId)),
+    db
+      .select({
+        occurredAt: attributionTouches.occurredAt,
+        source: attributionTouches.channel,
+        campaign: attributionTouches.campaignId,
+      })
+      .from(attributionTouches)
+      .where(eq(attributionTouches.organizationId, organizationId)),
   ]);
   const facts = connectedProgressFacts({
     now,
@@ -181,6 +190,7 @@ async function persistComputableGoalProgress(
     bookings: bookingRows,
     payments: paymentRows,
     events: eventRows,
+    visits: visitRows,
   });
 
   let saved = 0;
