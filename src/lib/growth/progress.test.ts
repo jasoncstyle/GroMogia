@@ -468,6 +468,79 @@ describe("live goal progress", () => {
     assert.equal(revenue?.note, "This Goal number is from instagram · spring-open-house.");
   });
 
+  it("counts a Traffic Goal from website visits and names the share", () => {
+    const goal = {
+      goalType: "traffic",
+      offerId: null,
+      startsOn: new Date("2026-08-01T00:00:00.000Z"),
+      currentValue: 0,
+      targetValue: 20,
+      unit: "visits",
+    };
+    const facts = {
+      now,
+      leads: [],
+      events: [],
+      bookings: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          offerId: null,
+          eventId: "e1",
+          status: "confirmed",
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+      ],
+      payments: [],
+      visits: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-11T00:00:00.000Z"),
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-12T00:00:00.000Z"),
+          source: "instagram",
+          campaign: "fall-open-house",
+        },
+        {
+          createdAt: new Date("2026-07-01T00:00:00.000Z"),
+          source: "instagram",
+          campaign: "too-old",
+        },
+      ],
+    };
+    const live = liveGoalProgress(goal, facts);
+    const share = goalShareAttribution(goal, facts);
+    assert.equal(live.computable, true);
+    assert.equal(live.currentValue, 3);
+    assert.match(live.note, /3 website visits/);
+    assert.equal(
+      share?.note,
+      "2 of 3 in this Goal number came from instagram · spring-open-house.",
+    );
+    assert.match(
+      extraShareClause(share?.rows),
+      /Other named shares: instagram · fall-open-house \(1\)/,
+    );
+    assert.equal(
+      liveGoalProgress(goal, { ...facts, visits: [] }).currentValue,
+      0,
+    );
+    const source = readFileSync(join(process.cwd(), "src/lib/growth/progress.ts"), "utf8");
+    assert.match(source, /matchingVisits/);
+    assert.match(source, /website visit/);
+    const queries = readFileSync(join(process.cwd(), "src/lib/growth/queries.ts"), "utf8");
+    assert.match(queries, /visits: visitRows/);
+    const persist = readFileSync(join(process.cwd(), "src/lib/actions/growth.ts"), "utf8");
+    assert.match(persist, /visits: visitRows/);
+  });
+
   it("says when a lead Goal number does not name a share", () => {
     const share = goalShareAttribution(
       {

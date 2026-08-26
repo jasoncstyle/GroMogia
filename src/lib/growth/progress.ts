@@ -53,12 +53,19 @@ export type ProgressEvent = {
   status: string
 };
 
+export type ProgressVisit = {
+  createdAt: Date
+  source?: string
+  campaign?: string
+};
+
 export type ProgressFacts = {
   now: Date
   leads: ProgressLead[]
   bookings: ProgressBooking[]
   payments: ProgressPayment[]
   events: ProgressEvent[]
+  visits?: ProgressVisit[]
 };
 
 export type ProgressGoal = {
@@ -240,6 +247,16 @@ export function liveGoalProgress(
     };
   }
 
+  if (goal.goalType === "traffic") {
+    const count = matchingVisits(goal, facts).length;
+    return {
+      currentValue: count,
+      progressPercent: goalProgressPercent(count, goal.targetValue),
+      note: `${count} website visit${count === 1 ? "" : "s"} in the connected window.`,
+      computable: true,
+    };
+  }
+
   const bookings = facts.bookings.filter(
     (booking) =>
       isConfirmedBooking(booking.status) &&
@@ -343,6 +360,13 @@ function handUpdatedShareSummary(
   };
 }
 
+function matchingVisits(goal: ProgressGoal, facts: ProgressFacts): ProgressVisit[] {
+  const windowStart = progressWindowStart(goal, facts.now);
+  return (facts.visits ?? []).filter((visit) =>
+    inWindow(visit.createdAt, windowStart, facts.now),
+  );
+}
+
 function matchingLeads(goal: ProgressGoal, facts: ProgressFacts): ProgressLead[] {
   const windowStart = progressWindowStart(goal, facts.now);
   return facts.leads.filter(
@@ -419,6 +443,12 @@ export function goalShareAttribution(
 
   if (goal.goalType === "lead_generation") {
     const matching = matchingLeads(goal, facts);
+    if (matching.length === 0) return null;
+    return shareSummary(matching.length, countByOrigin(matching), "count");
+  }
+
+  if (goal.goalType === "traffic") {
+    const matching = matchingVisits(goal, facts);
     if (matching.length === 0) return null;
     return shareSummary(matching.length, countByOrigin(matching), "count");
   }
@@ -526,6 +556,11 @@ export function connectedProgressFacts(input: {
     capacity: number | null
     status: string
   }[]
+  visits?: {
+    occurredAt: Date
+    source?: string | null
+    campaign?: string | null
+  }[]
 }): ProgressFacts {
   const bookingById = new Map(input.bookings.map((booking) => [booking.id, booking]));
   const firstShare = firstShareByContact(input.leads);
@@ -583,6 +618,11 @@ export function connectedProgressFacts(input: {
       startsAt: event.startsAt,
       capacity: event.capacity,
       status: event.status,
+    })),
+    visits: (input.visits ?? []).map((visit) => ({
+      createdAt: visit.occurredAt,
+      source: visit.source ?? "",
+      campaign: visit.campaign ?? "",
     })),
   };
 }

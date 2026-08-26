@@ -201,6 +201,7 @@ describe("named campaign lead form links", () => {
     );
     assert.match(track, /firstShareVisit/);
     assert.match(track, /revalidatePath\("\/app\/marketing"\)/);
+    assert.match(track, /revalidatePath\("\/app\/goals"\)/);
 
     const intelligenceFacts = readFileSync(
       join(process.cwd(), "src/lib/phase4/queries.ts"),
@@ -221,5 +222,6 @@ describe("named campaign lead form links", () => {
     );
     assert.match(progress, /handUpdatedShareSummary/);
     assert.match(progress, /updated by hand/);
+    assert.match(progress, /matchingVisits/);
   });
 });

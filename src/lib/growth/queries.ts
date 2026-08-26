@@ -28,6 +28,7 @@ import {
   seoDrafts,
   searchConsoleSnapshots,
   websiteDiscoveredPages,
+  attributionTouches,
 } from "@/lib/db/schema";
 import { connectedProgressFacts, goalShareAttribution, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
@@ -65,6 +66,7 @@ export async function getGrowthSnapshot(organizationId: string) {
     paymentRows,
     leadRows,
     snapshotRows,
+    visitRows,
   ] = await Promise.all([
     db
       .select()
@@ -124,6 +126,14 @@ export async function getGrowthSnapshot(organizationId: string) {
       .from(goalProgressSnapshots)
       .where(eq(goalProgressSnapshots.organizationId, organizationId))
       .orderBy(desc(goalProgressSnapshots.recordedAt)),
+    db
+      .select({
+        occurredAt: attributionTouches.occurredAt,
+        source: attributionTouches.channel,
+        campaign: attributionTouches.campaignId,
+      })
+      .from(attributionTouches)
+      .where(eq(attributionTouches.organizationId, organizationId)),
   ]);
 
   const facts = connectedProgressFacts({
@@ -132,6 +142,7 @@ export async function getGrowthSnapshot(organizationId: string) {
     bookings: bookingRows,
     payments: paymentRows,
     events: eventRows,
+    visits: visitRows,
   });
 
   const historyByGoal = new Map<string, (typeof snapshotRows)[number][]>();

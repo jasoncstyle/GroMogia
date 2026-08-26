@@ -1552,6 +1552,16 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 
 **Current functionality:** A Goal updated by hand names the share that brought people, bookings, or payments in the same window, including extra named shares. The typed number is unchanged. GroovGro will not buy ads.
 
+### 155. Count a Traffic Goal from website visits
+
+**Reason:** A Traffic Goal was treated as connected, but the live number came from bookings. Website visits from a named share already exist. The owner could not see visit count or which named share moved a Traffic Goal.
+
+**Affected:** Goal progress helper, growth snapshot, Save connected progress, first named-share visit refresh of Goals and Next step. Existing Goal read surfaces already print `shareNote`.
+
+**Migration risk:** An existing Traffic Goal that saved a booking count will show website visits after this slice. Naming a share stays on Marketing. Matching charges stays on Bookings.
+
+**Current functionality:** A Traffic Goal counts website visits in the connected window and names the share that moved that number, including extra named shares. GroovGro will not buy ads or change the live site.
+
 ## BUILD NEXT (after this slice is tested)
 
 - **Website builder is parked.** Optional GroovGro-hosted pages stay. Do not add builder features until Jason asks.
@@ -1698,7 +1708,8 @@ Website builder stays optional. V2’s later “Phase 13 builder” does not mea
 - **Refresh Marketing when a named website share records a visit.** Marketing refreshes the first time that named share records a visit. Do not buy ads or change the live site.
 - **Point Dashboard at Marketing for share names.** Dashboard names Marketing for the share name instead of only listing the place. Do not buy ads.
 - **Show which named share moved a Goal.** Goals, Next step, Dashboard, Check what changed, Your work, drafted plans, specialists, the path so far, and Intelligence name the share that moved a connected Goal number. Do not buy ads.
-- **Name the share next to a Goal that is updated by hand (this slice).** A Goal the owner types by hand still names the share that brought people, bookings, or payments in. The typed number is unchanged. Do not buy ads.
+- **Name the share next to a Goal that is updated by hand is parked.** A Goal the owner types by hand still names the share that brought people, bookings, or payments in. The typed number is unchanged. Do not buy ads.
+- **Count a Traffic Goal from website visits (this slice).** A Traffic Goal counts website visits and names the share that moved that number. Do not buy ads or change the live site.
 
 ## DESIGN FOR LATER
 
@@ -1924,7 +1935,8 @@ Organization
 146. **Refresh Marketing when a named website share records a visit** — Marketing refreshes the first time that named share records a visit. Done. Do not buy ads or change the live site.
 147. **Point Dashboard at Marketing for share names** — Dashboard names Marketing for the share name. Done. Do not buy ads.
 148. **Show which named share moved a Goal** — Goals, Next step, Dashboard, Check what changed, Your work, drafted plans, specialists, the path so far, and Intelligence name the share that moved a connected Goal number (leads, payments, and bookings), including extra named shares. Done. Do not buy ads.
-149. **Name the share next to a Goal that is updated by hand** — A Goal the owner types by hand names the share that brought people, bookings, or payments in the same window, including extra named shares. The typed number is unchanged. This slice. Do not buy ads.
-150. **Guarded automation** — only after the above is trusted.
+149. **Name the share next to a Goal that is updated by hand** — A Goal the owner types by hand names the share that brought people, bookings, or payments in the same window, including extra named shares. The typed number is unchanged. Done. Do not buy ads.
+150. **Count a Traffic Goal from website visits** — A Traffic Goal counts website visits in the connected window and names the share that moved that number, including extra named shares. This slice. Do not buy ads or change the live site.
+151. **Guarded automation** — only after the above is trusted.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.

@@ -112,6 +112,8 @@ export async function POST(request: Request) {
     revalidatePath("/app/marketing");
     revalidatePath("/app/analytics");
     revalidatePath("/app/intelligence");
+    revalidatePath("/app/goals");
+    revalidatePath("/app/next-step");
   }
 
   return json({ ok: true });
