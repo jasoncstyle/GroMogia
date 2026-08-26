@@ -245,9 +245,107 @@ describe("live goal progress", () => {
       goalShareAttribution(goal, { ...facts, leads: [] }),
       null,
     );
+    const paidFacts = {
+      ...facts,
+      leads: [] as typeof facts.leads,
+      payments: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          amountCents: 12000,
+          kind: "charge",
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-10T12:00:00.000Z"),
+          amountCents: 4000,
+          kind: "charge",
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-11T00:00:00.000Z"),
+          amountCents: 8000,
+          kind: "charge",
+          offerId: null,
+          source: "instagram",
+          campaign: "fall-open-house",
+        },
+      ],
+    };
+    const paid = goalShareAttribution(goal, paidFacts);
+    assert.equal(liveGoalProgress(goal, paidFacts).currentValue, 7);
+    assert.equal(liveGoalProgress(goal, paidFacts).computable, false);
+    assert.equal(
+      paid?.note,
+      "This Goal number is updated by hand. 2 of 3 payments in this window came from instagram · spring-open-house.",
+    );
+    assert.match(
+      extraShareClause(paid?.rows),
+      /Other named shares: instagram · fall-open-house \(1\)/,
+    );
+    assert.equal(
+      goalShareAttribution(
+        { ...goal, goalType: "retention" },
+        {
+          ...facts,
+          leads: [],
+          bookings: [
+            {
+              createdAt: new Date("2026-08-10T00:00:00.000Z"),
+              offerId: null,
+              eventId: "e1",
+              status: "confirmed",
+              source: "instagram",
+              campaign: "spring-open-house",
+            },
+          ],
+        },
+      )?.note,
+      "This Goal number is updated by hand. Named bookings in this window came from instagram · spring-open-house.",
+    );
+    const mixed = goalShareAttribution(goal, {
+      now,
+      leads: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+      ],
+      events: [],
+      bookings: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          offerId: null,
+          eventId: "e1",
+          status: "confirmed",
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+      ],
+      payments: [
+        {
+          createdAt: new Date("2026-08-11T00:00:00.000Z"),
+          amountCents: 5000,
+          kind: "charge",
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+      ],
+    });
+    assert.equal(
+      mixed?.note,
+      "This Goal number is updated by hand. Named people, bookings, and payments in this window came from instagram · spring-open-house.",
+    );
     const source = readFileSync(join(process.cwd(), "src/lib/growth/progress.ts"), "utf8");
     assert.match(source, /handUpdatedShareSummary/);
     assert.match(source, /updated by hand/);
+    assert.match(source, /handUpdatedKindPhrase/);
   });
 
   it("names the share that moved a revenue Goal from matched payments", () => {
