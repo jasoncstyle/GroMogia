@@ -254,15 +254,19 @@ export function liveGoalProgress(
   };
 }
 
+function shareRowsFromBuckets(buckets: Map<string, number>): GoalShareRow[] {
+  return [...buckets.entries()]
+    .map(([origin, count]) => ({ origin, count }))
+    .sort((a, b) => b.count - a.count || a.origin.localeCompare(b.origin))
+    .slice(0, 3);
+}
+
 function shareSummary(
   total: number,
   buckets: Map<string, number>,
   unit: "count" | "dollars",
 ): GoalShareAttribution {
-  const rows = [...buckets.entries()]
-    .map(([origin, count]) => ({ origin, count }))
-    .sort((a, b) => b.count - a.count || a.origin.localeCompare(b.origin))
-    .slice(0, 3);
+  const rows = shareRowsFromBuckets(buckets);
 
   if (rows.length === 0) {
     return {
@@ -286,6 +290,32 @@ function shareSummary(
   }
   return {
     note: `${top.count} of ${total} in this Goal number came from ${top.origin}.`,
+    rows,
+  };
+}
+
+function handUpdatedShareSummary(
+  total: number,
+  buckets: Map<string, number>,
+): GoalShareAttribution {
+  const rows = shareRowsFromBuckets(buckets);
+
+  if (rows.length === 0) {
+    return {
+      note: "This Goal number is updated by hand and does not yet name a share.",
+      rows: [],
+    };
+  }
+
+  const top = rows[0];
+  if (top.count === total) {
+    return {
+      note: `This Goal number is updated by hand. Named people in this window came from ${top.origin}.`,
+      rows,
+    };
+  }
+  return {
+    note: `This Goal number is updated by hand. ${top.count} of ${total} people in this window came from ${top.origin}.`,
     rows,
   };
 }
@@ -354,7 +384,11 @@ export function goalShareAttribution(
   goal: ProgressGoal,
   facts: ProgressFacts,
 ): GoalShareAttribution | null {
-  if (!FLOW_TYPES.has(goal.goalType)) return null;
+  if (!FLOW_TYPES.has(goal.goalType)) {
+    const matching = matchingLeads(goal, facts);
+    if (matching.length === 0) return null;
+    return handUpdatedShareSummary(matching.length, countByOrigin(matching));
+  }
 
   if (goal.goalType === "lead_generation") {
     const matching = matchingLeads(goal, facts);

@@ -215,5 +215,11 @@ describe("named campaign lead form links", () => {
     );
     assert.match(intelligencePage, /GoalShareNote/);
     assert.match(intelligencePage, /activeGoalShare\.rows/);
+    const progress = readFileSync(
+      join(process.cwd(), "src/lib/growth/progress.ts"),
+      "utf8",
+    );
+    assert.match(progress, /handUpdatedShareSummary/);
+    assert.match(progress, /updated by hand/);
   });
 });
