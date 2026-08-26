@@ -254,15 +254,19 @@ export function liveGoalProgress(
   };
 }
 
+function shareRowsFromBuckets(buckets: Map<string, number>): GoalShareRow[] {
+  return [...buckets.entries()]
+    .map(([origin, count]) => ({ origin, count }))
+    .sort((a, b) => b.count - a.count || a.origin.localeCompare(b.origin))
+    .slice(0, 3);
+}
+
 function shareSummary(
   total: number,
   buckets: Map<string, number>,
   unit: "count" | "dollars",
 ): GoalShareAttribution {
-  const rows = [...buckets.entries()]
-    .map(([origin, count]) => ({ origin, count }))
-    .sort((a, b) => b.count - a.count || a.origin.localeCompare(b.origin))
-    .slice(0, 3);
+  const rows = shareRowsFromBuckets(buckets);
 
   if (rows.length === 0) {
     return {
@@ -286,6 +290,55 @@ function shareSummary(
   }
   return {
     note: `${top.count} of ${total} in this Goal number came from ${top.origin}.`,
+    rows,
+  };
+}
+
+function handUpdatedKindPhrase(
+  people: number,
+  bookings: number,
+  payments: number,
+): string {
+  const parts: string[] = [];
+  if (people > 0) parts.push("people");
+  if (bookings > 0) parts.push("bookings");
+  if (payments > 0) parts.push("payments");
+  if (parts.length === 0) return "activity";
+  if (parts.length === 1) return parts[0];
+  if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
+  return `${parts[0]}, ${parts[1]}, and ${parts[2]}`;
+}
+
+function handUpdatedShareSummary(
+  people: ProgressLead[],
+  bookings: ProgressBooking[],
+  payments: ProgressPayment[],
+): GoalShareAttribution {
+  const total = people.length + bookings.length + payments.length;
+  const buckets = countByOrigin([...people, ...bookings, ...payments]);
+  const rows = shareRowsFromBuckets(buckets);
+  const kinds = handUpdatedKindPhrase(
+    people.length,
+    bookings.length,
+    payments.length,
+  );
+
+  if (rows.length === 0) {
+    return {
+      note: "This Goal number is updated by hand and does not yet name a share.",
+      rows: [],
+    };
+  }
+
+  const top = rows[0];
+  if (top.count === total) {
+    return {
+      note: `This Goal number is updated by hand. Named ${kinds} in this window came from ${top.origin}.`,
+      rows,
+    };
+  }
+  return {
+    note: `This Goal number is updated by hand. ${top.count} of ${total} ${kinds} in this window came from ${top.origin}.`,
     rows,
   };
 }
@@ -354,7 +407,15 @@ export function goalShareAttribution(
   goal: ProgressGoal,
   facts: ProgressFacts,
 ): GoalShareAttribution | null {
-  if (!FLOW_TYPES.has(goal.goalType)) return null;
+  if (!FLOW_TYPES.has(goal.goalType)) {
+    const people = matchingLeads(goal, facts);
+    const bookings = matchingBookings(goal, facts);
+    const payments = matchingPayments(goal, facts);
+    if (people.length === 0 && bookings.length === 0 && payments.length === 0) {
+      return null;
+    }
+    return handUpdatedShareSummary(people, bookings, payments);
+  }
 
   if (goal.goalType === "lead_generation") {
     const matching = matchingLeads(goal, facts);

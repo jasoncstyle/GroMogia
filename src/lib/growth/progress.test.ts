@@ -158,10 +158,194 @@ describe("live goal progress", () => {
     );
     assert.equal(extraShareClause([{ origin: "instagram · spring-open-house", count: 3 }]), "");
     assert.equal(extraShareClause([]), "");
+  });
+
+  it("names the share next to a Goal that is updated by hand", () => {
+    const goal = {
+      goalType: "custom",
+      offerId: null,
+      startsOn: new Date("2026-08-01T00:00:00.000Z"),
+      currentValue: 7,
+      targetValue: 10,
+      unit: "referrals",
+    };
+    const facts = {
+      now,
+      leads: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-11T00:00:00.000Z"),
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-12T00:00:00.000Z"),
+          offerId: null,
+          source: "instagram",
+          campaign: "fall-open-house",
+        },
+      ],
+      events: [],
+      bookings: [],
+      payments: [],
+    };
+    const live = liveGoalProgress(goal, facts);
+    const share = goalShareAttribution(goal, facts);
+    assert.equal(live.computable, false);
+    assert.equal(live.currentValue, 7);
     assert.equal(
-      goalShareAttribution({ ...goal, goalType: "custom" }, facts),
+      share?.note,
+      "This Goal number is updated by hand. 2 of 3 people in this window came from instagram · spring-open-house.",
+    );
+    assert.equal(share?.rows[0]?.origin, "instagram · spring-open-house");
+    assert.equal(share?.rows[0]?.count, 2);
+    assert.match(
+      extraShareClause(share?.rows),
+      /Other named shares: instagram · fall-open-house \(1\)/,
+    );
+    assert.equal(
+      goalShareAttribution({ ...goal, goalType: "visibility" }, facts)?.note,
+      share?.note,
+    );
+    assert.equal(
+      goalShareAttribution(goal, {
+        ...facts,
+        leads: [
+          {
+            createdAt: new Date("2026-08-10T00:00:00.000Z"),
+            offerId: null,
+            source: "instagram",
+            campaign: "spring-open-house",
+          },
+        ],
+      })?.note,
+      "This Goal number is updated by hand. Named people in this window came from instagram · spring-open-house.",
+    );
+    assert.equal(
+      goalShareAttribution(goal, {
+        ...facts,
+        leads: [
+          {
+            createdAt: new Date("2026-08-10T00:00:00.000Z"),
+            offerId: null,
+            source: "instagram",
+            campaign: "",
+          },
+        ],
+      })?.note,
+      "This Goal number is updated by hand and does not yet name a share.",
+    );
+    assert.equal(
+      goalShareAttribution(goal, { ...facts, leads: [] }),
       null,
     );
+    const paidFacts = {
+      ...facts,
+      leads: [] as typeof facts.leads,
+      payments: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          amountCents: 12000,
+          kind: "charge",
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-10T12:00:00.000Z"),
+          amountCents: 4000,
+          kind: "charge",
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-11T00:00:00.000Z"),
+          amountCents: 8000,
+          kind: "charge",
+          offerId: null,
+          source: "instagram",
+          campaign: "fall-open-house",
+        },
+      ],
+    };
+    const paid = goalShareAttribution(goal, paidFacts);
+    assert.equal(liveGoalProgress(goal, paidFacts).currentValue, 7);
+    assert.equal(liveGoalProgress(goal, paidFacts).computable, false);
+    assert.equal(
+      paid?.note,
+      "This Goal number is updated by hand. 2 of 3 payments in this window came from instagram · spring-open-house.",
+    );
+    assert.match(
+      extraShareClause(paid?.rows),
+      /Other named shares: instagram · fall-open-house \(1\)/,
+    );
+    assert.equal(
+      goalShareAttribution(
+        { ...goal, goalType: "retention" },
+        {
+          ...facts,
+          leads: [],
+          bookings: [
+            {
+              createdAt: new Date("2026-08-10T00:00:00.000Z"),
+              offerId: null,
+              eventId: "e1",
+              status: "confirmed",
+              source: "instagram",
+              campaign: "spring-open-house",
+            },
+          ],
+        },
+      )?.note,
+      "This Goal number is updated by hand. Named bookings in this window came from instagram · spring-open-house.",
+    );
+    const mixed = goalShareAttribution(goal, {
+      now,
+      leads: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+      ],
+      events: [],
+      bookings: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          offerId: null,
+          eventId: "e1",
+          status: "confirmed",
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+      ],
+      payments: [
+        {
+          createdAt: new Date("2026-08-11T00:00:00.000Z"),
+          amountCents: 5000,
+          kind: "charge",
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+      ],
+    });
+    assert.equal(
+      mixed?.note,
+      "This Goal number is updated by hand. Named people, bookings, and payments in this window came from instagram · spring-open-house.",
+    );
+    const source = readFileSync(join(process.cwd(), "src/lib/growth/progress.ts"), "utf8");
+    assert.match(source, /handUpdatedShareSummary/);
+    assert.match(source, /updated by hand/);
+    assert.match(source, /handUpdatedKindPhrase/);
   });
 
   it("names the share that moved a revenue Goal from matched payments", () => {
@@ -356,6 +540,20 @@ describe("live goal progress", () => {
     assert.equal(live.computable, false);
     assert.equal(live.currentValue, 3);
     assert.equal(live.progressPercent, 30);
+    assert.equal(
+      goalShareAttribution(
+        {
+          goalType: "custom",
+          offerId: null,
+          startsOn: null,
+          currentValue: 3,
+          targetValue: 10,
+          unit: "referrals",
+        },
+        { now, leads: [], events: [], bookings: [], payments: [] },
+      ),
+      null,
+    );
   });
 
   it("stores one connected number per day and updates that day if it changed", () => {
