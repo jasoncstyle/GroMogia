@@ -315,29 +315,34 @@ function handUpdatedKindPhrase(
   people: number,
   bookings: number,
   payments: number,
+  visits: number,
 ): string {
   const parts: string[] = [];
   if (people > 0) parts.push("people");
   if (bookings > 0) parts.push("bookings");
   if (payments > 0) parts.push("payments");
+  if (visits > 0) parts.push("website visits");
   if (parts.length === 0) return "activity";
   if (parts.length === 1) return parts[0];
   if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
-  return `${parts[0]}, ${parts[1]}, and ${parts[2]}`;
+  return `${parts.slice(0, -1).join(", ")}, and ${parts[parts.length - 1]}`;
 }
 
 function handUpdatedShareSummary(
   people: ProgressLead[],
   bookings: ProgressBooking[],
   payments: ProgressPayment[],
+  visits: ProgressVisit[],
 ): GoalShareAttribution {
-  const total = people.length + bookings.length + payments.length;
-  const buckets = countByOrigin([...people, ...bookings, ...payments]);
+  const total =
+    people.length + bookings.length + payments.length + visits.length;
+  const buckets = countByOrigin([...people, ...bookings, ...payments, ...visits]);
   const rows = shareRowsFromBuckets(buckets);
   const kinds = handUpdatedKindPhrase(
     people.length,
     bookings.length,
     payments.length,
+    visits.length,
   );
 
   if (rows.length === 0) {
@@ -435,10 +440,16 @@ export function goalShareAttribution(
     const people = matchingLeads(goal, facts);
     const bookings = matchingBookings(goal, facts);
     const payments = matchingPayments(goal, facts);
-    if (people.length === 0 && bookings.length === 0 && payments.length === 0) {
+    const visits = matchingVisits(goal, facts);
+    if (
+      people.length === 0 &&
+      bookings.length === 0 &&
+      payments.length === 0 &&
+      visits.length === 0
+    ) {
       return null;
     }
-    return handUpdatedShareSummary(people, bookings, payments);
+    return handUpdatedShareSummary(people, bookings, payments, visits);
   }
 
   if (goal.goalType === "lead_generation") {

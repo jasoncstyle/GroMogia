@@ -342,10 +342,48 @@ describe("live goal progress", () => {
       mixed?.note,
       "This Goal number is updated by hand. Named people, bookings, and payments in this window came from instagram · spring-open-house.",
     );
+    const visitFacts = {
+      now,
+      leads: [] as typeof facts.leads,
+      events: [] as typeof facts.events,
+      bookings: [] as typeof facts.bookings,
+      payments: [] as typeof facts.payments,
+      visits: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-11T00:00:00.000Z"),
+          source: "instagram",
+          campaign: "fall-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-11T12:00:00.000Z"),
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+      ],
+    };
+    const visited = goalShareAttribution(
+      { ...goal, goalType: "visibility" },
+      visitFacts,
+    );
+    assert.equal(liveGoalProgress({ ...goal, goalType: "visibility" }, visitFacts).currentValue, 7);
+    assert.equal(
+      visited?.note,
+      "This Goal number is updated by hand. 2 of 3 website visits in this window came from instagram · spring-open-house.",
+    );
+    assert.match(
+      extraShareClause(visited?.rows),
+      /Other named shares: instagram · fall-open-house \(1\)/,
+    );
     const source = readFileSync(join(process.cwd(), "src/lib/growth/progress.ts"), "utf8");
     assert.match(source, /handUpdatedShareSummary/);
     assert.match(source, /updated by hand/);
     assert.match(source, /handUpdatedKindPhrase/);
+    assert.match(source, /website visits/);
   });
 
   it("names the share that moved a revenue Goal from matched payments", () => {
