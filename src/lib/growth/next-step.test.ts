@@ -2771,6 +2771,35 @@ describe("coordinated next step", () => {
     assert.match(goals, /Saved progress/);
     assert.match(queries, /toReadableGoal/);
     assert.match(queries, /progressHistory/);
+    assert.match(queries, /shareNote/);
+    assert.match(queries, /shareRows/);
+    assert.match(page, /GoalShareNote/);
+    assert.match(page, /goal\.shareRows/);
+    assert.match(goals, /GoalShareNote/);
+    const shareNote = readFileSync(
+      join(process.cwd(), "src/components/goal-share-note.tsx"),
+      "utf8",
+    );
+    assert.match(shareNote, /min-h-11/);
+    const dashboard = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      "utf8",
+    );
+    assert.match(dashboard, /GoalShareNote/);
+    assert.match(dashboard, /goal\.shareRows/);
+    const intelligencePage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/intelligence/page.tsx"),
+      "utf8",
+    );
+    assert.match(intelligencePage, /GoalShareNote/);
+    const learning = readFileSync(
+      join(process.cwd(), "src/lib/growth/work-learning.ts"),
+      "utf8",
+    );
+    assert.match(learning, /shareClause/);
+    assert.match(learning, /shareNote/);
+    assert.match(learning, /shareRows/);
+    assert.match(learning, /extraShareClause/);
   });
 
   it("lets the owner read this week’s look on Next step", () => {

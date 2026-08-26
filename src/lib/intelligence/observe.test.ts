@@ -238,6 +238,43 @@ describe("intelligence observe", () => {
     assert.match(revenueSource?.body ?? "", /instagram · spring-open-house/);
   });
 
+  it("names the share that moved the active Goal", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        activeGoalShare: {
+          title: "More people get in touch",
+          note: "This Goal number is from instagram · spring-open-house.",
+        },
+      }),
+    );
+    const goalShare = brief.observations.find(
+      (item) => item.title === "Goal number and share",
+    );
+    assert.match(goalShare?.body ?? "", /instagram · spring-open-house/);
+    assert.equal(goalShare?.href, "/app/next-step");
+    assert.match(goalShare?.body ?? "", /Marketing/);
+  });
+
+  it("names extra shares that also moved the active Goal", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        activeGoalShare: {
+          title: "More people get in touch",
+          note: "2 of 3 in this Goal number came from instagram · spring-open-house.",
+          rows: [
+            { origin: "instagram · spring-open-house", count: 2 },
+            { origin: "instagram · summer-open-house", count: 1 },
+          ],
+        },
+      }),
+    );
+    const goalShare = brief.observations.find(
+      (item) => item.title === "Goal number and share",
+    );
+    assert.match(goalShare?.body ?? "", /instagram · spring-open-house/);
+    assert.match(goalShare?.body ?? "", /Other named shares: instagram · summer-open-house \(1\)/);
+  });
+
   it("sends people observations to Next step when follow-up or adding a person lives there", () => {
     const empty = buildIntelligenceBrief(facts({ contactCount: 0, openLeadCount: 0 }));
     const peopleEmpty = empty.observations.find(

@@ -104,6 +104,7 @@ describe("named campaign lead form links", () => {
     assert.doesNotMatch(observe, /google ads/i);
     assert.match(observe, /website_campaign/);
     assert.match(observe, /formatLeadOrigin/);
+    assert.match(observe, /Goal number and share/);
 
     const action = readFileSync(
       join(process.cwd(), "src/lib/actions/public-lead.ts"),
@@ -169,6 +170,12 @@ describe("named campaign lead form links", () => {
     );
     assert.match(dashboard, /formatLeadOrigin/);
     assert.match(dashboard, /Open Marketing to see the share name/);
+    assert.match(dashboard, /goalShare/);
+    assert.match(dashboard, /GoalShareNote/);
+    assert.match(dashboard, /goal\.shareNote/);
+    assert.match(dashboard, /goal\.shareRows/);
+    assert.match(dashboard, /Read the Goal on Next step/);
+    assert.match(dashboard, /extraShareClause/);
     assert.doesNotMatch(dashboard, /· \{lead\.source\}/);
 
     const website = readFileSync(
@@ -184,6 +191,8 @@ describe("named campaign lead form links", () => {
     );
     assert.match(analytics, /href="\/app\/marketing"/);
     assert.match(analytics, /share name/);
+    assert.match(analytics, /GoalShareNote/);
+    assert.match(analytics, /which share moved the Goal number/);
     assert.doesNotMatch(analytics, /expands later/);
 
     const track = readFileSync(
@@ -192,5 +201,19 @@ describe("named campaign lead form links", () => {
     );
     assert.match(track, /firstShareVisit/);
     assert.match(track, /revalidatePath\("\/app\/marketing"\)/);
+
+    const intelligenceFacts = readFileSync(
+      join(process.cwd(), "src/lib/phase4/queries.ts"),
+      "utf8",
+    );
+    assert.match(intelligenceFacts, /getGrowthSnapshot/);
+    assert.match(intelligenceFacts, /activeGoalShare/);
+    assert.match(intelligenceFacts, /shareRows/);
+    const intelligencePage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/intelligence/page.tsx"),
+      "utf8",
+    );
+    assert.match(intelligencePage, /GoalShareNote/);
+    assert.match(intelligencePage, /activeGoalShare\.rows/);
   });
 });

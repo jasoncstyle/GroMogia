@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
+  connectedProgressFacts,
+  extraShareClause,
+  goalShareAttribution,
   liveGoalProgress,
   planProgressSnapshot,
   progressDayKey,
@@ -99,6 +102,243 @@ describe("live goal progress", () => {
 
     assert.equal(live.currentValue, 475);
     assert.doesNotMatch(live.note.toLowerCase(), /sailing|boat|seat/);
+  });
+
+  it("names the share that moved a lead Goal", () => {
+    const goal = {
+      goalType: "lead_generation",
+      offerId: null,
+      startsOn: new Date("2026-08-01T00:00:00.000Z"),
+      currentValue: 0,
+      targetValue: 10,
+      unit: "leads",
+    };
+    const facts = {
+      now,
+      leads: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-11T00:00:00.000Z"),
+          offerId: null,
+          source: "instagram",
+          campaign: "spring-open-house",
+        },
+        {
+          createdAt: new Date("2026-08-12T00:00:00.000Z"),
+          offerId: null,
+          source: "instagram",
+          campaign: "fall-open-house",
+        },
+        {
+          createdAt: new Date("2026-07-01T00:00:00.000Z"),
+          offerId: null,
+          source: "instagram",
+          campaign: "too-old",
+        },
+      ],
+      events: [],
+      bookings: [],
+      payments: [],
+    };
+    const share = goalShareAttribution(goal, facts);
+    assert.equal(
+      share?.note,
+      "2 of 3 in this Goal number came from instagram · spring-open-house.",
+    );
+    assert.equal(share?.rows[0]?.origin, "instagram · spring-open-house");
+    assert.equal(share?.rows[0]?.count, 2);
+    assert.match(
+      extraShareClause(share?.rows),
+      /Other named shares: instagram · fall-open-house \(1\)/,
+    );
+    assert.equal(extraShareClause([{ origin: "instagram · spring-open-house", count: 3 }]), "");
+    assert.equal(extraShareClause([]), "");
+    assert.equal(
+      goalShareAttribution({ ...goal, goalType: "custom" }, facts),
+      null,
+    );
+  });
+
+  it("names the share that moved a revenue Goal from matched payments", () => {
+    const share = goalShareAttribution(
+      {
+        goalType: "revenue",
+        offerId: null,
+        startsOn: new Date("2026-08-01T00:00:00.000Z"),
+        currentValue: 0,
+        targetValue: 1000,
+        unit: "dollars",
+      },
+      {
+        now,
+        leads: [],
+        events: [],
+        bookings: [],
+        payments: [
+          {
+            createdAt: new Date("2026-08-10T00:00:00.000Z"),
+            amountCents: 30000,
+            kind: "charge",
+            offerId: null,
+            source: "instagram",
+            campaign: "spring-open-house",
+          },
+          {
+            createdAt: new Date("2026-08-12T00:00:00.000Z"),
+            amountCents: 17500,
+            kind: "charge",
+            offerId: null,
+            source: "instagram",
+            campaign: "fall-open-house",
+          },
+          {
+            createdAt: new Date("2026-08-12T00:00:00.000Z"),
+            amountCents: 20000,
+            kind: "refund",
+            offerId: null,
+            source: "instagram",
+            campaign: "spring-open-house",
+          },
+        ],
+      },
+    );
+    assert.equal(
+      share?.note,
+      "300 of 475 dollars in this Goal number came from instagram · spring-open-house.",
+    );
+    assert.equal(share?.rows[0]?.count, 300);
+  });
+
+  it("names the share that moved a booking Goal, including through the first named lead", () => {
+    const facts = connectedProgressFacts({
+      now,
+      leads: [
+        {
+          createdAt: new Date("2026-08-02T00:00:00.000Z"),
+          offerId: null,
+          contactId: "c1",
+          source: "instagram",
+          campaignId: "spring-open-house",
+        },
+      ],
+      bookings: [
+        {
+          id: "b1",
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          offerId: null,
+          eventId: "e1",
+          status: "confirmed",
+          contactId: "c1",
+        },
+        {
+          id: "b2",
+          createdAt: new Date("2026-08-11T00:00:00.000Z"),
+          offerId: null,
+          eventId: "e1",
+          status: "confirmed",
+          contactId: "c2",
+        },
+      ],
+      payments: [
+        {
+          createdAt: new Date("2026-08-10T00:00:00.000Z"),
+          amountCents: 12000,
+          kind: "charge",
+          bookingId: "b1",
+          contactId: "c1",
+        },
+      ],
+      events: [],
+    });
+    const bookings = goalShareAttribution(
+      {
+        goalType: "conversions",
+        offerId: null,
+        startsOn: new Date("2026-08-01T00:00:00.000Z"),
+        currentValue: 0,
+        targetValue: 10,
+        unit: "bookings",
+      },
+      facts,
+    );
+    assert.equal(
+      bookings?.note,
+      "1 of 2 in this Goal number came from instagram · spring-open-house.",
+    );
+    const revenue = goalShareAttribution(
+      {
+        goalType: "revenue",
+        offerId: null,
+        startsOn: new Date("2026-08-01T00:00:00.000Z"),
+        currentValue: 0,
+        targetValue: 500,
+        unit: "dollars",
+      },
+      facts,
+    );
+    assert.equal(revenue?.note, "This Goal number is from instagram · spring-open-house.");
+  });
+
+  it("says when a lead Goal number does not name a share", () => {
+    const share = goalShareAttribution(
+      {
+        goalType: "lead_generation",
+        offerId: null,
+        startsOn: null,
+        currentValue: 0,
+        targetValue: 5,
+        unit: "leads",
+      },
+      {
+        now,
+        leads: [
+          {
+            createdAt: now,
+            offerId: null,
+            source: "manual",
+            campaign: "",
+          },
+        ],
+        events: [],
+        bookings: [],
+        payments: [],
+      },
+    );
+    assert.equal(share?.note, "This Goal number does not yet name a share.");
+    assert.deepEqual(share?.rows, []);
+  });
+
+  it("does not treat a place without a share name as a named share", () => {
+    const share = goalShareAttribution(
+      {
+        goalType: "lead_generation",
+        offerId: null,
+        startsOn: null,
+        currentValue: 0,
+        targetValue: 5,
+        unit: "leads",
+      },
+      {
+        now,
+        leads: [
+          {
+            createdAt: now,
+            offerId: null,
+            source: "instagram",
+            campaign: "",
+          },
+        ],
+        events: [],
+        bookings: [],
+        payments: [],
+      },
+    );
+    assert.equal(share?.note, "This Goal number does not yet name a share.");
   });
 
   it("leaves custom goals as manual numbers", () => {

@@ -1,4 +1,5 @@
 import { FOLLOW_UP_LEADS_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { extraShareClause } from "@/lib/growth/progress";
 import { formatLeadOrigin } from "@/lib/marketing/named-link";
 import { formatMoney } from "@/lib/money";
 
@@ -23,6 +24,11 @@ export type IntelligenceFacts = {
   upcomingEventCount: number
   sources: IntelligenceSource[]
   showFinancials: boolean
+  activeGoalShare?: {
+    title: string
+    note: string
+    rows?: { origin: string; count: number }[]
+  } | null
 };
 
 export type InsightItem = {
@@ -125,6 +131,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       body: `${formatMoney(facts.unattributedRevenueCents)} in Stripe charges has no person email yet, so GroovGro cannot attach a marketing source.`,
       evidence: ["payments.contact_id is null"],
       href: "/app/commerce",
+    });
+  }
+
+  if (facts.activeGoalShare?.note) {
+    observations.push({
+      kind: "observation",
+      title: "Goal number and share",
+      body: `“${facts.activeGoalShare.title}”: ${facts.activeGoalShare.note}${extraShareClause(facts.activeGoalShare.rows)} Naming a share stays on Marketing. GroovGro will not buy ads.`,
+      evidence: ["growth_goals live progress", "named share"],
+      href: "/app/next-step",
     });
   }
 

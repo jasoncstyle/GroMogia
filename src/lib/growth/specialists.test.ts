@@ -768,6 +768,66 @@ describe("growth specialists", () => {
     }
   });
 
+  it("names the share that moved a related Goal", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          goals: [
+            {
+              id: "g-lead",
+              title: "More people get in touch",
+              status: "active",
+              goalType: "lead_generation",
+              liveCurrentValue: 3,
+              targetValue: 10,
+              progressPercent: 30,
+              liveNote: "3 leads in the connected window.",
+              shareNote: "This Goal number is from instagram · spring-open-house.",
+            },
+          ],
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.match(crm.analyze, /instagram · spring-open-house/);
+  });
+
+  it("names extra shares on a related Goal", () => {
+    const crm = specialistById(
+      buildSpecialistReports(
+        facts({
+          goals: [
+            {
+              id: "g-lead",
+              title: "More people get in touch",
+              status: "active",
+              goalType: "lead_generation",
+              liveCurrentValue: 3,
+              targetValue: 10,
+              progressPercent: 30,
+              liveNote: "3 leads in the connected window.",
+              shareNote: "2 of 3 in this Goal number came from instagram · spring-open-house.",
+              shareRows: [
+                { origin: "instagram · spring-open-house", count: 2 },
+                { origin: "instagram · summer-open-house", count: 1 },
+              ],
+            },
+          ],
+        }),
+      ),
+      "crm",
+    );
+    assert.ok(crm);
+    assert.match(crm.analyze, /instagram · spring-open-house/);
+    assert.match(crm.analyze, /Other named shares: instagram · summer-open-house \(1\)/);
+    const queries = readFileSync(
+      join(process.cwd(), "src/lib/growth/queries.ts"),
+      "utf8",
+    );
+    assert.match(queries, /shareRows: goal\.shareRows/);
+  });
+
   it("always stays on read, analyze, and recommend", () => {
     const reports = buildSpecialistReports(facts());
     assert.equal(reports.length, 7);

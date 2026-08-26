@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/card";
 import { getAppSession } from "@/lib/auth/session";
 import { refreshIntelligence } from "@/lib/actions/intelligence";
+import { GoalShareNote } from "@/components/goal-share-note";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { hasPermission } from "@/lib/permissions";
 import {
@@ -71,6 +72,24 @@ export default async function IntelligencePage() {
               </SaveForm>
             </CardContent>
           </Card>
+
+          {data.facts.activeGoalShare?.note ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{data.facts.activeGoalShare.title}</CardTitle>
+                <CardDescription>
+                  Which named share moved this Goal number. Open Next step to
+                  read the Goal. Naming a share stays on Marketing.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <GoalShareNote
+                  note={data.facts.activeGoalShare.note}
+                  rows={data.facts.activeGoalShare.rows}
+                />
+              </CardContent>
+            </Card>
+          ) : null}
 
           <div className="grid gap-4 md:grid-cols-2">
             <Card>

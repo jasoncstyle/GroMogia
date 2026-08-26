@@ -7,6 +7,7 @@ import {
   type IntelligenceBrief,
   type IntelligenceFacts,
 } from "@/lib/intelligence/observe";
+import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 import { getMarketingSnapshot } from "@/lib/phase3/queries";
 
@@ -14,11 +15,14 @@ export async function getIntelligenceFacts(
   organizationId: string,
   options: { showFinancials: boolean },
 ): Promise<IntelligenceFacts> {
-  const [dashboard, marketing, charges] = await Promise.all([
+  const [dashboard, marketing, charges, growth] = await Promise.all([
     getDashboardSnapshot(organizationId),
     getMarketingSnapshot(organizationId),
     countChargesThisMonth(organizationId),
+    getGrowthSnapshot(organizationId),
   ]);
+
+  const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
 
   return {
     websiteConnected: Boolean(dashboard.website?.publicUrl),
@@ -37,6 +41,13 @@ export async function getIntelligenceFacts(
     }).length,
     sources: marketing.rows,
     showFinancials: options.showFinancials,
+    activeGoalShare: activeGoal
+      ? {
+          title: activeGoal.title,
+          note: activeGoal.shareNote,
+          rows: activeGoal.shareRows,
+        }
+      : null,
   };
 }
 

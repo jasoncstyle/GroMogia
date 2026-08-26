@@ -29,7 +29,7 @@ import {
   searchConsoleSnapshots,
   websiteDiscoveredPages,
 } from "@/lib/db/schema";
-import { connectedProgressFacts, liveGoalProgress } from "@/lib/growth/progress";
+import { connectedProgressFacts, goalShareAttribution, liveGoalProgress } from "@/lib/growth/progress";
 import { findActivateCandidate } from "@/lib/growth/next-goal";
 import { findPlanNeedingActions } from "@/lib/growth/plan-actions";
 import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal, findReadableGoal, findReadableGrowthPlan } from "@/lib/growth/plan-draft";
@@ -143,11 +143,14 @@ export async function getGrowthSnapshot(organizationId: string) {
 
   const goals = goalRows.map((goal) => {
     const live = liveGoalProgress(goal, facts);
+    const share = goalShareAttribution(goal, facts);
     return {
       ...goal,
       liveCurrentValue: live.currentValue,
       liveNote: live.note,
       liveComputable: live.computable,
+      shareNote: share?.note ?? "",
+      shareRows: share?.rows ?? [],
       progressPercent: live.computable
         ? live.progressPercent
         : goalProgressPercent(goal.currentValue, goal.targetValue),
@@ -166,6 +169,8 @@ export async function getGrowthSnapshot(organizationId: string) {
       targetValue: goal.targetValue,
       progressPercent: goal.progressPercent,
       liveNote: goal.liveNote,
+      shareNote: goal.shareNote,
+      shareRows: goal.shareRows,
       discoveryStatus: goal.discoveryStatus,
     })),
     offers: offerRows.map((offer) => ({
@@ -558,6 +563,8 @@ export async function getSpecialistReports(organizationId: string) {
       targetValue: goal.targetValue,
       progressPercent: goal.progressPercent,
       liveNote: goal.liveNote,
+      shareNote: goal.shareNote,
+      shareRows: goal.shareRows,
     })),
     inferredDraftCount:
       snapshot.inferredOffers.length + snapshot.inferredGoals.length,
@@ -767,6 +774,8 @@ function toReadableGoal(goal: {
   targetValue: number | null
   unit: string
   liveNote: string
+  shareNote?: string
+  shareRows?: { origin: string; count: number }[]
   progressPercent: number | null
   liveComputable?: boolean
   progressHistory?: {
@@ -784,6 +793,8 @@ function toReadableGoal(goal: {
     targetValue: goal.targetValue,
     unit: goal.unit,
     liveNote: goal.liveNote,
+    shareNote: goal.shareNote ?? "",
+    shareRows: goal.shareRows ?? [],
     progressPercent: goal.progressPercent,
     liveComputable: Boolean(goal.liveComputable),
     progressHistory: (goal.progressHistory ?? []).map((row) => ({

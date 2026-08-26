@@ -1,3 +1,4 @@
+import { extraShareClause, type GoalShareRow } from "@/lib/growth/progress";
 import { DEFAULT_EVIDENCE_POLICIES, evidenceRecommendation, labelFor } from "@/lib/growth/types";
 import type { EvidencePolicy, EvidenceSample } from "@/lib/growth/types";
 import { CONNECT_SEARCH_CONSOLE_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, FIX_SEO_STEP_TITLE, FOLLOW_UP_LEADS_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PICK_SEARCH_CONSOLE_STEP_TITLE, REFRESH_SEARCH_CONSOLE_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, RUN_SEO_STEP_TITLE, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_OFFER_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SAVE_PROGRESS_STEP_TITLE, SAVE_REVIEW_SCHEDULE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE, SYNC_STRIPE_STEP_TITLE } from "@/lib/growth/plan-draft";
@@ -23,7 +24,26 @@ export type SpecialistGoal = {
   targetValue: number | null
   progressPercent: number | null
   liveNote: string
+  shareNote?: string
+  shareRows?: GoalShareRow[]
 };
+
+function relatedGoalLine(
+  goal: SpecialistGoal | null,
+  empty: string,
+  detail?: "paren" | "dash",
+): string {
+  if (!goal) return empty;
+  const core =
+    detail === "paren"
+      ? `This relates to “${goal.title}” (${goal.liveNote || `${goal.liveCurrentValue}${goal.targetValue != null ? ` / ${goal.targetValue}` : ""}`}).`
+      : detail === "dash"
+        ? `This relates to “${goal.title}” — ${goal.liveNote || `${goal.liveCurrentValue} of ${goal.targetValue ?? "—"}`}.`
+        : `This relates to “${goal.title}.”`;
+  return goal.shareNote
+    ? `${core} ${goal.shareNote}${extraShareClause(goal.shareRows)}`
+    : core;
+}
 
 export type SpecialistPolicy = EvidencePolicy & {
   channel: string
@@ -177,9 +197,10 @@ function seoReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Special
   const policy = policyFor(facts.policies, "seo");
   const sample = sampleFor(facts, "seo");
   const verdict = evidenceRecommendation(sample, policy);
-  const goalLine = goal
-    ? `This relates to “${goal.title}.”`
-    : "No visibility or traffic Goal is active yet.";
+  const goalLine = relatedGoalLine(
+    goal,
+    "No visibility or traffic Goal is active yet.",
+  );
 
   const read = facts.seoCheckedAt
     ? `Last SEO check scored ${facts.seoScore} out of 100${facts.seoSummary ? ` — ${facts.seoSummary}` : "."} ${facts.seoFailCount} blocking item${facts.seoFailCount === 1 ? "" : "s"}, ${facts.seoWarnCount} item${facts.seoWarnCount === 1 ? "" : "s"} to improve. Search Console is ${
@@ -363,9 +384,10 @@ function websiteRecommend(facts: SpecialistFacts): SpecialistRecommend {
 function websiteReport(facts: SpecialistFacts, goal: SpecialistGoal | null): SpecialistReport {
   const policy = policyFor(facts.policies, "website");
   const verdict = evidenceRecommendation(sampleFor(facts, "website"), policy);
-  const goalLine = goal
-    ? `This relates to “${goal.title}.”`
-    : "No traffic or conversion Goal is active yet.";
+  const goalLine = relatedGoalLine(
+    goal,
+    "No traffic or conversion Goal is active yet.",
+  );
 
   if (!facts.websiteConnected) {
     return {
@@ -409,9 +431,11 @@ function websiteReport(facts: SpecialistFacts, goal: SpecialistGoal | null): Spe
 }
 
 function crmReport(facts: SpecialistFacts, goal: SpecialistGoal | null): SpecialistReport {
-  const goalLine = goal
-    ? `This relates to “${goal.title}” (${goal.liveNote || `${goal.liveCurrentValue}${goal.targetValue != null ? ` / ${goal.targetValue}` : ""}`}).`
-    : "No lead-generation Goal is active yet.";
+  const goalLine = relatedGoalLine(
+    goal,
+    "No lead-generation Goal is active yet.",
+    "paren",
+  );
 
   return {
     id: "crm",
@@ -476,9 +500,11 @@ function availabilityReport(
     goal.targetValue != null &&
     goal.targetValue > 0 &&
     (goal.progressPercent ?? 0) < 25;
-  const goalLine = goal
-    ? `This relates to “${goal.title}” — ${goal.liveNote || `${goal.liveCurrentValue} of ${goal.targetValue ?? "—"}`}.`
-    : "No utilization or registration Goal is active yet.";
+  const goalLine = relatedGoalLine(
+    goal,
+    "No utilization or registration Goal is active yet.",
+    "dash",
+  );
 
   let recommend: SpecialistRecommend;
   if (facts.upcomingEventCount === 0 && !goal) {
