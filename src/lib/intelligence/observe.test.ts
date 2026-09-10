@@ -282,6 +282,31 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("observes recorded Search Console queries and does not score them", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        recordedKeywordCount: 3,
+      }),
+    );
+    const observed = brief.observations.find(
+      (item) => item.title === "Search queries from Search Console",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /3 search queries/);
+    assert.match(observed.body, /does not buy keyword data or score/);
+    assert.equal(
+      brief.recommendations.some((item) => /keyword/i.test(item.title)),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(facts()).observations.some(
+        (item) => item.title === "Search queries from Search Console",
+      ),
+      false,
+    );
+  });
+
   it("observes saved business context and does not look up competitors", () => {
     const saved = buildIntelligenceBrief(
       facts({

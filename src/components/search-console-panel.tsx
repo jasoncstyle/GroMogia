@@ -115,6 +115,12 @@ export function SearchConsolePanel({
         </p>
       ) : null}
 
+      {searchConsole.lastError ? (
+        <p role="alert" className="text-sm text-destructive">
+          {searchConsole.lastError}
+        </p>
+      ) : null}
+
       {explanation ? (
         <div className="space-y-2">
           <p className="text-sm font-medium">{explanation.headline}</p>

@@ -15,6 +15,7 @@ import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
 import { isBuilderApplyableFinding } from "@/lib/website-builder/apply-seo";
 import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
+import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
@@ -96,7 +97,8 @@ export default async function SeoPage({
         <p className="text-muted-foreground">
           Check the connected website and every GroovGro page. Approve drafts,
           then apply title, description, or heading changes onto that GroovGro
-          page. Search Console is read-only. GroovGro will not buy ads or
+          page. Search Console is read-only. Queries from those snapshots are
+          stored as a history. GroovGro will not buy keyword data, ads, or
           change Stripe checkout.
         </p>
       </div>
@@ -247,6 +249,8 @@ export default async function SeoPage({
             searchConsole={data.searchConsole}
             notice={searchConsoleNotice(params.gsc, params.error)}
           />
+
+          <KeywordHistoryPanel keywords={data.keywords} />
 
           {latest && explanation ? (
             <>

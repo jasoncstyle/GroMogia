@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  doublePrecision,
   foreignKey,
   index,
   integer,
@@ -726,7 +727,65 @@ export const searchConsoleSnapshots = pgTable(
       .defaultNow()
       .notNull(),
   },
-  (table) => [index("search_console_snapshots_org_idx").on(table.organizationId)],
+  (table) => [    index("search_console_snapshots_org_idx").on(table.organizationId)],
+);
+
+export const KEYWORD_SOURCE_SEARCH_CONSOLE = "search_console";
+
+export const keywords = pgTable(
+  "keywords",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    queryKey: text("query_key").notNull(),
+    query: text("query").notNull(),
+    source: text("source").notNull().default(KEYWORD_SOURCE_SEARCH_CONSOLE),
+    firstSeenAt: timestamp("first_seen_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    lastSeenAt: timestamp("last_seen_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("keywords_org_query_idx").on(table.organizationId, table.queryKey),
+    index("keywords_org_idx").on(table.organizationId),
+  ],
+);
+
+export const keywordHistory = pgTable(
+  "keyword_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    keywordId: uuid("keyword_id")
+      .notNull()
+      .references(() => keywords.id, { onDelete: "cascade" }),
+    snapshotId: uuid("snapshot_id").references(() => searchConsoleSnapshots.id, {
+      onDelete: "set null",
+    }),
+    propertyUrl: text("property_url").notNull().default(""),
+    startDate: text("start_date").notNull(),
+    endDate: text("end_date").notNull(),
+    clicks: integer("clicks").notNull().default(0),
+    impressions: integer("impressions").notNull().default(0),
+    ctr: doublePrecision("ctr").notNull().default(0),
+    position: doublePrecision("position").notNull().default(0),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("keyword_history_keyword_snapshot_idx").on(
+      table.keywordId,
+      table.snapshotId,
+    ),
+    index("keyword_history_org_idx").on(table.organizationId),
+    index("keyword_history_keyword_idx").on(table.keywordId),
+  ],
 );
 
 export type BuilderSectionType =

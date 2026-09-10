@@ -274,4 +274,12 @@ export async function ensureSchema(): Promise<void> {
   if (!brainSeoContext[0]?.name) {
     await applyMigration(sql, "0024_business_brain_seo_context.sql");
   }
+
+  const keywordTable = (await sql.query(
+    "select to_regclass('public.keywords') as name",
+  )) as RegistryRow[];
+
+  if (!keywordTable[0]?.name) {
+    await applyMigration(sql, "0025_keyword_history.sql");
+  }
 }

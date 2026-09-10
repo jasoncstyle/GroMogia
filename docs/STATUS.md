@@ -19,9 +19,9 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 **V2 owner-assistance is on `main`.** The owner can name a share, count a Traffic Goal from visits, name a share next to a typed Goal, match a payment copy on Bookings, and draft or approve a plan on Next step. GroovGro does not execute.
 
-**Phase D (this branch):** Business Brain can store who you want to reach, problems they are trying to solve, competitors the owner already knows, what makes the business different, and claims GroovGro must never make. These are owner-entered lists for later search and content work. GroovGro does not look up competitors, scrape websites, or execute.
+**Phase E (this branch):** Search Console queries GroovGro already stored become a keyword list with snapshot history. The SEO page can show those queries over time. GroovGro does not buy keyword data, guess search volume, or score opportunities.
 
-Phases A–C first slices are on `main`. Keyword discovery, SERP, competitor intelligence, content, GEO, publishing, and execute remain **PLANNED**. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
+Phases A–D first slices are on `main`. Keyword scoring, SERP, competitor intelligence, content, GEO, publishing, and execute remain **PLANNED**. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 
 The website builder is paused. Public groovgro.com homepage stays Coming soon.
 
@@ -152,9 +152,10 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 ## What is already working
 
-- Phase D Business Brain extras (this branch): the owner can save who to reach, problems, known competitors, differences, and prohibited claims. Intelligence can notice that context. GroovGro does not look up competitors or write pages from this yet.
+- Phase E keyword history (this branch): Search Console queries already stored become a keyword model with snapshot history. SEO and Intelligence can show that history. GroovGro does not buy keyword data or score opportunities.
+- Phase D Business Brain extras: the owner can save who to reach, problems, known competitors, differences, and prohibited claims. Intelligence can notice that context. GroovGro does not look up competitors or write pages from this yet.
 - Phase B structured evidence: `growth_actions` can store title, evidence JSON, confidence, expected impact, and priority. SEO recommendations fill those fields. Next step shows the facts without parsing `description`. GroovGro does not execute or estimate traffic lift.
-- Phase C first slice: existing SEO page-check findings and Search Console snapshots can become recommend-only `growth_actions`. Next step and Intelligence can show them. GroovGro does not edit the live website, change Search Console, buy ads, or execute. Keyword / SERP / GEO / publishing stay planned.
+- Phase C first slice: existing SEO page-check findings and Search Console snapshots can become recommend-only `growth_actions`. Next step and Intelligence can show them. GroovGro does not edit the live website, change Search Console, buy ads, or execute. SERP / GEO / publishing stay planned.
 - Phase A **docs**: v2.1 brief, `growth_actions` as the shared recommendation, phases A–T. Done.
 - Hand-updated Goal names website visits: a Goal the owner types by hand names which named share brought website visits, people, bookings, or payments, including extra named shares. The typed number is unchanged. Naming a share stays on Marketing. GroovGro will not buy ads or change the live site.
 - Traffic Goal from website visits: a Traffic Goal counts website visits in the connected window and names which named share moved that number, including extra named shares. Naming a share stays on Marketing. GroovGro will not buy ads or change the live site.
@@ -240,9 +241,9 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 Vision is in the master brief. Do not implement the whole list. Do not build a second SEO app. Do not add `growth_opportunities`.
 
-**IMPLEMENTED:** page SEO checks, SEO copy drafts, Search Console read-only, Brand Voice drafts in the workspace, named-share attribution, Next step recommend-only, existing SEO/Search Console evidence → recommend-only `growth_actions` (Phase C), structured title/evidence/confidence/impact fields on `growth_actions` (Phase B), owner-entered Business Brain extras for later search/content work (Phase D).
+**IMPLEMENTED:** page SEO checks, SEO copy drafts, Search Console read-only, Brand Voice drafts in the workspace, named-share attribution, Next step recommend-only, existing SEO/Search Console evidence → recommend-only `growth_actions` (Phase C), structured title/evidence/confidence/impact fields on `growth_actions` (Phase B), owner-entered Business Brain extras for later search/content work (Phase D), keyword model and history from stored Search Console queries (Phase E).
 
-**PLANNED:** keywords, SERP, competitor intelligence, content, GEO, CMS write, scoring, experiments (E–T). Effort, cost, and measurement-window columns stay later if usage needs them.
+**PLANNED:** keyword scoring, SERP, competitor intelligence, content, GEO, CMS write, experiments (F–T). Effort, cost, and measurement-window columns stay later if usage needs them.
 
 **Do not do until asked:** keyword or SERP vendors, scrape AI products, auto-publish, overwrite the connected live website, start Google Ads, or turn on execute.
 
