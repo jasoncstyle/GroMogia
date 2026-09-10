@@ -7,6 +7,8 @@ import {
   type IntelligenceBrief,
   type IntelligenceFacts,
 } from "@/lib/intelligence/observe";
+import { isWaitingActionStatus } from "@/lib/growth/next-step";
+import { isSeoGrowthActionType } from "@/lib/growth/seo-actions";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 import { getMarketingSnapshot } from "@/lib/phase3/queries";
@@ -23,6 +25,16 @@ export async function getIntelligenceFacts(
   ]);
 
   const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
+  const proposedSeo = (growth?.actions ?? []).filter(
+    (action) =>
+      action.module === "seo" &&
+      isSeoGrowthActionType(action.actionType) &&
+      isWaitingActionStatus(action.status),
+  );
+  const seoExample = (proposedSeo[0]?.description ?? "")
+    .split("\n")
+    .map((line) => line.trim())
+    .find((line) => line && line !== "GroovGro found an opportunity worth reviewing.");
 
   return {
     websiteConnected: Boolean(dashboard.website?.publicUrl),
@@ -48,6 +60,8 @@ export async function getIntelligenceFacts(
           rows: activeGoal.shareRows,
         }
       : null,
+    proposedSeoActionCount: proposedSeo.length,
+    proposedSeoSummary: seoExample ?? "",
   };
 }
 

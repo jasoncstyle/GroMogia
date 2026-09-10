@@ -175,6 +175,47 @@ describe("coordinated next step", () => {
     assert.match(step.primary.body, /will not start ads/);
   });
 
+  it("lets proposed SEO actions wait without beating confirm drafts", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 2,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 2 })),
+      waitingActions: [
+        {
+          id: "seo-1",
+          description: "GroovGro found an opportunity worth reviewing.",
+          module: "seo",
+          status: "proposed",
+          risk: "optimization",
+        },
+      ],
+    });
+    assert.equal(step.primary.title, "Confirm or reject what GroovGro drafted");
+    assert.equal(step.waitingActions.length, 1);
+    assert.equal(step.waitingActions[0]?.module, "seo");
+    assert.equal(step.executeAllowed, false);
+  });
+
+  it("lets an eligible SEO growth action become the next step when nothing higher is waiting", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [
+        {
+          id: "seo-1",
+          description:
+            "GroovGro found an opportunity worth reviewing.\n\nWHAT GroovGro found\nSearch Console shows a striking-distance query.",
+          module: "seo",
+          status: "proposed",
+          risk: "optimization",
+        },
+      ],
+    });
+    assert.equal(step.primary.title, "Approve or reject these actions");
+    assert.equal(step.waitingActions.length, 1);
+    assert.match(step.waitingActions[0]?.description ?? "", /opportunity worth reviewing/);
+    assert.equal(step.executeAllowed, false);
+  });
+
   it("lists proposed actions as waiting without treating them as executed", () => {
     assert.equal(isWaitingActionStatus("proposed"), true);
     assert.equal(isWaitingActionStatus("approved"), false);

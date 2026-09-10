@@ -13,6 +13,8 @@ const HREF_BY_TYPE: Record<string, string> = {
   specialist_recommend: "/app/next-step",
   brand_voice_draft: "/app/next-step",
   observe_recommend: "/app/next-step",
+  seo_page_improvement: "/app/next-step",
+  seo_search_opportunity: "/app/next-step",
 };
 
 const HREF_BY_MODULE: Record<string, string> = {

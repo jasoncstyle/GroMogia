@@ -419,7 +419,7 @@ export default async function GoalsPage() {
                             key={action.id}
                             className="space-y-2 rounded-md border p-3 text-sm"
                           >
-                            <p className="font-medium">{action.description}</p>
+                            <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                             <p className="text-muted-foreground">
                               {action.status} · {labelFor(action.risk)}
                             </p>

@@ -1955,7 +1955,7 @@ Organization
 151. **Name website visits next to a Goal that is updated by hand** — A Goal the owner types by hand names website visits in the same window, along with people, bookings, and payments, including extra named shares. The typed number is unchanged. Done. Do not buy ads or change the live site.
 152. **Phase A — documentation and architecture alignment** — Fold the v2.1 vision into the brief, this file, STATUS, and agent rules. Prefer extending `growth_actions`. This slice. No expansion code. No migration.
 153. **Phase B — extend `growth_actions`** — **PLANNED.** Optional columns or JSON for evidence, confidence, impact, effort. No separate `growth_opportunities` table unless this fails.
-154. **Phase C — existing Search Console + SEO findings → growth actions** — **PLANNED** first coding slice after Jason reviews. Recommend-only on Next step and Intelligence. May use existing columns (no migration) or wait for Phase B fields. No paid API. No scrape. No live-site edit.
+154. **Phase C — existing Search Console + SEO findings → growth actions** — **IMPLEMENTED** first coding slice. Recommend-only `growth_actions` (`module=seo`, `seo_page_improvement` / `seo_search_opportunity`) from existing audits and Search Console snapshots. Next step and Intelligence read those rows. No migration. No paid API. No scrape. No live-site edit.
 155. **Phases D–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: Business Brain extras, keywords, scoring, SERP, content, GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
@@ -1980,7 +1980,7 @@ Inspected table (`src/lib/db/schema.ts` → `growthActions`):
 
 **Preference:** keep one table. Do not add `growth_opportunities`.
 
-**Phase C (first coding, not this PR):** insert recommend-only rows with existing columns. Example: `module=seo`, `action_type=improve_page` or `review_search_query`, `description` = what + why, `status=proposed`. Next step and Intelligence read those rows. **No migration required.**
+**Phase C (this slice):** insert recommend-only rows with existing columns. Used: `module=seo`, `action_type=seo_page_improvement` or `seo_search_opportunity`, `description` = what + why + recommend, `status=proposed`, `provider` = `seo_audit` or `search_console`, `external_id` = stable fingerprint for dedup. Next step and Intelligence read those rows. **No migration required.**
 
 **Phase B (later):** add nullable fields or a JSON `evidence` payload on the same table if the UI needs structured confidence / impact / effort. Only then consider a second table, and only if this model cannot stay coherent.
 
@@ -1988,7 +1988,7 @@ Fields Phase B may add (all optional, same table): `title`, `category`, `evidenc
 
 ### IMPLEMENTED / PARTIAL / PLANNED
 
-**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only.
+**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions.
 
 **PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder.
 

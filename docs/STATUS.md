@@ -19,9 +19,9 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 **V2 owner-assistance is on `main`.** The owner can name a share, count a Traffic Goal from visits, name a share next to a typed Goal, match a payment copy on Bookings, and draft or approve a plan on Next step. GroovGro does not execute.
 
-**Phase A (this branch):** documentation and architecture alignment for v2.1. SEO / content / GEO feed the same growth loop. Shared recommendations prefer **`growth_actions`**, not a new table. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19. No expansion code. No migration.
+**Phase C first slice (this branch):** existing SEO audit findings and Search Console snapshots can create recommend-only `growth_actions` (`module=seo`, `status=proposed`). Those actions use the existing table — no migration. They can appear on Next step and Intelligence. GroovGro does not edit the live website, change Search Console, or execute.
 
-**Phase B and C are not started.** Do not begin them until Jason reviews this architecture. Phase C (first coding, when asked): existing Search Console + SEO findings → `growth_actions` → Next step + Intelligence, recommend-only. No paid API, scrape, or live-site edit.
+Phase A documentation is done. Phase B richer `growth_actions` fields are still **PLANNED**. Keyword discovery, SERP, competitors, content intelligence, GEO, publishing, and execute remain **PLANNED**. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 
 The website builder is paused. Public groovgro.com homepage stays Coming soon.
 
@@ -152,7 +152,8 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 ## What is already working
 
-- Phase A **docs** (this slice): v2.1 brief, `growth_actions` as the shared recommendation, phases A–T, historical labels on Phase 0. No expansion code. No migration.
+- Phase C first slice (this branch): existing SEO page-check findings and Search Console snapshots can become recommend-only `growth_actions`. Next step and Intelligence can show them. GroovGro does not edit the live website, change Search Console, buy ads, or execute. Keyword / SERP / GEO / publishing stay planned.
+- Phase A **docs**: v2.1 brief, `growth_actions` as the shared recommendation, phases A–T. Done.
 - Hand-updated Goal names website visits: a Goal the owner types by hand names which named share brought website visits, people, bookings, or payments, including extra named shares. The typed number is unchanged. Naming a share stays on Marketing. GroovGro will not buy ads or change the live site.
 - Traffic Goal from website visits: a Traffic Goal counts website visits in the connected window and names which named share moved that number, including extra named shares. Naming a share stays on Marketing. GroovGro will not buy ads or change the live site.
 - Hand-updated Goal names the share: a Goal the owner types by hand still names which named share brought people, bookings, or payments in, including extra named shares. The typed number is unchanged. Naming a share stays on Marketing. GroovGro will not buy ads.
@@ -235,13 +236,13 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 ## Parked: SEO / content / GEO expansion (10 September 2026)
 
-Vision is in the master brief. Phase A is docs only. Do not implement the whole list. Do not build a second SEO app. Do not add `growth_opportunities`.
+Vision is in the master brief. Do not implement the whole list. Do not build a second SEO app. Do not add `growth_opportunities`.
 
-**IMPLEMENTED:** page SEO checks, SEO copy drafts, Search Console read-only, Brand Voice drafts in the workspace, named-share attribution, Next step recommend-only.
+**IMPLEMENTED:** page SEO checks, SEO copy drafts, Search Console read-only, Brand Voice drafts in the workspace, named-share attribution, Next step recommend-only, existing SEO/Search Console evidence → recommend-only `growth_actions` (Phase C first slice).
 
-**PLANNED:** extend `growth_actions` (Phase B); turn existing GSC + SEO findings into actions (Phase C); then keywords, SERP, content, GEO, CMS write, scoring, experiments (D–T).
+**PLANNED:** extend `growth_actions` with structured evidence fields (Phase B); then keywords, SERP, content, GEO, CMS write, scoring, experiments (D–T).
 
-**Do not do until asked:** Phase B/C code, buy keyword or SERP vendors, scrape AI products, auto-publish, overwrite the connected live website, start Google Ads, or turn on execute.
+**Do not do until asked:** Phase B migration, keyword or SERP vendors, scrape AI products, auto-publish, overwrite the connected live website, start Google Ads, or turn on execute.
 
 ## Still later
 

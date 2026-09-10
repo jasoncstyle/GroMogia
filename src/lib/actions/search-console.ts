@@ -12,6 +12,7 @@ import {
   searchConsoleSnapshots,
   websites,
 } from "@/lib/db/schema";
+import { persistSeoGrowthActions } from "@/lib/growth/persist-seo-actions";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession, type OrgSession } from "@/lib/require-org";
 import { matchSearchConsoleProperty } from "@/lib/seo/search-console";
@@ -214,6 +215,14 @@ async function refreshSearchConsoleForOrganization(
     topPages: snapshot.topPages,
     createdBy: session.userId,
   });
+  try {
+    await persistSeoGrowthActions(db, session.organizationId);
+  } catch (error) {
+    console.error("GroovGro SEO growth action persist failed", {
+      organizationId: session.organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+  }
   await upsertGoogleConnection(session.organizationId, {
     status: "connected",
     lastError: null,

@@ -203,7 +203,7 @@ export default async function NextStepPage({
               ) : step.primary.title === APPROVE_ACTIONS_STEP_TITLE ? (
                 step.waitingActions.map((action) => (
                   <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
-                    <p className="font-medium">{action.description}</p>
+                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                     <p className="text-muted-foreground">
                       {action.status} · {labelFor(action.risk)}
                       {action.module ? ` · ${action.module}` : ""}
@@ -217,7 +217,7 @@ export default async function NextStepPage({
               ) : step.primary.title === OWNER_WORK_STEP_TITLE ? (
                 step.openWork.map((action) => (
                   <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
-                    <p className="font-medium">{action.description}</p>
+                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                     <p className="text-muted-foreground">
                       {labelFor(action.risk)}
                       {action.module ? ` · ${labelFor(action.module)}` : ""}
@@ -233,7 +233,7 @@ export default async function NextStepPage({
               ) : step.primary.title === CHECK_CHANGED_STEP_TITLE ? (
                 step.uncheckedWork.map((action) => (
                   <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
-                    <p className="font-medium">{action.description}</p>
+                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                     <CheckWhatChangedButton
                       actionId={action.id}
                       canCheck={canCheck}
@@ -531,7 +531,7 @@ export default async function NextStepPage({
               <CardContent className="space-y-4">
                 {step.waitingActions.map((action) => (
                   <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
-                    <p className="font-medium">{action.description}</p>
+                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                     <p className="text-muted-foreground">
                       {action.status} · {labelFor(action.risk)}
                       {action.module ? ` · ${action.module}` : ""}
@@ -559,7 +559,7 @@ export default async function NextStepPage({
               <CardContent className="space-y-4">
                 {step.openWork.map((action) => (
                   <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
-                    <p className="font-medium">{action.description}</p>
+                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                     <p className="text-muted-foreground">
                       {labelFor(action.risk)}
                       {action.module ? ` · ${labelFor(action.module)}` : ""}
@@ -589,7 +589,7 @@ export default async function NextStepPage({
               <CardContent className="space-y-4">
                 {step.uncheckedWork.map((action) => (
                   <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
-                    <p className="font-medium">{action.description}</p>
+                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                     <CheckWhatChangedButton
                       actionId={action.id}
                       canCheck={canCheck}

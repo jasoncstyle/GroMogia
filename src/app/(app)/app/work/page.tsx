@@ -60,7 +60,7 @@ export default async function OwnerWorkPage() {
           ) : (
             work.open.map((action) => (
               <div key={action.id} className="space-y-3 rounded-lg border p-4">
-                <p className="font-medium">{action.description}</p>
+                <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                 <p className="text-sm text-muted-foreground">
                   {labelFor(action.risk)}
                   {action.module ? ` · ${labelFor(action.module)}` : ""}
@@ -87,7 +87,7 @@ export default async function OwnerWorkPage() {
           <CardContent className="space-y-4">
             {work.waiting.map((action) => (
               <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
-                <p className="font-medium">{action.description}</p>
+                <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                 <p className="text-muted-foreground">
                   {action.status} · {labelFor(action.risk)}
                 </p>
@@ -112,7 +112,7 @@ export default async function OwnerWorkPage() {
               const learned = workLearningFromResult(action.result ?? "");
               return (
               <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
-                <p className="font-medium">{action.description}</p>
+                <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                 <p className="text-muted-foreground">{labelFor(action.status)}</p>
                 {learned ? (
                   <p className="text-muted-foreground">{learned}</p>

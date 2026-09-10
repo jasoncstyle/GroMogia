@@ -45,6 +45,14 @@ describe("owner work", () => {
       hrefForGrowthAction({ actionType: "observe_recommend", module: "intelligence" }),
       "/app/next-step",
     );
+    assert.equal(
+      hrefForGrowthAction({ actionType: "seo_page_improvement", module: "seo" }),
+      "/app/next-step",
+    );
+    assert.equal(
+      hrefForGrowthAction({ actionType: "seo_search_opportunity", module: "seo" }),
+      "/app/next-step",
+    );
   });
 
   it("does not send ads, email, or social work to an execution page", () => {
