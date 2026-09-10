@@ -160,7 +160,7 @@ If a future job is too long, too chatty, or needs a specialized runtime, extract
   drizzle/                    SQL migrations
 ```
 
-Until Phase 1 is approved, this repository correctly contains **docs and agent configuration only**.
+**Historical note:** Phase 1–7 and V2 are on `main`. This file is the original stack plan. Current intent: [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.1.
 
 ## What this architecture refuses
 

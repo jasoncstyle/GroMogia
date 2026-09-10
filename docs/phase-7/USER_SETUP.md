@@ -1,5 +1,7 @@
 # Website builder (Phase 7)
 
+**How-to for a PAUSED module.** The builder stays in the app. Do not add builder features unless Jason asks. Do not overwrite a connected existing website. Current product status: [STATUS.md](../STATUS.md).
+
 This is optional. It does **not** replace a connected existing website. Ocean Sailing Adventures checkout stays on the sailing site.
 
 The builder works in two layers:

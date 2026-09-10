@@ -2,6 +2,8 @@
 
 How GroovGro gets built and how it stays running.
 
+**Still current** for GitHub → Vercel. Examples that say “Phase 1 foundation” or “no package.json yet” are **historical**. The app and `package.json` exist on `main`.
+
 ## The important distinction
 
 | Place | Job |
