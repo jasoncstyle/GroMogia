@@ -18,7 +18,7 @@ GitHub is the source of truth. Vercel is where the software runs. Cursor is deve
 
 The owner can connect an existing website, name a marketing share, capture people, match a Stripe payment copy, set a Goal, draft and approve a plan on Next step, and read SEO checks plus Search Console (read-only). GroovGro recommends. It does not run ads, send email, or change live checkout.
 
-**Approved vision (docs, not built yet):** SEO Intelligence, a Content Engine, and AI Visibility / GEO as modules that feed the same growth loop. See [Master brief §15](docs/MASTER_BRIEF.md).
+**Approved vision (Phase A docs, not built yet):** SEO Intelligence, Content Intelligence, and AI Visibility / GEO feed the same growth loop. Recommendations should become `growth_actions`, not a second app. See [Master brief §§15–19](docs/MASTER_BRIEF.md).
 
 Public groovgro.com homepage stays Coming soon. The optional website builder stays paused.
 

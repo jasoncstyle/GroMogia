@@ -25,6 +25,12 @@ Primary value comes from understanding the relationships between the business, i
 
 **CONNECT THE BUSINESS. UNDERSTAND THE BUSINESS. DEFINE THE GOAL. GROW THE BUSINESS.**
 
+Official intelligence loop:
+
+CONNECT → UNDERSTAND → OBSERVE → ANALYZE → IDENTIFY OPPORTUNITIES → PRIORITIZE → RECOMMEND → OWNER REVIEW → EXECUTE WHEN AUTHORIZED → MEASURE → LEARN → REPEAT
+
+The owner should not have to think in separate marketing disciplines. GroovGro should eventually synthesize website, SEO, content, AI visibility, advertising, traffic, leads, customers, and revenue, then recommend the highest-value next action.
+
 Journeys to understand:
 
 Website → Traffic → Marketing Source → Lead → Customer → Booking / Purchase / Conversion → Payment / Revenue → Review → Repeat Customer
@@ -63,9 +69,11 @@ Customers are not required to use every capability. Design database, permissions
 | Integration | Connected external service |
 | Goal | Measurable business objective |
 | Growth Plan | Coordinated strategy pursuing a goal |
-| Action | Proposed, approved, or executed activity |
+| Action | Shared recommendation object (`growth_actions`). Proposed, approved, or later executed. Also the preferred home for SEO / GEO / content / lead opportunities. |
 
-Isolate per organization: users, roles, websites, customers, leads, marketing data, integrations, analytics, AI context, Business Brain, Brand Voice, assets, events, settings, goals, plans, actions, decision history, keywords, content items, AI visibility scans, growth opportunities, billing, and audit history. SEO, competitor, content, and AI-visibility data from one organization must never appear in another.
+Isolate per organization: users, roles, websites, customers, leads, marketing data, integrations, analytics, AI context, Business Brain, Brand Voice, assets, events, settings, goals, plans, **growth actions**, decision history, and later keywords, content items, and AI visibility scans. SEO, competitor, content, and AI-visibility data from one organization must never appear in another.
+
+Do not add a separate `growth_opportunities` table unless `growth_actions` cannot cleanly hold the shared recommendation. See §15.
 
 ## 5. Business Brain
 
@@ -89,7 +97,7 @@ Goals are first-class measurable outcomes. Plans are versioned strategies for a 
 
 Decision History records what GroovGro decided and why. Audit History records what changed. Both are required.
 
-Actions are structured entities with risk, approval, and execution fields. They are not executed in this foundation slice.
+Actions (`growth_actions`) are the shared recommendation object: module, type, description, risk, approval, and later execution fields. They are **not executed** in the current product. SEO, content, AI visibility, website, and lead recommendations should become rows here so Next step can compare them. Do not invent a second opportunity table first.
 
 ## 8. Evidence and cadence
 
@@ -149,91 +157,174 @@ Cloud-first. GitHub is the source of truth. Production is Vercel, not a laptop. 
 
 Current implementation checkpoint: [STATUS.md](STATUS.md).
 
-## 15. SEO, content, and AI visibility feed Growth Intelligence
+## 15. Status words used in this brief
 
-**Status:** vision approved 10 September 2026. Parts already exist (see below). The rest is planned. Do not mark planned work as implemented.
+Use these labels. Do not make planned work sound shipped.
 
-GroovGro already asks: *What is this business trying to accomplish, and what should happen next?* SEO Intelligence, the Content Engine, and AI Visibility / GEO must answer that question. They must not become a second application.
+| Label | Meaning |
+| --- | --- |
+| **IMPLEMENTED** | In the live app on `main` |
+| **PARTIALLY IMPLEMENTED** | Real, but thinner than the vision |
+| **PLANNED** | Approved direction, not built |
+| **EXPERIMENTAL** | In code or docs for learning; not a product promise |
+| **PAUSED** | Built or designed; do not extend until Jason asks |
+| **DEPRECATED** | Do not follow for new work |
 
-Closed loop (same as V2):
+## 16. SEO, content, and AI visibility feed Growth Intelligence
 
-OBSERVE → ANALYZE → IDENTIFY → PRIORITIZE → RECOMMEND → OWNER REVIEW → EXECUTE (later, after approval) → MEASURE → LEARN → REPEAT
+**Status:** vision approved 10 September 2026. Phase A is this documentation. Do not start Phase B or C until Jason reviews.
 
-Every new SEO, content, or AI-visibility feature should produce, when possible: an insight, an opportunity, a recommendation, an action the owner can review, a measurable result, and learning. Isolated dashboards that only display numbers are not enough.
+GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
 
-### What is already implemented
+Every new feature should, when possible, produce: an insight, an opportunity stored as a **growth action**, a recommendation on Next step, a measurable result, and learning.
+
+### IMPLEMENTED
 
 - Business Brain, Brand, Offers, Brand Voice (profile, examples, in-workspace drafts)
 - Website connect, discovered pages, review of checked pages only
 - Named marketing shares: visit → lead → customer → payment copy
 - Goals, Growth Plans, Next step, Intelligence, weekly / monthly review, Decision History, what changed
-- SEO page checks, homepage SEO copy drafts the owner approves (they do not edit the connected live site)
+- SEO **page** checks and homepage SEO copy drafts the owner approves (they do not edit the connected live site)
 - Search Console **read-only** snapshots: totals, top queries, top pages
 - Specialists that read and recommend only. Ads, email, and social stay left alone
-- Autonomy levels 1–3 in product use: observe, recommend, draft. Execute stays off
+- Autonomy in product use: observe, recommend, draft, owner approve. Execute stays off
 
-### What is partially implemented
+### PARTIALLY IMPLEMENTED
 
-- Business knowledge: missing structured personas, pain points, competitors, differentiators, and prohibited claims
-- Attribution: named share → person → revenue exists. Keyword → page → person and AI-referral attribution do not
-- Prioritization: Next step uses a fixed owner-assistance order. It does not yet score “SEO vs follow up a person vs fix a page”
-- Brand Voice: does not yet learn from repeated owner edits
-- Publishing: GroovGro-hosted builder exists and is **paused**. No WordPress / Shopify write adapter. Do not overwrite a connected existing website
-- Notifications: table exists; the product page is a stub
+- Business knowledge: missing structured personas, pain points, competitors, differentiators, prohibited claims
+- Attribution: named share → person → revenue exists. Keyword → page → person and AI-referral do not. Labels DIRECT / ASSISTED / ESTIMATED / UNKNOWN are **PLANNED**
+- Prioritization: Next step uses a fixed owner-assistance order. Scored “SEO vs follow up a person vs fix a page” is **PLANNED**
+- Brand Voice: does not learn from repeated owner edits
+- Publishing: GroovGro-hosted builder exists and is **PAUSED**. No WordPress / Shopify write. Do not overwrite a connected existing website
+- Notifications: table exists; the page is a stub (**PAUSED** as a product)
+- `growth_actions`: exists for plan/owner work. Does not yet hold SEO/GEO evidence, confidence, or impact fields
 
-### What is planned (not implemented)
+### PLANNED (not implemented)
 
-- Keyword discovery, groups, opportunity scores, and revenue-aware keyword value
-- Competitor and search-results intelligence (legal, contracted providers only)
-- Content gap types, briefs, planner, generation, internal linking, and schema recommendations
-- CMS publishing abstraction (review-first; auto-publish only if the owner turns it on)
-- AI Visibility / GEO: query library, provider adapters, mention / citation history, accuracy issues, GEO audits
-- Unified Growth Opportunity object and cross-channel priority scoring
-- Experiments with stored before / after
-- Meaningful alerts without alert fatigue
-- AI scan cost controls (cache, schedule, caps) before expensive providers go live
+- Keyword discovery, history, groups, intent, opportunity scores, create-vs-improve
+- Competitor and SERP intelligence (contracted, allowed providers only)
+- Content gaps, briefs, planner, generation, internal linking, schema (facts only)
+- CMS publishing adapters (review-first)
+- AI Visibility / GEO: query library, adapters, mentions, citations, share of voice, accuracy, GEO audits
+- Cross-channel scoring, experiments, alerts
+- Cost controls before paid keyword or AI-scan vendors
+- Specialist execute and guarded automation
 
-### Growth Opportunity (planned)
+### Shared object: extend `growth_actions`
 
-SEO, GEO, website, leads, and later ads must not each invent a different recommendation shape.
+**Architectural preference:** extend `growth_actions`. Do **not** create `growth_opportunities` unless a later review proves the existing table cannot hold this cleanly.
 
-A Growth Opportunity is one reviewable item: source module, title, evidence, recommended action, expected impact, confidence, effort, cost, urgency, status, and later measured result. Next step remains the owner review surface. Module pages stay for detail.
+Today the table already has: `organization_id`, `goal_id`, `plan_id`, `module`, `action_type`, `description`, `status`, `risk`, `proposed_at`, `approved_at`, `executed_at`, `provider`, `result`, `error`.
 
-Reuse or extend `growth_actions` and Decision History where that is enough. Do not add a parallel coordinator.
+It does not yet have structured: title, evidence, confidence, expected impact, effort, estimated cost, urgency, priority, reviewed_at, measurement window, learning.
 
-### Revenue-aware SEO (planned)
+Phase C (first coding slice, not this PR) may write recommend-only SEO rows using **existing** columns (`module` = `seo`, `description` = what and why in plain English, `status` = `proposed`). No migration required for that proof.
 
-High search volume is not success. A smaller keyword that creates customers and revenue can outrank a popular keyword that creates visits and no customers. Opportunity scoring must be able to include demand, feasibility, intent, business relevance, conversion, revenue, and strategic fit. The formula stays configurable. Facts, estimates, and AI inference must stay labeled.
+Phase B (later, still not this PR) may add nullable columns or a JSON evidence payload on the **same** table. Avoid duplicate concepts.
 
-### AI Visibility / GEO (planned)
+Next step and Intelligence stay the owner surfaces. Module pages stay for detail.
 
-SEO = visibility in traditional search. AI Visibility = visibility when people ask AI systems for recommendations, comparisons, or who to hire.
+Example compatible recommendations (all `growth_actions`):
 
-Monitor through **provider adapters**. Do not hard-code business logic to a fixed vendor list. Before any automated monitoring: confirm API, terms, rate limits, cost, and whether querying is allowed. Never scrape to fake the feature.
+- SEO: improve a page
+- Leads: follow up uncontacted people
+- Website: fix a poor-converting landing page
+- Ads (**PLANNED**, do not build now): change a profitable campaign
+- AI Visibility (**PLANNED**): improve a page competitors are cited for
 
-AI answers vary. Store history and show trends. Do not treat one run as truth.
+GroovGro should eventually explain **why**, with evidence, confidence, expected impact, and effort. Facts, estimates, and inference stay labeled.
 
-### Content and publishing (planned)
+### SEO Intelligence (**PARTIALLY IMPLEMENTED** page checks; rest **PLANNED**)
 
-Content type must match intent and the Goal. Not every keyword needs a blog post. Default is review-first: recommend only, draft, require approval, schedule after approval. Auto-publish is an explicit owner choice.
+Today: title, description, heading, and similar page checks; owner-approved drafts; Search Console totals and top queries.
 
-Never fabricate ratings, reviews, prices, addresses, or other schema facts. Content is for humans first.
+Future: keyword discovery from the business and Search Console; keyword history and groups; intent; opportunity scoring; SERP and competitor analysis; content gaps; page improvement; create vs improve; conversion- and revenue-aware priority.
 
-### First coding slice after these docs
+Search volume is not success. Traffic is not success. Prefer activity that produces qualified people, customers, revenue, and a Goal.
 
-Turn **existing** Search Console top queries and **existing** SEO check findings into Growth Opportunities the owner can see on Next step and Intelligence. Recommend only. No new paid API. No content factory. No AI-platform scraping. No live-site edits.
+### Content Intelligence (**PLANNED**; Brand Voice drafts are **IMPLEMENTED** in-workspace only)
 
-## 16. Human control and cost
+Future workflow: Opportunity → Research → Brief → Draft → Optimization → Review → Publish when authorized → Measure → Learn.
 
-Autonomy stays: 1 Observe · 2 Recommend · 3 Draft · 4 Execute after approval · 5 Guarded autopilot · 6 Future.
+Possible later work: briefs, planner, internal links, schema, brand-voice generation, improve existing pages, recommend new pages, measure content.
+
+GroovGro does **not** currently auto-generate or publish a large volume of content.
+
+### AI Visibility / GEO (**PLANNED**)
+
+Traditional SEO: can customers find the business in search engines?
+
+AI Visibility: does the business appear when people ask AI systems questions or ask who to hire?
+
+Future: query library; brand mentions and citations; competitor mentions and citations; share of voice; trends; content and citation gaps; accuracy issues; GEO audits; recommendations for AI-readable, citable pages.
+
+Possible environments (not a hard-coded vendor list, not all available today): ChatGPT, Google AI experiences, Gemini, Perplexity, Claude, Grok, DeepSeek, and later systems. Use modular **provider adapters**. Confirm API, terms, cost, and permission before any automated query. **Do not scrape.** Do not treat one AI answer as truth. Store history.
+
+### Revenue-aware attribution (**PARTIALLY IMPLEMENTED**)
+
+**IMPLEMENTED:** named share → visitor/lead → customer → Stripe charge copy.
+
+**PLANNED:** keyword → page → visitor → lead → customer → revenue; ad → visitor → lead → customer → revenue; AI referral → visitor → lead → customer → revenue.
+
+Never invent certainty. Label each link:
+
+- **DIRECT** — GroovGro stored the join
+- **ASSISTED** — the person or visit touched more than one source
+- **ESTIMATED** — inferred, not measured
+- **UNKNOWN** — missing
+
+### Weekly review (**IMPLEMENTED**, cadence options **PARTIALLY IMPLEMENTED**)
+
+GroovGro may observe continuously. It must not nag the owner every day. The owner controls when they look (weekly is the default; daily / bi-weekly / monthly / custom may be offered later). Collect evidence between reviews. Present a few meaningful items, including “nothing yet.”
+
+### Evidence provenance and history (**PARTIALLY IMPLEMENTED**)
+
+Store where important facts came from when practical: user-entered, website crawl, Search Console, analytics, Stripe, CRM, later ads/CMS/AI/keyword providers, or GroovGro inference.
+
+Do not overwrite the only copy of a metric. Keep snapshots (Search Console already stores snapshots). Later: rankings, content, AI visibility, citations, competitors, conversions, opportunities, experiments. Learning needs before and after.
+
+### Expansion phases (conceptual — do not rebuild V2 to fit)
+
+| Phase | Work | Status |
+| --- | --- | --- |
+| A | Documentation and architecture alignment | **This PR** |
+| B | Extend `growth_actions` with optional opportunity fields | **PLANNED** — no migration in Phase A |
+| C | Existing Search Console + SEO findings → `growth_actions` → Next step + Intelligence (recommend-only) | **PLANNED** — first coding slice after Jason reviews |
+| D | Business Brain extras SEO/GEO need | **PLANNED** |
+| E | Keyword model and history from Search Console | **PLANNED** |
+| F | Keyword opportunity scoring | **PLANNED** |
+| G | Competitor and SERP intelligence | **PLANNED** |
+| H | Content gap detection | **PLANNED** |
+| I | Content briefs and planner | **PLANNED** |
+| J | Content generation / optimization | **PLANNED** |
+| K | Internal linking and schema | **PLANNED** |
+| L | AI Visibility / GEO architecture | **PLANNED** |
+| M | AI query library and provider adapters | **PLANNED** |
+| N | AI visibility measurement and history | **PLANNED** |
+| O | GEO audits and citation gaps | **PLANNED** |
+| P | CMS publishing adapters | **PLANNED** |
+| Q | Cross-channel opportunity scoring | **PLANNED** |
+| R | Attribution improvements | **PLANNED** |
+| S | Experimentation / before-and-after | **PLANNED** |
+| T | Carefully expanded execution | **PLANNED** — still gated |
+
+**Do not expand yet:** Google Ads execution, email send, social post, Growth Director autopilot, hosted website builder, autonomous publishing.
+
+Phase C rules: recommend-only. No automatic execution or publishing. No paid keyword API. No AI-platform scraping. No live website editing.
+
+## 17. Human control, adapters, and cost
+
+Current product: **LEVEL 1 Observe · LEVEL 2 Recommend · LEVEL 3 Draft · owner approve**. LEVEL 4 execute-after-approval and LEVEL 5 guarded autopilot stay off.
 
 High-impact or hard-to-reverse actions stay approval-gated unless the owner explicitly authorizes them.
 
-SEO, GEO, and content scans can cost more than hosting. Architect caching, batching, weekly (not continuous) scans, active/paused queries, model choice, and per-organization budgets **before** turning paid providers on. Do not re-run expensive analysis when the underlying data has not changed.
+Future third-party capabilities use adapters, not core `if (vendor === …)` logic: keyword data, SERP, AI visibility, CMS publish, ads, analytics. Search Console already exists as a read-only Google adapter.
 
-Credentials stay in Vercel or equivalent secret storage. Never commit them. This repository is public. Use minimum scopes. Search Console stays read-only until a later approved write adapter exists.
+Variable API cost is an architecture requirement: caching, batching, scheduled/weekly jobs, priority-query scans, org usage limits, provider rate limits, token budgets, deduplication, retries, and skip re-analysis when evidence has not changed. Do not assume unlimited AI calls.
 
-## 17. The differentiator
+Credentials stay in Vercel. This repository is public. Minimum scopes. Search Console stays read-only until a later approved write adapter exists.
+
+## 18. The differentiator
 
 GroovGro must not optimize a metric only because it is easy to measure.
 
@@ -241,8 +332,6 @@ More impressions, clicks, traffic, content, or AI mentions are not automatically
 
 The question remains: **did this help the business grow?**
 
-Connect activity, over time, to qualified people, customers, revenue, and a Goal. SEO Intelligence and AI Visibility are important parts of that system. They are not the entire system.
+## 19. Documentation
 
-## 18. Documentation
-
-When this vision changes, update the canonical files: this brief, [v2/ARCHITECTURE.md](v2/ARCHITECTURE.md), [STATUS.md](STATUS.md), [AGENTS.md](../AGENTS.md), and any Phase 0 note that would otherwise contradict them. Do not add a second SEO brief. Distinguish **implemented**, **partially implemented**, and **planned**.
+Canonical files: this brief, [v2/ARCHITECTURE.md](v2/ARCHITECTURE.md), [STATUS.md](STATUS.md), [AGENTS.md](../AGENTS.md). Phase 0 is **historical** platform planning. Setup guides under `docs/phase-1` through `docs/phase-7` are how-to for services that are already connected. Do not add a second SEO brief.

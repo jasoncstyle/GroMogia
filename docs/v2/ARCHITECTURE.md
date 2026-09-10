@@ -1766,8 +1766,8 @@ A policy is: minimum elapsed days, observations, and conversions. Helper `eviden
 
 - Specialist execute path
 - Risk guardrail engine beyond stored fields and permissions
-- Unified Growth Opportunity object (planned; see Expansion)
-- Keyword intelligence, content planner, CMS write, and AI Visibility / GEO (planned; see Expansion)
+- Richer `growth_actions` fields (evidence, confidence, impact) — **PLANNED** Phase B; do not add a second opportunity table first
+- Keyword intelligence, content planner, CMS write, and AI Visibility / GEO — **PLANNED** (see Expansion)
 
 ## What in V2 is unnecessarily complex for now
 
@@ -1794,9 +1794,9 @@ Organization
   │    ├─ Progress snapshots (one stored number per day)
   │    ├─ Growth Plans (versioned)
   │    ├─ Decision records
-  │    └─ Growth Actions (proposed only)
-  ├─ Planned: Growth Opportunities (SEO, content, GEO, website, leads — one review shape)
-  ├─ Planned: keywords, content items, AI visibility scans (all organization-scoped)
+  │    └─ Growth Actions (proposed only; preferred shared recommendation object)
+  ├─ Planned later on the same actions table: evidence, confidence, impact, effort
+  ├─ Planned new tables only when needed: keywords, content items, AI visibility scans
   └─ V1 records (leads, events, bookings, touches) with optional goal/offer ids
 ```
 
@@ -1953,55 +1953,52 @@ Organization
 149. **Name the share next to a Goal that is updated by hand** — A Goal the owner types by hand names the share that brought people, bookings, or payments in the same window, including extra named shares. The typed number is unchanged. Done. Do not buy ads.
 150. **Count a Traffic Goal from website visits** — A Traffic Goal counts website visits in the connected window and names the share that moved that number, including extra named shares. Done. Do not buy ads or change the live site.
 151. **Name website visits next to a Goal that is updated by hand** — A Goal the owner types by hand names website visits in the same window, along with people, bookings, and payments, including extra named shares. The typed number is unchanged. Done. Do not buy ads or change the live site.
-152. **Document SEO / content / GEO expansion** — Fold the v2.1 vision into the master brief, this file, STATUS, and agent rules. This slice. No expansion code.
-153. **Growth Opportunities from data GroovGro already has** — Planned first coding slice. Turn existing Search Console top queries and existing SEO findings into reviewable opportunities on Next step. Recommend only. No new paid API. No content factory. No AI scraping. No live-site edits.
-154. **Keyword model from Search Console** — Planned. Store GSC queries as keywords. Scoring and paid volume data wait.
-155. **Business Brain extras SEO/GEO need** — Planned. Competitors, pain points, and similar fields only if missing. Do not duplicate Brand or Offers.
-156. **Content brief only** — Planned. No mass writing and no publish.
-157. **GEO architecture** — Planned. Query library and provider adapter stubs. No live AI-platform scraping.
-158. **CMS publish adapter** — Planned interface only until Jason chooses a site GroovGro may write to. Connected live sites stay read-only by default.
-159. **Cross-channel priority** — Planned. Compare SEO vs follow-up vs a page fix against the Goal.
-160. **Guarded automation** — only after the above is trusted.
+152. **Phase A — documentation and architecture alignment** — Fold the v2.1 vision into the brief, this file, STATUS, and agent rules. Prefer extending `growth_actions`. This slice. No expansion code. No migration.
+153. **Phase B — extend `growth_actions`** — **PLANNED.** Optional columns or JSON for evidence, confidence, impact, effort. No separate `growth_opportunities` table unless this fails.
+154. **Phase C — existing Search Console + SEO findings → growth actions** — **PLANNED** first coding slice after Jason reviews. Recommend-only on Next step and Intelligence. May use existing columns (no migration) or wait for Phase B fields. No paid API. No scrape. No live-site edit.
+155. **Phases D–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: Business Brain extras, keywords, scoring, SERP, content, GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
 ## Expansion: SEO Intelligence, Content, AI Visibility (10 September 2026)
 
-**Status of this section:** planned architecture. Do not treat the lists below as shipped features.
+Canonical product text: [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.1 §§15–19. This section is the implementation map. Do not treat **PLANNED** lists as shipped.
 
-Approved in [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.1. GroovGro stays one product. SEO, content, and AI visibility feed Next step, Intelligence, Goals, and Decision History. They do not become a disconnected SEO application.
+### Shared recommendation: extend `growth_actions`
 
-### Implemented
+Inspected table (`src/lib/db/schema.ts` → `growthActions`):
 
-- SEO page checks and owner-approved homepage SEO drafts (no live-site write)
-- Search Console read-only snapshots (totals, top queries, top pages)
-- Brand Voice profile, examples, in-workspace drafts
-- Named-share attribution through people and payment copies
-- Next step / specialists recommend-only, including SEO and Search Console loops
+| Already on the row | Role today |
+| --- | --- |
+| `organization_id` | Tenant isolation |
+| `goal_id`, `plan_id` | Optional Goal / plan link |
+| `module`, `action_type` | Source and kind (`seo`, `crm`, `follow_up_leads`, …) |
+| `description` | Plain-English recommendation |
+| `status`, `risk` | `proposed` / approved / owner-completed; operational vs optimization |
+| `proposed_at`, `approved_at`, `executed_at` | Review and later execute (execute unused) |
+| `provider`, `external_id`, `result`, `error` | Adapter hook and outcome text |
 
-### Partially implemented
+**Preference:** keep one table. Do not add `growth_opportunities`.
 
-- Business Brain (no structured competitors or personas yet)
-- Attribution (share-level, not keyword-level or AI-referral)
-- Next step priority (fixed owner order, not scored opportunities)
-- GroovGro-hosted publishing (builder paused; no CMS write adapter)
+**Phase C (first coding, not this PR):** insert recommend-only rows with existing columns. Example: `module=seo`, `action_type=improve_page` or `review_search_query`, `description` = what + why, `status=proposed`. Next step and Intelligence read those rows. **No migration required.**
 
-### Planned
+**Phase B (later):** add nullable fields or a JSON `evidence` payload on the same table if the UI needs structured confidence / impact / effort. Only then consider a second table, and only if this model cannot stay coherent.
 
-- Keyword discovery and revenue-aware opportunity scores
-- Competitor and search-results intelligence via contracted, allowed providers
-- Content gaps, briefs, planner, generation, internal links, schema (facts only)
-- AI Visibility / GEO metrics, query library, accuracy issues, citation sources
-- Unified Growth Opportunity fields: evidence, confidence, expected impact, effort, measured result
-- Experiments (before / action / after)
-- Alerts for important, actionable changes only
-- Cost caps before paid keyword or AI-scan vendors
+Fields Phase B may add (all optional, same table): `title`, `category`, `evidence` (JSON), `confidence`, `expected_impact`, `effort`, `estimated_cost`, `urgency`, `priority`, `reviewed_at`, `measurement_start`, `measurement_end`, `learning`.
+
+### IMPLEMENTED / PARTIAL / PLANNED
+
+**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only.
+
+**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder.
+
+**PLANNED:** keyword/SERP/competitor engines; content planner and generation; CMS write; AI Visibility / GEO; scored cross-channel priority; experiments; execute.
 
 ### Architecture rules
 
-- Reuse Next step as the owner review surface.
-- New vendors stay behind adapters (keyword, SERP, AI visibility, CMS publish).
+- Next step is the owner review surface.
+- Vendors stay behind adapters. Search Console already exists (read-only).
 - Every new table keeps `organization_id`.
-- Default publishing is review-first. Auto-publish is an explicit owner choice.
-- Do not scrape. Do not buy a vendor in the first coding slice.
+- Review-first publishing. No scrape. No paid vendor in Phase C.
 - Do not overwrite Ocean Sailing Adventures or change stripe-osa.
+- Do not start ads, email send, social post, Growth Director autopilot, or the hosted builder in this expansion.

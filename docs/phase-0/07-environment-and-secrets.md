@@ -1,5 +1,7 @@
 # Environment, secrets, and Cloud Agent setup
 
+**Partially historical.** Secret *names* still matter. “After Phase 1 adds package.json” is outdated — the app exists. Add new provider keys only when a later phase needs them. Never commit values. This repo is public.
+
 ## Runtime
 
 | Item | Value |
