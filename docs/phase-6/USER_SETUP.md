@@ -108,3 +108,5 @@ Search Console stays read-only. If you also have a GroovGro website:
 3. In **Earlier decisions**, click **Apply to Home** (or the name of that page).
 4. That updates that GroovGro page only. The connected existing website does not change.
 
+Keyword intelligence and AI Visibility are **planned** (master brief §15). This setup does not turn them on. GroovGro still only **reads** Search Console.
+

@@ -2,6 +2,8 @@
 
 Postgres (Neon) is the system of record. Shared schema, every tenant row stamped with `organization_id`, Row Level Security as defense in depth.
 
+Live tables are in `src/lib/db/schema.ts`. Planned expansion tables (keywords, content items, AI visibility scans, growth opportunities) are listed in [v2/ARCHITECTURE.md](../v2/ARCHITECTURE.md) “Expansion”. They are **not** in the schema yet. Every new table must keep `organization_id`.
+
 Do not use one database per customer in v1. Do not use one Postgres schema per customer in v1. Those choices are hard to operate with a small team and fight Neon + serverless connections.
 
 ## Isolation rules

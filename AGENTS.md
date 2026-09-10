@@ -44,15 +44,19 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 
 ## Phase gate
 
-- Phase 0 architecture is approved in `docs/phase-0/`.
-- V2 source of truth is [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md). First V2 slice is **growth foundation** (Business Brain, Offers, constraints, Goals, Decision History). See [docs/STATUS.md](docs/STATUS.md).
-- Keep working V1 features, including the optional website builder. Do not rewrite them to match a later V2 phase number.
-- Do not skip ahead to ads, Growth Director execution, or autonomous AI.
+- Phase 0 architecture is approved in `docs/phase-0/` (historical platform plan). Current product intent is [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) **v2.1**.
+- V2 owner-assistance is on `main`: Business Brain, Offers, Goals, Next step, named shares, SEO checks, Search Console read-only, Brand Voice drafts. See [docs/STATUS.md](docs/STATUS.md) and [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).
+- Keep working V1 features. The optional website builder stays in the app and is **paused** unless Jason asks to resume it. Do not rewrite working features to match a later phase number.
+- SEO Intelligence, Content Engine, and AI Visibility / GEO are an approved **vision expansion**. They extend GroovGro. They are not a second app and not a clone of another SEO product. Status of each piece is in MASTER_BRIEF §15 and v2/ARCHITECTURE “Expansion”.
+- Do not mark planned expansion work as implemented. The first coding slice (after the docs PR) is Growth Opportunities from **existing** Search Console queries and **existing** SEO findings, recommend-only, on Next step. No new paid API. No content factory. No AI-platform scraping. No live-site edits.
+- Do not start ads, Growth Director execution, guarded automation, or autonomous AI.
+- Do not scrape third parties in violation of their terms. Do not hard-code a fixed list of AI vendors through business logic.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.
 - The website builder must not overwrite a connected existing website or change Stripe checkout.
-- Custom domains for GroovGro-built sites wait for a later Phase 7 slice.
+- Custom domains for GroovGro-built sites wait for a later slice.
 - Do not change Ocean Sailing Adventures live Stripe checkout or **stripe-osa endpoint**.
 - Brand voice drafts must not send email, post to social, edit a website, or take a payment.
 - SEO checks and approved drafts must not edit the connected website. Title, description, and heading drafts may be applied to a **GroovGro-hosted** page after the user clicks Apply.
 - Website apply model: suggest → user approves or rejects → apply only if an official connector exists (GroovGro builder, WordPress, or similar). Custom/code-hosted sites stay manual; show how and where to make the change. Do not silently rewrite a live site.
 - Do not publish groovgro.com `robots.txt` or `sitemap.xml` for tenant builder pages.
+- Do not auto-publish content. Do not present estimates as facts. Do not treat one AI answer as absolute truth.

@@ -1,6 +1,6 @@
-# GroovGro — Project Master Brief
+# GroovGro — Project Master Brief (V1 archive)
 
-Source of truth for product intent. Architecture and implementation must follow this document unless a later approved decision supersedes it.
+**Archived.** Current product intent is [MASTER_BRIEF.md](MASTER_BRIEF.md) (v2.1). Do not implement from this file.
 
 **Product:** GroovGro (formerly GroMogia)  
 **Parent company:** Mogia Group  

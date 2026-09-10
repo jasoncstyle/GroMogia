@@ -31,6 +31,17 @@ Phase 2 first adapters:
 
 Later adapters (Mailchimp, Google, Meta, Square, TripAdvisor) implement the same interfaces. Do not spread `if (provider === 'meta')` through the app.
 
+**Planned capability interfaces** (do not implement vendors in the first expansion slice):
+
+| Capability | Purpose | Rule |
+| --- | --- | --- |
+| `KeywordProvider` | Volume, difficulty, related terms | Contracted data only; cache; cost cap |
+| `SerpProvider` | Search-result snapshots | Official or licensed; no ToS-breaking scrape |
+| `AiVisibilityProvider` | Ask/monitor AI answer surfaces | Confirm API and terms first; store history, not one-run truth |
+| `CmsPublishProvider` | Draft/publish to a CMS | Review-first; auto-publish is an explicit owner choice |
+
+Search Console already exists as a read-only Google adapter. Reuse it before adding a keyword vendor.
+
 Disconnect must be a first-class operation: revoke token, mark disconnected, stop jobs, keep historical canonical records.
 
 ## Background jobs
