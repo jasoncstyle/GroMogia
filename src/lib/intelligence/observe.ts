@@ -33,6 +33,7 @@ export type IntelligenceFacts = {
   proposedSeoSummary?: string
   businessBrainSaved?: boolean
   businessContextSaved?: boolean
+  recordedKeywordCount?: number
 };
 
 export type InsightItem = {
@@ -157,6 +158,17 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       body: `GroovGro observed Search Console and page-check evidence and proposed ${seoCount} review-only growth action${seoCount === 1 ? "" : "s"}.${example ? ` ${example}` : ""} GroovGro will not change the live website.`,
       evidence: ["seo_audits", "search_console_snapshots", "growth_actions.module=seo"],
       href: "/app/next-step",
+    });
+  }
+
+  const keywordCount = facts.recordedKeywordCount ?? 0;
+  if (keywordCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Search queries from Search Console",
+      body: `GroovGro recorded ${keywordCount} search quer${keywordCount === 1 ? "y" : "ies"} from stored Search Console snapshots. This is a history of what Google already reported. GroovGro does not buy keyword data or score these yet.`,
+      evidence: ["keywords", "keyword_history", "search_console_snapshots"],
+      href: "/app/seo",
     });
   }
 
@@ -306,6 +318,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `stripe=${facts.stripeConnected ? "yes" : "no"}`,
     `seo_actions=${facts.proposedSeoActionCount ?? 0}`,
     `business_context=${facts.businessContextSaved ? "yes" : "no"}`,
+    `keywords=${facts.recordedKeywordCount ?? 0}`,
   ].join(" ");
 }
 

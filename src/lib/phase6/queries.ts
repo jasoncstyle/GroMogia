@@ -12,6 +12,11 @@ import {
   websites,
 } from "@/lib/db/schema";
 import { isGoogleOAuthConfigured } from "@/lib/env";
+import {
+  getKeywordHistory,
+  persistKeywordHistory,
+} from "@/lib/growth/persist-keywords";
+import type { KeywordWithHistory } from "@/lib/growth/keywords";
 import { listBuilderPages, type BuilderPageSummary } from "@/lib/website-builder/queries";
 
 export async function getSeoPageData(organizationId: string) {
@@ -39,7 +44,17 @@ export async function getSeoPageData(organizationId: string) {
         lastCheckedAt: Date | null
       })[],
       searchConsole: emptySearchConsole,
+      keywords: [] as KeywordWithHistory[],
     };
+  }
+
+  try {
+    await persistKeywordHistory(db, organizationId);
+  } catch (error) {
+    console.error("GroovGro keyword history persist failed", {
+      organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
   }
 
   const [website] = await db
@@ -107,12 +122,15 @@ export async function getSeoPageData(organizationId: string) {
       ? await readGoogleSecret(organizationId)
       : null;
 
-  const snapshots = await db
-    .select()
-    .from(searchConsoleSnapshots)
-    .where(eq(searchConsoleSnapshots.organizationId, organizationId))
-    .orderBy(desc(searchConsoleSnapshots.createdAt))
-    .limit(8);
+  const [snapshots, keywords] = await Promise.all([
+    db
+      .select()
+      .from(searchConsoleSnapshots)
+      .where(eq(searchConsoleSnapshots.organizationId, organizationId))
+      .orderBy(desc(searchConsoleSnapshots.createdAt))
+      .limit(8),
+    getKeywordHistory(db, organizationId),
+  ]);
 
   return {
     website: website ?? null,
@@ -131,6 +149,7 @@ export async function getSeoPageData(organizationId: string) {
       lastError: google?.lastError ?? null,
       snapshots,
     },
+    keywords,
   };
 }
 

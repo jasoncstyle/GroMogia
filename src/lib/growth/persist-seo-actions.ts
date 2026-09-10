@@ -6,6 +6,7 @@ import {
   searchConsoleSnapshots,
   seoAudits,
 } from "@/lib/db/schema";
+import { persistKeywordHistory } from "@/lib/growth/persist-keywords";
 import {
   planSeoGrowthActions,
   type ExistingSeoAction,
@@ -189,6 +190,15 @@ async function persistSeoGrowthActionsOnce(
         message: error instanceof Error ? error.message : "unknown",
       });
     }
+  }
+
+  try {
+    await persistKeywordHistory(db, organizationId);
+  } catch (error) {
+    console.error("GroovGro keyword history persist failed", {
+      organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
   }
 
   return { inserted, backfilled };
