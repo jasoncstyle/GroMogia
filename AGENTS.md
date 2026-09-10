@@ -48,8 +48,9 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 - V2 owner-assistance is on `main`: Business Brain, Offers, Goals, Next step, named shares, SEO checks, Search Console read-only, Brand Voice drafts. See [docs/STATUS.md](docs/STATUS.md) and [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).
 - Keep working V1 features. The optional website builder stays in the app and is **paused** unless Jason asks to resume it. Do not rewrite working features to match a later phase number.
 - SEO Intelligence, Content Engine, and AI Visibility / GEO are an approved **vision expansion**. They extend GroovGro. They are not a second app and not a clone of another SEO product. Status: MASTER_BRIEF §§15–19 and v2/ARCHITECTURE “Expansion”.
-- Shared recommendations live on **`growth_actions`**. Do not create `growth_opportunities` unless a later review proves that table cannot hold them. No migration in Phase A.
-- Do not mark planned expansion work as implemented. Phase A is documentation only. Do not start Phase B or Phase C until Jason asks. Phase C (when asked) is existing Search Console + SEO findings → `growth_actions` → Next step, recommend-only. No new paid API. No content factory. No AI-platform scraping. No live-site edits.
+- Shared recommendations live on **`growth_actions`**. Do not create `growth_opportunities` unless a later review proves that table cannot hold them.
+- Phase C first slice is implemented: existing Search Console + SEO findings can create recommend-only `growth_actions` for Next step and Intelligence. No new paid API. No content factory. No AI-platform scraping. No live-site edits.
+- Do not mark later expansion work as implemented. Phase B structured evidence fields, and phases D–T (keywords, SERP, content, GEO, publishing, execute), stay planned until Jason asks.
 - Do not start ads, Growth Director execution, guarded automation, or autonomous AI.
 - Do not scrape third parties in violation of their terms. Do not hard-code a fixed list of AI vendors through business logic.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.

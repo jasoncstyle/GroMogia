@@ -29,6 +29,8 @@ export type IntelligenceFacts = {
     note: string
     rows?: { origin: string; count: number }[]
   } | null
+  proposedSeoActionCount?: number
+  proposedSeoSummary?: string
 };
 
 export type InsightItem = {
@@ -144,6 +146,18 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  const seoCount = facts.proposedSeoActionCount ?? 0;
+  if (seoCount > 0) {
+    const example = (facts.proposedSeoSummary ?? "").replace(/\s+/g, " ").trim();
+    observations.push({
+      kind: "observation",
+      title: "Search and website opportunity",
+      body: `GroovGro observed Search Console and page-check evidence and proposed ${seoCount} review-only growth action${seoCount === 1 ? "" : "s"}.${example ? ` ${example}` : ""} GroovGro will not change the live website.`,
+      evidence: ["seo_audits", "search_console_snapshots", "growth_actions.module=seo"],
+      href: "/app/next-step",
+    });
+  }
+
   if (!facts.websiteConnected) {
     observations.push({
       kind: "observation",
@@ -181,6 +195,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       body: "When a checkout collects an email, GroovGro can attach the payment to a contact. Do not change the live checkout webhook on the business website.",
       evidence: ["unattributed payments"],
       href: "/app/commerce",
+    });
+  }
+
+  if (seoCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review the SEO opportunity",
+      body: "Open Next step to read what GroovGro found and what it recommends. Approving does not change the live website, Search Console, or ads.",
+      evidence: ["growth_actions.module=seo status=proposed"],
+      href: "/app/next-step",
     });
   }
 
@@ -254,6 +278,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `unattributed_cents=${facts.showFinancials ? facts.unattributedRevenueCents : "hidden"}`,
     `website=${facts.websiteConnected ? "yes" : "no"}`,
     `stripe=${facts.stripeConnected ? "yes" : "no"}`,
+    `seo_actions=${facts.proposedSeoActionCount ?? 0}`,
   ].join(" ");
 }
 

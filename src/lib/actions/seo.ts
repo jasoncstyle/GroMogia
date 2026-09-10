@@ -24,6 +24,7 @@ import { fetchPublicText, originFromWebsiteUrl } from "@/lib/seo/fetch";
 import { builderApplyHint, builderPublicUrl } from "@/lib/website-builder/apply-seo";
 import { flattenLayoutWidgets } from "@/lib/website-builder/nest";
 import { builderPageLabel } from "@/lib/website-builder/pages";
+import { persistSeoGrowthActions } from "@/lib/growth/persist-seo-actions";
 import { getBuilderEditorData, listBuilderPages } from "@/lib/website-builder/queries";
 
 function revalidateSeo() {
@@ -77,6 +78,14 @@ async function checkBuilderPage(
     builderSiteId: data.site.id,
     createdBy: session.userId,
   });
+  try {
+    await persistSeoGrowthActions(db, session.organizationId);
+  } catch (error) {
+    console.error("GroovGro SEO growth action persist failed", {
+      organizationId: session.organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+  }
   return { label, score: result.score };
 }
 
@@ -132,6 +141,14 @@ export async function runSeoAudit(): Promise<ActionResult> {
       findings: result.findings,
       createdBy: session.userId,
     });
+    try {
+      await persistSeoGrowthActions(db, session.organizationId);
+    } catch (error) {
+      console.error("GroovGro SEO growth action persist failed", {
+        organizationId: session.organizationId,
+        message: error instanceof Error ? error.message : "unknown",
+      });
+    }
 
     await recordAudit({
       organizationId: session.organizationId,

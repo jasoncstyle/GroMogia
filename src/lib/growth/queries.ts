@@ -43,12 +43,22 @@ import {
   buildSpecialistReports,
   type SpecialistFacts,
 } from "@/lib/growth/specialists";
+import { persistSeoGrowthActions } from "@/lib/growth/persist-seo-actions";
 import { goalProgressPercent } from "@/lib/growth/types";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 
 export async function getGrowthSnapshot(organizationId: string) {
   const db = getDb();
   if (!db) return null;
+
+  try {
+    await persistSeoGrowthActions(db, organizationId);
+  } catch (error) {
+    console.error("GroovGro SEO growth action persist failed", {
+      organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+  }
 
   const [
     brainRows,

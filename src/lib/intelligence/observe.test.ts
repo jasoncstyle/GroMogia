@@ -255,6 +255,33 @@ describe("intelligence observe", () => {
     assert.match(goalShare?.body ?? "", /Marketing/);
   });
 
+  it("shows a proposed SEO action as observed evidence, not an executed change", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        proposedSeoActionCount: 1,
+        proposedSeoSummary:
+          "Search Console shows that “ASA sailing lessons” received 1,240 impressions and an average position of 11.3.",
+      }),
+    );
+    const observed = brief.observations.find(
+      (item) => item.title === "Search and website opportunity",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/next-step");
+    assert.match(observed.body, /1,240 impressions/);
+    assert.match(observed.body, /will not change the live website/);
+    const recommended = brief.recommendations.find(
+      (item) => item.title === "Review the SEO opportunity",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/next-step");
+    assert.match(recommended.body, /Approving does not change the live website/);
+    assert.equal(
+      brief.recommendations.some((item) => /Keep recording/.test(item.title)),
+      false,
+    );
+  });
+
   it("names extra shares that also moved the active Goal", () => {
     const brief = buildIntelligenceBrief(
       facts({

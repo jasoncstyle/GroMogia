@@ -197,7 +197,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Brand Voice: does not learn from repeated owner edits
 - Publishing: GroovGro-hosted builder exists and is **PAUSED**. No WordPress / Shopify write. Do not overwrite a connected existing website
 - Notifications: table exists; the page is a stub (**PAUSED** as a product)
-- `growth_actions`: exists for plan/owner work. Does not yet hold SEO/GEO evidence, confidence, or impact fields
+- `growth_actions`: exists for plan/owner work. Phase C can write recommend-only SEO rows with the existing columns (`module`, `action_type`, `description`, `provider`, `external_id`). It still does not have structured evidence, confidence, or impact fields (Phase B).
 
 ### PLANNED (not implemented)
 
@@ -218,9 +218,9 @@ Today the table already has: `organization_id`, `goal_id`, `plan_id`, `module`, 
 
 It does not yet have structured: title, evidence, confidence, expected impact, effort, estimated cost, urgency, priority, reviewed_at, measurement window, learning.
 
-Phase C (first coding slice, not this PR) may write recommend-only SEO rows using **existing** columns (`module` = `seo`, `description` = what and why in plain English, `status` = `proposed`). No migration required for that proof.
+Phase C (this slice) writes recommend-only SEO rows using **existing** columns (`module` = `seo`, `action_type` = `seo_page_improvement` or `seo_search_opportunity`, `description` = what / why / recommend in plain English, `status` = `proposed`, `provider` + `external_id` for dedup). No migration.
 
-Phase B (later, still not this PR) may add nullable columns or a JSON evidence payload on the **same** table. Avoid duplicate concepts.
+Phase B (later) may add nullable columns or a JSON evidence payload on the **same** table. Avoid duplicate concepts. Do not parse `description` as machine data.
 
 Next step and Intelligence stay the owner surfaces. Module pages stay for detail.
 
@@ -236,7 +236,7 @@ GroovGro should eventually explain **why**, with evidence, confidence, expected 
 
 ### SEO Intelligence (**PARTIALLY IMPLEMENTED** page checks; rest **PLANNED**)
 
-Today: title, description, heading, and similar page checks; owner-approved drafts; Search Console totals and top queries.
+Today: title, description, heading, and similar page checks; owner-approved drafts; Search Console totals and top queries; those existing sources can create recommend-only Growth Actions when evidence clears conservative thresholds.
 
 Future: keyword discovery from the business and Search Console; keyword history and groups; intent; opportunity scoring; SERP and competitor analysis; content gaps; page improvement; create vs improve; conversion- and revenue-aware priority.
 
@@ -287,9 +287,9 @@ Do not overwrite the only copy of a metric. Keep snapshots (Search Console alrea
 
 | Phase | Work | Status |
 | --- | --- | --- |
-| A | Documentation and architecture alignment | **This PR** |
-| B | Extend `growth_actions` with optional opportunity fields | **PLANNED** — no migration in Phase A |
-| C | Existing Search Console + SEO findings → `growth_actions` → Next step + Intelligence (recommend-only) | **PLANNED** — first coding slice after Jason reviews |
+| A | Documentation and architecture alignment | **IMPLEMENTED** |
+| B | Extend `growth_actions` with optional opportunity fields | **PLANNED** — no migration in this slice |
+| C | Existing Search Console + SEO findings → `growth_actions` → Next step + Intelligence (recommend-only) | **IMPLEMENTED** — this slice. No paid API. No scrape. No live-site edit. |
 | D | Business Brain extras SEO/GEO need | **PLANNED** |
 | E | Keyword model and history from Search Console | **PLANNED** |
 | F | Keyword opportunity scoring | **PLANNED** |

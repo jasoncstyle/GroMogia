@@ -258,7 +258,7 @@ export default async function DecisionsPage() {
           ) : (
             actions.map((action) => (
               <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
-                <p className="font-medium">{action.description}</p>
+                <p className="whitespace-pre-wrap font-medium">{action.description}</p>
                 <p className="text-muted-foreground">
                   {action.status} · {labelFor(action.risk)}
                   {action.module ? ` · ${action.module}` : ""}
