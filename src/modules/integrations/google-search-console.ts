@@ -116,12 +116,17 @@ export async function listSearchConsoleSites(accessToken: string): Promise<strin
     "https://www.googleapis.com/webmasters/v3/sites",
     accessToken,
   );
-  const payload = (await response.json()) as {
+  const payload = (await readGoogleJson(response)) as {
     siteEntry?: Array<{ siteUrl?: string }>
-    error?: { message?: string }
+    error?: { message?: string; status?: string; errors?: Array<{ message?: string; reason?: string }> }
   };
   if (!response.ok) {
-    throw new Error(payload.error?.message || "Could not list Search Console properties.");
+    throw new Error(
+      formatGoogleApiError(
+        payload,
+        "Search Console could not list properties. Disconnect, then connect Search Console again. GroovGro did not change the website.",
+      ),
+    );
   }
   return (payload.siteEntry ?? [])
     .map((entry) => entry.siteUrl ?? "")
@@ -183,6 +188,28 @@ export function searchConsoleWindow(now = new Date()): {
   return { startDate: isoDate(start), endDate: isoDate(end) };
 }
 
+export function searchAnalyticsQueryBody(
+  body: Record<string, unknown>,
+): Record<string, unknown> {
+  return { ...body, type: "web" };
+}
+
+export function formatGoogleApiError(
+  payload: { error?: { message?: string; status?: string; errors?: Array<{ message?: string; reason?: string }> } },
+  fallback: string,
+): string {
+  const detail =
+    payload.error?.errors?.[0]?.message ||
+    payload.error?.message ||
+    payload.error?.status ||
+    "";
+  const generic = /^(bad request|invalid|invalid argument)$/i.test(detail.trim());
+  if (!detail || generic) {
+    return fallback;
+  }
+  return `${fallback} (${detail})`;
+}
+
 async function querySearchAnalytics(
   accessToken: string,
   siteUrl: string,
@@ -197,17 +224,32 @@ async function querySearchAnalytics(
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ ...body, searchType: "web" }),
+      body: JSON.stringify(searchAnalyticsQueryBody(body)),
     },
   );
-  const payload = (await response.json()) as {
+  const payload = (await readGoogleJson(response)) as {
     rows?: SearchAnalyticsApiRow[]
-    error?: { message?: string }
+    error?: { message?: string; status?: string; errors?: Array<{ message?: string; reason?: string }> }
   };
   if (!response.ok) {
-    throw new Error(payload.error?.message || "Could not read Search Console analytics.");
+    throw new Error(
+      formatGoogleApiError(
+        payload,
+        "Search Console could not read those numbers. Disconnect, then connect Search Console again. GroovGro did not change the website.",
+      ),
+    );
   }
   return payload.rows ?? [];
+}
+
+async function readGoogleJson(response: Response): Promise<unknown> {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    return { error: { message: text.slice(0, 180) } };
+  }
 }
 
 async function googleGet(url: string, accessToken: string): Promise<Response> {

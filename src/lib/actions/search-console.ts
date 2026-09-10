@@ -44,16 +44,27 @@ function canManageSearchConsole(session: OrgSession): boolean {
   );
 }
 
-export async function syncSearchConsole(): Promise<ActionResult> {
+export async function syncSearchConsole(_formData?: FormData): Promise<ActionResult> {
   return runAction("Could not refresh Search Console.", async () => {
     const session = await requireOrgSession();
     if (!canManageSearchConsole(session)) {
       throw new Error("You do not have permission to refresh Search Console.");
     }
-    const snapshot = await refreshSearchConsoleForOrganization(session);
-    return snapshot
-      ? "Search Console numbers saved. GroovGro did not change the website."
-      : "Pick the Search Console property that matches the connected website, then refresh.";
+    try {
+      const snapshot = await refreshSearchConsoleForOrganization(session);
+      return snapshot
+        ? "Search Console numbers saved. GroovGro did not change the website."
+        : "Pick the Search Console property that matches the connected website, then refresh.";
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : "Could not refresh Search Console.";
+      await upsertGoogleConnection(session.organizationId, {
+        lastError: message.slice(0, 400),
+      }).catch(() => undefined);
+      throw error;
+    }
   });
 }
 
