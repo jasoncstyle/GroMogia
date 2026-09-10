@@ -486,6 +486,11 @@ export async function getBusinessBrainForm(organizationId: string) {
       operatingHours: businessBrains.operatingHours,
       seasonality: businessBrains.seasonality,
       notes: businessBrains.notes,
+      idealCustomers: businessBrains.idealCustomers,
+      painPoints: businessBrains.painPoints,
+      competitors: businessBrains.competitors,
+      differentiators: businessBrains.differentiators,
+      prohibitedClaims: businessBrains.prohibitedClaims,
       discoveryStatus: businessBrains.discoveryStatus,
     })
     .from(businessBrains)

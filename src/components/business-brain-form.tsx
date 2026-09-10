@@ -16,6 +16,11 @@ export type BusinessBrainValues = {
   operatingHours?: string | null
   seasonality?: string | null
   notes?: string | null
+  idealCustomers?: string[] | null
+  painPoints?: string[] | null
+  competitors?: string[] | null
+  differentiators?: string[] | null
+  prohibitedClaims?: string[] | null
   discoveryStatus?: string | null
 };
 
@@ -115,6 +120,59 @@ export function BusinessBrainForm({
           rows={4}
           defaultValue={brain?.notes ?? ""}
           placeholder="Budget, staffing, compliance, or anything GroovGro should not ignore"
+        />
+      </div>
+      <div className="space-y-2 md:col-span-2">
+        <Label htmlFor="idealCustomers">Who you want to reach</Label>
+        <Input
+          id="idealCustomers"
+          name="idealCustomers"
+          defaultValue={commaTextFromList(brain?.idealCustomers)}
+          placeholder="Separate with commas. Later search and content work can use this."
+        />
+        <p className="text-xs text-muted-foreground">
+          Who should find this business. This is not an AI persona. Who the
+          business serves in Brand can stay there.
+        </p>
+      </div>
+      <div className="space-y-2 md:col-span-2">
+        <Label htmlFor="painPoints">Problems they are trying to solve</Label>
+        <Input
+          id="painPoints"
+          name="painPoints"
+          defaultValue={commaTextFromList(brain?.painPoints)}
+          placeholder="Separate with commas"
+        />
+      </div>
+      <div className="space-y-2 md:col-span-2">
+        <Label htmlFor="competitors">Competitors you already know</Label>
+        <Input
+          id="competitors"
+          name="competitors"
+          defaultValue={commaTextFromList(brain?.competitors)}
+          placeholder="Names only. Separate with commas"
+        />
+        <p className="text-xs text-muted-foreground">
+          GroovGro will not look these businesses up or scrape their websites.
+        </p>
+      </div>
+      <div className="space-y-2 md:col-span-2">
+        <Label htmlFor="differentiators">What makes this business different</Label>
+        <Input
+          id="differentiators"
+          name="differentiators"
+          defaultValue={commaTextFromList(brain?.differentiators)}
+          placeholder="Separate with commas"
+        />
+      </div>
+      <div className="space-y-2 md:col-span-2">
+        <Label htmlFor="prohibitedClaims">Claims GroovGro must never make</Label>
+        <Textarea
+          id="prohibitedClaims"
+          name="prohibitedClaims"
+          rows={3}
+          defaultValue={commaTextFromList(brain?.prohibitedClaims)}
+          placeholder="Separate with commas. Later drafts should stay inside these limits."
         />
       </div>
       <div className="md:col-span-2">

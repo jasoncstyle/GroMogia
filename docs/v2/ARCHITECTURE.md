@@ -1956,7 +1956,8 @@ Organization
 152. **Phase A — documentation and architecture alignment** — Fold the v2.1 vision into the brief, this file, STATUS, and agent rules. Prefer extending `growth_actions`. This slice. No expansion code. No migration.
 153. **Phase B — extend `growth_actions`** — **IMPLEMENTED** this slice. Added `title`, `evidence` (JSON), `confidence`, `expected_impact`, `priority`. SEO rows write them. Next step shows the facts without parsing `description`. Priority does not reorder Next step yet. No `growth_opportunities` table.
 154. **Phase C — existing Search Console + SEO findings → growth actions** — **IMPLEMENTED** first coding slice. Recommend-only `growth_actions` (`module=seo`, `seo_page_improvement` / `seo_search_opportunity`) from existing audits and Search Console snapshots. Next step and Intelligence read those rows. No migration. No paid API. No scrape. No live-site edit.
-155. **Phases D–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: Business Brain extras, keywords, scoring, SERP, content, GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters.
+155. **Phase D — Business Brain extras** — **IMPLEMENTED** this slice. Owner can save ideal customers, pain points, known competitors, differentiators, and prohibited claims on `business_brains`. No scrape. No keyword engine. No execute.
+156. **Phases E–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: keywords, scoring, SERP, content, GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
@@ -1988,7 +1989,7 @@ Fields still later if usage needs them: `effort`, `estimated_cost`, `urgency`, `
 
 ### IMPLEMENTED / PARTIAL / PLANNED
 
-**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`.
+**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work.
 
 **PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder.
 

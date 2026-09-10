@@ -31,6 +31,8 @@ export type IntelligenceFacts = {
   } | null
   proposedSeoActionCount?: number
   proposedSeoSummary?: string
+  businessBrainSaved?: boolean
+  businessContextSaved?: boolean
 };
 
 export type InsightItem = {
@@ -158,6 +160,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.businessContextSaved) {
+    observations.push({
+      kind: "observation",
+      title: "Business context for later search work",
+      body: "The owner saved who to reach, problems they have, known competitors, what makes the business different, or claims to avoid. GroovGro will not look up competitors or write pages from this yet.",
+      evidence: ["business_brains seo context"],
+      href: "/app/business",
+    });
+  }
+
   if (!facts.websiteConnected) {
     observations.push({
       kind: "observation",
@@ -205,6 +217,20 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       body: "Open Next step to read what GroovGro found and what it recommends. Approving does not change the live website, Search Console, or ads.",
       evidence: ["growth_actions.module=seo status=proposed"],
       href: "/app/next-step",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
+    facts.businessBrainSaved &&
+    !facts.businessContextSaved
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Add business context for later search work",
+      body: "On Business, add who you want to reach, problems they are trying to solve, competitors you already know, what makes the business different, or claims GroovGro must never make. GroovGro will not look up competitors or change the live website.",
+      evidence: ["business_brains seo context missing"],
+      href: "/app/business",
     });
   }
 
@@ -279,6 +305,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `website=${facts.websiteConnected ? "yes" : "no"}`,
     `stripe=${facts.stripeConnected ? "yes" : "no"}`,
     `seo_actions=${facts.proposedSeoActionCount ?? 0}`,
+    `business_context=${facts.businessContextSaved ? "yes" : "no"}`,
   ].join(" ");
 }
 

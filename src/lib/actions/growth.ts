@@ -288,6 +288,11 @@ const brainSchema = z.object({
   operatingHours: z.string().trim().max(1000).optional().default(""),
   seasonality: z.string().trim().max(500).optional().default(""),
   notes: z.string().trim().max(4000).optional().default(""),
+  idealCustomers: z.string().trim().max(2000).optional().default(""),
+  painPoints: z.string().trim().max(2000).optional().default(""),
+  competitors: z.string().trim().max(2000).optional().default(""),
+  differentiators: z.string().trim().max(2000).optional().default(""),
+  prohibitedClaims: z.string().trim().max(4000).optional().default(""),
   discoveryStatus: z
     .enum(["not_started", "inferred", "confirmed"])
     .optional()
@@ -305,8 +310,21 @@ export async function updateBusinessBrain(formData: FormData): Promise<ActionRes
       operatingHours: formData.get("operatingHours") ?? "",
       seasonality: formData.get("seasonality") ?? "",
       notes: formData.get("notes") ?? "",
+      idealCustomers: formData.get("idealCustomers") ?? "",
+      painPoints: formData.get("painPoints") ?? "",
+      competitors: formData.get("competitors") ?? "",
+      differentiators: formData.get("differentiators") ?? "",
+      prohibitedClaims: formData.get("prohibitedClaims") ?? "",
       discoveryStatus: formData.get("discoveryStatus") ?? "not_started",
     });
+
+    const seoContext = {
+      idealCustomers: listFromCommaText(parsed.idealCustomers),
+      painPoints: listFromCommaText(parsed.painPoints),
+      competitors: listFromCommaText(parsed.competitors),
+      differentiators: listFromCommaText(parsed.differentiators),
+      prohibitedClaims: listFromCommaText(parsed.prohibitedClaims),
+    };
 
     await db
       .insert(businessBrains)
@@ -319,6 +337,7 @@ export async function updateBusinessBrain(formData: FormData): Promise<ActionRes
         operatingHours: parsed.operatingHours,
         seasonality: parsed.seasonality,
         notes: parsed.notes,
+        ...seoContext,
         discoveryStatus: parsed.discoveryStatus,
         updatedAt: new Date(),
       })
@@ -332,6 +351,7 @@ export async function updateBusinessBrain(formData: FormData): Promise<ActionRes
           operatingHours: parsed.operatingHours,
           seasonality: parsed.seasonality,
           notes: parsed.notes,
+          ...seoContext,
           discoveryStatus: parsed.discoveryStatus,
           updatedAt: new Date(),
         },

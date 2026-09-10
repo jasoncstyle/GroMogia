@@ -172,7 +172,7 @@ Use these labels. Do not make planned work sound shipped.
 
 ## 16. SEO, content, and AI visibility feed Growth Intelligence
 
-**Status:** vision approved 10 September 2026. Phases A–C first slices are implemented. Do not start Phase D–T until Jason asks.
+**Status:** vision approved 10 September 2026. Phases A–D first slices are implemented. Do not start Phase E–T until Jason asks.
 
 GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
 
@@ -180,7 +180,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 
 ### IMPLEMENTED
 
-- Business Brain, Brand, Offers, Brand Voice (profile, examples, in-workspace drafts)
+- Business Brain (including owner-entered who-to-reach, problems, known competitors, differences, and prohibited claims), Brand, Offers, Brand Voice (profile, examples, in-workspace drafts)
 - Website connect, discovered pages, review of checked pages only
 - Named marketing shares: visit → lead → customer → payment copy
 - Goals, Growth Plans, Next step, Intelligence, weekly / monthly review, Decision History, what changed
@@ -191,7 +191,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 
 ### PARTIALLY IMPLEMENTED
 
-- Business knowledge: missing structured personas, pain points, competitors, differentiators, prohibited claims
+- Business knowledge: owner can save who to reach, pain points, known competitors, differentiators, and prohibited claims (Phase D). Later keyword/GEO work still does not read these into a scoring engine.
 - Attribution: named share → person → revenue exists. Keyword → page → person and AI-referral do not. Labels DIRECT / ASSISTED / ESTIMATED / UNKNOWN are **PLANNED**
 - Prioritization: Next step uses a fixed owner-assistance order. Scored “SEO vs follow up a person vs fix a page” is **PLANNED**
 - Brand Voice: does not learn from repeated owner edits
@@ -288,7 +288,7 @@ Do not overwrite the only copy of a metric. Keep snapshots (Search Console alrea
 | A | Documentation and architecture alignment | **IMPLEMENTED** |
 | B | Extend `growth_actions` with optional opportunity fields | **IMPLEMENTED** — title, evidence JSON, confidence, expected impact, priority. No second table. |
 | C | Existing Search Console + SEO findings → `growth_actions` → Next step + Intelligence (recommend-only) | **IMPLEMENTED**. No paid API. No scrape. No live-site edit. |
-| D | Business Brain extras SEO/GEO need | **PLANNED** |
+| D | Business Brain extras SEO/GEO need | **IMPLEMENTED** — owner-entered lists only. No scrape. No keyword engine. |
 | E | Keyword model and history from Search Console | **PLANNED** |
 | F | Keyword opportunity scoring | **PLANNED** |
 | G | Competitor and SERP intelligence | **PLANNED** |
