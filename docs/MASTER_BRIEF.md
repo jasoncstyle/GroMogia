@@ -172,7 +172,7 @@ Use these labels. Do not make planned work sound shipped.
 
 ## 16. SEO, content, and AI visibility feed Growth Intelligence
 
-**Status:** vision approved 10 September 2026. Phases A–E first slices are implemented. Do not start Phase F–T until Jason asks.
+**Status:** vision approved 10 September 2026. Phases A–F first slices are implemented. Do not start Phase G–T until Jason asks.
 
 GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
 
@@ -186,14 +186,14 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Goals, Growth Plans, Next step, Intelligence, weekly / monthly review, Decision History, what changed
 - SEO **page** checks and homepage SEO copy drafts the owner approves (they do not edit the connected live site)
 - Search Console **read-only** snapshots: totals, top queries, top pages
-- Keyword model and history from those stored Search Console queries (no vendor, no score)
+- Keyword model and history from those stored Search Console queries, with a conservative estimate rank (no vendor volume)
 - Specialists that read and recommend only. Ads, email, and social stay left alone
 - Autonomy in product use: observe, recommend, draft, owner approve. Execute stays off
 
 ### PARTIALLY IMPLEMENTED
 
 - Business knowledge: owner can save who to reach, pain points, known competitors, differentiators, and prohibited claims (Phase D). Later keyword/GEO work still does not read these into a scoring engine.
-- Keywords: Search Console queries are stored as a keyword model with snapshot history (Phase E). Groups, intent, opportunity scores, and paid keyword vendors stay **PLANNED**.
+- Keywords: Search Console queries are stored as a keyword model with snapshot history (Phase E) and a conservative estimate rank (Phase F). Groups, intent, paid keyword vendors, and SERP stay **PLANNED**.
 - Attribution: named share → person → revenue exists. Keyword → page → person and AI-referral do not. Labels DIRECT / ASSISTED / ESTIMATED / UNKNOWN are **PLANNED**
 - Prioritization: Next step uses a fixed owner-assistance order. Scored “SEO vs follow up a person vs fix a page” is **PLANNED**
 - Brand Voice: does not learn from repeated owner edits
@@ -203,7 +203,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 
 ### PLANNED (not implemented)
 
-- Keyword groups, intent, opportunity scores, create-vs-improve, paid keyword vendors
+- Keyword groups, intent, create-vs-improve, paid keyword vendors
 - Competitor and SERP intelligence (contracted, allowed providers only)
 - Content gaps, briefs, planner, generation, internal linking, schema (facts only)
 - CMS publishing adapters (review-first)
@@ -236,9 +236,9 @@ GroovGro should eventually explain **why**, with evidence, confidence, expected 
 
 ### SEO Intelligence (**PARTIALLY IMPLEMENTED** page checks; rest **PLANNED**)
 
-Today: title, description, heading, and similar page checks; owner-approved drafts; Search Console totals and top queries; those existing sources can create recommend-only Growth Actions when evidence clears conservative thresholds; stored Search Console queries become a keyword model with snapshot history.
+Today: title, description, heading, and similar page checks; owner-approved drafts; Search Console totals and top queries; those existing sources can create recommend-only Growth Actions when evidence clears conservative thresholds; stored Search Console queries become a keyword model with snapshot history and a conservative estimate rank.
 
-Future: keyword groups; intent; opportunity scoring; SERP and competitor analysis; content gaps; page improvement; create vs improve; conversion- and revenue-aware priority.
+Future: keyword groups; intent; SERP and competitor analysis; content gaps; page improvement; create vs improve; conversion- and revenue-aware priority.
 
 Search volume is not success. Traffic is not success. Prefer activity that produces qualified people, customers, revenue, and a Goal.
 
@@ -292,7 +292,7 @@ Do not overwrite the only copy of a metric. Keep snapshots (Search Console alrea
 | C | Existing Search Console + SEO findings → `growth_actions` → Next step + Intelligence (recommend-only) | **IMPLEMENTED**. No paid API. No scrape. No live-site edit. |
 | D | Business Brain extras SEO/GEO need | **IMPLEMENTED** — owner-entered lists only. No scrape. No keyword engine. |
 | E | Keyword model and history from Search Console | **IMPLEMENTED** — stored GSC queries only. No vendor. No score. |
-| F | Keyword opportunity scoring | **PLANNED** |
+| F | Keyword opportunity scoring | **IMPLEMENTED** — estimate from stored GSC numbers only. No vendor volume. No SERP. |
 | G | Competitor and SERP intelligence | **PLANNED** |
 | H | Content gap detection | **PLANNED** |
 | I | Content briefs and planner | **PLANNED** |

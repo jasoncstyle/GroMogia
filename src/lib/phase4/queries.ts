@@ -24,7 +24,7 @@ export async function getIntelligenceFacts(
     countChargesThisMonth(organizationId),
     getGrowthSnapshot(organizationId),
   ]);
-  const recordedKeywordCount = await countRecordedKeywords(organizationId);
+  const keywordCounts = await countRecordedKeywords(organizationId);
 
   const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
   const proposedSeo = (growth?.actions ?? []).filter(
@@ -70,18 +70,28 @@ export async function getIntelligenceFacts(
       growth?.brain?.industry?.trim() && growth?.brain?.businessModel?.trim(),
     ),
     businessContextSaved: brainSeoContextSaved(growth?.brain ?? null),
-    recordedKeywordCount,
+    recordedKeywordCount: keywordCounts.total,
+    keywordReviewCount: keywordCounts.review,
   };
 }
 
-async function countRecordedKeywords(organizationId: string): Promise<number> {
+async function countRecordedKeywords(organizationId: string): Promise<{
+  total: number
+  review: number
+}> {
   const db = getDb();
-  if (!db) return 0;
+  if (!db) return { total: 0, review: 0 };
   const rows = await db
-    .select({ id: keywords.id })
+    .select({
+      id: keywords.id,
+      opportunityLabel: keywords.opportunityLabel,
+    })
     .from(keywords)
     .where(eq(keywords.organizationId, organizationId));
-  return rows.length;
+  return {
+    total: rows.length,
+    review: rows.filter((row) => row.opportunityLabel === "review").length,
+  };
 }
 
 export async function getIntelligencePageData(

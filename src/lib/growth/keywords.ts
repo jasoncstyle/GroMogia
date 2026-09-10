@@ -56,6 +56,9 @@ export type KeywordWithHistory = {
   source: string
   firstSeenAt: Date
   lastSeenAt: Date
+  opportunityScore: number
+  opportunityLabel: "none" | "watch" | "review"
+  opportunityWhy: string
   points: KeywordHistoryPoint[]
 };
 

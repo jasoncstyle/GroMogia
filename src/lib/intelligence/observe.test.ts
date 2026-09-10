@@ -282,10 +282,11 @@ describe("intelligence observe", () => {
     );
   });
 
-  it("observes recorded Search Console queries and does not score them", () => {
+  it("observes recorded Search Console queries and ranks them as estimates", () => {
     const brief = buildIntelligenceBrief(
       facts({
         recordedKeywordCount: 3,
+        keywordReviewCount: 1,
       }),
     );
     const observed = brief.observations.find(
@@ -294,9 +295,18 @@ describe("intelligence observe", () => {
     assert.ok(observed);
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /3 search queries/);
-    assert.match(observed.body, /does not buy keyword data or score/);
+    assert.match(observed.body, /worth a look/);
+    assert.match(observed.body, /not search volume or a traffic forecast/);
+    const recommended = brief.recommendations.find(
+      (item) => item.title === "Review the ranked search queries",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /will not change the live website/);
     assert.equal(
-      brief.recommendations.some((item) => /keyword/i.test(item.title)),
+      buildIntelligenceBrief(facts({ recordedKeywordCount: 3 })).recommendations.some(
+        (item) => item.title === "Review the ranked search queries",
+      ),
       false,
     );
     assert.equal(

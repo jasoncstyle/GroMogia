@@ -4,6 +4,7 @@ import {
   latestKeywordPoint,
   type KeywordWithHistory,
 } from "@/lib/growth/keywords";
+import { keywordScoreLabelTitle } from "@/lib/growth/keyword-score";
 import {
   Card,
   CardContent,
@@ -25,8 +26,8 @@ export function KeywordHistoryPanel({
         <CardTitle>Queries GroovGro has recorded</CardTitle>
         <CardDescription>
           These come from Search Console snapshots GroovGro already stored.
-          GroovGro does not buy keyword data, guess search volume, or score
-          these yet.
+          GroovGro can mark a query worth a look, keep watching, or not enough
+          evidence. That rank is an estimate from stored numbers, not search volume or a traffic forecast.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -42,12 +43,18 @@ export function KeywordHistoryPanel({
               <div key={keyword.queryKey} className="space-y-1">
                 <p className="text-sm font-medium">{keyword.query}</p>
                 <p className="text-sm text-muted-foreground">
+                  {keywordScoreLabelTitle(keyword.opportunityLabel)}
+                  {keyword.opportunityScore > 0
+                    ? ` · estimate ${keyword.opportunityScore} of 100`
+                    : ""}
+                </p>
+                <p className="text-sm text-muted-foreground">
                   {latest
                     ? `${latest.clicks} clicks · ${latest.impressions} impressions · average position ${formatPosition(latest.position)}`
                     : "No snapshot numbers stored yet."}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  {describeKeywordHistory(keyword.points)}
+                  {keyword.opportunityWhy || describeKeywordHistory(keyword.points)}
                 </p>
               </div>
             );

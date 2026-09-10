@@ -159,7 +159,7 @@ describe("keyword history from Search Console", () => {
     );
     assert.doesNotMatch(helper, /fetch\(/);
     assert.doesNotMatch(persist, /fetch\(/);
-    assert.doesNotMatch(persist, /opportunityScore|searchVolume|keyword vendor/i);
+    assert.doesNotMatch(persist, /searchVolume|keyword vendor/i);
     assert.match(persist, /eq\(searchConsoleSnapshots\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(keywords\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(keywordHistory\.organizationId, organizationId\)/);
@@ -174,7 +174,7 @@ describe("keyword history from Search Console", () => {
       join(process.cwd(), "src/components/keyword-history-panel.tsx"),
       "utf8",
     );
-    assert.match(panel, /does not buy keyword data/);
-    assert.doesNotMatch(panel, /opportunity score/i);
+    assert.match(panel, /not search volume or a traffic forecast/);
+    assert.doesNotMatch(panel, /search volume forecast/i);
   });
 });
