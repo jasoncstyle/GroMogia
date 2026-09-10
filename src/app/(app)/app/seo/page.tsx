@@ -17,6 +17,7 @@ import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
 import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
+import { SerpNotesPanel } from "@/components/serp-notes-panel";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
@@ -98,8 +99,10 @@ export default async function SeoPage({
           Check the connected website and every GroovGro page. Approve drafts,
           then apply title, description, or heading changes onto that GroovGro
           page. Search Console is read-only. Queries from those snapshots are
-          stored as a history and given a conservative estimate rank. GroovGro
-          will not buy keyword data, ads, or change Stripe checkout.
+          stored as a history and given a conservative estimate rank. You can
+          save a competitor you already see. GroovGro will not look businesses
+          up, scrape search results, buy keyword or SERP data, buy ads, or
+          change Stripe checkout.
         </p>
       </div>
 
@@ -251,6 +254,13 @@ export default async function SeoPage({
           />
 
           <KeywordHistoryPanel keywords={data.keywords} />
+
+          <SerpNotesPanel
+            notes={data.serpNotes}
+            knownCompetitors={data.knownCompetitors}
+            querySuggestions={data.keywords.map((keyword) => keyword.query)}
+            canManage={session.permissions.includes("manage_seo")}
+          />
 
           {latest && explanation ? (
             <>

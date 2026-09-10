@@ -317,6 +317,83 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("observes owner-saved competitor notes and does not scrape search results", () => {
+    const saved = buildIntelligenceBrief(
+      facts({
+        recordedKeywordCount: 3,
+        knownCompetitorCount: 2,
+        serpNoteCount: 1,
+      }),
+    );
+    const observed = saved.observations.find(
+      (item) => item.title === "Competitor notes you already saved",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /1 competitor note/);
+    assert.match(observed.body, /did not look these businesses up/);
+    assert.equal(
+      saved.recommendations.some(
+        (item) => item.title === "Save a competitor you already see",
+      ),
+      false,
+    );
+
+    const missing = buildIntelligenceBrief(
+      facts({
+        recordedKeywordCount: 3,
+        knownCompetitorCount: 2,
+        serpNoteCount: 0,
+      }),
+    );
+    const recommended = missing.recommendations.find(
+      (item) => item.title === "Save a competitor you already see",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /will not look anyone up/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Save a competitor you already see",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          recordedKeywordCount: 3,
+          knownCompetitorCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a competitor you already see",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          recordedKeywordCount: 0,
+          knownCompetitorCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a competitor you already see",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          recordedKeywordCount: 3,
+          knownCompetitorCount: 0,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a competitor you already see",
+      ),
+      false,
+    );
+  });
+
   it("observes saved business context and does not look up competitors", () => {
     const saved = buildIntelligenceBrief(
       facts({

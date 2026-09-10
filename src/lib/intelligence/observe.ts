@@ -35,6 +35,8 @@ export type IntelligenceFacts = {
   businessContextSaved?: boolean
   recordedKeywordCount?: number
   keywordReviewCount?: number
+  serpNoteCount?: number
+  knownCompetitorCount?: number
 };
 
 export type InsightItem = {
@@ -164,12 +166,24 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
 
   const keywordCount = facts.recordedKeywordCount ?? 0;
   const keywordReviewCount = facts.keywordReviewCount ?? 0;
+  const serpNoteCount = facts.serpNoteCount ?? 0;
+  const knownCompetitorCount = facts.knownCompetitorCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
       title: "Search queries from Search Console",
       body: `GroovGro recorded ${keywordCount} search quer${keywordCount === 1 ? "y" : "ies"} from stored Search Console snapshots and ranked them from those numbers.${keywordReviewCount > 0 ? ` ${keywordReviewCount} ${keywordReviewCount === 1 ? "is" : "are"} marked worth a look.` : ""} This is an estimate, not search volume or a traffic forecast.`,
       evidence: ["keywords", "keyword_history", "search_console_snapshots"],
+      href: "/app/seo",
+    });
+  }
+
+  if (serpNoteCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Competitor notes you already saved",
+      body: `The owner saved ${serpNoteCount} competitor ${serpNoteCount === 1 ? "note" : "notes"} from what they already see. GroovGro did not look these businesses up or scrape search results.`,
+      evidence: ["serp_notes.source=owner"],
       href: "/app/seo",
     });
   }
@@ -258,6 +272,21 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (
+    facts.websiteConnected &&
+    keywordCount > 0 &&
+    knownCompetitorCount > 0 &&
+    serpNoteCount === 0
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Save a competitor you already see",
+      body: "On SEO, save a note about a competitor you already see for a recorded query. GroovGro will not look anyone up or scrape search results.",
+      evidence: ["serp_notes missing"],
+      href: "/app/seo",
+    });
+  }
+
   if (facts.websiteConnected && namedSources.length === 0) {
     recommendations.push({
       kind: "recommendation",
@@ -332,6 +361,8 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `business_context=${facts.businessContextSaved ? "yes" : "no"}`,
     `keywords=${facts.recordedKeywordCount ?? 0}`,
     `keyword_review=${facts.keywordReviewCount ?? 0}`,
+    `serp_notes=${facts.serpNoteCount ?? 0}`,
+    `known_competitors=${facts.knownCompetitorCount ?? 0}`,
   ].join(" ");
 }
 
