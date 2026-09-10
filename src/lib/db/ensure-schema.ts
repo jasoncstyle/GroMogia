@@ -282,4 +282,16 @@ export async function ensureSchema(): Promise<void> {
   if (!keywordTable[0]?.name) {
     await applyMigration(sql, "0025_keyword_history.sql");
   }
+
+  const keywordScore = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'keywords'
+       and column_name = 'opportunity_score'`,
+  )) as RegistryRow[];
+
+  if (!keywordScore[0]?.name) {
+    await applyMigration(sql, "0026_keyword_opportunity_score.sql");
+  }
 }

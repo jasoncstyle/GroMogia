@@ -98,8 +98,8 @@ export default async function SeoPage({
           Check the connected website and every GroovGro page. Approve drafts,
           then apply title, description, or heading changes onto that GroovGro
           page. Search Console is read-only. Queries from those snapshots are
-          stored as a history. GroovGro will not buy keyword data, ads, or
-          change Stripe checkout.
+          stored as a history and given a conservative estimate rank. GroovGro
+          will not buy keyword data, ads, or change Stripe checkout.
         </p>
       </div>
 

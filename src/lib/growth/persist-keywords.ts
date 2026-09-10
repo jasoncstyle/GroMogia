@@ -1,11 +1,17 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 
 import type { getDb } from "@/lib/db";
 import { keywordHistory, keywords, searchConsoleSnapshots } from "@/lib/db/schema";
 import {
   planKeywordHistory,
   type ExistingKeywordHistoryRow,
+  type KeywordWithHistory,
 } from "@/lib/growth/keywords";
+import {
+  compareKeywordScores,
+  scoreKeywordOpportunity,
+  type KeywordScoreLabel,
+} from "@/lib/growth/keyword-score";
 
 type AppDb = NonNullable<ReturnType<typeof getDb>>;
 
@@ -140,7 +146,70 @@ async function persistKeywordHistoryOnce(
     insertedHistory += 1;
   }
 
+  await persistKeywordScores(db, organizationId, now);
+
   return { keywords: upserted, history: insertedHistory };
+}
+
+async function persistKeywordScores(
+  db: AppDb,
+  organizationId: string,
+  now: Date,
+) {
+  const [keywordRows, historyRows] = await Promise.all([
+    db
+      .select({
+        id: keywords.id,
+        organizationId: keywords.organizationId,
+      })
+      .from(keywords)
+      .where(eq(keywords.organizationId, organizationId)),
+    db
+      .select({
+        keywordId: keywordHistory.keywordId,
+        startDate: keywordHistory.startDate,
+        endDate: keywordHistory.endDate,
+        clicks: keywordHistory.clicks,
+        impressions: keywordHistory.impressions,
+        ctr: keywordHistory.ctr,
+        position: keywordHistory.position,
+        organizationId: keywordHistory.organizationId,
+      })
+      .from(keywordHistory)
+      .where(eq(keywordHistory.organizationId, organizationId)),
+  ]);
+
+  const pointsByKeyword = new Map<string, KeywordWithHistory["points"]>();
+  for (const row of historyRows) {
+    if (row.organizationId !== organizationId) continue;
+    const list = pointsByKeyword.get(row.keywordId) ?? [];
+    list.push({
+      startDate: row.startDate,
+      endDate: row.endDate,
+      clicks: row.clicks,
+      impressions: row.impressions,
+      ctr: row.ctr,
+      position: row.position,
+    });
+    pointsByKeyword.set(row.keywordId, list);
+  }
+
+  for (const row of keywordRows) {
+    if (row.organizationId !== organizationId) continue;
+    const scored = scoreKeywordOpportunity(pointsByKeyword.get(row.id) ?? []);
+    await db
+      .update(keywords)
+      .set({
+        opportunityScore: scored.score,
+        opportunityLabel: scored.label,
+        opportunityWhy: scored.why,
+        scoredAt: now,
+        updatedAt: now,
+      })
+      .where(
+        and(eq(keywords.id, row.id), eq(keywords.organizationId, organizationId)),
+      );
+  }
 }
 
 export async function getKeywordHistory(
@@ -156,6 +225,9 @@ export async function getKeywordHistory(
         source: keywords.source,
         firstSeenAt: keywords.firstSeenAt,
         lastSeenAt: keywords.lastSeenAt,
+        opportunityScore: keywords.opportunityScore,
+        opportunityLabel: keywords.opportunityLabel,
+        opportunityWhy: keywords.opportunityWhy,
       })
       .from(keywords)
       .where(eq(keywords.organizationId, organizationId))
@@ -198,14 +270,41 @@ export async function getKeywordHistory(
     pointsByKeyword.set(row.keywordId, list);
   }
 
-  return keywordRows.map((row) => ({
-    query: row.query,
-    queryKey: row.queryKey,
-    source: row.source,
-    firstSeenAt: row.firstSeenAt,
-    lastSeenAt: row.lastSeenAt,
-    points: (pointsByKeyword.get(row.id) ?? []).sort((a, b) =>
-      a.endDate.localeCompare(b.endDate),
-    ),
-  }));
+  return keywordRows
+    .map((row) => {
+      const points = (pointsByKeyword.get(row.id) ?? []).sort((a, b) =>
+        a.endDate.localeCompare(b.endDate),
+      );
+      const label = asKeywordScoreLabel(row.opportunityLabel);
+      return {
+        query: row.query,
+        queryKey: row.queryKey,
+        source: row.source,
+        firstSeenAt: row.firstSeenAt,
+        lastSeenAt: row.lastSeenAt,
+        opportunityScore: row.opportunityScore,
+        opportunityLabel: label,
+        opportunityWhy: row.opportunityWhy,
+        points,
+      };
+    })
+    .sort((left, right) =>
+      compareKeywordScores(
+        {
+          label: left.opportunityLabel,
+          score: left.opportunityScore,
+          impressions: left.points.at(-1)?.impressions ?? 0,
+        },
+        {
+          label: right.opportunityLabel,
+          score: right.opportunityScore,
+          impressions: right.points.at(-1)?.impressions ?? 0,
+        },
+      ),
+    );
+}
+
+function asKeywordScoreLabel(value: string | null | undefined): KeywordScoreLabel {
+  if (value === "review" || value === "watch" || value === "none") return value;
+  return "none";
 }

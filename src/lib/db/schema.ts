@@ -748,6 +748,10 @@ export const keywords = pgTable(
     lastSeenAt: timestamp("last_seen_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
+    opportunityScore: integer("opportunity_score").notNull().default(0),
+    opportunityLabel: text("opportunity_label").notNull().default("none"),
+    opportunityWhy: text("opportunity_why").notNull().default(""),
+    scoredAt: timestamp("scored_at", { withTimezone: true }),
     ...timestamps,
   },
   (table) => [

@@ -1957,8 +1957,9 @@ Organization
 153. **Phase B — extend `growth_actions`** — **IMPLEMENTED** this slice. Added `title`, `evidence` (JSON), `confidence`, `expected_impact`, `priority`. SEO rows write them. Next step shows the facts without parsing `description`. Priority does not reorder Next step yet. No `growth_opportunities` table.
 154. **Phase C — existing Search Console + SEO findings → growth actions** — **IMPLEMENTED** first coding slice. Recommend-only `growth_actions` (`module=seo`, `seo_page_improvement` / `seo_search_opportunity`) from existing audits and Search Console snapshots. Next step and Intelligence read those rows. No migration. No paid API. No scrape. No live-site edit.
 155. **Phase D — Business Brain extras** — **IMPLEMENTED** this slice. Owner can save ideal customers, pain points, known competitors, differentiators, and prohibited claims on `business_brains`. No scrape. No keyword engine. No execute.
-156. **Phase E — Keyword model and history from Search Console** — **IMPLEMENTED** this slice. Stored `search_console_snapshots.top_queries` become `keywords` + `keyword_history`. SEO and Intelligence can show that history. No vendor. No score. No execute.
-157. **Phases F–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: scoring, SERP, content, GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters.
+156. **Phase E — Keyword model and history from Search Console** — **IMPLEMENTED** this slice. Stored `search_console_snapshots.top_queries` become `keywords` + `keyword_history`. SEO and Intelligence can show that history. No vendor. No execute.
+157. **Phase F — Keyword opportunity scoring** — **IMPLEMENTED** this slice. Stored keyword history gets `opportunity_score`, `opportunity_label` (`none` / `watch` / `review`), and a plain-English why. Estimate only. No vendor volume. No SERP. No execute.
+158. **Phases G–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: SERP, content, GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
@@ -1990,11 +1991,11 @@ Fields still later if usage needs them: `effort`, `estimated_cost`, `urgency`, `
 
 ### IMPLEMENTED / PARTIAL / PLANNED
 
-**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work; keyword model and history from stored Search Console queries.
+**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work; keyword model and history from stored Search Console queries; conservative keyword estimate ranks from those stored numbers.
 
-**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder; keywords (history stored, scoring not).
+**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder; keywords (history and estimate rank stored; groups, intent, and vendor scores not).
 
-**PLANNED:** keyword scoring; SERP/competitor engines; content planner and generation; CMS write; AI Visibility / GEO; scored cross-channel priority; experiments; execute.
+**PLANNED:** SERP/competitor engines; content planner and generation; CMS write; AI Visibility / GEO; scored cross-channel priority; experiments; execute.
 
 ### Architecture rules
 

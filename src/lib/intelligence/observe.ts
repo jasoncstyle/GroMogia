@@ -34,6 +34,7 @@ export type IntelligenceFacts = {
   businessBrainSaved?: boolean
   businessContextSaved?: boolean
   recordedKeywordCount?: number
+  keywordReviewCount?: number
 };
 
 export type InsightItem = {
@@ -162,11 +163,12 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   }
 
   const keywordCount = facts.recordedKeywordCount ?? 0;
+  const keywordReviewCount = facts.keywordReviewCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
       title: "Search queries from Search Console",
-      body: `GroovGro recorded ${keywordCount} search quer${keywordCount === 1 ? "y" : "ies"} from stored Search Console snapshots. This is a history of what Google already reported. GroovGro does not buy keyword data or score these yet.`,
+      body: `GroovGro recorded ${keywordCount} search quer${keywordCount === 1 ? "y" : "ies"} from stored Search Console snapshots and ranked them from those numbers.${keywordReviewCount > 0 ? ` ${keywordReviewCount} ${keywordReviewCount === 1 ? "is" : "are"} marked worth a look.` : ""} This is an estimate, not search volume or a traffic forecast.`,
       evidence: ["keywords", "keyword_history", "search_console_snapshots"],
       href: "/app/seo",
     });
@@ -229,6 +231,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       body: "Open Next step to read what GroovGro found and what it recommends. Approving does not change the live website, Search Console, or ads.",
       evidence: ["growth_actions.module=seo status=proposed"],
       href: "/app/next-step",
+    });
+  }
+
+  if (facts.websiteConnected && keywordReviewCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review the ranked search queries",
+      body: "Open SEO to read which stored Search Console queries GroovGro marked worth a look. This is an estimate from stored numbers. GroovGro will not change the live website or buy keyword data.",
+      evidence: ["keywords.opportunity_label=review"],
+      href: "/app/seo",
     });
   }
 
@@ -319,6 +331,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `seo_actions=${facts.proposedSeoActionCount ?? 0}`,
     `business_context=${facts.businessContextSaved ? "yes" : "no"}`,
     `keywords=${facts.recordedKeywordCount ?? 0}`,
+    `keyword_review=${facts.keywordReviewCount ?? 0}`,
   ].join(" ");
 }
 
