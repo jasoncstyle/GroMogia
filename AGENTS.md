@@ -51,7 +51,8 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 - Shared recommendations live on **`growth_actions`**. Do not create `growth_opportunities` unless a later review proves that table cannot hold them.
 - Phase C first slice is implemented: existing Search Console + SEO findings can create recommend-only `growth_actions` for Next step and Intelligence. No new paid API. No content factory. No AI-platform scraping. No live-site edits.
 - Phase B first slice is implemented: `growth_actions` can store title, evidence JSON, confidence, expected impact, and priority. Do not parse `description`. Do not use `priority` to reorder Next step until Jason asks.
-- Do not mark later expansion work as implemented. Phases D–T (keywords, SERP, content, GEO, publishing, execute) stay planned until Jason asks.
+- Phase D first slice is implemented: Business Brain can store who to reach, problems, known competitors, differentiators, and prohibited claims. Owner-entered only. Do not scrape competitors.
+- Do not mark later expansion work as implemented. Phases E–T (keywords, SERP, content, GEO, publishing, execute) stay planned until Jason asks.
 - Do not start ads, Growth Director execution, guarded automation, or autonomous AI.
 - Do not scrape third parties in violation of their terms. Do not hard-code a fixed list of AI vendors through business logic.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.

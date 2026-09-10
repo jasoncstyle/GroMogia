@@ -282,6 +282,52 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("observes saved business context and does not look up competitors", () => {
+    const saved = buildIntelligenceBrief(
+      facts({
+        businessBrainSaved: true,
+        businessContextSaved: true,
+      }),
+    );
+    const observed = saved.observations.find(
+      (item) => item.title === "Business context for later search work",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/business");
+    assert.match(observed.body, /will not look up competitors/);
+
+    const missing = buildIntelligenceBrief(
+      facts({
+        businessBrainSaved: true,
+        businessContextSaved: false,
+      }),
+    );
+    const recommended = missing.recommendations.find(
+      (item) => item.title === "Add business context for later search work",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/business");
+    assert.match(recommended.body, /will not look up competitors/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Add business context for later search work",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          businessBrainSaved: true,
+          businessContextSaved: false,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Add business context for later search work",
+      ),
+      false,
+    );
+  });
+
   it("names extra shares that also moved the active Goal", () => {
     const brief = buildIntelligenceBrief(
       facts({

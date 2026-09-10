@@ -250,4 +250,28 @@ export async function ensureSchema(): Promise<void> {
   if (!builderInspiration[0]?.name) {
     await applyMigration(sql, "0022_v2_builder_inspiration.sql");
   }
+
+  const growthActionTitle = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'growth_actions'
+       and column_name = 'title'`,
+  )) as RegistryRow[];
+
+  if (!growthActionTitle[0]?.name) {
+    await applyMigration(sql, "0023_growth_action_evidence.sql");
+  }
+
+  const brainSeoContext = (await sql.query(
+    `select 1 as name
+     from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'business_brains'
+       and column_name = 'ideal_customers'`,
+  )) as RegistryRow[];
+
+  if (!brainSeoContext[0]?.name) {
+    await applyMigration(sql, "0024_business_brain_seo_context.sql");
+  }
 }

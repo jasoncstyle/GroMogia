@@ -7,6 +7,7 @@ import {
   type IntelligenceBrief,
   type IntelligenceFacts,
 } from "@/lib/intelligence/observe";
+import { brainSeoContextSaved } from "@/lib/growth/brain-context";
 import { isWaitingActionStatus } from "@/lib/growth/next-step";
 import { isSeoGrowthActionType } from "@/lib/growth/seo-actions";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
@@ -64,6 +65,10 @@ export async function getIntelligenceFacts(
       : null,
     proposedSeoActionCount: proposedSeo.length,
     proposedSeoSummary: seoExample ?? "",
+    businessBrainSaved: Boolean(
+      growth?.brain?.industry?.trim() && growth?.brain?.businessModel?.trim(),
+    ),
+    businessContextSaved: brainSeoContextSaved(growth?.brain ?? null),
   };
 }
 

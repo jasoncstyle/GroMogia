@@ -152,8 +152,11 @@ export default async function BusinessBrainPage() {
         <CardHeader>
           <CardTitle>How this business works</CardTitle>
           <CardDescription>
-            Use the business&apos;s own words. GroovGro will not assume seats,
-            rooms, tickets, or other industry-specific shapes.
+            Use the business&apos;s own words. Add who you want to reach,
+            problems, known competitors, differences, and claims to avoid so
+            later search and content work has a source of truth. GroovGro will
+            not look up competitors, assume an industry shape, or edit the live
+            website.
           </CardDescription>
         </CardHeader>
         <CardContent>
