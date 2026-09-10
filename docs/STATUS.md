@@ -1,12 +1,12 @@
 # Build status
 
-Last updated: 26 August 2026.
+Last updated: 10 September 2026.
 
 ## V1 checkpoint (do not mix with V2)
 
 GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
 
-Use that tag to compare, roll back, or see what V2 actually changed. Do not start V2 architecture edits on `main`. Current V2 work is on `cursor/v2-hand-goal-visits-a329`.
+Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-assistance is on `main`. Do not start new work on the old `cursor/v2-hand-goal-visits-a329` branch.
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -17,9 +17,13 @@ Use that tag to compare, roll back, or see what V2 actually changed. Do not star
 
 ## Current phase
 
-**V2 growth foundation is on `main`.** The website builder is paused. Counting a Traffic Goal from website visits is in the previous slice. This branch names website visits next to a Goal the owner types by hand, without changing that typed number. Naming a share stays on Marketing. GroovGro does not execute. Do not start ads, execution, or autonomy.
+**V2 owner-assistance is on `main`.** The owner can name a share, count a Traffic Goal from visits, name a share next to a typed Goal, match a payment copy on Bookings, and draft or approve a plan on Next step. GroovGro does not execute.
 
-Public groovgro.com homepage stays Coming soon.
+**This docs branch** records the approved v2.1 expansion: SEO Intelligence, Content Engine, and AI Visibility / GEO as modules that feed the same growth loop. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §15 and [v2/ARCHITECTURE.md](v2/ARCHITECTURE.md) “Expansion”. No expansion code ships in this slice.
+
+**First coding slice after these docs (not started):** Growth Opportunities from existing Search Console top queries and existing SEO check findings, recommend-only, on Next step. No new paid API. No content factory. No AI-platform scraping. No live-site edits.
+
+The website builder is paused. Public groovgro.com homepage stays Coming soon.
 
 Do not start ads, Growth Director execution, or autonomous AI. Custom domains for builder sites wait. Do not write groovgro.com robots.txt or sitemap.xml for tenant pages.
 
@@ -148,6 +152,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 ## What is already working
 
+- v2.1 expansion **docs** (this slice): master brief, V2 architecture, STATUS, agent rules, and Phase 0 pointers now distinguish implemented vs planned SEO / content / GEO work. No expansion code.
 - Hand-updated Goal names website visits: a Goal the owner types by hand names which named share brought website visits, people, bookings, or payments, including extra named shares. The typed number is unchanged. Naming a share stays on Marketing. GroovGro will not buy ads or change the live site.
 - Traffic Goal from website visits: a Traffic Goal counts website visits in the connected window and names which named share moved that number, including extra named shares. Naming a share stays on Marketing. GroovGro will not buy ads or change the live site.
 - Hand-updated Goal names the share: a Goal the owner types by hand still names which named share brought people, bookings, or payments in, including extra named shares. The typed number is unchanged. Naming a share stays on Marketing. GroovGro will not buy ads.
@@ -228,6 +233,16 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 - Your work: approved actions the owner does here or on Next step. I did this or Skip for now. GroovGro records it and does not execute.
 - What changed: after work is marked done, GroovGro can compare the Goal number on Next step or Your work and write what it learned. It does not change course or execute.
 
+## Parked: SEO / content / GEO expansion (10 September 2026)
+
+Vision is in the master brief. Do not implement the whole list. Do not build a second SEO app.
+
+**Implemented today:** page SEO checks, SEO copy drafts, Search Console read-only, Brand Voice drafts in the workspace, named-share attribution, Next step recommend-only.
+
+**Planned later:** keyword intelligence, competitor / SERP research, content planner and generation, CMS write adapters, AI visibility monitoring, unified opportunity scoring, experiments, alerts.
+
+**Do not do until asked:** buy keyword or SERP vendors, scrape AI products, auto-publish, overwrite the connected live website, start Google Ads, or turn on execute.
+
 ## Still later
 
-Growth Director, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization.
+Growth Director execute, builder custom domains, WordPress write adapter, Phase 8 integrations (including Google Ads), guarded automation, commercialization, keyword/SERP vendors, AI-visibility provider adapters that are contractually allowed.

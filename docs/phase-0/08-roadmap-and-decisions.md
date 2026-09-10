@@ -38,6 +38,8 @@ Audit, recommendations, technical monitoring, Search Console when OAuth is ready
 
 **Now in the app:** homepage check, drafts you approve, score over time, a plain-language explanation, and Search Console read-only (after Google OAuth keys are in Vercel).
 
+**v2.1 expansion (planned, not a new Phase 6 rewrite):** keyword intelligence, content engine, and AI Visibility / GEO as modules that feed the existing growth loop. See [MASTER_BRIEF.md](../MASTER_BRIEF.md) §15 and [v2/ARCHITECTURE.md](../v2/ARCHITECTURE.md) “Expansion”. First coding slice uses data already stored (Search Console queries and SEO findings). Do not buy vendors or scrape in that slice.
+
 ### Phase 7 — Website builder
 
 Section-based builder. Not before the core platform is useful. Existing-site customers never need this module.

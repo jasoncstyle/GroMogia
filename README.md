@@ -1,28 +1,36 @@
 # GroovGro
 
-Cloud-based modular business platform from Mogia Group. Connect the business. Understand the business. Grow the business.
+Cloud-based modular business growth platform from Mogia Group. Connect the business. Understand the business. Define the Goal. Grow the business.
 
 Formerly GroMogia.
 
-**Live today:** [https://gro-mogia.vercel.app](https://gro-mogia.vercel.app)  
-**Product domain:** [groovgro.com](https://groovgro.com) (purchased; attach it in the Vercel project next)  
-**Parent:** mogiagroup.com
+**Live app:** [https://www.groovgro.com/app](https://www.groovgro.com/app)  
+**Product domain:** [groovgro.com](https://www.groovgro.com)  
+**Parent:** [mogiagroup.com](https://mogiagroup.com)  
+**Vercel project:** gro-mogia  
+**GitHub repo:** [jasoncstyle/GroMogia](https://github.com/jasoncstyle/GroMogia) (name unchanged until renamed on GitHub)
 
 GitHub is the source of truth. Vercel is where the software runs. Cursor is development only.
 
 ## Current status
 
-**Phase 2 — first real business data**, in progress. Snapshot: [docs/STATUS.md](docs/STATUS.md).
+**V2 owner-assistance is on `main`.** Snapshot: [docs/STATUS.md](docs/STATUS.md).
 
-Sign in, connect an existing website, capture leads and customers as one contact record, add generic events, and sync Stripe bookings without storing card numbers.
+The owner can connect an existing website, name a marketing share, capture people, match a Stripe payment copy, set a Goal, draft and approve a plan on Next step, and read SEO checks plus Search Console (read-only). GroovGro recommends. It does not run ads, send email, or change live checkout.
+
+**Approved vision (docs, not built yet):** SEO Intelligence, a Content Engine, and AI Visibility / GEO as modules that feed the same growth loop. See [Master brief §15](docs/MASTER_BRIEF.md).
+
+Public groovgro.com homepage stays Coming soon. The optional website builder stays paused.
 
 | Doc | For |
 | --- | --- |
-| [Master brief](docs/MASTER_BRIEF.md) | Product vision |
+| [Master brief](docs/MASTER_BRIEF.md) | Product vision (v2.1) |
+| [V2 architecture](docs/v2/ARCHITECTURE.md) | What V2 built, and the expansion roadmap |
 | [Build status](docs/STATUS.md) | Where the build is right now |
-| [Phase 0 architecture](docs/phase-0/) | Approved plan |
+| [Phase 0 architecture](docs/phase-0/) | Historical approved platform plan |
 | [Clerk + Neon setup](docs/phase-1/USER_SETUP.md) | Sign-in and database |
 | [Stripe + website + domain](docs/phase-2/USER_SETUP.md) | Payments, tracking, groovgro.com |
+| [Search Console](docs/phase-6/USER_SETUP.md) | Read-only Google search numbers |
 | [Agent rules](AGENTS.md) | How Cloud Agents work |
 
 ## Scripts

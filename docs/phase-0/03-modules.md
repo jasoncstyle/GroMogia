@@ -25,10 +25,12 @@ Modules are independently enabled capabilities. The codebase may contain a modul
 | `commerce` | Bookings / purchases / Stripe | 2 | Adapter to existing OSA Stripe booking; not a new Stripe |
 | `marketing` | Campaigns and channels | 3 | Ads, email, social as adapters |
 | `analytics` | Cross-system analytics | 2 (basic), 3 (attribution) | Not a GA clone |
-| `seo` | SEO | 6 | Independent module |
+| `seo` | SEO | 6 | Independent module. **Implemented:** page checks, drafts, Search Console read-only. **Planned:** keyword intelligence and revenue-aware scores (see master brief §15) |
+| `content` | Content engine | later | **Planned.** Briefs and planner feed Goals / Next step. Not a second app. Builder publish stays paused |
+| `ai_visibility` | AI Visibility / GEO | later | **Planned.** Provider adapters only. No scraping |
 | `social` | Social publishing | 8 | After brand voice exists |
 | `reviews` | Reputation | 8 | Official APIs only |
-| `intelligence` | Mogia intelligence | 4 | Reads other modules; does not replace them |
+| `intelligence` | Growth intelligence | 4 | Reads other modules; does not replace them. SEO / GEO opportunities must land here and on Next step |
 | `brand_voice` | Brand voice / content | 5 | Approved examples only |
 | `billing` | SaaS subscriptions | 10 | Stripe Billing for GroovGro itself |
 | `media` | Media library | 1 (stub), used by all later | Vercel Blob, tenant-keyed |
@@ -48,6 +50,7 @@ Allowed:
 - `crm` and `commerce` both reference `contacts`
 - `analytics` reads canonical records from other modules
 - `intelligence` reads those records and `brand_voice`
+- `seo`, planned `content`, and planned `ai_visibility` create the same kind of Growth Opportunity for Next step; they do not each invent a coordinator
 - `website_builder` and `website_connect` both produce a `websites` row
 - `events` can optionally publish onto a connected or built website
 

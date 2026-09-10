@@ -2,6 +2,8 @@
 
 GroovGro is a **multi-tenant modular SaaS monolith** hosted on Vercel. Cursor develops it. GitHub stores it. Vercel, Neon, Clerk, Stripe, Resend, and Blob operate it.
 
+Current intent and V2/expansion status: [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.1, [v2/ARCHITECTURE.md](../v2/ARCHITECTURE.md), [STATUS.md](../STATUS.md). This file is the original stack plan.
+
 This matches the brief’s preference for a well-structured modular monolith (§35) and the constraint that production must run when any local computer is off (§21–22).
 
 ## System context

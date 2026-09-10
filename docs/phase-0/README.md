@@ -1,8 +1,14 @@
 # Phase 0 — inspect, design, document, recommend
 
-This folder is the architecture and planning deliverable required by [the master brief](../MASTER_BRIEF.md) §41. It is not the product. No customer data is stored, no payments are taken, and no website is published from these files.
+This folder is the **historical** architecture and planning deliverable. Phase 1–7 and V2 owner-assistance are already on `main`.
 
-**Do not start Phase 1 implementation until this architecture is approved.**
+**Current product intent:** [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.1.  
+**What V2 built, and the SEO / content / GEO expansion:** [v2/ARCHITECTURE.md](../v2/ARCHITECTURE.md).  
+**Live checkpoint:** [STATUS.md](../STATUS.md).
+
+Do not implement new work from this folder alone when those documents disagree. Phase 0 still explains tenancy, modules, adapters, and the original phase numbers.
+
+This folder is not the product. No customer data is stored, no payments are taken, and no website is published from these files.
 
 ## Brief §41 checklist
 
