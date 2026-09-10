@@ -172,7 +172,7 @@ Use these labels. Do not make planned work sound shipped.
 
 ## 16. SEO, content, and AI visibility feed Growth Intelligence
 
-**Status:** vision approved 10 September 2026. Phase A is this documentation. Do not start Phase B or C until Jason reviews.
+**Status:** vision approved 10 September 2026. Phases A–C first slices are implemented. Do not start Phase D–T until Jason asks.
 
 GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
 
@@ -197,7 +197,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Brand Voice: does not learn from repeated owner edits
 - Publishing: GroovGro-hosted builder exists and is **PAUSED**. No WordPress / Shopify write. Do not overwrite a connected existing website
 - Notifications: table exists; the page is a stub (**PAUSED** as a product)
-- `growth_actions`: exists for plan/owner work. Phase C can write recommend-only SEO rows with the existing columns (`module`, `action_type`, `description`, `provider`, `external_id`). It still does not have structured evidence, confidence, or impact fields (Phase B).
+- `growth_actions`: exists for plan/owner work and recommend-only SEO rows. Phase B added optional `title`, `evidence` (JSON), `confidence`, `expected_impact`, and `priority`. Do not parse `description` as machine data.
 
 ### PLANNED (not implemented)
 
@@ -216,11 +216,9 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 
 Today the table already has: `organization_id`, `goal_id`, `plan_id`, `module`, `action_type`, `description`, `status`, `risk`, `proposed_at`, `approved_at`, `executed_at`, `provider`, `result`, `error`.
 
-It does not yet have structured: title, evidence, confidence, expected impact, effort, estimated cost, urgency, priority, reviewed_at, measurement window, learning.
+Phase B added: `title`, `evidence` (JSON), `confidence`, `expected_impact`, `priority`. Not added yet: effort, estimated cost, urgency, reviewed_at, measurement window, learning. Avoid duplicate concepts. Do not parse `description` as machine data.
 
-Phase C (this slice) writes recommend-only SEO rows using **existing** columns (`module` = `seo`, `action_type` = `seo_page_improvement` or `seo_search_opportunity`, `description` = what / why / recommend in plain English, `status` = `proposed`, `provider` + `external_id` for dedup). No migration.
-
-Phase B (later) may add nullable columns or a JSON evidence payload on the **same** table. Avoid duplicate concepts. Do not parse `description` as machine data.
+Phase C writes recommend-only SEO rows (`module` = `seo`, `action_type` = `seo_page_improvement` or `seo_search_opportunity`, `status` = `proposed`, `provider` + `external_id` for dedup). New rows also fill the Phase B fields. Description stays a human fallback.
 
 Next step and Intelligence stay the owner surfaces. Module pages stay for detail.
 
@@ -288,8 +286,8 @@ Do not overwrite the only copy of a metric. Keep snapshots (Search Console alrea
 | Phase | Work | Status |
 | --- | --- | --- |
 | A | Documentation and architecture alignment | **IMPLEMENTED** |
-| B | Extend `growth_actions` with optional opportunity fields | **PLANNED** — no migration in this slice |
-| C | Existing Search Console + SEO findings → `growth_actions` → Next step + Intelligence (recommend-only) | **IMPLEMENTED** — this slice. No paid API. No scrape. No live-site edit. |
+| B | Extend `growth_actions` with optional opportunity fields | **IMPLEMENTED** — title, evidence JSON, confidence, expected impact, priority. No second table. |
+| C | Existing Search Console + SEO findings → `growth_actions` → Next step + Intelligence (recommend-only) | **IMPLEMENTED**. No paid API. No scrape. No live-site edit. |
 | D | Business Brain extras SEO/GEO need | **PLANNED** |
 | E | Keyword model and history from Search Console | **PLANNED** |
 | F | Keyword opportunity scoring | **PLANNED** |

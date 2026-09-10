@@ -1114,6 +1114,23 @@ export const decisionRecords = pgTable(
   ],
 );
 
+export type GrowthActionEvidence = {
+  source?: string
+  kind?: string
+  pageUrl?: string
+  query?: string
+  impressions?: number
+  clicks?: number
+  ctr?: number
+  position?: number
+  startDate?: string
+  endDate?: string
+  findingIds?: string[]
+  labels?: string[]
+  why?: string
+  recommend?: string
+};
+
 export const growthActions = pgTable(
   "growth_actions",
   {
@@ -1129,7 +1146,12 @@ export const growthActions = pgTable(
     }),
     module: text("module").notNull().default(""),
     actionType: text("action_type").notNull().default(""),
+    title: text("title").notNull().default(""),
     description: text("description").notNull(),
+    evidence: jsonb("evidence").$type<GrowthActionEvidence>().notNull().default({}),
+    confidence: text("confidence").notNull().default(""),
+    expectedImpact: text("expected_impact").notNull().default(""),
+    priority: integer("priority").notNull().default(0),
     status: text("status").notNull().default("proposed"),
     risk: text("risk").notNull().default("optimization"),
     proposedBy: uuid("proposed_by").references(() => users.id),

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { GrowthActionSummary } from "@/components/growth-action-summary";
 import {
   CheckWhatChangedButton,
   OwnerWorkButtons,
@@ -60,7 +61,13 @@ export default async function OwnerWorkPage() {
           ) : (
             work.open.map((action) => (
               <div key={action.id} className="space-y-3 rounded-lg border p-4">
-                <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                <GrowthActionSummary
+                  title={action.title}
+                  description={action.description}
+                  evidence={action.evidence}
+                  confidence={action.confidence}
+                  expectedImpact={action.expectedImpact}
+                />
                 <p className="text-sm text-muted-foreground">
                   {labelFor(action.risk)}
                   {action.module ? ` · ${labelFor(action.module)}` : ""}
@@ -87,7 +94,13 @@ export default async function OwnerWorkPage() {
           <CardContent className="space-y-4">
             {work.waiting.map((action) => (
               <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
-                <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                <GrowthActionSummary
+                  title={action.title}
+                  description={action.description}
+                  evidence={action.evidence}
+                  confidence={action.confidence}
+                  expectedImpact={action.expectedImpact}
+                />
                 <p className="text-muted-foreground">
                   {action.status} · {labelFor(action.risk)}
                 </p>
@@ -112,7 +125,13 @@ export default async function OwnerWorkPage() {
               const learned = workLearningFromResult(action.result ?? "");
               return (
               <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
-                <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                <GrowthActionSummary
+                  title={action.title}
+                  description={action.description}
+                  evidence={action.evidence}
+                  confidence={action.confidence}
+                  expectedImpact={action.expectedImpact}
+                />
                 <p className="text-muted-foreground">{labelFor(action.status)}</p>
                 {learned ? (
                   <p className="text-muted-foreground">{learned}</p>

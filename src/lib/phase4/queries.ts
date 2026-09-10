@@ -31,10 +31,12 @@ export async function getIntelligenceFacts(
       isSeoGrowthActionType(action.actionType) &&
       isWaitingActionStatus(action.status),
   );
-  const seoExample = (proposedSeo[0]?.description ?? "")
-    .split("\n")
-    .map((line) => line.trim())
-    .find((line) => line && line !== "GroovGro found an opportunity worth reviewing.");
+  const seoExample =
+    proposedSeo[0]?.title?.trim() ||
+    (proposedSeo[0]?.description ?? "")
+      .split("\n")
+      .map((line) => line.trim())
+      .find((line) => line && line !== "GroovGro found an opportunity worth reviewing.");
 
   return {
     websiteConnected: Boolean(dashboard.website?.publicUrl),

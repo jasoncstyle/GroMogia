@@ -195,6 +195,39 @@ describe("coordinated next step", () => {
     assert.equal(step.executeAllowed, false);
   });
 
+  it("keeps structured SEO evidence on a waiting action without executing it", () => {
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [
+        {
+          id: "seo-1",
+          title: "Review “ASA sailing lessons” search visibility",
+          description: "GroovGro found an opportunity worth reviewing.",
+          module: "seo",
+          status: "proposed",
+          risk: "optimization",
+          evidence: {
+            query: "ASA sailing lessons",
+            impressions: 1240,
+            position: 11.3,
+          },
+          confidence: "inferred",
+          expectedImpact: "unknown",
+        },
+      ],
+    });
+    assert.equal(step.primary.title, "Approve or reject these actions");
+    assert.equal(step.waitingActions[0]?.title, "Review “ASA sailing lessons” search visibility");
+    assert.equal(step.waitingActions[0]?.evidence?.impressions, 1240);
+    assert.equal(step.executeAllowed, false);
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(page, /GrowthActionSummary/);
+  });
+
   it("lets an eligible SEO growth action become the next step when nothing higher is waiting", () => {
     const step = coordinateNextStep({
       inferredDraftCount: 0,

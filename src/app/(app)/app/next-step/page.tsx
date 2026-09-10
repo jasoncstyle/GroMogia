@@ -26,6 +26,7 @@ import { StripeReadCopyPanel } from "@/components/stripe-read-copy-panel";
 import { GrowthSettingsForm } from "@/components/growth-settings-form";
 import { GrowthStoryCard } from "@/components/growth-story";
 import { SpecialistReports } from "@/components/specialist-reports";
+import { GrowthActionSummary } from "@/components/growth-action-summary";
 import { WebsiteConnectForm } from "@/components/website-connect-form";
 import { WebsitePageChecklist } from "@/components/website-page-checklist";
 import { Button } from "@/components/ui/button";
@@ -203,7 +204,13 @@ export default async function NextStepPage({
               ) : step.primary.title === APPROVE_ACTIONS_STEP_TITLE ? (
                 step.waitingActions.map((action) => (
                   <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
-                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                    <GrowthActionSummary
+                      title={action.title}
+                      description={action.description}
+                      evidence={action.evidence}
+                      confidence={action.confidence}
+                      expectedImpact={action.expectedImpact}
+                    />
                     <p className="text-muted-foreground">
                       {action.status} · {labelFor(action.risk)}
                       {action.module ? ` · ${action.module}` : ""}
@@ -217,7 +224,13 @@ export default async function NextStepPage({
               ) : step.primary.title === OWNER_WORK_STEP_TITLE ? (
                 step.openWork.map((action) => (
                   <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
-                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                    <GrowthActionSummary
+                      title={action.title}
+                      description={action.description}
+                      evidence={action.evidence}
+                      confidence={action.confidence}
+                      expectedImpact={action.expectedImpact}
+                    />
                     <p className="text-muted-foreground">
                       {labelFor(action.risk)}
                       {action.module ? ` · ${labelFor(action.module)}` : ""}
@@ -233,7 +246,13 @@ export default async function NextStepPage({
               ) : step.primary.title === CHECK_CHANGED_STEP_TITLE ? (
                 step.uncheckedWork.map((action) => (
                   <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
-                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                    <GrowthActionSummary
+                      title={action.title}
+                      description={action.description}
+                      evidence={action.evidence}
+                      confidence={action.confidence}
+                      expectedImpact={action.expectedImpact}
+                    />
                     <CheckWhatChangedButton
                       actionId={action.id}
                       canCheck={canCheck}
@@ -531,7 +550,13 @@ export default async function NextStepPage({
               <CardContent className="space-y-4">
                 {step.waitingActions.map((action) => (
                   <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
-                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                    <GrowthActionSummary
+                      title={action.title}
+                      description={action.description}
+                      evidence={action.evidence}
+                      confidence={action.confidence}
+                      expectedImpact={action.expectedImpact}
+                    />
                     <p className="text-muted-foreground">
                       {action.status} · {labelFor(action.risk)}
                       {action.module ? ` · ${action.module}` : ""}
@@ -559,7 +584,13 @@ export default async function NextStepPage({
               <CardContent className="space-y-4">
                 {step.openWork.map((action) => (
                   <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
-                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                    <GrowthActionSummary
+                      title={action.title}
+                      description={action.description}
+                      evidence={action.evidence}
+                      confidence={action.confidence}
+                      expectedImpact={action.expectedImpact}
+                    />
                     <p className="text-muted-foreground">
                       {labelFor(action.risk)}
                       {action.module ? ` · ${labelFor(action.module)}` : ""}
@@ -589,7 +620,13 @@ export default async function NextStepPage({
               <CardContent className="space-y-4">
                 {step.uncheckedWork.map((action) => (
                   <div key={action.id} className="space-y-3 rounded-lg border p-4 text-sm">
-                    <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                    <GrowthActionSummary
+                      title={action.title}
+                      description={action.description}
+                      evidence={action.evidence}
+                      confidence={action.confidence}
+                      expectedImpact={action.expectedImpact}
+                    />
                     <CheckWhatChangedButton
                       actionId={action.id}
                       canCheck={canCheck}

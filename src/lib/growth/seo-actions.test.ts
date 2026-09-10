@@ -66,6 +66,13 @@ describe("SEO growth actions", () => {
     assert.match(action?.description ?? "", /missing primary heading/);
     assert.match(action?.description ?? "", /Update the title, description, and primary heading/);
     assert.match(action?.description ?? "", /will not change the live website/);
+    assert.equal(action?.title, "Improve search presentation on the Asa 104 page");
+    assert.equal(action?.confidence, "observed");
+    assert.equal(action?.expectedImpact, "unknown");
+    assert.equal(action?.priority, 0);
+    assert.equal(action?.evidence.pageUrl, PAGE_URL);
+    assert.deepEqual(action?.evidence.findingIds, ["title", "description", "h1"]);
+    assert.equal(typeof action?.evidence.impressions, "undefined");
   });
 
   it("does not create a page action from a single weak warning", () => {
@@ -120,6 +127,13 @@ describe("SEO growth actions", () => {
     assert.match(action?.description ?? "", /opportunity worth reviewing/);
     assert.doesNotMatch(action?.description ?? "", /causing low traffic/);
     assert.match(action?.description ?? "", /will not change the live website/);
+    assert.equal(action?.title, "Review “ASA sailing lessons” search visibility");
+    assert.equal(action?.confidence, "inferred");
+    assert.equal(action?.expectedImpact, "unknown");
+    assert.equal(action?.evidence.query, "ASA sailing lessons");
+    assert.equal(action?.evidence.impressions, 1240);
+    assert.equal(action?.evidence.position, 11.3);
+    assert.equal(action?.evidence.kind, "striking_distance");
   });
 
   it("turns a high-impression page-one query with low CTR into a cautious search action", () => {
@@ -243,10 +257,62 @@ describe("SEO growth actions", () => {
     });
 
     assert.equal(second.toInsert.length, 0);
+    assert.equal(second.toBackfill.length, 0);
     assert.equal(
       second.skipped.filter((item) => item.reason === "duplicate").length,
       2,
     );
+  });
+
+  it("backfills structured evidence on an unresolved action that has no title yet", () => {
+    const first = planSeoGrowthActions({
+      organizationId: ORG_A,
+      searchConsole: {
+        startDate: "2026-08-01",
+        endDate: "2026-08-31",
+        topQueries: [
+          {
+            key: "ASA sailing lessons",
+            clicks: 18,
+            impressions: 1240,
+            ctr: 0.0145,
+            position: 11.3,
+          },
+        ],
+      },
+    });
+    const plan = planSeoGrowthActions({
+      organizationId: ORG_A,
+      searchConsole: {
+        startDate: "2026-08-01",
+        endDate: "2026-08-31",
+        topQueries: [
+          {
+            key: "ASA sailing lessons",
+            clicks: 18,
+            impressions: 1240,
+            ctr: 0.0145,
+            position: 11.3,
+          },
+        ],
+      },
+      existingActions: [
+        {
+          id: "existing-1",
+          organizationId: ORG_A,
+          actionType: SEO_SEARCH_OPPORTUNITY,
+          module: "seo",
+          externalId: first.toInsert[0]?.externalId ?? "",
+          status: "proposed",
+          title: "",
+        },
+      ],
+    });
+    assert.equal(plan.toInsert.length, 0);
+    assert.equal(plan.toBackfill.length, 1);
+    assert.equal(plan.toBackfill[0]?.id, "existing-1");
+    assert.equal(plan.toBackfill[0]?.draft.evidence.impressions, 1240);
+    assert.equal(plan.toBackfill[0]?.draft.title, first.toInsert[0]?.title);
   });
 
   it("does not reuse or match another organization's unresolved action", () => {

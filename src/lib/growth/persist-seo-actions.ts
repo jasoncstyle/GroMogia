@@ -14,12 +14,12 @@ import {
 
 type AppDb = NonNullable<ReturnType<typeof getDb>>;
 
-const inflight = new Map<string, Promise<{ inserted: number }>>();
+const inflight = new Map<string, Promise<{ inserted: number; backfilled: number }>>();
 
 export async function persistSeoGrowthActions(
   db: AppDb,
   organizationId: string,
-): Promise<{ inserted: number }> {
+): Promise<{ inserted: number; backfilled: number }> {
   const existing = inflight.get(organizationId);
   if (existing) return existing;
 
@@ -33,7 +33,7 @@ export async function persistSeoGrowthActions(
 async function persistSeoGrowthActionsOnce(
   db: AppDb,
   organizationId: string,
-): Promise<{ inserted: number }> {
+): Promise<{ inserted: number; backfilled: number }> {
   const [auditRows, snapshotRows, actionRows] = await Promise.all([
     db
       .select({
@@ -58,11 +58,13 @@ async function persistSeoGrowthActionsOnce(
       .limit(1),
     db
       .select({
+        id: growthActions.id,
         organizationId: growthActions.organizationId,
         actionType: growthActions.actionType,
         module: growthActions.module,
         externalId: growthActions.externalId,
         status: growthActions.status,
+        title: growthActions.title,
       })
       .from(growthActions)
       .where(
@@ -129,6 +131,39 @@ async function persistSeoGrowthActionsOnce(
   }
 
   let inserted = 0;
+  let backfilled = 0;
+  for (const item of plan.toBackfill) {
+    if (item.draft.organizationId !== organizationId) continue;
+    try {
+      await db
+        .update(growthActions)
+        .set({
+          title: item.draft.title,
+          evidence: item.draft.evidence,
+          confidence: item.draft.confidence,
+          expectedImpact: item.draft.expectedImpact,
+          priority: item.draft.priority,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(growthActions.id, item.id),
+            eq(growthActions.organizationId, organizationId),
+          ),
+        );
+      backfilled += 1;
+      console.info("GroovGro SEO growth action evidence backfilled", {
+        organizationId,
+        actionType: item.draft.actionType,
+      });
+    } catch (error) {
+      console.error("GroovGro SEO growth action persist failed", {
+        organizationId,
+        actionType: item.draft.actionType,
+        message: error instanceof Error ? error.message : "unknown",
+      });
+    }
+  }
   for (const draft of plan.toInsert) {
     if (draft.organizationId !== organizationId) {
       console.info("GroovGro SEO growth action skipped", {
@@ -156,7 +191,7 @@ async function persistSeoGrowthActionsOnce(
     }
   }
 
-  return { inserted };
+  return { inserted, backfilled };
 }
 
 async function insertProposedSeoAction(
@@ -168,7 +203,12 @@ async function insertProposedSeoAction(
     organizationId,
     module: draft.module,
     actionType: draft.actionType,
+    title: draft.title,
     description: draft.description,
+    evidence: draft.evidence,
+    confidence: draft.confidence,
+    expectedImpact: draft.expectedImpact,
+    priority: draft.priority,
     status: "proposed",
     risk: draft.risk,
     provider: draft.provider,
