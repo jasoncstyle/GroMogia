@@ -4,6 +4,7 @@ import {
   createGrowthPlan,
   updateGoalProgress,
 } from "@/lib/actions/growth";
+import { GrowthActionSummary } from "@/components/growth-action-summary";
 import { InferredBadge } from "@/components/growth-review";
 import { GoalCreateForm } from "@/components/goal-create-form";
 import { GoalShareNote } from "@/components/goal-share-note";
@@ -419,7 +420,13 @@ export default async function GoalsPage() {
                             key={action.id}
                             className="space-y-2 rounded-md border p-3 text-sm"
                           >
-                            <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                            <GrowthActionSummary
+                              title={action.title}
+                              description={action.description}
+                              evidence={action.evidence}
+                              confidence={action.confidence}
+                              expectedImpact={action.expectedImpact}
+                            />
                             <p className="text-muted-foreground">
                               {action.status} · {labelFor(action.risk)}
                             </p>

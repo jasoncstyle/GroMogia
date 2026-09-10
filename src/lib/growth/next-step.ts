@@ -1,3 +1,4 @@
+import type { GrowthActionEvidence } from "@/lib/db/schema";
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
 import { ACTIVATE_GOAL_STEP_TITLE, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_GOAL_STEP_TITLE, ADD_OFFER_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, FIX_SEO_STEP_TITLE, GOAL_REACHED_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, isSearchConsoleNextStep, OWNER_WORK_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, READ_GOAL_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SAVE_REVIEW_SCHEDULE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE, SYNC_STRIPE_STEP_TITLE } from "@/lib/growth/plan-draft";
@@ -26,6 +27,10 @@ export type WaitingAction = {
   module: string
   status: string
   risk: string
+  title?: string
+  evidence?: GrowthActionEvidence
+  confidence?: string
+  expectedImpact?: string
 };
 
 export type OpenOwnerWork = {
@@ -34,12 +39,20 @@ export type OpenOwnerWork = {
   module: string
   actionType: string
   risk: string
+  title?: string
+  evidence?: GrowthActionEvidence
+  confidence?: string
+  expectedImpact?: string
 };
 
 export type UncheckedWork = {
   id: string
   description: string
   status: string
+  title?: string
+  evidence?: GrowthActionEvidence
+  confidence?: string
+  expectedImpact?: string
 };
 
 export type InferredDraft = {

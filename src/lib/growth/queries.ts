@@ -670,6 +670,10 @@ export async function getCoordinatedNextStep(organizationId: string) {
       module: action.module,
       status: action.status,
       risk: action.risk,
+      title: action.title,
+      evidence: action.evidence,
+      confidence: action.confidence,
+      expectedImpact: action.expectedImpact,
     })),
     openWork: snapshot.actions
       .filter((action) => isOpenOwnerWork(action.status))
@@ -679,6 +683,10 @@ export async function getCoordinatedNextStep(organizationId: string) {
         module: action.module,
         actionType: action.actionType,
         risk: action.risk,
+        title: action.title,
+        evidence: action.evidence,
+        confidence: action.confidence,
+        expectedImpact: action.expectedImpact,
       })),
     uncheckedWork: snapshot.actions
       .filter((action) => needsWhatChangedCheck(action))
@@ -686,6 +694,10 @@ export async function getCoordinatedNextStep(organizationId: string) {
         id: action.id,
         description: action.description,
         status: action.status,
+        title: action.title,
+        evidence: action.evidence,
+        confidence: action.confidence,
+        expectedImpact: action.expectedImpact,
       })),
     inferredDrafts: [
       ...snapshot.inferredOffers.map((offer) => ({

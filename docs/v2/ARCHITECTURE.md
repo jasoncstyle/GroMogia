@@ -1766,7 +1766,7 @@ A policy is: minimum elapsed days, observations, and conversions. Helper `eviden
 
 - Specialist execute path
 - Risk guardrail engine beyond stored fields and permissions
-- Richer `growth_actions` fields (evidence, confidence, impact) — **PLANNED** Phase B; do not add a second opportunity table first
+- Richer `growth_actions` fields (evidence, confidence, impact) — **IMPLEMENTED** Phase B for title / evidence / confidence / expected impact / priority. Do not add a second opportunity table.
 - Keyword intelligence, content planner, CMS write, and AI Visibility / GEO — **PLANNED** (see Expansion)
 
 ## What in V2 is unnecessarily complex for now
@@ -1954,7 +1954,7 @@ Organization
 150. **Count a Traffic Goal from website visits** — A Traffic Goal counts website visits in the connected window and names the share that moved that number, including extra named shares. Done. Do not buy ads or change the live site.
 151. **Name website visits next to a Goal that is updated by hand** — A Goal the owner types by hand names website visits in the same window, along with people, bookings, and payments, including extra named shares. The typed number is unchanged. Done. Do not buy ads or change the live site.
 152. **Phase A — documentation and architecture alignment** — Fold the v2.1 vision into the brief, this file, STATUS, and agent rules. Prefer extending `growth_actions`. This slice. No expansion code. No migration.
-153. **Phase B — extend `growth_actions`** — **PLANNED.** Optional columns or JSON for evidence, confidence, impact, effort. No separate `growth_opportunities` table unless this fails.
+153. **Phase B — extend `growth_actions`** — **IMPLEMENTED** this slice. Added `title`, `evidence` (JSON), `confidence`, `expected_impact`, `priority`. SEO rows write them. Next step shows the facts without parsing `description`. Priority does not reorder Next step yet. No `growth_opportunities` table.
 154. **Phase C — existing Search Console + SEO findings → growth actions** — **IMPLEMENTED** first coding slice. Recommend-only `growth_actions` (`module=seo`, `seo_page_improvement` / `seo_search_opportunity`) from existing audits and Search Console snapshots. Next step and Intelligence read those rows. No migration. No paid API. No scrape. No live-site edit.
 155. **Phases D–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: Business Brain extras, keywords, scoring, SERP, content, GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters.
 
@@ -1980,15 +1980,15 @@ Inspected table (`src/lib/db/schema.ts` → `growthActions`):
 
 **Preference:** keep one table. Do not add `growth_opportunities`.
 
-**Phase C (this slice):** insert recommend-only rows with existing columns. Used: `module=seo`, `action_type=seo_page_improvement` or `seo_search_opportunity`, `description` = what + why + recommend, `status=proposed`, `provider` = `seo_audit` or `search_console`, `external_id` = stable fingerprint for dedup. Next step and Intelligence read those rows. **No migration required.**
+**Phase C:** insert recommend-only rows. Used: `module=seo`, `action_type=seo_page_improvement` or `seo_search_opportunity`, `description` = what + why + recommend, `status=proposed`, `provider` = `seo_audit` or `search_console`, `external_id` = stable fingerprint for dedup.
 
-**Phase B (later):** add nullable fields or a JSON `evidence` payload on the same table if the UI needs structured confidence / impact / effort. Only then consider a second table, and only if this model cannot stay coherent.
+**Phase B (this slice):** same table now also has `title`, `evidence` (JSON), `confidence`, `expected_impact`, `priority`. New SEO rows fill them. Older rows can be backfilled when title is still empty. Do not parse `description`.
 
-Fields Phase B may add (all optional, same table): `title`, `category`, `evidence` (JSON), `confidence`, `expected_impact`, `effort`, `estimated_cost`, `urgency`, `priority`, `reviewed_at`, `measurement_start`, `measurement_end`, `learning`.
+Fields still later if usage needs them: `effort`, `estimated_cost`, `urgency`, `reviewed_at`, measurement window, `learning`. Only then consider a second table, and only if this model cannot stay coherent.
 
 ### IMPLEMENTED / PARTIAL / PLANNED
 
-**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions.
+**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`.
 
 **PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder.
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { proposeGrowthAction, recordDecision } from "@/lib/actions/growth";
 import { getAppSession } from "@/lib/auth/session";
+import { GrowthActionSummary } from "@/components/growth-action-summary";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { DECISION_TYPES, labelFor } from "@/lib/growth/types";
@@ -258,7 +259,13 @@ export default async function DecisionsPage() {
           ) : (
             actions.map((action) => (
               <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
-                <p className="whitespace-pre-wrap font-medium">{action.description}</p>
+                <GrowthActionSummary
+                  title={action.title}
+                  description={action.description}
+                  evidence={action.evidence}
+                  confidence={action.confidence}
+                  expectedImpact={action.expectedImpact}
+                />
                 <p className="text-muted-foreground">
                   {action.status} · {labelFor(action.risk)}
                   {action.module ? ` · ${action.module}` : ""}

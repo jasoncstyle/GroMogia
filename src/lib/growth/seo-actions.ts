@@ -1,3 +1,9 @@
+import type { GrowthActionEvidence } from "@/lib/db/schema";
+import {
+  GROWTH_ACTION_CONFIDENCE_INFERRED,
+  GROWTH_ACTION_CONFIDENCE_OBSERVED,
+  GROWTH_ACTION_IMPACT_UNKNOWN,
+} from "@/lib/growth/action-evidence";
 import type { SearchConsoleMetricRow } from "@/lib/seo/search-console";
 
 /**
@@ -58,18 +64,25 @@ export type SearchConsoleEvidence = {
 };
 
 export type ExistingSeoAction = {
+  id?: string
   organizationId: string
   actionType: string
   module?: string
   externalId: string
   status: string
+  title?: string
 };
 
 export type SeoActionDraft = {
   organizationId: string
   module: typeof SEO_MODULE
   actionType: typeof SEO_PAGE_IMPROVEMENT | typeof SEO_SEARCH_OPPORTUNITY
+  title: string
   description: string
+  evidence: GrowthActionEvidence
+  confidence: string
+  expectedImpact: string
+  priority: number
   status: "proposed"
   risk: "optimization"
   provider: typeof SEO_AUDIT_PROVIDER | typeof SEARCH_CONSOLE_PROVIDER
@@ -94,6 +107,7 @@ export type SeoActionSkip = {
 
 export type SeoActionPlan = {
   toInsert: SeoActionDraft[]
+  toBackfill: Array<{ id: string; draft: SeoActionDraft }>
   skipped: SeoActionSkip[]
 };
 
@@ -140,6 +154,7 @@ export function planSeoGrowthActions(input: {
 }): SeoActionPlan {
   const skipped: SeoActionSkip[] = [];
   const toInsert: SeoActionDraft[] = [];
+  const toBackfill: Array<{ id: string; draft: SeoActionDraft }> = [];
   const existing = (input.existingActions ?? []).filter((action) => {
     if (action.organizationId !== input.organizationId) {
       skipped.push({ reason: "tenant_mismatch", actionType: action.actionType });
@@ -154,8 +169,14 @@ export function planSeoGrowthActions(input: {
       .map((action) => action.externalId),
   );
 
+  const unresolved = existing.filter((action) => isUnresolvedSeoAction(action.status));
   const consider = (draft: SeoActionDraft, skip: Omit<SeoActionSkip, "reason">) => {
     if (seen.has(draft.externalId)) {
+      const match = unresolved.find((action) => action.externalId === draft.externalId);
+      if (match?.id && !(match.title ?? "").trim()) {
+        toBackfill.push({ id: match.id, draft });
+        return;
+      }
       skipped.push({ reason: "duplicate", ...skip });
       return;
     }
@@ -211,7 +232,7 @@ export function planSeoGrowthActions(input: {
     if (toInsert.length > before) searchAccepted += 1;
   }
 
-  return { toInsert, skipped };
+  return { toInsert, toBackfill, skipped };
 }
 
 function latestAuditsByUrl(audits: SeoAuditEvidence[]): SeoAuditEvidence[] {
@@ -246,11 +267,24 @@ function pageImprovementFromAudit(
   ];
   const page = pageLabel(audit.url);
   const recommended = recommendFromFindings(presentation, Boolean(noindex));
+  const why =
+    "Search results and the page itself may not clearly say what the page offers. This is a review item, not proof that search traffic is failing.";
+  const recommend = `${recommended} GroovGro will not change the live website.`;
+  const evidence: GrowthActionEvidence = {
+    source: SEO_AUDIT_PROVIDER,
+    kind: "page_presentation",
+    pageUrl: audit.url,
+    findingIds: [...(noindex ? ["robots-meta"] : []), ...presentation.map((item) => item.id)],
+    labels,
+    why,
+    recommend,
+  };
 
   return {
     organizationId,
     module: SEO_MODULE,
     actionType: SEO_PAGE_IMPROVEMENT,
+    title: `Improve search presentation on the ${page}`,
     description: [
       "GroovGro found an opportunity worth reviewing.",
       "",
@@ -258,11 +292,15 @@ function pageImprovementFromAudit(
       `The ${page} is missing or weak in important search signals: ${joinList(labels)}.`,
       "",
       "WHY this matters",
-      "Search results and the page itself may not clearly say what the page offers. This is a review item, not proof that search traffic is failing.",
+      why,
       "",
       "WHAT GroovGro recommends",
-      `${recommended} GroovGro will not change the live website.`,
+      recommend,
     ].join("\n"),
+    evidence,
+    confidence: GROWTH_ACTION_CONFIDENCE_OBSERVED,
+    expectedImpact: GROWTH_ACTION_IMPACT_UNKNOWN,
+    priority: 0,
     status: "proposed",
     risk: "optimization",
     provider: SEO_AUDIT_PROVIDER,
@@ -283,7 +321,6 @@ function rankSearchOpportunities(
 }> {
   if (!snapshot) return [];
 
-  const period = `${snapshot.startDate} to ${snapshot.endDate}`;
   const eligible: Array<{
     draft?: SeoActionDraft
     kind: "striking_distance" | "low_ctr"
@@ -351,7 +388,8 @@ function rankSearchOpportunities(
         clicks,
         ctr,
         position,
-        period,
+        startDate: snapshot.startDate,
+        endDate: snapshot.endDate,
       }),
       kind,
       impressions,
@@ -373,28 +411,35 @@ function searchDraft(input: {
   clicks: number
   ctr: number
   position: number
-  period: string
+  startDate: string
+  endDate: string
 }): SeoActionDraft {
+  const period = `${input.startDate} to ${input.endDate}`;
   const impressionsLabel = formatCount(input.impressions);
   const positionLabel = input.position.toFixed(1);
   const ctrLabel = `${(input.ctr * 100).toFixed(1)}%`;
   const found =
     input.kind === "striking_distance"
-      ? `Search Console shows that “${input.query}” received ${impressionsLabel} impressions and an average position of ${positionLabel} from ${input.period}.`
-      : `Search Console shows that “${input.query}” received ${impressionsLabel} impressions, ${formatCount(input.clicks)} click${input.clicks === 1 ? "" : "s"} (${ctrLabel} CTR), and an average position of ${positionLabel} from ${input.period}.`;
+      ? `Search Console shows that “${input.query}” received ${impressionsLabel} impressions and an average position of ${positionLabel} from ${period}.`
+      : `Search Console shows that “${input.query}” received ${impressionsLabel} impressions, ${formatCount(input.clicks)} click${input.clicks === 1 ? "" : "s"} (${ctrLabel} CTR), and an average position of ${positionLabel} from ${period}.`;
   const why =
     input.kind === "striking_distance"
       ? "That search already shows the website often and may be close to stronger first-page visibility. Average position is evidence, not a guarantee."
       : "The query is already reasonably visible, but relatively few impressions became clicks. A lower CTR can have several causes, including the snippet or search intent. It does not automatically mean the title is bad.";
   const recommend =
     input.kind === "striking_distance"
-      ? "Review the page Google associates with this search and strengthen how it matches that intent."
-      : "Review the search title and description on the associated page so they better match what people may be looking for.";
+      ? "Review the page Google associates with this search and strengthen how it matches that intent. GroovGro will not change the live website."
+      : "Review the search title and description on the associated page so they better match what people may be looking for. GroovGro will not change the live website.";
+  const title =
+    input.kind === "striking_distance"
+      ? `Review “${input.query}” search visibility`
+      : `Review click-through for “${input.query}”`;
 
   return {
     organizationId: input.organizationId,
     module: SEO_MODULE,
     actionType: SEO_SEARCH_OPPORTUNITY,
+    title,
     description: [
       "GroovGro found an opportunity worth reviewing.",
       "",
@@ -405,8 +450,24 @@ function searchDraft(input: {
       why,
       "",
       "WHAT GroovGro recommends",
-      `${recommend} GroovGro will not change the live website.`,
+      recommend,
     ].join("\n"),
+    evidence: {
+      source: SEARCH_CONSOLE_PROVIDER,
+      kind: input.kind,
+      query: input.query,
+      impressions: input.impressions,
+      clicks: input.clicks,
+      ctr: input.ctr,
+      position: input.position,
+      startDate: input.startDate,
+      endDate: input.endDate,
+      why,
+      recommend,
+    },
+    confidence: GROWTH_ACTION_CONFIDENCE_INFERRED,
+    expectedImpact: GROWTH_ACTION_IMPACT_UNKNOWN,
+    priority: 0,
     status: "proposed",
     risk: "optimization",
     provider: SEARCH_CONSOLE_PROVIDER,
