@@ -1,5 +1,7 @@
 # Phase 1 — what you add in Vercel
 
+**How-to (still used).** Clerk and Neon are already on the gro-mogia project. Use this if you must rotate keys. Current product status: [STATUS.md](../STATUS.md).
+
 The GroovGro app is already deploying from GitHub. You still need two hosted services so people can sign in and organizations can be stored. Do this in the browser. Do not install Postgres or Clerk on your computer.
 
 Project: **gro-mogia** at [https://vercel.com/dashboard](https://vercel.com/dashboard)

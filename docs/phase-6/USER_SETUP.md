@@ -1,5 +1,7 @@
 # Connect Google Search Console to GroovGro
 
+**How-to (still used).** Search Console is **IMPLEMENTED** as read-only. Keyword intelligence and AI Visibility are **PLANNED** (master brief §16). This setup does not turn those on.
+
 This is the last Phase 6 step. GroovGro **reads** Search Console. It does **not** edit the website, submit sitemaps, or buy ads.
 
 Do not paste Client IDs, Client secrets, or Google tokens into chat.

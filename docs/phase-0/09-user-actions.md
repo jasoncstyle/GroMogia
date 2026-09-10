@@ -1,5 +1,7 @@
 # What you need to do
 
+**Historical Phase 0 checklist.** Vercel, Clerk, Neon, and groovgro.com are already connected. Keep this file for account/DNS steps that still apply. Do not treat “no Next.js app yet” as true today.
+
 Most GroovGro work will be done by Cloud Agents after you approve this architecture. These steps need **you**, because they involve accounts, billing, and DNS.
 
 You do **not** need to keep a development computer running for production. You do **not** need to paste the master brief again; it is in `docs/MASTER_BRIEF.md` on this branch.

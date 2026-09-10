@@ -1,5 +1,7 @@
 # Phase 0 inspection
 
+**Historical.** Written 17 August 2026 when this repository had almost no app. The live product is on `main`. Current intent: [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.1. Current checkpoint: [STATUS.md](../STATUS.md). Do not treat “no application code” below as true today.
+
 Inspected on 17 August 2026 by the Cloud Agent run [GroovGro project architecture](https://cursor.com/agents/bc-2dcf22b7-dc3a-455b-968d-27785ffca329).
 
 The [master brief](../MASTER_BRIEF.md) was provided in a follow-up message and is now stored in git.

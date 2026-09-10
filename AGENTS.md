@@ -47,8 +47,9 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 - Phase 0 architecture is approved in `docs/phase-0/` (historical platform plan). Current product intent is [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) **v2.1**.
 - V2 owner-assistance is on `main`: Business Brain, Offers, Goals, Next step, named shares, SEO checks, Search Console read-only, Brand Voice drafts. See [docs/STATUS.md](docs/STATUS.md) and [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).
 - Keep working V1 features. The optional website builder stays in the app and is **paused** unless Jason asks to resume it. Do not rewrite working features to match a later phase number.
-- SEO Intelligence, Content Engine, and AI Visibility / GEO are an approved **vision expansion**. They extend GroovGro. They are not a second app and not a clone of another SEO product. Status of each piece is in MASTER_BRIEF §15 and v2/ARCHITECTURE “Expansion”.
-- Do not mark planned expansion work as implemented. The first coding slice (after the docs PR) is Growth Opportunities from **existing** Search Console queries and **existing** SEO findings, recommend-only, on Next step. No new paid API. No content factory. No AI-platform scraping. No live-site edits.
+- SEO Intelligence, Content Engine, and AI Visibility / GEO are an approved **vision expansion**. They extend GroovGro. They are not a second app and not a clone of another SEO product. Status: MASTER_BRIEF §§15–19 and v2/ARCHITECTURE “Expansion”.
+- Shared recommendations live on **`growth_actions`**. Do not create `growth_opportunities` unless a later review proves that table cannot hold them. No migration in Phase A.
+- Do not mark planned expansion work as implemented. Phase A is documentation only. Do not start Phase B or Phase C until Jason asks. Phase C (when asked) is existing Search Console + SEO findings → `growth_actions` → Next step, recommend-only. No new paid API. No content factory. No AI-platform scraping. No live-site edits.
 - Do not start ads, Growth Director execution, guarded automation, or autonomous AI.
 - Do not scrape third parties in violation of their terms. Do not hard-code a fixed list of AI vendors through business logic.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.

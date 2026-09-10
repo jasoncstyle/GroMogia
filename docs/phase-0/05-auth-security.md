@@ -1,5 +1,7 @@
 # Authentication, authorization, and security
 
+**Still current** for Clerk + Neon tenant isolation. “Phase 1 should include” language is **historical** — those tests belong in the live repo now. New SEO / GEO / action rows must keep `organization_id`.
+
 ## Authentication (who you are)
 
 **Clerk** hosts identity: sign-up, sign-in, sessions, MFA, password reset.

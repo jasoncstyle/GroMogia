@@ -50,7 +50,7 @@ Allowed:
 - `crm` and `commerce` both reference `contacts`
 - `analytics` reads canonical records from other modules
 - `intelligence` reads those records and `brand_voice`
-- `seo`, planned `content`, and planned `ai_visibility` create the same kind of Growth Opportunity for Next step; they do not each invent a coordinator
+- `seo`, planned `content`, and planned `ai_visibility` write compatible **`growth_actions`** for Next step; they do not each invent a coordinator or a second opportunity table
 - `website_builder` and `website_connect` both produce a `websites` row
 - `events` can optionally publish onto a connected or built website
 

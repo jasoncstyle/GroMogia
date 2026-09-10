@@ -117,4 +117,4 @@ No change is recommended to: modularity, multi-tenancy, AI levels, no scraping, 
 
 ## Stop line
 
-Phase 0 stops here. The next code that belongs in this repo after approval is Phase 1 scaffolding (Next.js, Clerk, Neon, dashboard shell) — not the website builder, not ads, not autonomous AI.
+**Historical close:** Phase 1 scaffolding is long done. Current work follows [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.1 phases A–T. Do not start ads, the paused builder, or autonomous AI from this file.

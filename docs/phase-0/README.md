@@ -37,4 +37,4 @@ Please reply with:
 2. Confirm you will complete the actions in [09-user-actions.md](09-user-actions.md), especially connecting this GitHub repository to Vercel (required for “always deploy”).
 3. Confirm the first real test business is **Ocean Sailing Adventures** (Stripe booking system already exists), or name a different Mogia Group business.
 
-After approval, Phase 1 can scaffold the Next.js app and start Preview deployments.
+**Historical close.** Phase 1 already shipped. New work follows the v2.1 brief (phases A–T). This folder stays as the original platform plan.

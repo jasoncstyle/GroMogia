@@ -1,9 +1,11 @@
 # Phase 2 — Stripe and website setup
 
+**How-to (still used).** Stripe read-copy and website tracking are already live. Use this to add or rotate keys. Do not change Ocean Sailing Adventures **stripe-osa** checkout. Current product status: [STATUS.md](../STATUS.md).
+
 Phase 1 sign-in and the database are already live. Phase 2 adds website tracking, leads, events, and Stripe bookings. Do this in the browser. Do not install Stripe or a database on your computer.
 
 Project: **gro-mogia** at [https://vercel.com/dashboard](https://vercel.com/dashboard)  
-Live app: [https://gro-mogia.vercel.app](https://gro-mogia.vercel.app)
+Live app: [https://www.groovgro.com/app](https://www.groovgro.com/app) (Vercel project still named gro-mogia)
 
 Use **test keys** first. GroovGro never stores card numbers.
 
