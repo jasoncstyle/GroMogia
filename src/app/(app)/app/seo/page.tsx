@@ -15,6 +15,7 @@ import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
 import { isBuilderApplyableFinding } from "@/lib/website-builder/apply-seo";
 import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
+import { ContentGapsPanel } from "@/components/content-gaps-panel";
 import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { SerpNotesPanel } from "@/components/serp-notes-panel";
@@ -100,9 +101,10 @@ export default async function SeoPage({
           then apply title, description, or heading changes onto that GroovGro
           page. Search Console is read-only. Queries from those snapshots are
           stored as a history and given a conservative estimate rank. You can
-          save a competitor you already see. GroovGro will not look businesses
-          up, scrape search results, buy keyword or SERP data, buy ads, or
-          change Stripe checkout.
+          save a competitor you already see. Worth-a-look queries are compared
+          to pages GroovGro already read. GroovGro will not invent topics,
+          write a page, look businesses up, scrape search results, buy keyword
+          or SERP data, buy ads, or change Stripe checkout.
         </p>
       </div>
 
@@ -254,6 +256,11 @@ export default async function SeoPage({
           />
 
           <KeywordHistoryPanel keywords={data.keywords} />
+
+          <ContentGapsPanel
+            gaps={data.contentGaps}
+            pagesRead={data.pagesRead}
+          />
 
           <SerpNotesPanel
             notes={data.serpNotes}

@@ -394,6 +394,41 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("observes stored content gaps and does not write a page", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        contentGapCount: 2,
+      }),
+    );
+    const observed = brief.observations.find(
+      (item) => item.title === "Search queries with no matching page GroovGro has read",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /2 worth-a-look queries/);
+    assert.match(observed.body, /did not invent topics/);
+    const recommended = brief.recommendations.find(
+      (item) => item.title === "Review queries with no matching page",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /will not write a brief or create a page/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Review queries with no matching page",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({ websiteConnected: false, contentGapCount: 2 }),
+      ).recommendations.some(
+        (item) => item.title === "Review queries with no matching page",
+      ),
+      false,
+    );
+  });
+
   it("observes saved business context and does not look up competitors", () => {
     const saved = buildIntelligenceBrief(
       facts({

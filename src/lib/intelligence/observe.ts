@@ -37,6 +37,7 @@ export type IntelligenceFacts = {
   keywordReviewCount?: number
   serpNoteCount?: number
   knownCompetitorCount?: number
+  contentGapCount?: number
 };
 
 export type InsightItem = {
@@ -168,6 +169,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const keywordReviewCount = facts.keywordReviewCount ?? 0;
   const serpNoteCount = facts.serpNoteCount ?? 0;
   const knownCompetitorCount = facts.knownCompetitorCount ?? 0;
+  const contentGapCount = facts.contentGapCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -184,6 +186,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Competitor notes you already saved",
       body: `The owner saved ${serpNoteCount} competitor ${serpNoteCount === 1 ? "note" : "notes"} from what they already see. GroovGro did not look these businesses up or scrape search results.`,
       evidence: ["serp_notes.source=owner"],
+      href: "/app/seo",
+    });
+  }
+
+  if (contentGapCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Search queries with no matching page GroovGro has read",
+      body: `${contentGapCount} worth-a-look ${contentGapCount === 1 ? "query has" : "queries have"} no matching page among the pages GroovGro already read. GroovGro did not invent topics, write a brief, or create a page.`,
+      evidence: ["content_gaps.status=gap"],
       href: "/app/seo",
     });
   }
@@ -287,6 +299,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && contentGapCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review queries with no matching page",
+      body: "Open SEO to read which worth-a-look queries GroovGro could not find on pages it already read. GroovGro will not write a brief or create a page.",
+      evidence: ["content_gaps.status=gap"],
+      href: "/app/seo",
+    });
+  }
+
   if (facts.websiteConnected && namedSources.length === 0) {
     recommendations.push({
       kind: "recommendation",
@@ -363,6 +385,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `keyword_review=${facts.keywordReviewCount ?? 0}`,
     `serp_notes=${facts.serpNoteCount ?? 0}`,
     `known_competitors=${facts.knownCompetitorCount ?? 0}`,
+    `content_gaps=${facts.contentGapCount ?? 0}`,
   ].join(" ");
 }
 

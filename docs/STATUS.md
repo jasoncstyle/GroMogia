@@ -19,9 +19,9 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 **V2 owner-assistance is on `main`.** The owner can name a share, count a Traffic Goal from visits, name a share next to a typed Goal, match a payment copy on Bookings, and draft or approve a plan on Next step. GroovGro does not execute.
 
-**Phase G (this branch):** The owner can save a competitor they already know for a search query on SEO. GroovGro stores that note. It does not look the business up, scrape search results, or buy a SERP vendor.
+**Phase H (this branch):** Worth-a-look Search Console queries are compared to pages GroovGro already read. SEO can show queries with no matching page. GroovGro does not invent topics, write a brief, or create a page.
 
-Phases A–F first slices are on `main`. Content, GEO, publishing, SERP lookup, and execute remain **PLANNED**. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
+Phases A–G first slices are on `main`. Briefs, generation, GEO, publishing, SERP lookup, and execute remain **PLANNED**. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 
 The website builder is paused. Public groovgro.com homepage stays Coming soon.
 
@@ -152,7 +152,8 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 ## What is already working
 
-- Phase G competitor notes (this branch): the owner can save who they already see for a query. SEO and Intelligence can show that note. GroovGro does not look businesses up, scrape search results, or buy a SERP vendor.
+- Phase H content gaps (this branch): worth-a-look queries are compared to pages GroovGro already read. SEO and Intelligence can show a missing-page estimate. GroovGro does not invent topics, write a brief, or create a page.
+- Phase G competitor notes: the owner can save who they already see for a query. SEO and Intelligence can show that note. GroovGro does not look businesses up, scrape search results, or buy a SERP vendor.
 - Phase F keyword scores: stored queries get a conservative estimate rank. SEO and Intelligence can show it. GroovGro does not buy keyword data or treat the rank as a traffic forecast.
 - Phase E keyword history: Search Console queries already stored become a keyword model with snapshot history. SEO and Intelligence can show that history. GroovGro does not buy keyword data.
 - Phase D Business Brain extras: the owner can save who to reach, problems, known competitors, differences, and prohibited claims. Intelligence can notice that context. GroovGro does not look up competitors or write pages from this yet.
@@ -243,9 +244,9 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 Vision is in the master brief. Do not implement the whole list. Do not build a second SEO app. Do not add `growth_opportunities`.
 
-**IMPLEMENTED:** page SEO checks, SEO copy drafts, Search Console read-only, Brand Voice drafts in the workspace, named-share attribution, Next step recommend-only, existing SEO/Search Console evidence → recommend-only `growth_actions` (Phase C), structured title/evidence/confidence/impact fields on `growth_actions` (Phase B), owner-entered Business Brain extras for later search/content work (Phase D), keyword model and history from stored Search Console queries (Phase E), conservative keyword estimate ranks from those stored numbers (Phase F), owner-entered competitor notes for queries the owner already sees (Phase G first slice).
+**IMPLEMENTED:** page SEO checks, SEO copy drafts, Search Console read-only, Brand Voice drafts in the workspace, named-share attribution, Next step recommend-only, existing SEO/Search Console evidence → recommend-only `growth_actions` (Phase C), structured title/evidence/confidence/impact fields on `growth_actions` (Phase B), owner-entered Business Brain extras for later search/content work (Phase D), keyword model and history from stored Search Console queries (Phase E), conservative keyword estimate ranks from those stored numbers (Phase F), owner-entered competitor notes for queries the owner already sees (Phase G first slice), content gaps from worth-a-look queries vs pages already read (Phase H first slice).
 
-**PLANNED:** SERP lookup, content, GEO, CMS write, experiments (H–T). Effort, cost, and measurement-window columns stay later if usage needs them.
+**PLANNED:** content briefs and generation, SERP lookup, GEO, CMS write, experiments (I–T). Effort, cost, and measurement-window columns stay later if usage needs them.
 
 **Do not do until asked:** keyword or SERP vendors, scrape search results or AI products, auto-publish, overwrite the connected live website, start Google Ads, or turn on execute.
 
