@@ -172,7 +172,7 @@ Use these labels. Do not make planned work sound shipped.
 
 ## 16. SEO, content, and AI visibility feed Growth Intelligence
 
-**Status:** vision approved 10 September 2026. Phases A–Q first slices are implemented. Do not start Phase R–T until Jason asks.
+**Status:** vision approved 10 September 2026. Phases A–R first slices are implemented. Do not start Phase S–T until Jason asks.
 
 GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
 
@@ -198,6 +198,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Owner-entered AI visibility history snapshots for a saved library question (no live lookup, no share of voice)
 - Citation-gap estimates from those saved snapshots (no live lookup, no share of voice)
 - Conservative cross-channel estimates from stored people, page, content, and AI-visibility facts (does not reorder Next step)
+- DIRECT / ASSISTED / ESTIMATED / UNKNOWN labels on stored people-to-revenue joins (no keyword or AI-referral path)
 - Specialists that read and recommend only. Ads, email, and social stay left alone
 - Autonomy in product use: observe, recommend, draft, owner approve. Execute stays off
 
@@ -211,7 +212,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Content drafts: a workspace draft can be written from a saved brief (Phase J first slice). The owner can save that draft for later CMS review (Phase P first slice). Live CMS write stays **PLANNED**.
 - Internal links and schema: suggestions and type estimates from pages GroovGro already read (Phase K first slice). Writing links or JSON-LD onto the live site stays **PLANNED**.
 - AI Visibility / GEO: the owner can save what they already heard (Phase L), questions to remember (Phase M first slice), another history snapshot (Phase N first slice), and citation-gap estimates from that history (Phase O first slice). Live adapters and share of voice stay **PLANNED**.
-- Attribution: named share → person → revenue exists. Keyword → page → person and AI-referral do not. Labels DIRECT / ASSISTED / ESTIMATED / UNKNOWN are **PLANNED**
+- Attribution: named share → person → revenue exists. Phase R labels those stored joins DIRECT / ASSISTED / ESTIMATED / UNKNOWN. Keyword → page → person and AI-referral stay **PLANNED**.
 - Prioritization: Next step uses a fixed owner-assistance order. Phase Q stores a conservative channel comparison from workspace facts. That estimate does not reorder Next step.
 - Brand Voice: does not learn from repeated owner edits
 - Publishing: GroovGro-hosted builder exists and is **PAUSED**. Owner can queue a workspace draft for later review (Phase P first slice). No WordPress / Shopify write. Do not overwrite a connected existing website. The CMS adapter stays off.
@@ -283,7 +284,7 @@ Possible environments (examples only, not a hard-coded vendor list, not all avai
 
 ### Revenue-aware attribution (**PARTIALLY IMPLEMENTED**)
 
-**IMPLEMENTED:** named share → visitor/lead → customer → Stripe charge copy.
+**IMPLEMENTED:** named share → visitor/lead → customer → Stripe charge copy. Those stored joins can be labeled DIRECT, ASSISTED, ESTIMATED, or UNKNOWN.
 
 **PLANNED:** keyword → page → visitor → lead → customer → revenue; ad → visitor → lead → customer → revenue; AI referral → visitor → lead → customer → revenue.
 
@@ -325,7 +326,7 @@ Do not overwrite the only copy of a metric. Keep snapshots (Search Console alrea
 | O | GEO audits and citation gaps | **IMPLEMENTED** first slice — citation-gap estimates from the latest saved history snapshot. Adapter stays off. No scrape. No share of voice. |
 | P | CMS publishing adapters | **IMPLEMENTED** first slice — owner-entered review queue from a workspace draft. Adapter exists and stays off. No live-site write. |
 | Q | Cross-channel opportunity scoring | **IMPLEMENTED** first slice — estimate from stored people, page, content, and AI-visibility facts. Does not reorder Next step. No ads. No execute. |
-| R | Attribution improvements | **PLANNED** |
+| R | Attribution improvements | **IMPLEMENTED** first slice — DIRECT / ASSISTED / ESTIMATED / UNKNOWN on stored people-to-revenue joins. No keyword path. No AI referral. Matching charges stays on Bookings. |
 | S | Experimentation / before-and-after | **PLANNED** |
 | T | Carefully expanded execution | **PLANNED** — still gated |
 

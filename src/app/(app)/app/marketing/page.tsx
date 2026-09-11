@@ -4,6 +4,10 @@ import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
 import { formatMoney } from "@/lib/money";
 import { resolveOrganizationSlug } from "@/lib/org";
+import {
+  attributionLabelTitle,
+  type AttributionLabel,
+} from "@/lib/attribution-labels";
 import { getMarketingSnapshot } from "@/lib/phase3/queries";
 import { NamedLeadFormLink } from "@/components/named-lead-form-link";
 import {
@@ -110,7 +114,11 @@ export default async function MarketingPage() {
               form or people you add. Revenue counts Stripe charges only
               (the <code className="text-foreground">ch_</code> rows), so one
               checkout is not counted three times. Share name is the name you
-              typed for that link. GroovGro will not buy ads.
+              typed for that link. How sure is a label on the stored join:
+              DIRECT means GroovGro stored it, ASSISTED means the person
+              touched more than one source, ESTIMATED means inferred, and
+              UNKNOWN means missing. GroovGro will not buy ads or invent a
+              keyword or AI-referral path.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -126,6 +134,7 @@ export default async function MarketingPage() {
                   <TableRow>
                     <TableHead>Source</TableHead>
                     <TableHead>Share name</TableHead>
+                    <TableHead>How sure</TableHead>
                     <TableHead>Visits</TableHead>
                     <TableHead>Leads</TableHead>
                     <TableHead>Customers</TableHead>
@@ -137,6 +146,12 @@ export default async function MarketingPage() {
                     <TableRow key={`${row.source}::${row.campaign}`}>
                       <TableCell className="font-medium">{row.source}</TableCell>
                       <TableCell>{row.campaign || "—"}</TableCell>
+                      <TableCell>
+                        <p className="font-medium">
+                          {attributionLabelTitle(row.label)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">{row.why}</p>
+                      </TableCell>
                       <TableCell>{row.visits}</TableCell>
                       <TableCell>{row.leads}</TableCell>
                       <TableCell>{row.customers}</TableCell>
@@ -145,11 +160,12 @@ export default async function MarketingPage() {
                   ))}
                 </TableBody>
                 </Table>
+                <AttributionLabelLegend />
                 {snapshot.unattributedRevenueCents > 0 ? (
                   <p className="mt-4 text-sm text-muted-foreground">
                     {formatMoney(snapshot.unattributedRevenueCents)} in Stripe
-                    charges has no person email yet, so it is listed as
-                    unattributed. Match those on{" "}
+                    charges has no person email yet, so How sure is UNKNOWN.
+                    Match those on{" "}
                     <Link href="/app/commerce" className="underline">
                       Bookings
                     </Link>
@@ -164,5 +180,28 @@ export default async function MarketingPage() {
 
       <OpenNextStepLink />
     </div>
+  );
+}
+
+const LABEL_LEGEND: { label: AttributionLabel; meaning: string }[] = [
+  { label: "direct", meaning: "GroovGro stored the join." },
+  { label: "assisted", meaning: "The person touched more than one stored source." },
+  { label: "estimated", meaning: "Inferred, not measured." },
+  { label: "unknown", meaning: "Missing. Match charges on Bookings." },
+];
+
+function AttributionLabelLegend() {
+  return (
+    <ul className="mt-4 space-y-1 text-xs text-muted-foreground">
+      {LABEL_LEGEND.map((row) => (
+        <li key={row.label}>
+          <span className="font-medium text-foreground">
+            {attributionLabelTitle(row.label)}
+          </span>
+          {" — "}
+          {row.meaning}
+        </li>
+      ))}
+    </ul>
   );
 }
