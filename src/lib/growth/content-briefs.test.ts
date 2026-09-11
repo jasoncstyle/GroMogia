@@ -1,0 +1,96 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { describe, it } from "node:test";
+import { join } from "node:path";
+
+import {
+  CONTENT_BRIEF_SOURCE_OWNER,
+  CONTENT_BRIEF_STATUS_PLANNED,
+  describeContentBrief,
+  planContentBrief,
+  suggestBriefOutline,
+  suggestBriefTitle,
+} from "./content-briefs";
+
+const ORG_A = "11111111-1111-1111-1111-111111111111";
+
+describe("owner-entered content briefs", () => {
+  it("plans a brief from a stored query without writing a page", () => {
+    const draft = planContentBrief({
+      organizationId: ORG_A,
+      query: "  Weekend beginner class  ",
+      title: "  Weekend beginner class  ",
+      audience: "  New guests  ",
+      outline: "  What to expect on the first visit.  ",
+    });
+    assert.equal(draft.organizationId, ORG_A);
+    assert.equal(draft.query, "Weekend beginner class");
+    assert.equal(draft.queryKey, "weekend beginner class");
+    assert.equal(draft.title, "Weekend beginner class");
+    assert.equal(draft.audience, "New guests");
+    assert.equal(draft.outline, "What to expect on the first visit.");
+    assert.equal(draft.source, CONTENT_BRIEF_SOURCE_OWNER);
+    assert.equal(draft.status, CONTENT_BRIEF_STATUS_PLANNED);
+    assert.equal(
+      describeContentBrief({
+        query: draft.query,
+        title: draft.title,
+      }),
+      "Planned: “Weekend beginner class” for “Weekend beginner class”.",
+    );
+  });
+
+  it("uses the query as the working title when the title is empty", () => {
+    const draft = planContentBrief({
+      organizationId: ORG_A,
+      query: "harbor tours",
+    });
+    assert.equal(draft.title, "harbor tours");
+    assert.equal(suggestBriefTitle("  harbor tours  "), "harbor tours");
+    assert.match(suggestBriefOutline("harbor tours"), /will not generate that page/);
+  });
+
+  it("requires an organization and a title or query", () => {
+    assert.throws(
+      () => planContentBrief({ organizationId: "", title: "Harbor tours" }),
+      /Missing organization/,
+    );
+    assert.throws(
+      () => planContentBrief({ organizationId: ORG_A, title: "   " }),
+      /Add a working title/,
+    );
+  });
+
+  it("does not fetch, generate article copy, or create a Next step", () => {
+    const helper = readFileSync(
+      join(process.cwd(), "src/lib/growth/content-briefs.ts"),
+      "utf8",
+    );
+    const action = readFileSync(
+      join(process.cwd(), "src/lib/actions/content-briefs.ts"),
+      "utf8",
+    );
+    const panel = readFileSync(
+      join(process.cwd(), "src/components/content-briefs-panel.tsx"),
+      "utf8",
+    );
+    const nextStep = readFileSync(
+      join(process.cwd(), "src/lib/growth/next-step.ts"),
+      "utf8",
+    );
+    for (const source of [helper, action, panel]) {
+      assert.doesNotMatch(source, /fetch\(/);
+      assert.doesNotMatch(source, /generateText|openai|anthropic|cheerio/i);
+    }
+    assert.match(action, /session\.organizationId/);
+    assert.match(action, /did not write a page/);
+    assert.match(panel, /will not write/);
+    assert.match(panel, /generate article copy/);
+    assert.doesNotMatch(nextStep, /contentBrief|content_brief|Save brief to planner/);
+    const seoPage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
+      "utf8",
+    );
+    assert.match(seoPage, /ContentBriefsPanel/);
+  });
+});

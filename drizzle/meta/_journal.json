@@ -204,6 +204,13 @@
       "when": 1787424000000,
       "tag": "0028_content_gaps",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1787432000000,
+      "tag": "0029_content_briefs",
+      "breakpoints": true
     }
   ]
 }

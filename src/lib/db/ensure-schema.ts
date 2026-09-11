@@ -310,4 +310,12 @@ export async function ensureSchema(): Promise<void> {
   if (!contentGapsTable[0]?.name) {
     await applyMigration(sql, "0028_content_gaps.sql");
   }
+
+  const contentBriefsTable = (await sql.query(
+    "select to_regclass('public.content_briefs') as name",
+  )) as RegistryRow[];
+
+  if (!contentBriefsTable[0]?.name) {
+    await applyMigration(sql, "0029_content_briefs.sql");
+  }
 }

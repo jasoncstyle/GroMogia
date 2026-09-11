@@ -38,6 +38,7 @@ export type IntelligenceFacts = {
   serpNoteCount?: number
   knownCompetitorCount?: number
   contentGapCount?: number
+  contentBriefCount?: number
 };
 
 export type InsightItem = {
@@ -170,6 +171,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const serpNoteCount = facts.serpNoteCount ?? 0;
   const knownCompetitorCount = facts.knownCompetitorCount ?? 0;
   const contentGapCount = facts.contentGapCount ?? 0;
+  const contentBriefCount = facts.contentBriefCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -194,8 +196,18 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     observations.push({
       kind: "observation",
       title: "Search queries with no matching page GroovGro has read",
-      body: `${contentGapCount} worth-a-look ${contentGapCount === 1 ? "query has" : "queries have"} no matching page among the pages GroovGro already read. GroovGro did not invent topics, write a brief, or create a page.`,
+      body: `${contentGapCount} worth-a-look ${contentGapCount === 1 ? "query has" : "queries have"} no matching page among the pages GroovGro already read. GroovGro did not invent topics or create a page.`,
       evidence: ["content_gaps.status=gap"],
+      href: "/app/seo",
+    });
+  }
+
+  if (contentBriefCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Content briefs on the planner",
+      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner. GroovGro did not write a page or generate article copy.`,
+      evidence: ["content_briefs.source=owner"],
       href: "/app/seo",
     });
   }
@@ -303,8 +315,22 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Review queries with no matching page",
-      body: "Open SEO to read which worth-a-look queries GroovGro could not find on pages it already read. GroovGro will not write a brief or create a page.",
+      body: "Open SEO to read which worth-a-look queries GroovGro could not find on pages it already read. GroovGro will not create a page.",
       evidence: ["content_gaps.status=gap"],
+      href: "/app/seo",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
+    contentGapCount > 0 &&
+    contentBriefCount === 0
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Save a content brief to the planner",
+      body: "On SEO, save a brief for a missing-page query. GroovGro will not write the page or generate article copy.",
+      evidence: ["content_briefs missing"],
       href: "/app/seo",
     });
   }
@@ -386,6 +412,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `serp_notes=${facts.serpNoteCount ?? 0}`,
     `known_competitors=${facts.knownCompetitorCount ?? 0}`,
     `content_gaps=${facts.contentGapCount ?? 0}`,
+    `content_briefs=${facts.contentBriefCount ?? 0}`,
   ].join(" ");
 }
 

@@ -162,7 +162,7 @@ describe("content gap detection from stored pages", () => {
     assert.match(persist, /eq\(websiteDiscoveredPages\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(contentGaps\.organizationId, organizationId\)/);
     assert.match(panel, /did not invent topics/);
-    assert.match(panel, /write a brief/);
+    assert.match(panel, /Save a brief on the planner/);
     assert.doesNotMatch(nextStep, /contentGap|content_gap|Write a brief/);
     const seoPersist = readFileSync(
       join(process.cwd(), "src/lib/growth/persist-seo-actions.ts"),

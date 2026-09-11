@@ -1,7 +1,7 @@
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
-import { aiActionLogs, contentGaps, keywords, payments, serpNotes } from "@/lib/db/schema";
+import { aiActionLogs, contentBriefs, contentGaps, keywords, payments, serpNotes } from "@/lib/db/schema";
 import {
   buildIntelligenceBrief,
   type IntelligenceBrief,
@@ -28,11 +28,13 @@ export async function getIntelligenceFacts(
     countChargesThisMonth(organizationId),
     getGrowthSnapshot(organizationId),
   ]);
-  const [keywordCounts, serpNoteCount, contentGapCount] = await Promise.all([
-    countRecordedKeywords(organizationId),
-    countSerpNotes(organizationId),
-    countContentGaps(organizationId),
-  ]);
+  const [keywordCounts, serpNoteCount, contentGapCount, contentBriefCount] =
+    await Promise.all([
+      countRecordedKeywords(organizationId),
+      countSerpNotes(organizationId),
+      countContentGaps(organizationId),
+      countContentBriefs(organizationId),
+    ]);
 
   const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
   const proposedSeo = (growth?.actions ?? []).filter(
@@ -83,6 +85,7 @@ export async function getIntelligenceFacts(
     serpNoteCount,
     knownCompetitorCount: brainSeoContextCounts(growth?.brain ?? null).competitors,
     contentGapCount,
+    contentBriefCount,
   };
 }
 
@@ -127,6 +130,16 @@ async function countContentGaps(organizationId: string): Promise<number> {
         eq(contentGaps.status, CONTENT_GAP_STATUS_GAP),
       ),
     );
+  return Number(row?.value ?? 0);
+}
+
+async function countContentBriefs(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(contentBriefs)
+    .where(eq(contentBriefs.organizationId, organizationId));
   return Number(row?.value ?? 0);
 }
 

@@ -15,6 +15,7 @@ import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
 import { isBuilderApplyableFinding } from "@/lib/website-builder/apply-seo";
 import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
+import { ContentBriefsPanel } from "@/components/content-briefs-panel";
 import { ContentGapsPanel } from "@/components/content-gaps-panel";
 import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
@@ -102,9 +103,10 @@ export default async function SeoPage({
           page. Search Console is read-only. Queries from those snapshots are
           stored as a history and given a conservative estimate rank. You can
           save a competitor you already see. Worth-a-look queries are compared
-          to pages GroovGro already read. GroovGro will not invent topics,
-          write a page, look businesses up, scrape search results, buy keyword
-          or SERP data, buy ads, or change Stripe checkout.
+          to pages GroovGro already read. You can save a brief to the planner.
+          GroovGro will not invent topics, write a page, look businesses up,
+          scrape search results, buy keyword or SERP data, buy ads, or change
+          Stripe checkout.
         </p>
       </div>
 
@@ -260,6 +262,15 @@ export default async function SeoPage({
           <ContentGapsPanel
             gaps={data.contentGaps}
             pagesRead={data.pagesRead}
+          />
+
+          <ContentBriefsPanel
+            briefs={data.contentBriefs}
+            querySuggestions={[
+              ...data.contentGaps.map((gap) => gap.query),
+              ...data.keywords.map((keyword) => keyword.query),
+            ].filter((query, index, rows) => rows.indexOf(query) === index)}
+            canManage={session.permissions.includes("manage_seo")}
           />
 
           <SerpNotesPanel
