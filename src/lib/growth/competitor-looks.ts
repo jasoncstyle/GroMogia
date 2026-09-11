@@ -4,7 +4,12 @@
  * stays behind an off adapter. Do not copy competitor words onto a
  * live site or treat one page as the whole market.
  */
-import { extractWebsitePage, isGenericWebsiteLabel } from "@/lib/growth/website-discover";
+import {
+  extractWebsitePage,
+  isGenericWebsiteLabel,
+  linkedDiscoveryUrls,
+  pathPriority,
+} from "@/lib/growth/website-discover";
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
 
 export const COMPETITOR_SOURCE_OWNER = "owner";
@@ -12,6 +17,7 @@ export const COMPETITOR_STATUS_SAVED = "saved";
 export const COMPETITOR_STATUS_LOOKED = "looked";
 export const COMPETITOR_MAX_SHOWN = 12;
 export const COMPETITOR_MAX_SEARCHES = 6;
+export const COMPETITOR_MAX_INNER_PAGES = 3;
 
 export type CompetitorSiteDraft = {
   organizationId: string
@@ -28,6 +34,8 @@ export type CompetitorLookFacts = {
   description: string
   headings: string[]
   navLabels: string[]
+  bodyText: string
+  pageCount: number
 };
 
 export type CompetitorLookDraft = CompetitorLookFacts & {
@@ -112,6 +120,35 @@ export function planCompetitorSite(input: {
   };
 }
 
+export function visiblePageText(content: string): string {
+  return content
+    .replace(/<script\b[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^Title:\s*/gim, "")
+    .replace(/^URL Source:\s*/gim, "")
+    .replace(/^Markdown Content:\s*/gim, "")
+    .replace(/[#*_`>]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 2500);
+}
+
+function uniqueLabels(values: string[], max: number): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of values) {
+    const value = raw.replace(/\s+/g, " ").trim();
+    const key = value.toLowerCase();
+    if (!value || seen.has(key)) continue;
+    seen.add(key);
+    out.push(value);
+    if (out.length >= max) break;
+  }
+  return out;
+}
+
 export function lookFromHtml(url: string, html: string): CompetitorLookFacts {
   const page = extractWebsitePage(url, html);
   return {
@@ -119,6 +156,8 @@ export function lookFromHtml(url: string, html: string): CompetitorLookFacts {
     description: page.description,
     headings: page.headings.slice(0, 8),
     navLabels: page.navLabels.slice(0, 10),
+    bodyText: visiblePageText(html),
+    pageCount: 1,
   };
 }
 
@@ -147,6 +186,8 @@ export function lookFromReadableText(url: string, text: string): CompetitorLookF
     description: paragraphs[0] ?? "",
     headings,
     navLabels: [],
+    bodyText: visiblePageText(text),
+    pageCount: 1,
   };
 }
 
@@ -157,27 +198,57 @@ export function lookFromPublicContent(url: string, content: string): CompetitorL
   return lookFromReadableText(url, content);
 }
 
+function lookBlob(look: CompetitorLookFacts): string {
+  return [look.title, look.description, ...look.headings, ...look.navLabels, look.bodyText]
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function describeCompetitorModel(look: CompetitorLookFacts): string {
-  const topics = look.headings.filter((heading) => !isGenericWebsiteLabel(heading));
-  if (topics[0]) {
-    return `This public homepage leads with “${topics[0]}”.`;
+  const blob = lookBlob(look);
+  const lead =
+    look.headings.find((heading) => !isGenericWebsiteLabel(heading)) ||
+    look.title ||
+    "";
+  const sells: string[] = [];
+  if (/(school|train|course|class|workshop|lesson|expedition)/i.test(blob)) {
+    sells.push("training or a course");
+  }
+  if (/(liveaboard|aboard|trip|voyage|expedition|tour)/i.test(blob)) {
+    sells.push("a trip people join");
+  }
+  if (/(up to \d+|small group|personalized|private)/i.test(blob)) {
+    sells.push("a small or personal group");
+  }
+  if (/(shop|store|buy|cart|product)/i.test(blob) && sells.length === 0) {
+    sells.push("products from the page");
+  }
+  const pages =
+    look.pageCount > 1 ? ` GroovGro read ${look.pageCount} public pages on the site you named.` : "";
+  if (sells.length && lead) {
+    return `This public site sells ${uniqueLabels(sells, 3).join(" and ")}. It leads with “${lead}”.${pages}`;
+  }
+  if (lead) {
+    return `This public homepage leads with “${lead}”.${pages}`;
   }
   if (look.description) {
-    return `This public homepage describes itself as “${look.description}”.`;
+    return `This public homepage describes itself as “${look.description}”.${pages}`;
   }
-  if (look.title) {
-    return `This public homepage titles itself “${look.title}”.`;
-  }
-  return "This public homepage did not name a clear offer.";
+  return `This public homepage did not name a clear offer.${pages}`;
 }
 
 export function describeCompetitorMarketing(look: CompetitorLookFacts): string {
-  const blob = [...look.headings, ...look.navLabels, look.description]
-    .join(" ")
-    .toLowerCase();
+  const blob = lookBlob(look);
   const bits: string[] = [];
-  if (/(book|reserv|schedul|appoint|enroll)/i.test(blob)) {
-    bits.push("It asks people to book or schedule.");
+  if (/(book|reserv|schedul|appoint|enroll|join|apply|sign up)/i.test(blob)) {
+    bits.push("It asks people to book, join, or apply.");
+  }
+  if (/(expedition|course|class|workshop|training|lesson)/i.test(blob)) {
+    bits.push("It markets a course, class, or expedition.");
+  }
+  if (/(up to \d+|small group|personalized|private)/i.test(blob)) {
+    bits.push("It promises a small or personal group.");
   }
   if (/(blog|guide|resource|learn|news)/i.test(blob)) {
     bits.push("It shows guides or news.");
@@ -188,10 +259,13 @@ export function describeCompetitorMarketing(look: CompetitorLookFacts): string {
   if (/(shop|store|buy|cart)/i.test(blob)) {
     bits.push("It sells from the page.");
   }
-  if (bits.length === 0) {
-    return "The public homepage did not show a clear marketing move.";
+  if (/(contact|email|call|phone|get in touch)/i.test(blob)) {
+    bits.push("It asks people to get in touch.");
   }
-  return bits.join(" ");
+  if (bits.length === 0) {
+    return "The public pages GroovGro read did not show a clear marketing move.";
+  }
+  return uniqueLabels(bits, 4).join(" ");
 }
 
 export function planCompeteNote(input: {
@@ -210,22 +284,88 @@ export function planCompeteNote(input: {
   const difference = (input.ourDifference ?? [])
     .map((row) => row.replace(/\s+/g, " ").trim())
     .filter(Boolean)[0];
+  const lead =
+    input.look.headings.find((heading) => !isGenericWebsiteLabel(heading)) ||
+    input.look.title ||
+    "their lead";
   const next = ours[0]
-    ? `A next look is to make “${ours[0]}” easier to see than their lead.`
+    ? `A next look is to make “${ours[0]}” easier to see than “${lead}”.`
     : difference
-      ? `A next look is to make “${difference}” easier to see on your site.`
-      : "A next look is to name your offer more clearly than this homepage does.";
-  return `${name}: ${model} ${marketing} ${next} This is a stored look at a page you named, not a reason to copy their words, buy ads, or change checkout.`;
+      ? `A next look is to make “${difference}” easier to see than “${lead}”.`
+      : `A next look is to name your offer more clearly than “${lead}”.`;
+  return `${name}: ${model} ${marketing} ${next} This is a stored look at a site you named, not a reason to copy their words, buy ads, or change checkout.`;
+}
+
+export function mergeCompetitorLooks(looks: CompetitorLookFacts[]): CompetitorLookFacts {
+  const first = looks[0];
+  if (!first) {
+    return {
+      title: "",
+      description: "",
+      headings: [],
+      navLabels: [],
+      bodyText: "",
+      pageCount: 0,
+    };
+  }
+  return {
+    title: first.title,
+    description: first.description,
+    headings: uniqueLabels(looks.flatMap((look) => look.headings), 10),
+    navLabels: uniqueLabels(looks.flatMap((look) => look.navLabels), 12),
+    bodyText: looks
+      .map((look) => look.bodyText)
+      .filter(Boolean)
+      .join(" ")
+      .slice(0, 2500),
+    pageCount: looks.length,
+  };
+}
+
+export function proposeCompetitorInnerPages(input: {
+  homeUrl: string
+  content: string
+  limit?: number
+}): string[] {
+  const home = normalizeCompetitorUrl(input.homeUrl);
+  if (!home) return [];
+  const limit = input.limit ?? COMPETITOR_MAX_INNER_PAGES;
+  const scored = new Map<string, number>();
+  const add = (raw: string) => {
+    const parsed = normalizeCompetitorUrl(raw.startsWith("http") ? raw : new URL(raw, home).toString());
+    if (!parsed) return;
+    if (competitorHost(parsed) !== competitorHost(home)) return;
+    const key = `${parsed.origin}${parsed.pathname.replace(/\/+$/, "") || "/"}`.toLowerCase();
+    const homeKey = `${home.origin}${home.pathname.replace(/\/+$/, "") || "/"}`.toLowerCase();
+    if (key === homeKey) return;
+    const score = pathPriority(parsed.pathname);
+    if (score < 0) return;
+    scored.set(parsed.toString(), Math.max(scored.get(parsed.toString()) ?? 0, score));
+  };
+  for (const row of linkedDiscoveryUrls(input.content, home.toString())) {
+    if (row.sameOrigin) add(row.url);
+  }
+  for (const match of input.content.matchAll(/\]\((https?:[^)\s]+|\/[^)\s]+)\)/gi)) {
+    add(match[1] ?? "");
+  }
+  return [...scored.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .slice(0, limit)
+    .map(([url]) => url);
 }
 
 export function planCompetitorLook(input: {
   name: string
   url: string
   html: string
+  extraPages?: { url: string; html: string }[]
   ourOffers?: string[]
   ourDifference?: string[]
 }): CompetitorLookDraft {
-  const look = lookFromPublicContent(input.url, input.html);
+  const look = mergeCompetitorLooks([
+    lookFromPublicContent(input.url, input.html),
+    ...(input.extraPages ?? []).map((page) => lookFromPublicContent(page.url, page.html)),
+  ]);
   return {
     ...look,
     modelGuess: describeCompetitorModel(look),

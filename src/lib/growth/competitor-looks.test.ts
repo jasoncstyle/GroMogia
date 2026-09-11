@@ -11,6 +11,7 @@ import {
   planCompeteNote,
   planCompetitorLook,
   planCompetitorSite,
+  proposeCompetitorInnerPages,
   proposeCompetitorSearches,
 } from "./competitor-looks";
 import {
@@ -89,7 +90,7 @@ describe("competitor looks from owner-saved URLs", () => {
       ourDifference: ["Smaller groups"],
     });
     assert.match(planned.modelGuess, /Weekend beginner class/);
-    assert.match(planned.marketingGuess, /book or schedule/);
+    assert.match(planned.marketingGuess, /book, join, or apply/);
     assert.match(planned.competeNote, /Private coaching/);
     assert.match(planned.competeNote, /not a reason to copy their words/);
     const fromText = lookFromPublicContent(
@@ -104,6 +105,36 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.equal(fromText.title, "Harbor Skills");
     assert.equal(fromText.headings[0], "Weekend beginner class");
     assert.match(fromText.description, /Book a date/);
+    const deeper = planCompetitorLook({
+      name: "Harbor Skills",
+      url: "https://harborskills.example/",
+      html: [
+        "Title: Harbor Skills is a coastal training school",
+        "",
+        "## Hands-on beginner expeditions",
+        "We take up to five students aboard for a liveaboard training course.",
+        "Book a date. [Courses](/courses) [About](/about)",
+      ].join("\n"),
+      extraPages: [
+        {
+          url: "https://harborskills.example/courses",
+          html: "## Private coaching\nSmall group coastal trips. Contact us.",
+        },
+      ],
+      ourOffers: ["Intro Workshop"],
+    });
+    assert.match(deeper.modelGuess, /training or a course/);
+    assert.match(deeper.modelGuess, /2 public pages/);
+    assert.match(deeper.marketingGuess, /course, class, or expedition/);
+    assert.doesNotMatch(deeper.marketingGuess, /did not show a clear marketing move/);
+    assert.match(deeper.competeNote, /Intro Workshop/);
+    assert.deepEqual(
+      proposeCompetitorInnerPages({
+        homeUrl: "https://harborskills.example/",
+        content: "Read [Courses](/courses) and [https://www.google.com/search](https://www.google.com/search).",
+      }),
+      ["https://harborskills.example/courses"],
+    );
     assert.equal(
       planCompeteNote({
         name: "Harbor Skills",
@@ -157,6 +188,8 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /eq\(competitorSites\.organizationId, session\.organizationId\)/);
     assert.match(action, /fetchNamedPublicPage/);
+    assert.match(action, /proposeCompetitorInnerPages/);
+    assert.match(action, /extraPages/);
     assert.match(action, /pageText/);
     assert.match(action, /explainPublicFetchFailure/);
     assert.match(reader, /r\.jina\.ai/);
@@ -165,6 +198,8 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(panel, /will not scrape Google/);
     assert.match(panel, /Read this website/);
     assert.match(panel, /paste the public page/);
+    assert.match(panel, /How they sell/);
+    assert.match(panel, /How they market/);
     for (const source of [helper, search, panel]) {
       assert.doesNotMatch(source, /cheerio|puppeteer|playwright|openai|anthropic/i);
       assert.doesNotMatch(source, /serpApi|dataforseo|googleusercontent/i);

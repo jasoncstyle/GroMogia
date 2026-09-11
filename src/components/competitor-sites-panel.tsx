@@ -33,9 +33,10 @@ export function CompetitorSitesPanel({
         <CardTitle>How we might compete</CardTitle>
         <CardDescription>
           Save a competitor website you already know. GroovGro can read that
-          public page and suggest how to compete. If the site blocks the
-          automated read, paste what you see on that public page. It will not
-          scrape Google, copy their words onto your site, or buy ads.
+          homepage and a few public pages on the same site, then suggest how
+          to compete. If the site blocks the automated read, paste what you
+          see. It will not scrape Google, copy their words onto your site, or
+          buy ads.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -53,9 +54,24 @@ export function CompetitorSitesPanel({
                 </p>
                 <p className="text-xs text-muted-foreground">{site.url}</p>
                 {site.competeNote ? (
-                  <p className="text-sm text-muted-foreground">
-                    {site.competeNote}
-                  </p>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    {site.modelGuess ? (
+                      <p>
+                        <span className="font-medium text-foreground">How they sell. </span>
+                        {site.modelGuess}
+                      </p>
+                    ) : null}
+                    {site.marketingGuess ? (
+                      <p>
+                        <span className="font-medium text-foreground">How they market. </span>
+                        {site.marketingGuess}
+                      </p>
+                    ) : null}
+                    <p>
+                      <span className="font-medium text-foreground">How we might compete. </span>
+                      {site.competeNote}
+                    </p>
+                  </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
                     Saved. GroovGro has not read this page yet.

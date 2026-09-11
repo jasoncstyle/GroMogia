@@ -109,7 +109,8 @@ export default async function SeoPage({
           then apply title, description, or heading changes onto that GroovGro
           page. Search Console is read-only. Queries from those snapshots are
           stored as a history and given a conservative estimate rank. You can
-          save a competitor website and read that public page. Worth-a-look queries are compared
+          save a competitor website and read that homepage plus a few public pages
+          on the same site. Worth-a-look queries are compared
           to pages GroovGro already read. You can save a brief to the planner
           and write a workspace draft from it. You can save a draft for later
           review. Pages GroovGro already read
