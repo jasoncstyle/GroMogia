@@ -24,7 +24,7 @@ Modules are independently enabled capabilities. The codebase may contain a modul
 | `crm` | Leads and customers | 2 | Shared contact identity (see data model) |
 | `commerce` | Bookings / purchases / Stripe | 2 | Adapter to existing OSA Stripe booking; not a new Stripe |
 | `marketing` | Campaigns and channels | 3 | Ads, email, social as adapters |
-| `analytics` | Cross-system analytics | 2 (basic), 3 (attribution) | Not a GA clone |
+| `analytics` | Cross-system analytics | 2 (basic), 3 (attribution) | Not a GA clone. Stored people-to-revenue joins can be labeled DIRECT / ASSISTED / ESTIMATED / UNKNOWN |
 | `seo` | SEO | 6 | Independent module. **Implemented:** page checks, drafts, Search Console read-only. **Planned:** keyword intelligence and revenue-aware scores (see master brief §15) |
 | `content` | Content engine | later | **Partial.** Briefs, workspace drafts, and a review-only publish queue live on SEO. Live CMS write stays off. Builder publish stays paused |
 | `ai_visibility` | AI Visibility / GEO | later | **Partial.** Owner-entered notes, a query library, history snapshots, and citation-gap estimates live on SEO. No separate nav. Adapters stay off. No scraping |

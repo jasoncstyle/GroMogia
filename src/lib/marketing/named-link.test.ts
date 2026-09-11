@@ -102,8 +102,13 @@ describe("named campaign lead form links", () => {
     assert.match(observe, /href: "\/app\/marketing"/);
     assert.match(observe, /will not buy ads/);
     assert.doesNotMatch(observe, /google ads/i);
-    assert.match(observe, /website_campaign/);
+    assert.match(observe, /GENERIC_ATTRIBUTION_SOURCES/);
     assert.match(observe, /formatLeadOrigin/);
+    const labels = readFileSync(
+      join(process.cwd(), "src/lib/attribution-labels.ts"),
+      "utf8",
+    );
+    assert.match(labels, /website_campaign/);
     assert.match(observe, /Goal number and share/);
 
     const action = readFileSync(

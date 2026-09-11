@@ -1,6 +1,16 @@
 import { and, asc, eq, sql } from "drizzle-orm";
 
 import { mergeAttributionRows, normalizeAttributionSource } from "@/lib/attribution";
+import {
+  addAttributionLabelCount,
+  attributionOriginKey,
+  emptyAttributionLabelCounts,
+  labelAttributionOrigin,
+  labelStoredJoin,
+  namedOriginCountForContact,
+  recordNamedOrigin,
+  type LabeledAttributionRow,
+} from "@/lib/attribution-labels";
 import { getDb } from "@/lib/db";
 import {
   attributionTouches,
@@ -14,9 +24,10 @@ export async function getMarketingSnapshot(organizationId: string) {
   const db = getDb();
   if (!db) {
     return {
-      rows: [] as ReturnType<typeof mergeAttributionRows>,
+      rows: [] as LabeledAttributionRow[],
       unattributedRevenueCents: 0,
       websiteUrl: "",
+      labelCounts: emptyAttributionLabelCounts(),
     };
   }
 
@@ -101,6 +112,33 @@ export async function getMarketingSnapshot(organizationId: string) {
 
   const revenue: { source: string; campaign: string; cents: number }[] = [];
   let unattributedRevenueCents = 0;
+  const originsByContact = new Map<string, Set<string>>();
+  const contactsByOrigin = new Map<string, Set<string>>();
+  for (const lead of leadSources) {
+    recordNamedOrigin(
+      originsByContact,
+      lead.contactId,
+      lead.source,
+      lead.campaign ?? "",
+    );
+    const originKey = attributionOriginKey(lead.source, lead.campaign ?? "");
+    const contacts = contactsByOrigin.get(originKey) ?? new Set<string>();
+    contacts.add(lead.contactId);
+    contactsByOrigin.set(originKey, contacts);
+  }
+
+  let labelCounts = emptyAttributionLabelCounts();
+  for (const lead of leadSources) {
+    const labeled = labelStoredJoin({
+      kind: "lead",
+      source: lead.source,
+      campaign: lead.campaign ?? "",
+      contactId: lead.contactId,
+      namedOriginCount: namedOriginCountForContact(originsByContact, lead.contactId),
+    });
+    labelCounts = addAttributionLabelCount(labelCounts, labeled.label);
+  }
+
   for (const charge of chargeRows) {
     const fromLead = charge.contactId
       ? firstLeadByContact.get(charge.contactId)
@@ -117,24 +155,52 @@ export async function getMarketingSnapshot(organizationId: string) {
       campaign: fromLead?.campaign ?? "",
       cents: charge.amountCents,
     });
+    const labeled = labelStoredJoin({
+      kind: "charge",
+      source,
+      campaign: fromLead?.campaign ?? "",
+      contactId: charge.contactId,
+      namedOriginCount: namedOriginCountForContact(
+        originsByContact,
+        charge.contactId,
+      ),
+    });
+    labelCounts = addAttributionLabelCount(labelCounts, labeled.label);
   }
 
+  const rows = mergeAttributionRows({
+    visits: visitRows.map((row) => ({
+      source: row.source,
+      campaign: row.campaign,
+      count: Number(row.count),
+    })),
+    leads: leadRows.map((row) => ({
+      source: row.source,
+      campaign: row.campaign,
+      count: Number(row.count),
+    })),
+    customers: customersForMerge,
+    revenue,
+  }).map((row) => {
+    const originKey = attributionOriginKey(row.source, row.campaign);
+    const contacts = contactsByOrigin.get(originKey) ?? new Set<string>();
+    const assisted = [...contacts].some(
+      (contactId) => namedOriginCountForContact(originsByContact, contactId) >= 2,
+    );
+    return {
+      ...row,
+      ...labelAttributionOrigin({
+        source: row.source,
+        campaign: row.campaign,
+        assisted,
+      }),
+    };
+  });
+
   return {
-    rows: mergeAttributionRows({
-      visits: visitRows.map((row) => ({
-        source: row.source,
-        campaign: row.campaign,
-        count: Number(row.count),
-      })),
-      leads: leadRows.map((row) => ({
-        source: row.source,
-        campaign: row.campaign,
-        count: Number(row.count),
-      })),
-      customers: customersForMerge,
-      revenue,
-    }),
+    rows,
     unattributedRevenueCents,
     websiteUrl: website?.publicUrl ?? "",
+    labelCounts,
   };
 }

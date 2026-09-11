@@ -157,6 +157,10 @@ export async function getIntelligenceFacts(
     geoHistoryCount,
     geoAuditGapCount,
     channelCompareCount: channelsWithEvidence(channelScores).length,
+    attributionDirectCount: marketing.labelCounts?.direct ?? 0,
+    attributionAssistedCount: marketing.labelCounts?.assisted ?? 0,
+    attributionEstimatedCount: marketing.labelCounts?.estimated ?? 0,
+    attributionUnknownCount: marketing.labelCounts?.unknown ?? 0,
   };
 }
 

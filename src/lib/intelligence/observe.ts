@@ -1,3 +1,4 @@
+import { GENERIC_ATTRIBUTION_SOURCES } from "@/lib/attribution-labels";
 import {
   channelScoreFactsFromCounts,
   channelsWithEvidence,
@@ -54,6 +55,10 @@ export type IntelligenceFacts = {
   geoHistoryCount?: number
   geoAuditGapCount?: number
   channelCompareCount?: number
+  attributionDirectCount?: number
+  attributionAssistedCount?: number
+  attributionEstimatedCount?: number
+  attributionUnknownCount?: number
 };
 
 export type InsightItem = {
@@ -70,15 +75,7 @@ export type IntelligenceBrief = {
   recommendations: InsightItem[]
 };
 
-const GENERIC_SOURCES = new Set([
-  "direct",
-  "website",
-  "stripe",
-  "unattributed",
-  "manual",
-  "website_campaign",
-  "campaign",
-]);
+const GENERIC_SOURCES = GENERIC_ATTRIBUTION_SOURCES;
 
 export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBrief {
   const observations: InsightItem[] = [];
@@ -192,6 +189,10 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const internalLinkCount = facts.internalLinkCount ?? 0;
   const schemaFactCount = facts.schemaFactCount ?? 0;
   const schemaReviewCount = facts.schemaReviewCount ?? 0;
+  const attributionDirectCount = facts.attributionDirectCount ?? 0;
+  const attributionAssistedCount = facts.attributionAssistedCount ?? 0;
+  const attributionEstimatedCount = facts.attributionEstimatedCount ?? 0;
+  const attributionUnknownCount = facts.attributionUnknownCount ?? 0;
   const geoNoteCount = facts.geoNoteCount ?? 0;
   const geoQueryCount = facts.geoQueryCount ?? 0;
   const geoHistoryCount = facts.geoHistoryCount ?? 0;
@@ -339,6 +340,21 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  const labeledJoinCount =
+    attributionDirectCount +
+    attributionAssistedCount +
+    attributionEstimatedCount +
+    attributionUnknownCount;
+  if (labeledJoinCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "How sure GroovGro is about stored joins",
+      body: `GroovGro labeled ${labeledJoinCount} stored ${labeledJoinCount === 1 ? "join" : "joins"}: ${attributionDirectCount} DIRECT, ${attributionAssistedCount} ASSISTED, ${attributionEstimatedCount} ESTIMATED, and ${attributionUnknownCount} UNKNOWN. GroovGro did not invent a keyword, AI-referral, or ad-click path.`,
+      evidence: ["attribution_labels.source=stored_join"],
+      href: "/app/marketing",
+    });
+  }
+
   if (facts.businessContextSaved) {
     observations.push({
       kind: "observation",
@@ -386,6 +402,19 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       body: "When a checkout collects an email, GroovGro can attach the payment to a contact. Do not change the live checkout webhook on the business website.",
       evidence: ["unattributed payments"],
       href: "/app/commerce",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
+    attributionDirectCount + attributionAssistedCount + attributionEstimatedCount > 0
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Read how sure GroovGro is about stored joins",
+      body: "Open Marketing to read DIRECT, ASSISTED, ESTIMATED, and UNKNOWN labels on stored people-to-revenue joins. GroovGro will not buy ads, invent a keyword or AI-referral path, or change checkout.",
+      evidence: ["attribution_labels.source=stored_join"],
+      href: "/app/marketing",
     });
   }
 
@@ -668,6 +697,10 @@ export function factsSummary(facts: IntelligenceFacts): string {
         ),
       ).length
     }`,
+    `attribution_direct=${facts.attributionDirectCount ?? 0}`,
+    `attribution_assisted=${facts.attributionAssistedCount ?? 0}`,
+    `attribution_estimated=${facts.attributionEstimatedCount ?? 0}`,
+    `attribution_unknown=${facts.attributionUnknownCount ?? 0}`,
   ].join(" ");
 }
 

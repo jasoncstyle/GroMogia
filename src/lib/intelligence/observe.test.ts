@@ -693,6 +693,66 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("labels stored attribution joins and does not invent a keyword path", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        attributionDirectCount: 2,
+        attributionAssistedCount: 1,
+        attributionEstimatedCount: 1,
+        attributionUnknownCount: 3,
+      }),
+    );
+    const observed = brief.observations.find(
+      (item) => item.title === "How sure GroovGro is about stored joins",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/marketing");
+    assert.match(observed.body, /7 stored joins/);
+    assert.match(observed.body, /2 DIRECT/);
+    assert.match(observed.body, /did not invent a keyword, AI-referral, or ad-click path/);
+    const recommended = brief.recommendations.find(
+      (item) => item.title === "Read how sure GroovGro is about stored joins",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/marketing");
+    assert.match(recommended.body, /will not buy ads/);
+    assert.match(recommended.body, /keyword or AI-referral path/);
+    assert.equal(
+      brief.recommendations.find((item) => item.title.includes("Match charges"))
+        ?.href,
+      undefined,
+    );
+    assert.equal(
+      buildIntelligenceBrief(facts()).observations.some(
+        (item) => item.title === "How sure GroovGro is about stored joins",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          attributionDirectCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Read how sure GroovGro is about stored joins",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({ attributionUnknownCount: 4 }),
+      ).recommendations.some(
+        (item) => item.title === "Read how sure GroovGro is about stored joins",
+      ),
+      false,
+    );
+    assert.match(
+      factsSummary(facts({ attributionDirectCount: 2, attributionUnknownCount: 1 })),
+      /attribution_direct=2/,
+    );
+  });
+
   it("observes stored content gaps and does not write a page", () => {
     const brief = buildIntelligenceBrief(
       facts({
