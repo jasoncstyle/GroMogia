@@ -1472,6 +1472,49 @@ export const goalProgressSnapshots = pgTable(
   ],
 );
 
+export const BEFORE_AFTER_SOURCE_STORED_GOAL = "stored_goal";
+
+export const beforeAfterLooks = pgTable(
+  "before_after_looks",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    goalId: uuid("goal_id")
+      .notNull()
+      .references(() => growthGoals.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    beforeValue: integer("before_value").notNull(),
+    afterValue: integer("after_value").notNull(),
+    unit: text("unit").notNull().default(""),
+    beforeOn: text("before_on").notNull().default(""),
+    afterOn: text("after_on").notNull().default(""),
+    beforeSnapshotId: uuid("before_snapshot_id").references(
+      () => goalProgressSnapshots.id,
+      { onDelete: "set null" },
+    ),
+    afterSnapshotId: uuid("after_snapshot_id").references(
+      () => goalProgressSnapshots.id,
+      { onDelete: "set null" },
+    ),
+    status: text("status").notNull().default("same"),
+    why: text("why").notNull().default(""),
+    source: text("source").notNull().default(BEFORE_AFTER_SOURCE_STORED_GOAL),
+    comparedAt: timestamp("compared_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("before_after_looks_org_goal_idx").on(
+      table.organizationId,
+      table.goalId,
+    ),
+    index("before_after_looks_org_idx").on(table.organizationId),
+  ],
+);
+
 export const growthPlans = pgTable(
   "growth_plans",
   {

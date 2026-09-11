@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { BeforeAfterPanel } from "@/components/before-after-panel";
 import { ChannelScorePanel } from "@/components/channel-score-panel";
 import { ConfirmRejectButtons, GrowthReviewBody, InferredBadge, ReviewConnectedDataButton, SaveGrowthReviewButton } from "@/components/growth-review";
 import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButton } from "@/components/growth-plan-actions";
@@ -50,6 +51,7 @@ import { labelFor } from "@/lib/growth/types";
 import { buildGrowthStory, storyFactsFromWorkspace } from "@/lib/growth/story";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
+import { refreshBeforeAfterLooks } from "@/lib/growth/persist-before-after";
 import { getChannelScoreViews } from "@/lib/phase4/queries";
 
 export default async function NextStepPage({
@@ -59,15 +61,17 @@ export default async function NextStepPage({
 }) {
   const params = await searchParams;
   const session = await getAppSession();
-  const [step, dashboard, links, slug, channelScores] = session.organizationId
+  const [step, dashboard, links, slug, channelScores, beforeAfterLooks] =
+    session.organizationId
     ? await Promise.all([
         getCoordinatedNextStep(session.organizationId),
         getDashboardSnapshot(session.organizationId),
         getGrowthLinkOptions(session.organizationId),
         resolveOrganizationSlug(session.organizationId, session.organizationSlug),
         getChannelScoreViews(session.organizationId),
+        refreshBeforeAfterLooks(session.organizationId),
       ])
-    : [null, null, { offers: [], goals: [] }, "", []];
+    : [null, null, { offers: [], goals: [] }, "", [], []];
   const canDecide = hasPermission(session.permissions, "view_decision_history");
   const canCheck = canDecide;
   const canApprove = hasPermission(session.permissions, "approve_actions");
@@ -542,6 +546,7 @@ export default async function NextStepPage({
           </Card>
 
           <ChannelScorePanel scores={channelScores} />
+          <BeforeAfterPanel looks={beforeAfterLooks} />
 
           {step.waitingActions.length > 0 &&
           step.primary.title !== APPROVE_ACTIONS_STEP_TITLE ? (

@@ -34,6 +34,7 @@ import { connectedProgressFacts, goalShareAttribution, liveGoalProgress } from "
 import { findActivateCandidate } from "@/lib/growth/next-goal";
 import { findPlanNeedingActions } from "@/lib/growth/plan-actions";
 import { draftPlanExcerpt, findDraftPlanToApprove, findPlanDraftGoal, findReadableGoal, findReadableGrowthPlan } from "@/lib/growth/plan-draft";
+import { persistBeforeAfterLooks } from "@/lib/growth/persist-before-after";
 import { coordinateNextStep, type LearningGoal } from "@/lib/growth/next-step";
 import { isFinishedOwnerWork, isOpenOwnerWork, needsWhatChangedCheck } from "@/lib/growth/owner-work";
 import { learningKindFromOutcome } from "@/lib/growth/work-learning";
@@ -55,6 +56,14 @@ export async function getGrowthSnapshot(organizationId: string) {
     await persistSeoGrowthActions(db, organizationId);
   } catch (error) {
     console.error("GroovGro SEO growth action persist failed", {
+      organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+  }
+  try {
+    await persistBeforeAfterLooks(db, organizationId);
+  } catch (error) {
+    console.error("GroovGro before-and-after persist failed", {
       organizationId,
       message: error instanceof Error ? error.message : "unknown",
     });
