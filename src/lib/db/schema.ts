@@ -902,6 +902,72 @@ export const contentDrafts = pgTable(
   ],
 );
 
+export const PAGE_STRUCTURE_SOURCE_STORED_PAGES = "stored_pages";
+export const SCHEMA_FACT_SOURCE_PAGE_GROUP = "page_group";
+
+export const internalLinkSuggestions = pgTable(
+  "internal_link_suggestions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    fromPageId: uuid("from_page_id")
+      .notNull()
+      .references(() => websiteDiscoveredPages.id, { onDelete: "cascade" }),
+    fromUrl: text("from_url").notNull(),
+    fromTitle: text("from_title").notNull().default(""),
+    toPageId: uuid("to_page_id")
+      .notNull()
+      .references(() => websiteDiscoveredPages.id, { onDelete: "cascade" }),
+    toUrl: text("to_url").notNull(),
+    toTitle: text("to_title").notNull().default(""),
+    reason: text("reason").notNull().default(""),
+    source: text("source").notNull().default(PAGE_STRUCTURE_SOURCE_STORED_PAGES),
+    detectedAt: timestamp("detected_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("internal_link_suggestions_org_pages_idx").on(
+      table.organizationId,
+      table.fromPageId,
+      table.toPageId,
+    ),
+    index("internal_link_suggestions_org_idx").on(table.organizationId),
+  ],
+);
+
+export const pageSchemaFacts = pgTable(
+  "page_schema_facts",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    pageId: uuid("page_id")
+      .notNull()
+      .references(() => websiteDiscoveredPages.id, { onDelete: "cascade" }),
+    pageUrl: text("page_url").notNull(),
+    pageTitle: text("page_title").notNull().default(""),
+    schemaType: text("schema_type").notNull(),
+    why: text("why").notNull().default(""),
+    source: text("source").notNull().default(SCHEMA_FACT_SOURCE_PAGE_GROUP),
+    detectedAt: timestamp("detected_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("page_schema_facts_org_page_idx").on(
+      table.organizationId,
+      table.pageId,
+    ),
+    index("page_schema_facts_org_idx").on(table.organizationId),
+  ],
+);
+
 export type BuilderSectionType =
   | "hero"
   | "text"

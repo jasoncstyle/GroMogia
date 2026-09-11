@@ -27,6 +27,11 @@ import {
   getContentGaps,
   persistContentGaps,
 } from "@/lib/growth/persist-content-gaps";
+import type { InternalLinkView, SchemaFactView } from "@/lib/growth/page-structure";
+import {
+  getPageStructure,
+  persistPageStructure,
+} from "@/lib/growth/persist-page-structure";
 import type { ContentBriefView } from "@/lib/growth/content-briefs";
 import type { ContentDraftView } from "@/lib/growth/content-drafts";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
@@ -64,6 +69,8 @@ export async function getSeoPageData(organizationId: string) {
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
       contentBriefs: [] as Array<ContentBriefView & { draft?: ContentDraftView | null }>,
+      internalLinks: [] as InternalLinkView[],
+      schemaFacts: [] as SchemaFactView[],
     };
   }
 
@@ -80,6 +87,15 @@ export async function getSeoPageData(organizationId: string) {
     await persistContentGaps(db, organizationId);
   } catch (error) {
     console.error("GroovGro content gap persist failed", {
+      organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+  }
+
+  try {
+    await persistPageStructure(db, organizationId);
+  } catch (error) {
+    console.error("GroovGro page structure persist failed", {
       organizationId,
       message: error instanceof Error ? error.message : "unknown",
     });
@@ -159,6 +175,7 @@ export async function getSeoPageData(organizationId: string) {
     contentGapRows,
     briefRows,
     draftRows,
+    pageStructure,
   ] = await Promise.all([
     db
       .select()
@@ -219,6 +236,7 @@ export async function getSeoPageData(organizationId: string) {
       })
       .from(contentDrafts)
       .where(eq(contentDrafts.organizationId, organizationId)),
+    getPageStructure(db, organizationId),
   ]);
 
   return {
@@ -280,6 +298,8 @@ export async function getSeoPageData(organizationId: string) {
             : null,
         };
       }),
+    internalLinks: pageStructure.links,
+    schemaFacts: pageStructure.schemaFacts,
   };
 }
 

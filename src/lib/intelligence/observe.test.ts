@@ -533,6 +533,67 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("observes link and schema facts and does not write the live site", () => {
+    const withLinks = buildIntelligenceBrief(
+      facts({
+        internalLinkCount: 2,
+        schemaFactCount: 3,
+        schemaReviewCount: 1,
+      }),
+    );
+    const linkNote = withLinks.observations.find(
+      (item) => item.title === "Internal link suggestions from pages already read",
+    );
+    assert.ok(linkNote);
+    assert.equal(linkNote.href, "/app/seo");
+    assert.match(linkNote.body, /2 stored pages mention/);
+    assert.match(linkNote.body, /did not add a link/);
+    const schemaNote = withLinks.observations.find(
+      (item) => item.title === "Estimated schema types from pages already read",
+    );
+    assert.ok(schemaNote);
+    assert.equal(schemaNote.href, "/app/seo");
+    assert.match(schemaNote.body, /3 pages/);
+    assert.match(schemaNote.body, /did not add schema/);
+    const recommended = withLinks.recommendations.find(
+      (item) => item.title === "Review link and schema facts from pages already read",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /will not add links or schema/);
+    assert.equal(
+      withLinks.recommendations.some((item) => /add schema/i.test(item.title)),
+      false,
+    );
+
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({ schemaFactCount: 4, schemaReviewCount: 0 }),
+      ).recommendations.some(
+        (item) => item.title === "Review link and schema facts from pages already read",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Review link and schema facts from pages already read",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          internalLinkCount: 2,
+          schemaReviewCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Review link and schema facts from pages already read",
+      ),
+      false,
+    );
+  });
+
   it("observes saved business context and does not look up competitors", () => {
     const saved = buildIntelligenceBrief(
       facts({

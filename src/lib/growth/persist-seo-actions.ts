@@ -8,6 +8,7 @@ import {
 } from "@/lib/db/schema";
 import { persistContentGaps } from "@/lib/growth/persist-content-gaps";
 import { persistKeywordHistory } from "@/lib/growth/persist-keywords";
+import { persistPageStructure } from "@/lib/growth/persist-page-structure";
 import {
   planSeoGrowthActions,
   type ExistingSeoAction,
@@ -206,6 +207,15 @@ async function persistSeoGrowthActionsOnce(
     await persistContentGaps(db, organizationId);
   } catch (error) {
     console.error("GroovGro content gap persist failed", {
+      organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+  }
+
+  try {
+    await persistPageStructure(db, organizationId);
+  } catch (error) {
+    console.error("GroovGro page structure persist failed", {
       organizationId,
       message: error instanceof Error ? error.message : "unknown",
     });
