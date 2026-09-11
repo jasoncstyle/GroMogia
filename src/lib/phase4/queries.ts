@@ -28,6 +28,7 @@ import {
   getBeforeAfterLooks,
   refreshBeforeAfterLooks,
 } from "@/lib/growth/persist-before-after";
+import { getExecutionRequests } from "@/lib/execute/queries";
 import {
   persistChannelScores,
   refreshChannelScores,
@@ -166,6 +167,7 @@ export async function getIntelligenceFacts(
     attributionEstimatedCount: marketing.labelCounts?.estimated ?? 0,
     attributionUnknownCount: marketing.labelCounts?.unknown ?? 0,
     beforeAfterLookCount: (await refreshBeforeAfterLooks(organizationId)).length,
+    executionRequestCount: (await getExecutionRequests(organizationId)).length,
   };
 }
 
@@ -343,7 +345,8 @@ export async function getIntelligencePageData(
     ),
   );
   const beforeAfterLooks = await getBeforeAfterLooks(organizationId);
-  return { facts, brief, logs, channelScores, beforeAfterLooks };
+  const executionRequests = await getExecutionRequests(organizationId);
+  return { facts, brief, logs, channelScores, beforeAfterLooks, executionRequests };
 }
 
 export async function getRecentInsightLogs(organizationId: string) {

@@ -793,6 +793,46 @@ describe("intelligence observe", () => {
     assert.match(factsSummary(facts({ beforeAfterLookCount: 3 })), /before_after=3/);
   });
 
+  it("observes approved work saved for later and does not run it", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        executionRequestCount: 2,
+      }),
+    );
+    const observed = brief.observations.find(
+      (item) => item.title === "Approved work saved for later",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/next-step");
+    assert.match(observed.body, /2 pieces/);
+    assert.match(observed.body, /did not run them/);
+    const recommended = brief.recommendations.find(
+      (item) => item.title === "Read the later-run queue",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/next-step");
+    assert.match(recommended.body, /will not run it/);
+    assert.match(recommended.body, /will not run it, buy ads/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).observations.some(
+        (item) => item.title === "Approved work saved for later",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          executionRequestCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Read the later-run queue",
+      ),
+      false,
+    );
+    assert.match(factsSummary(facts({ executionRequestCount: 3 })), /execution=3/);
+  });
+
   it("observes stored content gaps and does not write a page", () => {
     const brief = buildIntelligenceBrief(
       facts({
