@@ -21,7 +21,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Execute stays off until that authorization exists and the adapter is turned on.
 
-**Competitor deeper look (this branch):** After a site is saved, GroovGro reads the homepage and a few public pages on that same site, then writes how they sell, how they market, and how we might compete. Search-based discovery stays off. GroovGro does not scrape Google, copy their words, buy ads, or change checkout.
+**Owner-run competitor search (this branch):** GroovGro names the best stored search terms for the business type. The owner opens that search, then saves a website they found. The search adapter stays off. GroovGro does not scrape Google, copy their words, buy ads, or change checkout.
 
 Phase T first slice is in #113. Phases A–T first slices are on `main`. Growth Director and guarded automation stay off. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 

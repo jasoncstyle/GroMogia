@@ -7,6 +7,7 @@ import {
   type CompetitorSiteView,
 } from "@/lib/growth/competitor-looks";
 import { SaveButton, SaveForm } from "@/components/save-form";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,11 +33,12 @@ export function CompetitorSitesPanel({
       <CardHeader>
         <CardTitle>How we might compete</CardTitle>
         <CardDescription>
-          Save a competitor website you already know. GroovGro can read that
-          homepage and a few public pages on the same site, then suggest how
-          to compete. If the site blocks the automated read, paste what you
-          see. It will not scrape Google, copy their words onto your site, or
-          buy ads.
+          Save a competitor website you already know, or open a suggested
+          search and save a site you found. GroovGro can read that homepage
+          and a few public pages on the same site, then suggest how to
+          compete. If the site blocks the automated read, paste what you see.
+          It will not scrape Google, copy their words onto your site, or buy
+          ads.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -106,18 +108,65 @@ export function CompetitorSitesPanel({
         )}
 
         {searches.length > 0 ? (
-          <div className="space-y-2">
-            <p className="text-sm font-medium">Searches to find more later</p>
-            <p className="text-xs text-muted-foreground">
-              These come from the saved business type and Search Console
-              queries. GroovGro has not searched them. A later allowed adapter
-              can.
-            </p>
-            {searches.map((hint) => (
-              <p key={hint.query} className="text-sm text-muted-foreground">
-                “{hint.query}” — {hint.why}
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <p className="text-sm font-medium">Searches you can run to find more</p>
+              <p className="text-xs text-muted-foreground">
+                These are the best stored terms for this business type. You
+                run the search. GroovGro will not search Google.
               </p>
-            ))}
+            </div>
+            {searches.map((hint) => {
+              const fieldKey = hint.query.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+              return (
+              <div key={hint.query} className="space-y-3 rounded-lg border p-3">
+                <p className="text-sm text-muted-foreground">
+                  “{hint.query}” — {hint.why}
+                </p>
+                <Button variant="outline" size="sm" asChild>
+                  <a
+                    href={hint.ownerSearchHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open this search
+                  </a>
+                </Button>
+                {canManage ? (
+                  <SaveForm
+                    action={createCompetitorSite}
+                    successMessage="Competitor website saved. GroovGro has not searched Google."
+                    className="grid gap-3"
+                    resetOnSuccess
+                  >
+                    <input type="hidden" name="foundFrom" value={hint.query} />
+                    <div className="space-y-2">
+                      <Label htmlFor={`foundName-${fieldKey}`}>
+                        Competitor name
+                      </Label>
+                      <Input
+                        id={`foundName-${fieldKey}`}
+                        name="name"
+                        placeholder="Optional."
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`foundUrl-${fieldKey}`}>
+                        Website you found
+                      </Label>
+                      <Input
+                        id={`foundUrl-${fieldKey}`}
+                        name="url"
+                        required
+                        placeholder="https://example.com"
+                      />
+                    </div>
+                    <SaveButton type="submit">Save this competitor</SaveButton>
+                  </SaveForm>
+                ) : null}
+              </div>
+              );
+            })}
           </div>
         ) : null}
 

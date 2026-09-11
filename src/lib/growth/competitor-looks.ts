@@ -13,6 +13,7 @@ import {
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
 
 export const COMPETITOR_SOURCE_OWNER = "owner";
+export const COMPETITOR_SOURCE_OWNER_SEARCH = "owner_search";
 export const COMPETITOR_STATUS_SAVED = "saved";
 export const COMPETITOR_STATUS_LOOKED = "looked";
 export const COMPETITOR_MAX_SHOWN = 12;
@@ -26,7 +27,7 @@ export type CompetitorSiteDraft = {
   host: string
   note: string
   status: typeof COMPETITOR_STATUS_SAVED
-  source: typeof COMPETITOR_SOURCE_OWNER
+  source: typeof COMPETITOR_SOURCE_OWNER | typeof COMPETITOR_SOURCE_OWNER_SEARCH
 };
 
 export type CompetitorLookFacts = {
@@ -65,6 +66,7 @@ export type CompetitorSiteView = {
 export type CompetitorSearchHint = {
   query: string
   why: string
+  ownerSearchHref: string
 };
 
 const BLOCKED_HOST =
@@ -86,11 +88,25 @@ export function competitorHost(url: URL): string {
   return url.hostname.replace(/^www\./i, "").toLowerCase();
 }
 
+export function ownerCompetitorSearchHref(query: string): string | null {
+  const q = query.replace(/\s+/g, " ").trim();
+  if (!q) return null;
+  return `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+}
+
+export function noteFromOwnerSearch(note: string, query: string): string {
+  const found = query.replace(/\s+/g, " ").trim();
+  const extra = note.replace(/\s+/g, " ").trim();
+  const prefix = found ? `Found from a search you ran: “${found}”.` : "";
+  return [prefix, extra].filter(Boolean).join(" ");
+}
+
 export function planCompetitorSite(input: {
   organizationId: string
   name?: string | null
   url?: string | null
   note?: string | null
+  foundFrom?: string | null
   ownHost?: string | null
 }): CompetitorSiteDraft {
   if (!input.organizationId) {
@@ -109,14 +125,17 @@ export function planCompetitorSite(input: {
   }
   const name =
     (input.name ?? "").replace(/\s+/g, " ").trim() || host;
+  const foundFrom = (input.foundFrom ?? "").replace(/\s+/g, " ").trim();
   return {
     organizationId: input.organizationId,
     name,
     url: parsed.toString(),
     host,
-    note: (input.note ?? "").trim(),
+    note: foundFrom
+      ? noteFromOwnerSearch(input.note ?? "", foundFrom)
+      : (input.note ?? "").trim(),
     status: COMPETITOR_STATUS_SAVED,
-    source: COMPETITOR_SOURCE_OWNER,
+    source: foundFrom ? COMPETITOR_SOURCE_OWNER_SEARCH : COMPETITOR_SOURCE_OWNER,
   };
 }
 
@@ -387,10 +406,14 @@ export function proposeCompetitorSearches(input: {
   const hints: CompetitorSearchHint[] = [];
   const industry = (input.industry ?? "").replace(/\s+/g, " ").trim();
   if (industry) {
-    hints.push({
-      query: industry,
-      why: "Saved business type. A later allowed search adapter can use this first.",
-    });
+    const href = ownerCompetitorSearchHref(industry);
+    if (href) {
+      hints.push({
+        query: industry,
+        why: "Best first search from the saved business type. You run it. GroovGro will not.",
+        ownerSearchHref: href,
+      });
+    }
   }
   for (const raw of input.storedQueries ?? []) {
     const query = raw.replace(/\s+/g, " ").trim();
@@ -398,9 +421,12 @@ export function proposeCompetitorSearches(input: {
     if (hints.some((hint) => hint.query.toLowerCase() === query.toLowerCase())) {
       continue;
     }
+    const href = ownerCompetitorSearchHref(query);
+    if (!href) continue;
     hints.push({
       query,
-      why: "A stored Search Console query. GroovGro has not searched it for other businesses.",
+      why: "A stored Search Console query. You can run this search. GroovGro will not.",
+      ownerSearchHref: href,
     });
     if (hints.length >= COMPETITOR_MAX_SEARCHES) break;
   }

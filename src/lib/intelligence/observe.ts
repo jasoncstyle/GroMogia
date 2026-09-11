@@ -230,7 +230,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       kind: "observation",
       title: "Competitor websites you asked GroovGro to read",
       body: `${competitorSiteCount} competitor ${competitorSiteCount === 1 ? "website is" : "websites are"} saved.${competitorLookCount > 0 ? ` GroovGro read ${competitorLookCount}.` : " GroovGro has not read them yet."} This is a look at a site you named, including how they sell and market. GroovGro did not scrape Google, copy their words, or buy ads.`,
-      evidence: ["competitor_sites.source=owner"],
+      evidence: ["competitor_sites"],
       href: "/app/seo",
     });
   }
@@ -507,6 +507,20 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       body: "On Business, add who you want to reach, problems they are trying to solve, competitors you already know, what makes the business different, or claims GroovGro must never make. This form still does not look up competitors or change the live website.",
       evidence: ["business_brains seo context missing"],
       href: "/app/business",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
+    (keywordCount > 0 || Boolean(facts.businessBrainSaved)) &&
+    competitorSiteCount < 2
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Run a search to find another competitor",
+      body: "On SEO, open a suggested search yourself, then save a website you found. GroovGro will not search Google.",
+      evidence: ["competitor_searches.owner_run"],
+      href: "/app/seo",
     });
   }
 

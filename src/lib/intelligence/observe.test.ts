@@ -906,6 +906,47 @@ describe("intelligence observe", () => {
       factsSummary(facts({ competitorSiteCount: 3, competitorLookCount: 2 })),
       /competitor_sites=3 competitor_looks=2/,
     );
+
+    const findMore = buildIntelligenceBrief(
+      facts({
+        recordedKeywordCount: 3,
+        competitorSiteCount: 0,
+      }),
+    );
+    const runSearch = findMore.recommendations.find(
+      (item) => item.title === "Run a search to find another competitor",
+    );
+    assert.ok(runSearch);
+    assert.equal(runSearch.href, "/app/seo");
+    assert.match(runSearch.body, /will not search Google/);
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          recordedKeywordCount: 3,
+          competitorSiteCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Run a search to find another competitor",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          recordedKeywordCount: 3,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Run a search to find another competitor",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Run a search to find another competitor",
+      ),
+      false,
+    );
   });
 
   it("observes stored content gaps and does not write a page", () => {
