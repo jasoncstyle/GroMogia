@@ -9,6 +9,7 @@ import {
   contentBriefs,
   contentDrafts,
   geoNotes,
+  geoQueries,
   integrationConnections,
   searchConsoleSnapshots,
   seoAudits,
@@ -37,6 +38,7 @@ import type { ContentBriefView } from "@/lib/growth/content-briefs";
 import type { ContentDraftView } from "@/lib/growth/content-drafts";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
 import type { GeoNoteView } from "@/lib/geo/notes";
+import type { GeoQueryView } from "@/lib/geo/queries";
 import type { SerpNoteView } from "@/lib/growth/serp-notes";
 import { listBuilderPages, type BuilderPageSummary } from "@/lib/website-builder/queries";
 
@@ -68,6 +70,7 @@ export async function getSeoPageData(organizationId: string) {
       keywords: [] as KeywordWithHistory[],
       serpNotes: [] as SerpNoteView[],
       geoNotes: [] as GeoNoteView[],
+      geoQueries: [] as GeoQueryView[],
       knownCompetitors: [] as string[],
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
@@ -180,6 +183,7 @@ export async function getSeoPageData(organizationId: string) {
     draftRows,
     pageStructure,
     geoNoteRows,
+    geoQueryRows,
   ] = await Promise.all([
     db
       .select()
@@ -256,6 +260,18 @@ export async function getSeoPageData(organizationId: string) {
       .where(eq(geoNotes.organizationId, organizationId))
       .orderBy(desc(geoNotes.createdAt))
       .limit(20),
+    db
+      .select({
+        id: geoQueries.id,
+        query: geoQueries.query,
+        why: geoQueries.why,
+        createdAt: geoQueries.createdAt,
+        organizationId: geoQueries.organizationId,
+      })
+      .from(geoQueries)
+      .where(eq(geoQueries.organizationId, organizationId))
+      .orderBy(desc(geoQueries.createdAt))
+      .limit(20),
   ]);
 
   return {
@@ -296,6 +312,14 @@ export async function getSeoPageData(organizationId: string) {
         heard: row.heard,
         note: row.note,
         source: row.source,
+        createdAt: row.createdAt,
+      })),
+    geoQueries: geoQueryRows
+      .filter((row) => row.organizationId === organizationId)
+      .map((row) => ({
+        id: row.id,
+        query: row.query,
+        why: row.why,
         createdAt: row.createdAt,
       })),
     contentGaps: contentGapRows,

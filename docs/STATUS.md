@@ -19,9 +19,9 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 **V2 owner-assistance is on `main`.** The owner can name a share, count a Traffic Goal from visits, name a share next to a typed Goal, match a payment copy on Bookings, and draft or approve a plan on Next step. GroovGro does not execute.
 
-**Phase L (this branch):** GroovGro can save what the owner already heard from an AI system. The owner reviews that note on SEO. GroovGro does not ask AI systems or scrape answers.
+**Phase M (this branch):** The owner can save questions to remember for later AI visibility. GroovGro does not ask AI systems. The GEO adapter stays off.
 
-Phases A–K first slices are on `main`. Query library, measurement, GEO audits, publishing, SERP lookup, and execute remain **PLANNED**. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
+Phases A–L first slices are on `main`. Measurement, GEO audits, publishing, SERP lookup, and execute remain **PLANNED**. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 
 The website builder is paused. Public groovgro.com homepage stays Coming soon.
 
@@ -152,7 +152,8 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 ## What is already working
 
-- Phase L GEO architecture (this branch): the owner can save what they already heard from an AI system. SEO and Intelligence can show that note. GroovGro does not ask AI systems or scrape answers.
+- Phase M query library (this branch): the owner can save questions to remember for later AI visibility. SEO and Intelligence can show them. GroovGro does not ask AI systems. The adapter stays off.
+- Phase L GEO architecture: the owner can save what they already heard from an AI system. SEO and Intelligence can show that note. GroovGro does not ask AI systems or scrape answers.
 - Phase K page structure: GroovGro can suggest internal links and estimate schema types from pages it already read. SEO and Intelligence can show those facts. GroovGro does not add links or schema to the live website.
 - Phase J content drafts: GroovGro can write a workspace draft from a saved brief. SEO and Intelligence can show it. GroovGro does not publish or change the live website.
 - Phase I content briefs: the owner can save a brief to the SEO planner. SEO and Intelligence can show it. GroovGro does not publish a page.
@@ -248,9 +249,9 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 Vision is in the master brief. Do not implement the whole list. Do not build a second SEO app. Do not add `growth_opportunities`.
 
-**IMPLEMENTED:** page SEO checks, SEO copy drafts, Search Console read-only, Brand Voice drafts in the workspace, named-share attribution, Next step recommend-only, existing SEO/Search Console evidence → recommend-only `growth_actions` (Phase C), structured title/evidence/confidence/impact fields on `growth_actions` (Phase B), owner-entered Business Brain extras for later search/content work (Phase D), keyword model and history from stored Search Console queries (Phase E), conservative keyword estimate ranks from those stored numbers (Phase F), owner-entered competitor notes for queries the owner already sees (Phase G first slice), content gaps from worth-a-look queries vs pages already read (Phase H first slice), owner-entered content briefs on the SEO planner (Phase I first slice), workspace drafts from a saved brief (Phase J first slice), internal link suggestions and schema type estimates from pages already read (Phase K first slice), owner-entered AI visibility notes (Phase L first slice).
+**IMPLEMENTED:** page SEO checks, SEO copy drafts, Search Console read-only, Brand Voice drafts in the workspace, named-share attribution, Next step recommend-only, existing SEO/Search Console evidence → recommend-only `growth_actions` (Phase C), structured title/evidence/confidence/impact fields on `growth_actions` (Phase B), owner-entered Business Brain extras for later search/content work (Phase D), keyword model and history from stored Search Console queries (Phase E), conservative keyword estimate ranks from those stored numbers (Phase F), owner-entered competitor notes for queries the owner already sees (Phase G first slice), content gaps from worth-a-look queries vs pages already read (Phase H first slice), owner-entered content briefs on the SEO planner (Phase I first slice), workspace drafts from a saved brief (Phase J first slice), internal link suggestions and schema type estimates from pages already read (Phase K first slice), owner-entered AI visibility notes (Phase L first slice), owner-entered AI query library with lookup off (Phase M first slice).
 
-**PLANNED:** SERP lookup, AI query library, GEO measurement, CMS write, experiments (M–T). Effort, cost, and measurement-window columns stay later if usage needs them.
+**PLANNED:** SERP lookup, GEO measurement, CMS write, experiments (N–T). Effort, cost, and measurement-window columns stay later if usage needs them.
 
 **Do not do until asked:** keyword or SERP vendors, scrape search results or AI products, auto-publish, overwrite the connected live website, start Google Ads, or turn on execute.
 
