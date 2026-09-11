@@ -442,7 +442,7 @@ describe("intelligence observe", () => {
     assert.ok(observed);
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /2 content briefs/);
-    assert.match(observed.body, /did not write a page/);
+    assert.match(observed.body, /did not publish a page/);
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Save a content brief to the planner",
@@ -461,7 +461,7 @@ describe("intelligence observe", () => {
     );
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
-    assert.match(recommended.body, /will not write the page/);
+    assert.match(recommended.body, /will not publish a page/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save a content brief to the planner",
@@ -476,6 +476,58 @@ describe("intelligence observe", () => {
         }),
       ).recommendations.some(
         (item) => item.title === "Save a content brief to the planner",
+      ),
+      false,
+    );
+  });
+
+  it("observes workspace content drafts and does not publish", () => {
+    const saved = buildIntelligenceBrief(
+      facts({
+        contentBriefCount: 1,
+        contentDraftCount: 2,
+      }),
+    );
+    const observed = saved.observations.find(
+      (item) => item.title === "Workspace content drafts",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /2 workspace drafts/);
+    assert.match(observed.body, /did not publish/);
+    assert.equal(
+      saved.recommendations.some(
+        (item) => item.title === "Write a workspace draft from a brief",
+      ),
+      false,
+    );
+
+    const missing = buildIntelligenceBrief(
+      facts({
+        contentBriefCount: 1,
+        contentDraftCount: 0,
+      }),
+    );
+    const recommended = missing.recommendations.find(
+      (item) => item.title === "Write a workspace draft from a brief",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /will not publish/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Write a workspace draft from a brief",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          contentBriefCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Write a workspace draft from a brief",
       ),
       false,
     );

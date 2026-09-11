@@ -1,8 +1,7 @@
 import { normalizeQueryKey } from "@/lib/growth/seo-actions";
 
 /**
- * Owner-entered content briefs for the planner. GroovGro does not write
- * the page, generate article copy, or publish.
+ * Owner-entered content briefs for the planner. GroovGro does not publish.
  */
 export const CONTENT_BRIEF_SOURCE_OWNER = "owner";
 export const CONTENT_BRIEF_STATUS_PLANNED = "planned";

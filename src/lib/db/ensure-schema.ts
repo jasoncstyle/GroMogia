@@ -318,4 +318,12 @@ export async function ensureSchema(): Promise<void> {
   if (!contentBriefsTable[0]?.name) {
     await applyMigration(sql, "0029_content_briefs.sql");
   }
+
+  const contentDraftsTable = (await sql.query(
+    "select to_regclass('public.content_drafts') as name",
+  )) as RegistryRow[];
+
+  if (!contentDraftsTable[0]?.name) {
+    await applyMigration(sql, "0030_content_drafts.sql");
+  }
 }

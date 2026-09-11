@@ -39,6 +39,7 @@ export type IntelligenceFacts = {
   knownCompetitorCount?: number
   contentGapCount?: number
   contentBriefCount?: number
+  contentDraftCount?: number
 };
 
 export type InsightItem = {
@@ -172,6 +173,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const knownCompetitorCount = facts.knownCompetitorCount ?? 0;
   const contentGapCount = facts.contentGapCount ?? 0;
   const contentBriefCount = facts.contentBriefCount ?? 0;
+  const contentDraftCount = facts.contentDraftCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -206,8 +208,18 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     observations.push({
       kind: "observation",
       title: "Content briefs on the planner",
-      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner. GroovGro did not write a page or generate article copy.`,
+      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner. GroovGro did not publish a page.`,
       evidence: ["content_briefs.source=owner"],
+      href: "/app/seo",
+    });
+  }
+
+  if (contentDraftCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Workspace content drafts",
+      body: `${contentDraftCount} workspace ${contentDraftCount === 1 ? "draft is" : "drafts are"} saved from a brief. GroovGro did not publish them or change the live website.`,
+      evidence: ["content_drafts.status=draft"],
       href: "/app/seo",
     });
   }
@@ -329,8 +341,22 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Save a content brief to the planner",
-      body: "On SEO, save a brief for a missing-page query. GroovGro will not write the page or generate article copy.",
+      body: "On SEO, save a brief for a missing-page query. GroovGro will not publish a page.",
       evidence: ["content_briefs missing"],
+      href: "/app/seo",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
+    contentBriefCount > 0 &&
+    contentDraftCount === 0
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Write a workspace draft from a brief",
+      body: "On SEO, write a workspace draft from a saved brief. GroovGro will not publish it or change the live website.",
+      evidence: ["content_drafts missing"],
       href: "/app/seo",
     });
   }
@@ -413,6 +439,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `known_competitors=${facts.knownCompetitorCount ?? 0}`,
     `content_gaps=${facts.contentGapCount ?? 0}`,
     `content_briefs=${facts.contentBriefCount ?? 0}`,
+    `content_drafts=${facts.contentDraftCount ?? 0}`,
   ].join(" ");
 }
 
