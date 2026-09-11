@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import {
   briefToPlainText,
   buildIntelligenceBrief,
+  factsSummary,
   type IntelligenceFacts,
 } from "./observe";
 
@@ -514,6 +515,71 @@ describe("intelligence observe", () => {
       ),
       false,
     );
+  });
+
+  it("observes owner-saved AI visibility history and does not ask an AI system", () => {
+    const saved = buildIntelligenceBrief(
+      facts({
+        geoQueryCount: 1,
+        geoHistoryCount: 2,
+      }),
+    );
+    const observed = saved.observations.find(
+      (item) => item.title === "AI visibility history you already saved",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /2 visibility snapshots/);
+    assert.match(observed.body, /did not ask an AI system/);
+    assert.equal(
+      saved.recommendations.some(
+        (item) => item.title === "Save visibility history from what you already heard",
+      ),
+      false,
+    );
+
+    const missing = buildIntelligenceBrief(
+      facts({
+        geoQueryCount: 1,
+        geoHistoryCount: 0,
+      }),
+    );
+    const recommended = missing.recommendations.find(
+      (item) => item.title === "Save visibility history from what you already heard",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /will not ask an AI system/);
+    assert.match(recommended.body, /treat one answer as truth/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Save visibility history from what you already heard",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          geoQueryCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save visibility history from what you already heard",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          geoQueryCount: 0,
+          geoHistoryCount: 0,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save visibility history from what you already heard",
+      ),
+      false,
+    );
+    assert.match(factsSummary(facts({ geoHistoryCount: 3 })), /geo_history=3/);
   });
 
   it("observes stored content gaps and does not write a page", () => {

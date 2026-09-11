@@ -1019,6 +1019,37 @@ export const geoQueries = pgTable(
   ],
 );
 
+export const GEO_HISTORY_SOURCE_OWNER = "owner";
+export const GEO_ANSWER_UNSURE = "unsure";
+
+export const geoHistory = pgTable(
+  "geo_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    queryId: uuid("query_id")
+      .notNull()
+      .references(() => geoQueries.id, { onDelete: "cascade" }),
+    queryKey: text("query_key").notNull().default(""),
+    query: text("query").notNull(),
+    mentioned: text("mentioned").notNull(),
+    cited: text("cited").notNull().default(GEO_ANSWER_UNSURE),
+    note: text("note").notNull().default(""),
+    source: text("source").notNull().default(GEO_HISTORY_SOURCE_OWNER),
+    observedAt: timestamp("observed_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    index("geo_history_org_idx").on(table.organizationId),
+    index("geo_history_org_query_idx").on(table.organizationId, table.queryId),
+  ],
+);
+
 export type BuilderSectionType =
   | "hero"
   | "text"

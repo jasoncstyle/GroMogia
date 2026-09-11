@@ -6,6 +6,7 @@ import {
   contentBriefs,
   contentDrafts,
   contentGaps,
+  geoHistory,
   geoNotes,
   geoQueries,
   internalLinkSuggestions,
@@ -50,6 +51,7 @@ export async function getIntelligenceFacts(
     pageStructureCounts,
     geoNoteCount,
     geoQueryCount,
+    geoHistoryCount,
   ] = await Promise.all([
     countRecordedKeywords(organizationId),
     countSerpNotes(organizationId),
@@ -59,6 +61,7 @@ export async function getIntelligenceFacts(
     countPageStructure(organizationId),
     countGeoNotes(organizationId),
     countGeoQueries(organizationId),
+    countGeoHistory(organizationId),
   ]);
 
   const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
@@ -117,6 +120,7 @@ export async function getIntelligenceFacts(
     schemaReviewCount: pageStructureCounts.review,
     geoNoteCount,
     geoQueryCount,
+    geoHistoryCount,
   };
 }
 
@@ -146,6 +150,16 @@ async function countGeoQueries(organizationId: string): Promise<number> {
     .select({ value: sql<number>`count(*)::int` })
     .from(geoQueries)
     .where(eq(geoQueries.organizationId, organizationId));
+  return Number(row?.value ?? 0);
+}
+
+async function countGeoHistory(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(geoHistory)
+    .where(eq(geoHistory.organizationId, organizationId));
   return Number(row?.value ?? 0);
 }
 

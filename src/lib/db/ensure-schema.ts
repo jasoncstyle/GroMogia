@@ -353,4 +353,12 @@ export async function ensureSchema(): Promise<void> {
   if (!geoQueriesTable[0]?.name) {
     await applyMigration(sql, "0033_geo_queries.sql");
   }
+
+  const geoHistoryTable = (await sql.query(
+    "select to_regclass('public.geo_history') as name",
+  )) as RegistryRow[];
+
+  if (!geoHistoryTable[0]?.name) {
+    await applyMigration(sql, "0034_geo_history.sql");
+  }
 }
