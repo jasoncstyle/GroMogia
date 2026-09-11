@@ -337,4 +337,12 @@ export async function ensureSchema(): Promise<void> {
   if (!internalLinkTable[0]?.name || !pageSchemaTable[0]?.name) {
     await applyMigration(sql, "0031_page_structure.sql");
   }
+
+  const geoNotesTable = (await sql.query(
+    "select to_regclass('public.geo_notes') as name",
+  )) as RegistryRow[];
+
+  if (!geoNotesTable[0]?.name) {
+    await applyMigration(sql, "0032_geo_notes.sql");
+  }
 }

@@ -59,7 +59,8 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 - Phase I first slice is implemented: the owner can save a content brief to the SEO planner. Do not publish.
 - Phase J first slice is implemented: GroovGro can write a workspace draft from a saved brief. Do not publish or change the live website.
 - Phase K first slice is implemented: GroovGro can suggest internal links and estimate schema types from pages it already read. Do not add links or schema to the live website.
-- Do not mark later expansion work as implemented. Phases L–T (GEO, publishing, execute) stay planned until Jason asks. Do not turn on SERP lookup.
+- Phase L first slice is implemented: the owner can save what they already heard from an AI system. Do not ask AI systems, scrape answers, or turn on a GEO adapter.
+- Do not mark later expansion work as implemented. Phases M–T (query library, GEO measurement, publishing, execute) stay planned until Jason asks. Do not turn on SERP lookup.
 - Do not start ads, Growth Director execution, guarded automation, or autonomous AI.
 - Do not scrape third parties in violation of their terms. Do not hard-code a fixed list of AI vendors through business logic.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.
