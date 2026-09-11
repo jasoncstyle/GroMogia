@@ -46,8 +46,10 @@ import type { KeywordWithHistory } from "@/lib/growth/keywords";
 import {
   competitorSitesToShow,
   planCompetitorCompare,
+  planCompetitorPageGaps,
   proposeCompetitorSearches,
   type CompetitorCompareView,
+  type CompetitorPageGapView,
   type CompetitorSearchHint,
   type CompetitorSiteView,
 } from "@/lib/growth/competitor-looks";
@@ -101,6 +103,7 @@ export async function getSeoPageData(organizationId: string) {
       competitorSites: [] as CompetitorSiteView[],
       competitorSearches: [] as CompetitorSearchHint[],
       competitorCompare: null as CompetitorCompareView | null,
+      competitorPageGaps: [] as CompetitorPageGapView[],
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
       contentBriefs: [] as Array<ContentBriefView & { draft?: ContentDraftView | null }>,
@@ -262,6 +265,9 @@ export async function getSeoPageData(organizationId: string) {
     db
       .select({
         title: websiteDiscoveredPages.title,
+        label: websiteDiscoveredPages.label,
+        description: websiteDiscoveredPages.description,
+        url: websiteDiscoveredPages.url,
         headings: websiteDiscoveredPages.headings,
         organizationId: websiteDiscoveredPages.organizationId,
       })
@@ -443,6 +449,18 @@ export async function getSeoPageData(organizationId: string) {
         .map((row) => row.name),
       ourDifference: brainRows[0]?.differentiators ?? [],
     }),
+    competitorPageGaps: planCompetitorPageGaps({
+      sites: competitorSiteViews,
+      pages: pageRows
+        .filter((row) => row.organizationId === organizationId)
+        .map((row) => ({
+          url: row.url,
+          label: row.label,
+          title: row.title,
+          description: row.description,
+          headings: row.headings ?? [],
+        })),
+    }),
     geoNotes: geoNoteRows
       .filter((row) => row.organizationId === organizationId)
       .map((row) => ({
@@ -489,7 +507,11 @@ export async function getSeoPageData(organizationId: string) {
     pagesRead: pageRows.some(
       (page) =>
         page.organizationId === organizationId &&
-        pageWasRead({ title: page.title, headings: page.headings, url: "" }),
+        pageWasRead({
+          title: page.title,
+          headings: page.headings,
+          url: page.url,
+        }),
     ),
     contentBriefs: briefRows
       .filter((row) => row.organizationId === organizationId)

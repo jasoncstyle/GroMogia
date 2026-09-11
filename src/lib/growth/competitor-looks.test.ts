@@ -12,6 +12,7 @@ import {
   ownerCompetitorSearchHref,
   planCompetitorCompare,
   planCompetitorLook,
+  planCompetitorPageGaps,
   planCompetitorSite,
   proposeCompetitorInnerPages,
   proposeCompetitorSearches,
@@ -247,6 +248,73 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.equal(planCompetitorCompare({ sites: [] }), null);
   });
 
+  it("names competitor page topics missing from pages already read", () => {
+    const looked = {
+      name: "Harbor Skills",
+      status: "looked" as const,
+      headings: ["Weekend beginner class", "About"],
+      navLabels: ["Book a date", "Guides"],
+      modelGuess: "looked",
+      competeNote: "looked",
+    };
+    assert.deepEqual(
+      planCompetitorPageGaps({
+        sites: [looked],
+        pages: [],
+      }),
+      [],
+    );
+    const gaps = planCompetitorPageGaps({
+      sites: [
+        looked,
+        {
+          name: "Coastal Practice",
+          status: "looked",
+          headings: ["Weekend beginner class"],
+          navLabels: ["Home"],
+          modelGuess: "looked",
+          competeNote: "looked",
+        },
+      ],
+      pages: [
+        {
+          url: "https://ours.example/",
+          title: "Harbor Home",
+          headings: ["Welcome"],
+        },
+      ],
+    });
+    assert.equal(
+      gaps.some((gap) => gap.label === "Weekend beginner class"),
+      true,
+    );
+    assert.equal(
+      gaps.some((gap) => /About|Book a date|Home/.test(gap.label)),
+      false,
+    );
+    assert.match(
+      gaps.find((gap) => gap.label === "Weekend beginner class")?.why ?? "",
+      /Harbor Skills and Coastal Practice/,
+    );
+    assert.match(
+      gaps.find((gap) => gap.label === "Weekend beginner class")?.why ?? "",
+      /not a reason to copy their words or create a page/,
+    );
+    assert.deepEqual(
+      planCompetitorPageGaps({
+        sites: [looked],
+        pages: [
+          {
+            url: "https://ours.example/class",
+            title: "Weekend beginner class",
+            headings: ["Weekend beginner class"],
+          },
+        ],
+      }).filter((gap) => gap.label === "Weekend beginner class"),
+      [],
+    );
+  });
+
   it("does not scrape Google, copy a site, or reorder Next step", () => {
     const helper = readFileSync(
       join(process.cwd(), "src/lib/growth/competitor-looks.ts"),
@@ -292,7 +360,9 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(panel, /You\s+run the search/);
     assert.match(panel, /ownerSearchHref/);
     assert.match(panel, /How these sites compare/);
+    assert.match(panel, /Pages they show that GroovGro has not read/);
     assert.match(helper, /planCompetitorCompare/);
+    assert.match(helper, /planCompetitorPageGaps/);
     assert.match(helper, /stored_looks/);
     assert.match(helper, /google\.com\/search/);
     assert.doesNotMatch(action, /google\.com\/search/);
@@ -320,8 +390,10 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(seoPage, /<CompetitorSitesPanel/);
     assert.match(seoPage, /sites=\{data\.competitorSites\}/);
     assert.match(seoPage, /compare=\{data\.competitorCompare\}/);
+    assert.match(seoPage, /pageGaps=\{data\.competitorPageGaps\}/);
     assert.match(seoPage, /open a suggested search yourself/);
     assert.match(seoPage, /compare those looks to what you sell/);
+    assert.match(seoPage, /topics those sites show/);
     const observe = readFileSync(
       join(process.cwd(), "src/lib/intelligence/observe.ts"),
       "utf8",
@@ -329,6 +401,8 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(observe, /competitorSiteCount/);
     assert.match(observe, /Run a search to find another competitor/);
     assert.match(observe, /How saved competitor websites compare/);
+    assert.match(observe, /competitorPageGapCount/);
+    assert.match(observe, /Competitor page topics GroovGro has not read/);
     assert.match(observe, /will not search Google/);
     assert.doesNotMatch(observe, /coordinateNextStep/);
   });

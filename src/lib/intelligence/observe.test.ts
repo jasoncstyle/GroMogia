@@ -935,8 +935,39 @@ describe("intelligence observe", () => {
       false,
     );
     assert.match(
-      factsSummary(facts({ competitorSiteCount: 3, competitorLookCount: 2 })),
-      /competitor_sites=3 competitor_looks=2/,
+      factsSummary(facts({ competitorSiteCount: 3, competitorLookCount: 2, competitorPageGapCount: 4 })),
+      /competitor_sites=3 competitor_looks=2 competitor_page_gaps=4/,
+    );
+
+    const pageGaps = buildIntelligenceBrief(
+      facts({
+        competitorLookCount: 1,
+        competitorPageGapCount: 2,
+      }),
+    );
+    const gapObserved = pageGaps.observations.find(
+      (item) => item.title === "Competitor page topics GroovGro has not read on your site",
+    );
+    assert.ok(gapObserved);
+    assert.equal(gapObserved.href, "/app/seo");
+    assert.match(gapObserved.body, /2 topics/);
+    assert.match(gapObserved.body, /not a reason to copy their words or create a page/);
+    const reviewGaps = pageGaps.recommendations.find(
+      (item) => item.title === "Review pages competitors show that GroovGro has not read",
+    );
+    assert.ok(reviewGaps);
+    assert.equal(reviewGaps.href, "/app/seo");
+    assert.match(reviewGaps.body, /will not copy their words/);
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          competitorPageGapCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Review pages competitors show that GroovGro has not read",
+      ),
+      false,
     );
 
     const findMore = buildIntelligenceBrief(

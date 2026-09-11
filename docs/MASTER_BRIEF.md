@@ -178,7 +178,7 @@ Use these labels. Do not make planned work sound shipped.
 
 ## 16. SEO, content, and AI visibility feed Growth Intelligence
 
-**Status:** vision approved 10 September 2026. Partner model recorded 11 September 2026. Phases A–T first slices are implemented. Owner-named competitor looks, owner-run suggested searches, and stored-look compares are implemented. Do not turn on execute, Growth Director, SERP lookup, competitor search, GEO lookup, or CMS publish.
+**Status:** vision approved 10 September 2026. Partner model recorded 11 September 2026. Phases A–T first slices are implemented. Owner-named competitor looks, owner-run suggested searches, stored-look compares, and competitor page-topic gaps are implemented. Do not turn on execute, Growth Director, SERP lookup, competitor search, GEO lookup, or CMS publish.
 
 GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
 
@@ -194,7 +194,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Search Console **read-only** snapshots: totals, top queries, top pages
 - Keyword model and history from those stored Search Console queries, with a conservative estimate rank (no vendor volume)
 - Owner-entered competitor notes for queries the owner already sees (no lookup, scrape, or SERP vendor)
-- Owner-named competitor websites: GroovGro can read that homepage and a few public pages on the same site, then store how they sell, how they market, and how we might compete. If the host blocks GroovGro’s server, it can read the same named URL through a public page reader, or the owner can paste the page. The owner can run a suggested search themselves and save a site they found. SEO can compare those stored looks to what this business sells (no Google scrape, no copy onto a live site, search discovery adapter off)
+- Owner-named competitor websites: GroovGro can read that homepage and a few public pages on the same site, then store how they sell, how they market, and how we might compete. If the host blocks GroovGro’s server, it can read the same named URL through a public page reader, or the owner can paste the page. The owner can run a suggested search themselves and save a site they found. SEO can compare those stored looks to what this business sells, and name topics those sites show that GroovGro has not read on this business’s pages (no Google scrape, no copy onto a live site, no new page, search discovery adapter off)
 - Content gaps: worth-a-look Search Console queries compared to pages GroovGro already read (no new pages)
 - Content briefs and planner: the owner can save a brief for a stored query (no publish)
 - Content drafts: GroovGro can write a workspace draft from a saved brief (no publish)
@@ -215,7 +215,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 
 - Business knowledge: owner can save who to reach, pain points, known competitors, differentiators, and prohibited claims (Phase D). Later keyword/GEO work still does not read these into a scoring engine.
 - Keywords: Search Console queries are stored as a keyword model with snapshot history (Phase E) and a conservative estimate rank (Phase F). Groups, intent, and paid keyword vendors stay **PLANNED**.
-- Competitor / SERP notes: the owner can save who they already see for a stored query (Phase G first slice). The owner can also save a competitor website and ask GroovGro to read that public page. The owner can run a suggested search themselves and save a site they found. SEO can compare those stored looks to what this business sells. Automated search-engine discovery, SERP vendors, and Google scrape stay **PLANNED** / off.
+- Competitor / SERP notes: the owner can save who they already see for a stored query (Phase G first slice). The owner can also save a competitor website and ask GroovGro to read that public page. The owner can run a suggested search themselves and save a site they found. SEO can compare those stored looks to what this business sells, and name topics those sites show that GroovGro has not read on this business’s pages. Automated search-engine discovery, SERP vendors, and Google scrape stay **PLANNED** / off.
 - Content gaps: worth-a-look stored queries are compared to pages GroovGro already read (Phase H first slice). Generation stays **PLANNED**.
 - Content briefs: the owner can save a planner brief for a stored query (Phase I first slice). Publishing stays **PLANNED**.
 - Content drafts: a workspace draft can be written from a saved brief (Phase J first slice). The owner can save that draft for later CMS review (Phase P first slice). Live CMS write stays **PLANNED**.
@@ -233,7 +233,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 ### PLANNED (not implemented)
 
 - Keyword groups, intent, create-vs-improve, paid keyword vendors
-- Competitor and SERP lookup (contracted, allowed providers only). Owner-entered notes, owner-named website looks, owner-run suggested searches, and stored-look compares exist. Automated finding from search terms stays behind an off adapter. Do not scrape Google.
+- Competitor and SERP lookup (contracted, allowed providers only). Owner-entered notes, owner-named website looks, owner-run suggested searches, stored-look compares, and competitor page-topic gaps exist. Automated finding from search terms stays behind an off adapter. Do not scrape Google.
 - Publishing links or schema onto a live site. Gap detection, briefs, workspace drafts, and page-structure facts exist.
 - Live CMS write after owner approval. A review-only queue and a disabled adapter exist.
 - AI Visibility / GEO adapters, mentions, citations, share of voice, accuracy. Owner-entered notes, a query library, history snapshots, and citation-gap estimates exist. Lookup stays off.
