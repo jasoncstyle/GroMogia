@@ -1050,6 +1050,44 @@ export const geoHistory = pgTable(
   ],
 );
 
+export const GEO_AUDIT_SOURCE_STORED_HISTORY = "stored_history";
+export const GEO_AUDIT_STATUS_GAP = "citation_gap";
+
+export const geoAudits = pgTable(
+  "geo_audits",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    queryId: uuid("query_id")
+      .notNull()
+      .references(() => geoQueries.id, { onDelete: "cascade" }),
+    queryKey: text("query_key").notNull().default(""),
+    query: text("query").notNull(),
+    historyId: uuid("history_id").references(() => geoHistory.id, {
+      onDelete: "set null",
+    }),
+    mentioned: text("mentioned").notNull(),
+    cited: text("cited").notNull(),
+    status: text("status").notNull().default(GEO_AUDIT_STATUS_GAP),
+    why: text("why").notNull().default(""),
+    source: text("source").notNull().default(GEO_AUDIT_SOURCE_STORED_HISTORY),
+    detectedAt: timestamp("detected_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("geo_audits_org_query_idx").on(
+      table.organizationId,
+      table.queryId,
+    ),
+    index("geo_audits_org_idx").on(table.organizationId),
+    index("geo_audits_org_status_idx").on(table.organizationId, table.status),
+  ],
+);
+
 export type BuilderSectionType =
   | "hero"
   | "text"

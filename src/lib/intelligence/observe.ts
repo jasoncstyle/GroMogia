@@ -46,6 +46,7 @@ export type IntelligenceFacts = {
   geoNoteCount?: number
   geoQueryCount?: number
   geoHistoryCount?: number
+  geoAuditGapCount?: number
 };
 
 export type InsightItem = {
@@ -186,6 +187,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const geoNoteCount = facts.geoNoteCount ?? 0;
   const geoQueryCount = facts.geoQueryCount ?? 0;
   const geoHistoryCount = facts.geoHistoryCount ?? 0;
+  const geoAuditGapCount = facts.geoAuditGapCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -282,6 +284,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "AI visibility history you already saved",
       body: `The owner saved ${geoHistoryCount} visibility ${geoHistoryCount === 1 ? "snapshot" : "snapshots"} from what they already heard. GroovGro did not ask an AI system or scrape answers.`,
       evidence: ["geo_history.source=owner"],
+      href: "/app/seo",
+    });
+  }
+
+  if (geoAuditGapCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Citation gaps from saved visibility history",
+      body: `${geoAuditGapCount} library ${geoAuditGapCount === 1 ? "question has" : "questions have"} a citation or mention gap in the latest saved snapshot. GroovGro did not ask an AI system or treat one answer as truth.`,
+      evidence: ["geo_audits.status=citation_gap"],
       href: "/app/seo",
     });
   }
@@ -474,6 +486,20 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (
+    facts.websiteConnected &&
+    geoHistoryCount > 0 &&
+    geoAuditGapCount > 0
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review citation gaps from saved history",
+      body: "Open SEO to read which library questions the latest saved snapshot marked as not mentioned or not cited. GroovGro will not ask an AI system, scrape answers, or treat one answer as truth.",
+      evidence: ["geo_audits.status=citation_gap"],
+      href: "/app/seo",
+    });
+  }
+
   if (facts.websiteConnected && namedSources.length === 0) {
     recommendations.push({
       kind: "recommendation",
@@ -559,6 +585,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `geo_notes=${facts.geoNoteCount ?? 0}`,
     `geo_queries=${facts.geoQueryCount ?? 0}`,
     `geo_history=${facts.geoHistoryCount ?? 0}`,
+    `geo_audits=${facts.geoAuditGapCount ?? 0}`,
   ].join(" ");
 }
 

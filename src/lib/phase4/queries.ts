@@ -6,6 +6,7 @@ import {
   contentBriefs,
   contentDrafts,
   contentGaps,
+  geoAudits,
   geoHistory,
   geoNotes,
   geoQueries,
@@ -19,6 +20,7 @@ import {
   brainSeoContextCounts,
   brainSeoContextSaved,
 } from "@/lib/growth/brain-context";
+import { GEO_AUDIT_STATUS_GAP } from "@/lib/geo/audits";
 import { CONTENT_GAP_STATUS_GAP } from "@/lib/growth/content-gaps";
 import { isDefaultSchemaType } from "@/lib/growth/page-structure";
 import {
@@ -52,6 +54,7 @@ export async function getIntelligenceFacts(
     geoNoteCount,
     geoQueryCount,
     geoHistoryCount,
+    geoAuditGapCount,
   ] = await Promise.all([
     countRecordedKeywords(organizationId),
     countSerpNotes(organizationId),
@@ -62,6 +65,7 @@ export async function getIntelligenceFacts(
     countGeoNotes(organizationId),
     countGeoQueries(organizationId),
     countGeoHistory(organizationId),
+    countGeoAuditGaps(organizationId),
   ]);
 
   const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
@@ -121,6 +125,7 @@ export async function getIntelligenceFacts(
     geoNoteCount,
     geoQueryCount,
     geoHistoryCount,
+    geoAuditGapCount,
   };
 }
 
@@ -160,6 +165,21 @@ async function countGeoHistory(organizationId: string): Promise<number> {
     .select({ value: sql<number>`count(*)::int` })
     .from(geoHistory)
     .where(eq(geoHistory.organizationId, organizationId));
+  return Number(row?.value ?? 0);
+}
+
+async function countGeoAuditGaps(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(geoAudits)
+    .where(
+      and(
+        eq(geoAudits.organizationId, organizationId),
+        eq(geoAudits.status, GEO_AUDIT_STATUS_GAP),
+      ),
+    );
   return Number(row?.value ?? 0);
 }
 

@@ -6,6 +6,7 @@ import {
   searchConsoleSnapshots,
   seoAudits,
 } from "@/lib/db/schema";
+import { persistGeoAudits } from "@/lib/geo/persist-audits";
 import { persistContentGaps } from "@/lib/growth/persist-content-gaps";
 import { persistKeywordHistory } from "@/lib/growth/persist-keywords";
 import { persistPageStructure } from "@/lib/growth/persist-page-structure";
@@ -216,6 +217,15 @@ async function persistSeoGrowthActionsOnce(
     await persistPageStructure(db, organizationId);
   } catch (error) {
     console.error("GroovGro page structure persist failed", {
+      organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+  }
+
+  try {
+    await persistGeoAudits(db, organizationId);
+  } catch (error) {
+    console.error("GroovGro GEO audit persist failed", {
       organizationId,
       message: error instanceof Error ? error.message : "unknown",
     });

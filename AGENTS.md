@@ -62,7 +62,8 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 - Phase L first slice is implemented: the owner can save what they already heard from an AI system. Do not ask AI systems, scrape answers, or turn on a GEO adapter.
 - Phase M first slice is implemented: the owner can save questions to a GEO query library. The adapter stays off. Do not ask AI systems or scrape answers.
 - Phase N first slice is implemented: the owner can save another visibility history snapshot from a saved library question. Do not ask AI systems, scrape answers, invent share of voice, or turn on a GEO adapter.
-- Do not mark later expansion work as implemented. Phases O–T (GEO audits, publishing, execute) stay planned until Jason asks. Do not turn on SERP lookup or GEO lookup.
+- Phase O first slice is implemented: GroovGro can estimate citation gaps from the latest saved visibility snapshot. Do not ask AI systems, scrape answers, invent share of voice, or turn on a GEO adapter.
+- Do not mark later expansion work as implemented. Phases P–T (CMS publishing, execute) stay planned until Jason asks. Do not turn on SERP lookup or GEO lookup.
 - Do not start ads, Growth Director execution, guarded automation, or autonomous AI.
 - Do not scrape third parties in violation of their terms. Do not hard-code a fixed list of AI vendors through business logic.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.
