@@ -6,6 +6,7 @@ import { join } from "node:path";
 import {
   competitorHost,
   lookFromHtml,
+  lookFromPublicContent,
   normalizeCompetitorUrl,
   planCompeteNote,
   planCompetitorLook,
@@ -91,6 +92,18 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(planned.marketingGuess, /book or schedule/);
     assert.match(planned.competeNote, /Private coaching/);
     assert.match(planned.competeNote, /not a reason to copy their words/);
+    const fromText = lookFromPublicContent(
+      "https://harborskills.example/",
+      [
+        "Title: Harbor Skills",
+        "",
+        "## Weekend beginner class",
+        "Book a date for a coastal trip.",
+      ].join("\n"),
+    );
+    assert.equal(fromText.title, "Harbor Skills");
+    assert.equal(fromText.headings[0], "Weekend beginner class");
+    assert.match(fromText.description, /Book a date/);
     assert.equal(
       planCompeteNote({
         name: "Harbor Skills",
@@ -126,6 +139,10 @@ describe("competitor looks from owner-saved URLs", () => {
       join(process.cwd(), "src/lib/growth/competitor-search.ts"),
       "utf8",
     );
+    const reader = readFileSync(
+      join(process.cwd(), "src/lib/growth/page-reader.ts"),
+      "utf8",
+    );
     const action = readFileSync(
       join(process.cwd(), "src/lib/actions/competitor-sites.ts"),
       "utf8",
@@ -139,10 +156,15 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.equal(competitorSearchEnabled(), false);
     assert.match(action, /session\.organizationId/);
     assert.match(action, /eq\(competitorSites\.organizationId, session\.organizationId\)/);
-    assert.match(action, /fetchPublicText/);
+    assert.match(action, /fetchNamedPublicPage/);
+    assert.match(action, /pageText/);
     assert.match(action, /explainPublicFetchFailure/);
+    assert.match(reader, /r\.jina\.ai/);
+    assert.match(reader, /owner-named public page/);
+    assert.doesNotMatch(reader, /google\.com\/search/);
     assert.match(panel, /will not scrape Google/);
     assert.match(panel, /Read this website/);
+    assert.match(panel, /paste the public page/);
     for (const source of [helper, search, panel]) {
       assert.doesNotMatch(source, /cheerio|puppeteer|playwright|openai|anthropic/i);
       assert.doesNotMatch(source, /serpApi|dataforseo|googleusercontent/i);
