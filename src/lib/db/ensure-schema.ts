@@ -393,4 +393,12 @@ export async function ensureSchema(): Promise<void> {
   if (!beforeAfterTable[0]?.name) {
     await applyMigration(sql, "0038_before_after_looks.sql");
   }
+
+  const executionTable = (await sql.query(
+    "select to_regclass('public.execution_requests') as name",
+  )) as RegistryRow[];
+
+  if (!executionTable[0]?.name) {
+    await applyMigration(sql, "0039_execution_requests.sql");
+  }
 }

@@ -60,6 +60,7 @@ export type IntelligenceFacts = {
   attributionEstimatedCount?: number
   attributionUnknownCount?: number
   beforeAfterLookCount?: number
+  executionRequestCount?: number
 };
 
 export type InsightItem = {
@@ -199,6 +200,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const geoHistoryCount = facts.geoHistoryCount ?? 0;
   const geoAuditGapCount = facts.geoAuditGapCount ?? 0;
   const beforeAfterLookCount = facts.beforeAfterLookCount ?? 0;
+  const executionRequestCount = facts.executionRequestCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -367,6 +369,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (executionRequestCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Approved work saved for later",
+      body: `The owner saved ${executionRequestCount} ${executionRequestCount === 1 ? "piece" : "pieces"} of approved work for later. GroovGro did not run ${executionRequestCount === 1 ? "it" : "them"}, buy ads, or change the live website.`,
+      evidence: ["execution_requests.status=review"],
+      href: "/app/next-step",
+    });
+  }
+
   if (facts.businessContextSaved) {
     observations.push({
       kind: "observation",
@@ -436,6 +448,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Read the stored before and after",
       body: "Open Next step to read the first stored Goal number next to the latest stored Goal number. This is not an experiment GroovGro ran. GroovGro will not buy ads or change the plan.",
       evidence: ["before_after_looks.source=stored_goal"],
+      href: "/app/next-step",
+    });
+  }
+
+  if (facts.websiteConnected && executionRequestCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Read the later-run queue",
+      body: "Open Next step to read approved work saved for later. GroovGro will not run it, buy ads, or change the live website.",
+      evidence: ["execution_requests.status=review"],
       href: "/app/next-step",
     });
   }
@@ -724,6 +746,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `attribution_estimated=${facts.attributionEstimatedCount ?? 0}`,
     `attribution_unknown=${facts.attributionUnknownCount ?? 0}`,
     `before_after=${facts.beforeAfterLookCount ?? 0}`,
+    `execution=${facts.executionRequestCount ?? 0}`,
   ].join(" ");
 }
 
