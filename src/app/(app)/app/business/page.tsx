@@ -154,9 +154,10 @@ export default async function BusinessBrainPage() {
           <CardDescription>
             Use the business&apos;s own words. Add who you want to reach,
             problems, known competitors, differences, and claims to avoid so
-            later search and content work has a source of truth. GroovGro will
-            not look up competitors, assume an industry shape, or edit the live
-            website.
+            later search and content work has a source of truth. This form still
+            does not look up competitors. Save a competitor website on SEO if
+            you want GroovGro to read that public page. It will not assume an
+            industry shape or edit the live website.
           </CardDescription>
         </CardHeader>
         <CardContent>

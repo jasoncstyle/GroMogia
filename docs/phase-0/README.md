@@ -2,7 +2,7 @@
 
 This folder is the **historical** architecture and planning deliverable. Phase 1–7 and V2 owner-assistance are already on `main`.
 
-**Current product intent:** [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.1.  
+**Current product intent:** [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.2.  
 **What V2 built, and the SEO / content / GEO expansion:** [v2/ARCHITECTURE.md](../v2/ARCHITECTURE.md).  
 **Live checkpoint:** [STATUS.md](../STATUS.md).
 
@@ -37,4 +37,4 @@ Please reply with:
 2. Confirm you will complete the actions in [09-user-actions.md](09-user-actions.md), especially connecting this GitHub repository to Vercel (required for “always deploy”).
 3. Confirm the first real test business is **Ocean Sailing Adventures** (Stripe booking system already exists), or name a different Mogia Group business.
 
-**Historical close.** Phase 1 already shipped. New work follows the v2.1 brief (phases A–T). This folder stays as the original platform plan.
+**Historical close.** Phase 1 already shipped. New work follows the v2.2 brief (phases A–T, plus owner-named competitor looks). This folder stays as the original platform plan.

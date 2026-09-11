@@ -15,6 +15,7 @@ import {
   keywords,
   pageSchemaFacts,
   payments,
+  competitorSites,
   serpNotes,
 } from "@/lib/db/schema";
 import {
@@ -64,6 +65,7 @@ export async function getIntelligenceFacts(
   const [
     keywordCounts,
     serpNoteCount,
+    competitorSiteCounts,
     contentGapCount,
     contentBriefCount,
     contentDraftCount,
@@ -76,6 +78,7 @@ export async function getIntelligenceFacts(
   ] = await Promise.all([
     countRecordedKeywords(organizationId),
     countSerpNotes(organizationId),
+    countCompetitorSites(organizationId),
     countContentGaps(organizationId),
     countContentBriefs(organizationId),
     countContentDrafts(organizationId),
@@ -168,6 +171,8 @@ export async function getIntelligenceFacts(
     attributionUnknownCount: marketing.labelCounts?.unknown ?? 0,
     beforeAfterLookCount: (await refreshBeforeAfterLooks(organizationId)).length,
     executionRequestCount: (await getExecutionRequests(organizationId)).length,
+    competitorSiteCount: competitorSiteCounts.total,
+    competitorLookCount: competitorSiteCounts.looked,
   };
 }
 
@@ -249,6 +254,26 @@ async function countSerpNotes(organizationId: string): Promise<number> {
     .from(serpNotes)
     .where(eq(serpNotes.organizationId, organizationId));
   return Number(row?.value ?? 0);
+}
+
+async function countCompetitorSites(organizationId: string): Promise<{
+  total: number
+  looked: number
+}> {
+  const db = getDb();
+  if (!db) return { total: 0, looked: 0 };
+  const rows = await db
+    .select({
+      status: competitorSites.status,
+      lookedAt: competitorSites.lookedAt,
+    })
+    .from(competitorSites)
+    .where(eq(competitorSites.organizationId, organizationId));
+  return {
+    total: rows.length,
+    looked: rows.filter((row) => Boolean(row.lookedAt) || row.status === "looked")
+      .length,
+  };
 }
 
 async function countContentGaps(organizationId: string): Promise<number> {

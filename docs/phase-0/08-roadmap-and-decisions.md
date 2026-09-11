@@ -117,4 +117,4 @@ No change is recommended to: modularity, multi-tenancy, AI levels, no scraping, 
 
 ## Stop line
 
-**Historical close:** Phase 1 scaffolding is long done. Current work follows [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.1 phases A–T. Do not start ads, the paused builder, or autonomous AI from this file.
+**Historical close:** Phase 1 scaffolding is long done. Current work follows [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.2. Do not start ads, the paused builder, or autonomous AI from this file.

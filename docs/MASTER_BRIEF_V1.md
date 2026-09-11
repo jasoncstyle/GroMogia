@@ -1,6 +1,6 @@
 # GroovGro — Project Master Brief (V1 archive)
 
-**Archived.** Current product intent is [MASTER_BRIEF.md](MASTER_BRIEF.md) (v2.1). Do not implement from this file.
+**Archived.** Current product intent is [MASTER_BRIEF.md](MASTER_BRIEF.md) (v2.2). Do not implement from this file.
 
 **Product:** GroovGro (formerly GroMogia)  
 **Parent company:** Mogia Group  

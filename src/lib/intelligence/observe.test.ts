@@ -833,6 +833,81 @@ describe("intelligence observe", () => {
     assert.match(factsSummary(facts({ executionRequestCount: 3 })), /execution=3/);
   });
 
+  it("observes owner-named competitor websites and does not scrape Google", () => {
+    const saved = buildIntelligenceBrief(
+      facts({
+        competitorSiteCount: 2,
+        competitorLookCount: 1,
+      }),
+    );
+    const observed = saved.observations.find(
+      (item) => item.title === "Competitor websites you asked GroovGro to read",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /2 competitor websites are saved/);
+    assert.match(observed.body, /GroovGro read 1/);
+    assert.match(observed.body, /did not scrape Google/);
+    assert.equal(
+      saved.recommendations.some(
+        (item) => item.title === "Save a competitor website you already know",
+      ),
+      false,
+    );
+    assert.equal(
+      saved.recommendations.some(
+        (item) => item.title === "Read a competitor website you saved",
+      ),
+      false,
+    );
+
+    const unread = buildIntelligenceBrief(
+      facts({
+        competitorSiteCount: 1,
+        competitorLookCount: 0,
+      }),
+    );
+    const readIt = unread.recommendations.find(
+      (item) => item.title === "Read a competitor website you saved",
+    );
+    assert.ok(readIt);
+    assert.equal(readIt.href, "/app/seo");
+    assert.match(readIt.body, /will not copy their words/);
+
+    const missing = buildIntelligenceBrief(
+      facts({
+        knownCompetitorCount: 2,
+      }),
+    );
+    const recommended = missing.recommendations.find(
+      (item) => item.title === "Save a competitor website you already know",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /will not scrape Google/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Save a competitor website you already know",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          knownCompetitorCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a competitor website you already know",
+      ),
+      false,
+    );
+    assert.match(
+      factsSummary(facts({ competitorSiteCount: 3, competitorLookCount: 2 })),
+      /competitor_sites=3 competitor_looks=2/,
+    );
+  });
+
   it("observes stored content gaps and does not write a page", () => {
     const brief = buildIntelligenceBrief(
       facts({
@@ -1098,7 +1173,7 @@ describe("intelligence observe", () => {
     );
     assert.ok(observed);
     assert.equal(observed.href, "/app/business");
-    assert.match(observed.body, /will not look up competitors/);
+    assert.match(observed.body, /This form still does not look up competitors/);
 
     const missing = buildIntelligenceBrief(
       facts({
@@ -1111,7 +1186,7 @@ describe("intelligence observe", () => {
     );
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/business");
-    assert.match(recommended.body, /will not look up competitors/);
+    assert.match(recommended.body, /This form still does not look up competitors/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Add business context for later search work",

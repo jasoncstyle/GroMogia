@@ -8,6 +8,8 @@ Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
 
 The product is **GroovGro** (domain groovgro.com). The GitHub repository may still be named GroMogia until it is renamed on GitHub.
 
+GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Do not implement marketing work until the owner says so.
+
 ## Cloud-first
 
 - Develop GroovGro with Cursor Cloud Agents for substantial work.
@@ -44,17 +46,18 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 
 ## Phase gate
 
-- Phase 0 architecture is approved in `docs/phase-0/` (historical platform plan). Current product intent is [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) **v2.1**.
+- Phase 0 architecture is approved in `docs/phase-0/` (historical platform plan). Current product intent is [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) **v2.2**.
 - V2 owner-assistance is on `main`: Business Brain, Offers, Goals, Next step, named shares, SEO checks, Search Console read-only, Brand Voice drafts. See [docs/STATUS.md](docs/STATUS.md) and [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).
 - Keep working V1 features. The optional website builder stays in the app and is **paused** unless Jason asks to resume it. Do not rewrite working features to match a later phase number.
 - SEO Intelligence, Content Engine, and AI Visibility / GEO are an approved **vision expansion**. They extend GroovGro. They are not a second app and not a clone of another SEO product. Status: MASTER_BRIEF §§15–19 and v2/ARCHITECTURE “Expansion”.
 - Shared recommendations live on **`growth_actions`**. Do not create `growth_opportunities` unless a later review proves that table cannot hold them.
 - Phase C first slice is implemented: existing Search Console + SEO findings can create recommend-only `growth_actions` for Next step and Intelligence. No new paid API. No content factory. No AI-platform scraping. No live-site edits.
 - Phase B first slice is implemented: `growth_actions` can store title, evidence JSON, confidence, expected impact, and priority. Do not parse `description`. Do not use `priority` to reorder Next step until Jason asks.
-- Phase D first slice is implemented: Business Brain can store who to reach, problems, known competitors, differentiators, and prohibited claims. Owner-entered only. Do not scrape competitors.
+- Phase D first slice is implemented: Business Brain can store who to reach, problems, known competitors, differentiators, and prohibited claims. Owner-entered names only. Do not fetch from this list.
 - Phase E first slice is implemented: Search Console queries already stored can become a keyword model with snapshot history. Do not buy keyword data.
 - Phase F first slice is implemented: stored keyword history can receive a conservative estimate rank (worth a look / keep watching / not enough evidence). Do not treat that rank as search volume or a traffic forecast.
-- Phase G first slice is implemented: the owner can save competitor notes they already know on SEO. Do not scrape search results, look businesses up, or buy a SERP vendor.
+- Phase G first slice is implemented: the owner can save competitor notes they already know on SEO. Do not scrape search results or buy a SERP vendor.
+- Competitor looks from owner-named URLs are implemented: the owner can save a competitor website on SEO. GroovGro may fetch that public page the same way it reads the owner’s own site. `requestCompetitorSearch` / `competitorSearchEnabled()` stay off. Do not scrape Google, Bing, or social networks. Do not copy competitor words onto a live site.
 - Phase H first slice is implemented: worth-a-look Search Console queries can be compared to pages GroovGro already read. Do not invent topics, create a page, or scrape competitors.
 - Phase I first slice is implemented: the owner can save a content brief to the SEO planner. Do not publish.
 - Phase J first slice is implemented: GroovGro can write a workspace draft from a saved brief. Do not publish or change the live website.
@@ -68,9 +71,9 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 - Phase R first slice is implemented: GroovGro can label stored people-to-revenue joins DIRECT, ASSISTED, ESTIMATED, or UNKNOWN. Matching charges stays on Bookings. Do not invent a keyword or AI-referral path, buy ads, or change checkout.
 - Phase S first slice is implemented: GroovGro can compare the first stored Goal number to the latest stored Goal number. Intelligence and Next step can show that look. Do not treat it as an experiment GroovGro ran, buy ads, or change the plan from it.
 - Phase T first slice is implemented: the owner can save approved work for later. `requestExecute` exists and stays off. Do not run that work, turn on Growth Director, buy ads, send email, or change the live website.
-- Do not mark later expansion work as implemented. Do not turn on SERP lookup, GEO lookup, CMS publish, or execute.
+- Do not mark later expansion work as implemented. Do not turn on SERP lookup, competitor search, GEO lookup, CMS publish, or execute.
 - Do not start ads, Growth Director execution, guarded automation, or autonomous AI.
-- Do not scrape third parties in violation of their terms. Do not hard-code a fixed list of AI vendors through business logic.
+- Do not scrape Google, Bing, social networks, or other third parties in violation of their terms. Owner-named public competitor URLs may be fetched. Do not hard-code a fixed list of AI vendors through business logic.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.
 - The website builder must not overwrite a connected existing website or change Stripe checkout.
 - Custom domains for GroovGro-built sites wait for a later slice.

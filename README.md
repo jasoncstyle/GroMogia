@@ -24,7 +24,7 @@ Public groovgro.com homepage stays Coming soon. The optional website builder sta
 
 | Doc | For |
 | --- | --- |
-| [Master brief](docs/MASTER_BRIEF.md) | Product vision (v2.1) |
+| [Master brief](docs/MASTER_BRIEF.md) | Product vision (v2.2) |
 | [V2 architecture](docs/v2/ARCHITECTURE.md) | What V2 built, and the expansion roadmap |
 | [Build status](docs/STATUS.md) | Where the build is right now |
 | [Phase 0 architecture](docs/phase-0/) | Historical approved platform plan |
