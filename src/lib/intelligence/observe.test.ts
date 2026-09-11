@@ -753,6 +753,46 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("observes a stored before and after and does not run an experiment", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        beforeAfterLookCount: 2,
+      }),
+    );
+    const observed = brief.observations.find(
+      (item) => item.title === "What a stored before and after shows",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/next-step");
+    assert.match(observed.body, /2 Goals have/);
+    assert.match(observed.body, /did not run an experiment/);
+    const recommended = brief.recommendations.find(
+      (item) => item.title === "Read the stored before and after",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/next-step");
+    assert.match(recommended.body, /not an experiment GroovGro ran/);
+    assert.match(recommended.body, /will not buy ads/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).observations.some(
+        (item) => item.title === "What a stored before and after shows",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          beforeAfterLookCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Read the stored before and after",
+      ),
+      false,
+    );
+    assert.match(factsSummary(facts({ beforeAfterLookCount: 3 })), /before_after=3/);
+  });
+
   it("observes stored content gaps and does not write a page", () => {
     const brief = buildIntelligenceBrief(
       facts({

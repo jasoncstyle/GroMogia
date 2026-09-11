@@ -25,6 +25,10 @@ import {
   type ChannelScoreView,
 } from "@/lib/growth/channel-score";
 import {
+  getBeforeAfterLooks,
+  refreshBeforeAfterLooks,
+} from "@/lib/growth/persist-before-after";
+import {
   persistChannelScores,
   refreshChannelScores,
 } from "@/lib/growth/persist-channel-scores";
@@ -161,6 +165,7 @@ export async function getIntelligenceFacts(
     attributionAssistedCount: marketing.labelCounts?.assisted ?? 0,
     attributionEstimatedCount: marketing.labelCounts?.estimated ?? 0,
     attributionUnknownCount: marketing.labelCounts?.unknown ?? 0,
+    beforeAfterLookCount: (await refreshBeforeAfterLooks(organizationId)).length,
   };
 }
 
@@ -337,7 +342,8 @@ export async function getIntelligencePageData(
       }),
     ),
   );
-  return { facts, brief, logs, channelScores };
+  const beforeAfterLooks = await getBeforeAfterLooks(organizationId);
+  return { facts, brief, logs, channelScores, beforeAfterLooks };
 }
 
 export async function getRecentInsightLogs(organizationId: string) {

@@ -267,6 +267,13 @@
       "when": 1787496000000,
       "tag": "0037_channel_scores",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1787504000000,
+      "tag": "0038_before_after_looks",
+      "breakpoints": true
     }
   ]
 }

@@ -377,4 +377,20 @@ export async function ensureSchema(): Promise<void> {
   if (!cmsPublishTable[0]?.name) {
     await applyMigration(sql, "0036_cms_publish_requests.sql");
   }
+
+  const channelScoresTable = (await sql.query(
+    "select to_regclass('public.channel_scores') as name",
+  )) as RegistryRow[];
+
+  if (!channelScoresTable[0]?.name) {
+    await applyMigration(sql, "0037_channel_scores.sql");
+  }
+
+  const beforeAfterTable = (await sql.query(
+    "select to_regclass('public.before_after_looks') as name",
+  )) as RegistryRow[];
+
+  if (!beforeAfterTable[0]?.name) {
+    await applyMigration(sql, "0038_before_after_looks.sql");
+  }
 }

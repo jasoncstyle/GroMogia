@@ -12,6 +12,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { refreshIntelligence } from "@/lib/actions/intelligence";
 import { GoalShareNote } from "@/components/goal-share-note";
+import { BeforeAfterPanel } from "@/components/before-after-panel";
 import { ChannelScorePanel } from "@/components/channel-score-panel";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { hasPermission } from "@/lib/permissions";
@@ -75,6 +76,7 @@ export default async function IntelligencePage() {
           </Card>
 
           <ChannelScorePanel scores={data.channelScores} />
+          <BeforeAfterPanel looks={data.beforeAfterLooks} />
 
           {data.facts.activeGoalShare?.note ? (
             <Card>

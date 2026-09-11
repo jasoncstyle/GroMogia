@@ -59,6 +59,7 @@ export type IntelligenceFacts = {
   attributionAssistedCount?: number
   attributionEstimatedCount?: number
   attributionUnknownCount?: number
+  beforeAfterLookCount?: number
 };
 
 export type InsightItem = {
@@ -197,6 +198,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const geoQueryCount = facts.geoQueryCount ?? 0;
   const geoHistoryCount = facts.geoHistoryCount ?? 0;
   const geoAuditGapCount = facts.geoAuditGapCount ?? 0;
+  const beforeAfterLookCount = facts.beforeAfterLookCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -355,6 +357,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (beforeAfterLookCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "What a stored before and after shows",
+      body: `${beforeAfterLookCount} Goal${beforeAfterLookCount === 1 ? " has" : "s have"} a stored before and after from saved Goal numbers. GroovGro did not run an experiment, buy ads, or change the plan.`,
+      evidence: ["before_after_looks.source=stored_goal"],
+      href: "/app/next-step",
+    });
+  }
+
   if (facts.businessContextSaved) {
     observations.push({
       kind: "observation",
@@ -415,6 +427,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       body: "Open Marketing to read DIRECT, ASSISTED, ESTIMATED, and UNKNOWN labels on stored people-to-revenue joins. GroovGro will not buy ads, invent a keyword or AI-referral path, or change checkout.",
       evidence: ["attribution_labels.source=stored_join"],
       href: "/app/marketing",
+    });
+  }
+
+  if (facts.websiteConnected && beforeAfterLookCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Read the stored before and after",
+      body: "Open Next step to read the first stored Goal number next to the latest stored Goal number. This is not an experiment GroovGro ran. GroovGro will not buy ads or change the plan.",
+      evidence: ["before_after_looks.source=stored_goal"],
+      href: "/app/next-step",
     });
   }
 
@@ -701,6 +723,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `attribution_assisted=${facts.attributionAssistedCount ?? 0}`,
     `attribution_estimated=${facts.attributionEstimatedCount ?? 0}`,
     `attribution_unknown=${facts.attributionUnknownCount ?? 0}`,
+    `before_after=${facts.beforeAfterLookCount ?? 0}`,
   ].join(" ");
 }
 
