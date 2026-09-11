@@ -21,6 +21,7 @@ import { PageStructurePanel } from "@/components/page-structure-panel";
 import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { GeoNotesPanel } from "@/components/geo-notes-panel";
+import { GeoQueriesPanel } from "@/components/geo-queries-panel";
 import { SerpNotesPanel } from "@/components/serp-notes-panel";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
@@ -108,11 +109,11 @@ export default async function SeoPage({
           to pages GroovGro already read. You can save a brief to the planner
           and write a workspace draft from it. Pages GroovGro already read
           can show link suggestions and estimated schema types. You can save
-          what you already heard from an AI system. GroovGro will not invent
-          topics, publish a page, add links or schema to the live website,
-          ask AI systems, scrape answers, look businesses up, scrape search
-          results, buy keyword or SERP data, buy ads, or change Stripe
-          checkout.
+          what you already heard from an AI system. You can save questions to
+          remember for later AI visibility. GroovGro will not invent topics,
+          publish a page, add links or schema to the live website, ask AI
+          systems, scrape answers, look businesses up, scrape search results,
+          buy keyword or SERP data, buy ads, or change Stripe checkout.
         </p>
       </div>
 
@@ -295,6 +296,15 @@ export default async function SeoPage({
           <GeoNotesPanel
             notes={data.geoNotes}
             querySuggestions={data.keywords.map((keyword) => keyword.query)}
+            canManage={session.permissions.includes("manage_seo")}
+          />
+
+          <GeoQueriesPanel
+            queries={data.geoQueries}
+            querySuggestions={[
+              ...data.geoNotes.map((note) => note.query),
+              ...data.keywords.map((keyword) => keyword.query),
+            ].filter((query, index, rows) => query && rows.indexOf(query) === index)}
             canManage={session.permissions.includes("manage_seo")}
           />
 

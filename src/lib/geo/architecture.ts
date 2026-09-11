@@ -1,8 +1,9 @@
 /**
  * GEO / AI Visibility architecture.
  *
- * Phase L stores owner-entered notes only. The query library (M),
- * measurement history (N), and GEO audits (O) stay planned.
+ * Phase L stores owner-entered notes. Phase M stores an owner-entered
+ * query library. Adapters stay off. Measurement history (N) and GEO
+ * audits (O) stay planned.
  * Adapters stay off. GroovGro does not scrape AI answers.
  * Do not add a hard-coded vendor list to business logic.
  */
@@ -16,7 +17,7 @@ export type GeoEvidenceSource =
   | typeof GEO_EVIDENCE_ADAPTER
   | typeof GEO_EVIDENCE_ESTIMATE;
 
-/** Later M: a question the business cares about. Not a live query in this slice. */
+/** A question the business cares about. Not a live query in this slice. */
 export type GeoQueryShape = {
   organizationId: string
   query: string

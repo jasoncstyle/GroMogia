@@ -992,6 +992,33 @@ export const geoNotes = pgTable(
   ],
 );
 
+export const GEO_QUERY_SOURCE_OWNER = "owner";
+export const GEO_QUERY_STATUS_PLANNED = "planned";
+
+export const geoQueries = pgTable(
+  "geo_queries",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    queryKey: text("query_key").notNull(),
+    query: text("query").notNull(),
+    why: text("why").notNull().default(""),
+    status: text("status").notNull().default(GEO_QUERY_STATUS_PLANNED),
+    source: text("source").notNull().default(GEO_QUERY_SOURCE_OWNER),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("geo_queries_org_query_idx").on(
+      table.organizationId,
+      table.queryKey,
+    ),
+    index("geo_queries_org_idx").on(table.organizationId),
+  ],
+);
+
 export type BuilderSectionType =
   | "hero"
   | "text"
