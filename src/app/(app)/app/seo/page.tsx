@@ -15,6 +15,7 @@ import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
 import { isBuilderApplyableFinding } from "@/lib/website-builder/apply-seo";
 import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
+import { CmsPublishPanel } from "@/components/cms-publish-panel";
 import { ContentBriefsPanel } from "@/components/content-briefs-panel";
 import { ContentGapsPanel } from "@/components/content-gaps-panel";
 import { PageStructurePanel } from "@/components/page-structure-panel";
@@ -109,7 +110,8 @@ export default async function SeoPage({
           stored as a history and given a conservative estimate rank. You can
           save a competitor you already see. Worth-a-look queries are compared
           to pages GroovGro already read. You can save a brief to the planner
-          and write a workspace draft from it. Pages GroovGro already read
+          and write a workspace draft from it. You can save a draft for later
+          review. Pages GroovGro already read
           can show link suggestions and estimated schema types. You can save
           what you already heard from an AI system. You can save questions to
           remember for later AI visibility. You can save another snapshot of
@@ -281,6 +283,16 @@ export default async function SeoPage({
               ...data.contentGaps.map((gap) => gap.query),
               ...data.keywords.map((keyword) => keyword.query),
             ].filter((query, index, rows) => rows.indexOf(query) === index)}
+            canManage={session.permissions.includes("manage_seo")}
+          />
+
+          <CmsPublishPanel
+            requests={data.cmsPublishRequests}
+            drafts={data.contentBriefs.flatMap((brief) =>
+              brief.draft
+                ? [{ id: brief.draft.id, title: brief.draft.title }]
+                : [],
+            )}
             canManage={session.permissions.includes("manage_seo")}
           />
 

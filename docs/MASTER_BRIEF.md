@@ -172,7 +172,7 @@ Use these labels. Do not make planned work sound shipped.
 
 ## 16. SEO, content, and AI visibility feed Growth Intelligence
 
-**Status:** vision approved 10 September 2026. Phases A–O first slices are implemented. Do not start Phase P–T until Jason asks.
+**Status:** vision approved 10 September 2026. Phases A–P first slices are implemented. Do not start Phase Q–T until Jason asks.
 
 GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
 
@@ -191,6 +191,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Content gaps: worth-a-look Search Console queries compared to pages GroovGro already read (no new pages)
 - Content briefs and planner: the owner can save a brief for a stored query (no publish)
 - Content drafts: GroovGro can write a workspace draft from a saved brief (no publish)
+- Owner-entered CMS publish review queue from a workspace draft (adapter exists and stays off)
 - Internal link suggestions and schema type estimates from pages GroovGro already read (no live-site write)
 - Owner-entered AI visibility notes from what the owner already heard (no AI query, no scrape)
 - Owner-entered AI query library for later visibility work (no live lookup)
@@ -206,13 +207,13 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Competitor / SERP notes: the owner can save who they already see for a stored query (Phase G first slice). Lookup, scrape, and SERP vendors stay **PLANNED**.
 - Content gaps: worth-a-look stored queries are compared to pages GroovGro already read (Phase H first slice). Generation stays **PLANNED**.
 - Content briefs: the owner can save a planner brief for a stored query (Phase I first slice). Publishing stays **PLANNED**.
-- Content drafts: a workspace draft can be written from a saved brief (Phase J first slice). Publishing and live-site edits stay **PLANNED**.
+- Content drafts: a workspace draft can be written from a saved brief (Phase J first slice). The owner can save that draft for later CMS review (Phase P first slice). Live CMS write stays **PLANNED**.
 - Internal links and schema: suggestions and type estimates from pages GroovGro already read (Phase K first slice). Writing links or JSON-LD onto the live site stays **PLANNED**.
 - AI Visibility / GEO: the owner can save what they already heard (Phase L), questions to remember (Phase M first slice), another history snapshot (Phase N first slice), and citation-gap estimates from that history (Phase O first slice). Live adapters and share of voice stay **PLANNED**.
 - Attribution: named share → person → revenue exists. Keyword → page → person and AI-referral do not. Labels DIRECT / ASSISTED / ESTIMATED / UNKNOWN are **PLANNED**
 - Prioritization: Next step uses a fixed owner-assistance order. Scored “SEO vs follow up a person vs fix a page” is **PLANNED**
 - Brand Voice: does not learn from repeated owner edits
-- Publishing: GroovGro-hosted builder exists and is **PAUSED**. No WordPress / Shopify write. Do not overwrite a connected existing website
+- Publishing: GroovGro-hosted builder exists and is **PAUSED**. Owner can queue a workspace draft for later review (Phase P first slice). No WordPress / Shopify write. Do not overwrite a connected existing website. The CMS adapter stays off.
 - Notifications: table exists; the page is a stub (**PAUSED** as a product)
 - `growth_actions`: exists for plan/owner work and recommend-only SEO rows. Phase B added optional `title`, `evidence` (JSON), `confidence`, `expected_impact`, and `priority`. Do not parse `description` as machine data.
 
@@ -221,7 +222,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Keyword groups, intent, create-vs-improve, paid keyword vendors
 - Competitor and SERP lookup (contracted, allowed providers only). Owner-entered notes exist.
 - Publishing links or schema onto a live site. Gap detection, briefs, workspace drafts, and page-structure facts exist.
-- CMS publishing adapters (review-first)
+- Live CMS write after owner approval. A review-only queue and a disabled adapter exist.
 - AI Visibility / GEO adapters, mentions, citations, share of voice, accuracy. Owner-entered notes, a query library, history snapshots, and citation-gap estimates exist. Lookup stays off.
 - Cross-channel scoring, experiments, alerts
 - Cost controls before paid keyword or AI-scan vendors
@@ -259,7 +260,7 @@ Search volume is not success. Traffic is not success. Prefer activity that produ
 
 ### Content Intelligence (**PARTIALLY IMPLEMENTED**; Brand Voice drafts are **IMPLEMENTED** in-workspace only)
 
-Today: worth-a-look Search Console queries can be compared to pages GroovGro already read. The owner can save a brief to the SEO planner and write a workspace draft from it. GroovGro can suggest internal links and estimate schema types from pages it already read. GroovGro does not publish or write the live site.
+Today: worth-a-look Search Console queries can be compared to pages GroovGro already read. The owner can save a brief to the SEO planner, write a workspace draft from it, and save that draft for later CMS review. GroovGro can suggest internal links and estimate schema types from pages it already read. GroovGro does not publish or write the live site. The CMS adapter stays off.
 
 Future workflow: Opportunity → Research → Brief → Draft → Optimization → Review → Publish when authorized → Measure → Learn.
 
@@ -321,7 +322,7 @@ Do not overwrite the only copy of a metric. Keep snapshots (Search Console alrea
 | M | AI query library and provider adapters | **IMPLEMENTED** first slice — owner-entered library. Adapter exists and stays off. No scrape. |
 | N | AI visibility measurement and history | **IMPLEMENTED** first slice — owner-entered snapshots from a saved library question. Adapter stays off. No scrape. No share of voice. |
 | O | GEO audits and citation gaps | **IMPLEMENTED** first slice — citation-gap estimates from the latest saved history snapshot. Adapter stays off. No scrape. No share of voice. |
-| P | CMS publishing adapters | **PLANNED** |
+| P | CMS publishing adapters | **IMPLEMENTED** first slice — owner-entered review queue from a workspace draft. Adapter exists and stays off. No live-site write. |
 | Q | Cross-channel opportunity scoring | **PLANNED** |
 | R | Attribution improvements | **PLANNED** |
 | S | Experimentation / before-and-after | **PLANNED** |

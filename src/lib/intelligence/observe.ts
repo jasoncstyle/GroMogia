@@ -40,6 +40,7 @@ export type IntelligenceFacts = {
   contentGapCount?: number
   contentBriefCount?: number
   contentDraftCount?: number
+  cmsPublishRequestCount?: number
   internalLinkCount?: number
   schemaFactCount?: number
   schemaReviewCount?: number
@@ -181,6 +182,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const contentGapCount = facts.contentGapCount ?? 0;
   const contentBriefCount = facts.contentBriefCount ?? 0;
   const contentDraftCount = facts.contentDraftCount ?? 0;
+  const cmsPublishRequestCount = facts.cmsPublishRequestCount ?? 0;
   const internalLinkCount = facts.internalLinkCount ?? 0;
   const schemaFactCount = facts.schemaFactCount ?? 0;
   const schemaReviewCount = facts.schemaReviewCount ?? 0;
@@ -234,6 +236,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Workspace content drafts",
       body: `${contentDraftCount} workspace ${contentDraftCount === 1 ? "draft is" : "drafts are"} saved from a brief. GroovGro did not publish them or change the live website.`,
       evidence: ["content_drafts.status=draft"],
+      href: "/app/seo",
+    });
+  }
+
+  if (cmsPublishRequestCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Drafts saved for later CMS review",
+      body: `The owner saved ${cmsPublishRequestCount} ${cmsPublishRequestCount === 1 ? "draft" : "drafts"} for later review. GroovGro did not publish or change the live website.`,
+      evidence: ["cms_publish_requests.status=review"],
       href: "/app/seo",
     });
   }
@@ -437,6 +449,20 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
 
   if (
     facts.websiteConnected &&
+    contentDraftCount > 0 &&
+    cmsPublishRequestCount === 0
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Save a draft for later CMS review",
+      body: "On SEO, save a workspace draft for later review. GroovGro will not publish or change the live website.",
+      evidence: ["cms_publish_requests missing"],
+      href: "/app/seo",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
     (internalLinkCount > 0 || schemaReviewCount > 0)
   ) {
     recommendations.push({
@@ -579,6 +605,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `content_gaps=${facts.contentGapCount ?? 0}`,
     `content_briefs=${facts.contentBriefCount ?? 0}`,
     `content_drafts=${facts.contentDraftCount ?? 0}`,
+    `cms_publish=${facts.cmsPublishRequestCount ?? 0}`,
     `internal_links=${facts.internalLinkCount ?? 0}`,
     `schema_facts=${facts.schemaFactCount ?? 0}`,
     `schema_review=${facts.schemaReviewCount ?? 0}`,

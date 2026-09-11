@@ -902,6 +902,35 @@ export const contentDrafts = pgTable(
   ],
 );
 
+export const CMS_PUBLISH_SOURCE_OWNER = "owner";
+export const CMS_PUBLISH_STATUS_REVIEW = "review";
+
+export const cmsPublishRequests = pgTable(
+  "cms_publish_requests",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    draftId: uuid("draft_id")
+      .notNull()
+      .references(() => contentDrafts.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    note: text("note").notNull().default(""),
+    status: text("status").notNull().default(CMS_PUBLISH_STATUS_REVIEW),
+    source: text("source").notNull().default(CMS_PUBLISH_SOURCE_OWNER),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("cms_publish_requests_org_draft_idx").on(
+      table.organizationId,
+      table.draftId,
+    ),
+    index("cms_publish_requests_org_idx").on(table.organizationId),
+  ],
+);
+
 export const PAGE_STRUCTURE_SOURCE_STORED_PAGES = "stored_pages";
 export const SCHEMA_FACT_SOURCE_PAGE_GROUP = "page_group";
 

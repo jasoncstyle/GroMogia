@@ -774,6 +774,59 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("observes drafts saved for later CMS review and does not publish", () => {
+    const saved = buildIntelligenceBrief(
+      facts({
+        contentDraftCount: 1,
+        cmsPublishRequestCount: 2,
+      }),
+    );
+    const observed = saved.observations.find(
+      (item) => item.title === "Drafts saved for later CMS review",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /2 drafts/);
+    assert.match(observed.body, /did not publish/);
+    assert.equal(
+      saved.recommendations.some(
+        (item) => item.title === "Save a draft for later CMS review",
+      ),
+      false,
+    );
+
+    const missing = buildIntelligenceBrief(
+      facts({
+        contentDraftCount: 1,
+        cmsPublishRequestCount: 0,
+      }),
+    );
+    const recommended = missing.recommendations.find(
+      (item) => item.title === "Save a draft for later CMS review",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /will not publish/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Save a draft for later CMS review",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          contentDraftCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a draft for later CMS review",
+      ),
+      false,
+    );
+    assert.match(factsSummary(facts({ cmsPublishRequestCount: 3 })), /cms_publish=3/);
+  });
+
   it("observes link and schema facts and does not write the live site", () => {
     const withLinks = buildIntelligenceBrief(
       facts({

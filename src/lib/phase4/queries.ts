@@ -3,6 +3,7 @@ import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db";
 import {
   aiActionLogs,
+  cmsPublishRequests,
   contentBriefs,
   contentDrafts,
   contentGaps,
@@ -50,6 +51,7 @@ export async function getIntelligenceFacts(
     contentGapCount,
     contentBriefCount,
     contentDraftCount,
+    cmsPublishRequestCount,
     pageStructureCounts,
     geoNoteCount,
     geoQueryCount,
@@ -61,6 +63,7 @@ export async function getIntelligenceFacts(
     countContentGaps(organizationId),
     countContentBriefs(organizationId),
     countContentDrafts(organizationId),
+    countCmsPublishRequests(organizationId),
     countPageStructure(organizationId),
     countGeoNotes(organizationId),
     countGeoQueries(organizationId),
@@ -119,6 +122,7 @@ export async function getIntelligenceFacts(
     contentGapCount,
     contentBriefCount,
     contentDraftCount,
+    cmsPublishRequestCount,
     internalLinkCount: pageStructureCounts.links,
     schemaFactCount: pageStructureCounts.facts,
     schemaReviewCount: pageStructureCounts.review,
@@ -235,6 +239,16 @@ async function countContentDrafts(organizationId: string): Promise<number> {
     .select({ value: sql<number>`count(*)::int` })
     .from(contentDrafts)
     .where(eq(contentDrafts.organizationId, organizationId));
+  return Number(row?.value ?? 0);
+}
+
+async function countCmsPublishRequests(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(cmsPublishRequests)
+    .where(eq(cmsPublishRequests.organizationId, organizationId));
   return Number(row?.value ?? 0);
 }
 

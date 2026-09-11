@@ -1968,7 +1968,8 @@ Organization
 164. **Phase M — AI query library and provider adapters** — **IMPLEMENTED** first slice. Owner can save `geo_queries`. `requestGeoLookup` exists and stays off. SEO and Intelligence can show the library. No scrape. No Next step.
 165. **Phase N — AI visibility measurement and history** — **IMPLEMENTED** first slice. Owner can save append-only `geo_history` snapshots from a saved library question. SEO and Intelligence can show that. Adapter stays off. No scrape. No share of voice. No Next step.
 166. **Phase O — GEO audits and citation gaps** — **IMPLEMENTED** first slice. Latest saved `geo_history` snapshots can produce `geo_audits` citation-gap estimates. SEO and Intelligence can show those. Adapter stays off. No scrape. No share of voice. No Next step.
-167. **Phases P–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters. Do not turn on SERP lookup or GEO lookup.
+167. **Phase P — CMS publishing adapters** — **IMPLEMENTED** first slice. Owner can save `cms_publish_requests` from a workspace draft. `requestCmsPublish` exists and stays off. SEO and Intelligence can show the queue. No live-site write. No Next step. Builder stays paused.
+168. **Phases Q–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: scoring, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters. Do not turn on SERP lookup, GEO lookup, or CMS publish.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
@@ -2000,11 +2001,11 @@ Fields still later if usage needs them: `effort`, `estimated_cost`, `urgency`, `
 
 ### IMPLEMENTED / PARTIAL / PLANNED
 
-**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work; keyword model and history from stored Search Console queries; conservative keyword estimate ranks from those stored numbers; owner-entered competitor notes; content gaps from stored worth-a-look queries vs pages already read; owner-entered content briefs on the SEO planner; workspace drafts from a saved brief; internal link suggestions and schema type estimates from pages already read; owner-entered AI visibility notes; owner-entered AI query library with lookup off; owner-entered AI visibility history snapshots; citation-gap estimates from those snapshots.
+**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work; keyword model and history from stored Search Console queries; conservative keyword estimate ranks from those stored numbers; owner-entered competitor notes; content gaps from stored worth-a-look queries vs pages already read; owner-entered content briefs on the SEO planner; workspace drafts from a saved brief; internal link suggestions and schema type estimates from pages already read; owner-entered AI visibility notes; owner-entered AI query library with lookup off; owner-entered AI visibility history snapshots; citation-gap estimates from those snapshots; owner-entered CMS publish review queue with write off.
 
-**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder; keywords (history and estimate rank stored; groups, intent, and vendor scores not); competitor/SERP (owner notes stored; lookup and vendors not); content (gaps, briefs, workspace drafts, and page-structure facts stored; publish and live-site write not); AI Visibility / GEO (owner notes, query library, history snapshots, and citation-gap estimates stored; live adapters and share of voice not).
+**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder; keywords (history and estimate rank stored; groups, intent, and vendor scores not); competitor/SERP (owner notes stored; lookup and vendors not); content (gaps, briefs, workspace drafts, review queue, and page-structure facts stored; live publish not); AI Visibility / GEO (owner notes, query library, history snapshots, and citation-gap estimates stored; live adapters and share of voice not).
 
-**PLANNED:** content publish; SERP/competitor lookup engines; CMS write; scored cross-channel priority; experiments; execute.
+**PLANNED:** live CMS write; SERP/competitor lookup engines; scored cross-channel priority; experiments; execute.
 
 ### Architecture rules
 
@@ -2012,6 +2013,6 @@ Fields still later if usage needs them: `effort`, `estimated_cost`, `urgency`, `
 - Vendors stay behind adapters. Search Console already exists (read-only). GEO lookup (`geoLookupEnabled`) stays off.
 - GEO facts in this slice are owner-entered `geo_notes`, `geo_queries`, and `geo_history`, plus `geo_audits` estimates from that history. `requestGeoLookup` stays off. Do not hard-code a vendor list. Do not scrape AI answers. Do not treat one AI answer as truth.
 - Every new table keeps `organization_id`.
-- Review-first publishing. No scrape. No paid vendor in Phase C.
+- Review-first publishing. `requestCmsPublish` stays off. No scrape. No paid vendor in Phase C.
 - Do not overwrite Ocean Sailing Adventures or change stripe-osa.
 - Do not start ads, email send, social post, Growth Director autopilot, or the hosted builder in this expansion.
