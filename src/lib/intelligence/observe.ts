@@ -1,3 +1,8 @@
+import {
+  channelScoreFactsFromCounts,
+  channelsWithEvidence,
+  scoreGrowthChannels,
+} from "@/lib/growth/channel-score";
 import { FOLLOW_UP_LEADS_STEP_TITLE } from "@/lib/growth/plan-draft";
 import { extraShareClause } from "@/lib/growth/progress";
 import { formatLeadOrigin } from "@/lib/marketing/named-link";
@@ -48,6 +53,7 @@ export type IntelligenceFacts = {
   geoQueryCount?: number
   geoHistoryCount?: number
   geoAuditGapCount?: number
+  channelCompareCount?: number
 };
 
 export type InsightItem = {
@@ -310,6 +316,29 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  const channelScores = scoreGrowthChannels(
+    channelScoreFactsFromCounts({
+      openLeadCount: facts.openLeadCount,
+      proposedSeoActionCount: facts.proposedSeoActionCount,
+      keywordReviewCount: facts.keywordReviewCount,
+      contentGapCount,
+      contentBriefCount,
+      contentDraftCount,
+      geoAuditGapCount,
+    }),
+  );
+  const comparable = channelsWithEvidence(channelScores);
+  if (comparable.length > 0) {
+    const names = comparable.map((row) => row.title).join(", ");
+    observations.push({
+      kind: "observation",
+      title: "What stored evidence says to compare",
+      body: `${comparable.length} stored ${comparable.length === 1 ? "channel looks" : "channels look"} stronger from workspace facts (${names}). GroovGro did not change Next step, buy ads, or run work.`,
+      evidence: ["channel_scores.source=stored_workspace"],
+      href: "/app/intelligence",
+    });
+  }
+
   if (facts.businessContextSaved) {
     observations.push({
       kind: "observation",
@@ -526,6 +555,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && comparable.length >= 2) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Compare stored people, pages, content, and AI visibility",
+      body: "Read the comparison of stored channels on Intelligence. GroovGro will not change today's Next step from this estimate, buy ads, or run work.",
+      evidence: ["channel_scores.source=stored_workspace"],
+      href: "/app/intelligence",
+    });
+  }
+
   if (facts.websiteConnected && namedSources.length === 0) {
     recommendations.push({
       kind: "recommendation",
@@ -613,6 +652,22 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `geo_queries=${facts.geoQueryCount ?? 0}`,
     `geo_history=${facts.geoHistoryCount ?? 0}`,
     `geo_audits=${facts.geoAuditGapCount ?? 0}`,
+    `channel_compare=${
+      facts.channelCompareCount ??
+      channelsWithEvidence(
+        scoreGrowthChannels(
+          channelScoreFactsFromCounts({
+            openLeadCount: facts.openLeadCount,
+            proposedSeoActionCount: facts.proposedSeoActionCount,
+            keywordReviewCount: facts.keywordReviewCount,
+            contentGapCount: facts.contentGapCount,
+            contentBriefCount: facts.contentBriefCount,
+            contentDraftCount: facts.contentDraftCount,
+            geoAuditGapCount: facts.geoAuditGapCount,
+          }),
+        ),
+      ).length
+    }`,
   ].join(" ");
 }
 

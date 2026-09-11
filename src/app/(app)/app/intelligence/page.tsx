@@ -12,6 +12,7 @@ import {
 import { getAppSession } from "@/lib/auth/session";
 import { refreshIntelligence } from "@/lib/actions/intelligence";
 import { GoalShareNote } from "@/components/goal-share-note";
+import { ChannelScorePanel } from "@/components/channel-score-panel";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
 import { hasPermission } from "@/lib/permissions";
 import {
@@ -72,6 +73,8 @@ export default async function IntelligencePage() {
               </SaveForm>
             </CardContent>
           </Card>
+
+          <ChannelScorePanel scores={data.channelScores} />
 
           {data.facts.activeGoalShare?.note ? (
             <Card>

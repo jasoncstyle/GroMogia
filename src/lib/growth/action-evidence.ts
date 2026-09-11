@@ -3,7 +3,8 @@ import type { GrowthActionEvidence } from "@/lib/db/schema";
 /**
  * Structured fields added in Phase B. They store facts the UI can show
  * without parsing `description`. Priority is stored but is not used to
- * reorder Next step yet (cross-channel scoring stays later).
+ * reorder Next step. Phase Q scores stored channels separately and also
+ * does not reorder Next step.
  */
 export const GROWTH_ACTION_CONFIDENCE_OBSERVED = "observed";
 export const GROWTH_ACTION_CONFIDENCE_INFERRED = "inferred";

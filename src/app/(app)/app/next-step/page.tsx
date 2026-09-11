@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ChannelScorePanel } from "@/components/channel-score-panel";
 import { ConfirmRejectButtons, GrowthReviewBody, InferredBadge, ReviewConnectedDataButton, SaveGrowthReviewButton } from "@/components/growth-review";
 import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
@@ -49,6 +50,7 @@ import { labelFor } from "@/lib/growth/types";
 import { buildGrowthStory, storyFactsFromWorkspace } from "@/lib/growth/story";
 import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
+import { getChannelScoreViews } from "@/lib/phase4/queries";
 
 export default async function NextStepPage({
   searchParams,
@@ -57,14 +59,15 @@ export default async function NextStepPage({
 }) {
   const params = await searchParams;
   const session = await getAppSession();
-  const [step, dashboard, links, slug] = session.organizationId
+  const [step, dashboard, links, slug, channelScores] = session.organizationId
     ? await Promise.all([
         getCoordinatedNextStep(session.organizationId),
         getDashboardSnapshot(session.organizationId),
         getGrowthLinkOptions(session.organizationId),
         resolveOrganizationSlug(session.organizationId, session.organizationSlug),
+        getChannelScoreViews(session.organizationId),
       ])
-    : [null, null, { offers: [], goals: [] }, ""];
+    : [null, null, { offers: [], goals: [] }, "", []];
   const canDecide = hasPermission(session.permissions, "view_decision_history");
   const canCheck = canDecide;
   const canApprove = hasPermission(session.permissions, "approve_actions");
@@ -537,6 +540,8 @@ export default async function NextStepPage({
               ) : null}
             </CardContent>
           </Card>
+
+          <ChannelScorePanel scores={channelScores} />
 
           {step.waitingActions.length > 0 &&
           step.primary.title !== APPROVE_ACTIONS_STEP_TITLE ? (
