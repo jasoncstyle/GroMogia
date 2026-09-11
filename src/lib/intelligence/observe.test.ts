@@ -635,6 +635,64 @@ describe("intelligence observe", () => {
     assert.match(factsSummary(facts({ geoAuditGapCount: 4 })), /geo_audits=4/);
   });
 
+  it("compares stored channels and does not change Next step", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        openLeadCount: 4,
+        contentGapCount: 3,
+        geoAuditGapCount: 1,
+      }),
+    );
+    const observed = brief.observations.find(
+      (item) => item.title === "What stored evidence says to compare",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/intelligence");
+    assert.match(observed.body, /3 stored channels look stronger/);
+    assert.match(observed.body, /did not change Next step/);
+    assert.match(observed.body, /buy ads/);
+    const recommended = brief.recommendations.find(
+      (item) =>
+        item.title === "Compare stored people, pages, content, and AI visibility",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/intelligence");
+    assert.match(recommended.body, /will not change today's Next step/);
+    assert.match(recommended.body, /buy ads, or run work/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).observations.some(
+        (item) => item.title === "What stored evidence says to compare",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(facts({ openLeadCount: 4 })).recommendations.some(
+        (item) =>
+          item.title ===
+          "Compare stored people, pages, content, and AI visibility",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          openLeadCount: 4,
+          contentGapCount: 3,
+        }),
+      ).recommendations.some(
+        (item) =>
+          item.title ===
+          "Compare stored people, pages, content, and AI visibility",
+      ),
+      false,
+    );
+    assert.match(
+      factsSummary(facts({ openLeadCount: 4, contentGapCount: 3 })),
+      /channel_compare=2/,
+    );
+  });
+
   it("observes stored content gaps and does not write a page", () => {
     const brief = buildIntelligenceBrief(
       facts({

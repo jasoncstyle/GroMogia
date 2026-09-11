@@ -260,6 +260,13 @@
       "when": 1787488000000,
       "tag": "0036_cms_publish_requests",
       "breakpoints": true
+    },
+    {
+      "idx": 37,
+      "version": "7",
+      "when": 1787496000000,
+      "tag": "0037_channel_scores",
+      "breakpoints": true
     }
   ]
 }

@@ -30,7 +30,7 @@ Modules are independently enabled capabilities. The codebase may contain a modul
 | `ai_visibility` | AI Visibility / GEO | later | **Partial.** Owner-entered notes, a query library, history snapshots, and citation-gap estimates live on SEO. No separate nav. Adapters stay off. No scraping |
 | `social` | Social publishing | 8 | After brand voice exists |
 | `reviews` | Reputation | 8 | Official APIs only |
-| `intelligence` | Growth intelligence | 4 | Reads other modules; does not replace them. SEO / GEO opportunities must land here and on Next step |
+| `intelligence` | Growth intelligence | 4 | Reads other modules; does not replace them. SEO / GEO opportunities and stored channel estimates can land here and on Next step. Channel estimates do not reorder Next step |
 | `brand_voice` | Brand voice / content | 5 | Approved examples only |
 | `billing` | SaaS subscriptions | 10 | Stripe Billing for GroovGro itself |
 | `media` | Media library | 1 (stub), used by all later | Vercel Blob, tenant-keyed |

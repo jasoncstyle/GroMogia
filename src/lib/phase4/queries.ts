@@ -18,6 +18,17 @@ import {
   serpNotes,
 } from "@/lib/db/schema";
 import {
+  channelScoreFactsFromCounts,
+  channelsWithEvidence,
+  scoreGrowthChannels,
+  scoresToShow,
+  type ChannelScoreView,
+} from "@/lib/growth/channel-score";
+import {
+  persistChannelScores,
+  refreshChannelScores,
+} from "@/lib/growth/persist-channel-scores";
+import {
   brainSeoContextCounts,
   brainSeoContextSaved,
 } from "@/lib/growth/brain-context";
@@ -85,6 +96,21 @@ export async function getIntelligenceFacts(
       .map((line) => line.trim())
       .find((line) => line && line !== "GroovGro found an opportunity worth reviewing.");
 
+  const channelFacts = channelScoreFactsFromCounts({
+    openLeadCount: dashboard.openLeadCount,
+    proposedSeoActionCount: proposedSeo.length,
+    keywordReviewCount: keywordCounts.review,
+    contentGapCount,
+    contentBriefCount,
+    contentDraftCount,
+    geoAuditGapCount,
+  });
+  const channelScores = scoresToShow(scoreGrowthChannels(channelFacts));
+  const db = getDb();
+  if (db) {
+    await persistChannelScores(db, organizationId, channelFacts);
+  }
+
   return {
     websiteConnected: Boolean(dashboard.website?.publicUrl),
     stripeConnected: dashboard.stripeConnected,
@@ -130,7 +156,14 @@ export async function getIntelligenceFacts(
     geoQueryCount,
     geoHistoryCount,
     geoAuditGapCount,
+    channelCompareCount: channelsWithEvidence(channelScores).length,
   };
+}
+
+export async function getChannelScoreViews(
+  organizationId: string,
+): Promise<ChannelScoreView[]> {
+  return refreshChannelScores(organizationId);
 }
 
 async function countRecordedKeywords(organizationId: string): Promise<{
@@ -287,7 +320,20 @@ export async function getIntelligencePageData(
   const facts = await getIntelligenceFacts(organizationId, options);
   const brief = buildIntelligenceBrief(facts);
   const logs = await getRecentInsightLogs(organizationId);
-  return { facts, brief, logs };
+  const channelScores = scoresToShow(
+    scoreGrowthChannels(
+      channelScoreFactsFromCounts({
+        openLeadCount: facts.openLeadCount,
+        proposedSeoActionCount: facts.proposedSeoActionCount,
+        keywordReviewCount: facts.keywordReviewCount,
+        contentGapCount: facts.contentGapCount,
+        contentBriefCount: facts.contentBriefCount,
+        contentDraftCount: facts.contentDraftCount,
+        geoAuditGapCount: facts.geoAuditGapCount,
+      }),
+    ),
+  );
+  return { facts, brief, logs, channelScores };
 }
 
 export async function getRecentInsightLogs(organizationId: string) {

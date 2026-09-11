@@ -1117,6 +1117,35 @@ export const geoAudits = pgTable(
   ],
 );
 
+export const CHANNEL_SCORE_SOURCE_STORED = "stored_workspace";
+
+export const channelScores = pgTable(
+  "channel_scores",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    channel: text("channel").notNull(),
+    label: text("label").notNull().default("none"),
+    score: integer("score").notNull().default(0),
+    evidenceCount: integer("evidence_count").notNull().default(0),
+    why: text("why").notNull().default(""),
+    source: text("source").notNull().default(CHANNEL_SCORE_SOURCE_STORED),
+    computedAt: timestamp("computed_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("channel_scores_org_channel_idx").on(
+      table.organizationId,
+      table.channel,
+    ),
+    index("channel_scores_org_idx").on(table.organizationId),
+  ],
+);
+
 export type BuilderSectionType =
   | "hero"
   | "text"
