@@ -1639,6 +1639,35 @@ export const growthActions = pgTable(
   ],
 );
 
+export const EXECUTION_SOURCE_OWNER = "owner";
+export const EXECUTION_STATUS_REVIEW = "review";
+
+export const executionRequests = pgTable(
+  "execution_requests",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    actionId: uuid("action_id")
+      .notNull()
+      .references(() => growthActions.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    note: text("note").notNull().default(""),
+    status: text("status").notNull().default(EXECUTION_STATUS_REVIEW),
+    source: text("source").notNull().default(EXECUTION_SOURCE_OWNER),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("execution_requests_org_action_idx").on(
+      table.organizationId,
+      table.actionId,
+    ),
+    index("execution_requests_org_idx").on(table.organizationId),
+  ],
+);
+
 export const growthSettings = pgTable("growth_settings", {
   organizationId: uuid("organization_id")
     .primaryKey()
