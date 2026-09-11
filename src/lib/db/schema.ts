@@ -792,6 +792,29 @@ export const keywordHistory = pgTable(
   ],
 );
 
+export const SERP_NOTE_SOURCE_OWNER = "owner";
+
+export const serpNotes = pgTable(
+  "serp_notes",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    queryKey: text("query_key").notNull().default(""),
+    query: text("query").notNull().default(""),
+    competitorName: text("competitor_name").notNull(),
+    note: text("note").notNull().default(""),
+    source: text("source").notNull().default(SERP_NOTE_SOURCE_OWNER),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    index("serp_notes_org_idx").on(table.organizationId),
+    index("serp_notes_org_query_idx").on(table.organizationId, table.queryKey),
+  ],
+);
+
 export type BuilderSectionType =
   | "hero"
   | "text"

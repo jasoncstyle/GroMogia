@@ -294,4 +294,12 @@ export async function ensureSchema(): Promise<void> {
   if (!keywordScore[0]?.name) {
     await applyMigration(sql, "0026_keyword_opportunity_score.sql");
   }
+
+  const serpNotesTable = (await sql.query(
+    "select to_regclass('public.serp_notes') as name",
+  )) as RegistryRow[];
+
+  if (!serpNotesTable[0]?.name) {
+    await applyMigration(sql, "0027_serp_notes.sql");
+  }
 }

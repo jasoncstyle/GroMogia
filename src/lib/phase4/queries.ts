@@ -1,13 +1,16 @@
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
-import { aiActionLogs, keywords, payments } from "@/lib/db/schema";
+import { aiActionLogs, keywords, payments, serpNotes } from "@/lib/db/schema";
 import {
   buildIntelligenceBrief,
   type IntelligenceBrief,
   type IntelligenceFacts,
 } from "@/lib/intelligence/observe";
-import { brainSeoContextSaved } from "@/lib/growth/brain-context";
+import {
+  brainSeoContextCounts,
+  brainSeoContextSaved,
+} from "@/lib/growth/brain-context";
 import { isWaitingActionStatus } from "@/lib/growth/next-step";
 import { isSeoGrowthActionType } from "@/lib/growth/seo-actions";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
@@ -24,7 +27,10 @@ export async function getIntelligenceFacts(
     countChargesThisMonth(organizationId),
     getGrowthSnapshot(organizationId),
   ]);
-  const keywordCounts = await countRecordedKeywords(organizationId);
+  const [keywordCounts, serpNoteCount] = await Promise.all([
+    countRecordedKeywords(organizationId),
+    countSerpNotes(organizationId),
+  ]);
 
   const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
   const proposedSeo = (growth?.actions ?? []).filter(
@@ -72,6 +78,8 @@ export async function getIntelligenceFacts(
     businessContextSaved: brainSeoContextSaved(growth?.brain ?? null),
     recordedKeywordCount: keywordCounts.total,
     keywordReviewCount: keywordCounts.review,
+    serpNoteCount,
+    knownCompetitorCount: brainSeoContextCounts(growth?.brain ?? null).competitors,
   };
 }
 
@@ -92,6 +100,16 @@ async function countRecordedKeywords(organizationId: string): Promise<{
     total: rows.length,
     review: rows.filter((row) => row.opportunityLabel === "review").length,
   };
+}
+
+async function countSerpNotes(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(serpNotes)
+    .where(eq(serpNotes.organizationId, organizationId));
+  return Number(row?.value ?? 0);
 }
 
 export async function getIntelligencePageData(

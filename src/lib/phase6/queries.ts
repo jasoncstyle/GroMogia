@@ -5,10 +5,12 @@ import { getDb } from "@/lib/db";
 import {
   brandSettings,
   brandVoiceProfiles,
+  businessBrains,
   integrationConnections,
   searchConsoleSnapshots,
   seoAudits,
   seoDrafts,
+  serpNotes,
   websites,
 } from "@/lib/db/schema";
 import { isGoogleOAuthConfigured } from "@/lib/env";
@@ -17,6 +19,7 @@ import {
   persistKeywordHistory,
 } from "@/lib/growth/persist-keywords";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
+import type { SerpNoteView } from "@/lib/growth/serp-notes";
 import { listBuilderPages, type BuilderPageSummary } from "@/lib/website-builder/queries";
 
 export async function getSeoPageData(organizationId: string) {
@@ -45,6 +48,8 @@ export async function getSeoPageData(organizationId: string) {
       })[],
       searchConsole: emptySearchConsole,
       keywords: [] as KeywordWithHistory[],
+      serpNotes: [] as SerpNoteView[],
+      knownCompetitors: [] as string[],
     };
   }
 
@@ -122,7 +127,7 @@ export async function getSeoPageData(organizationId: string) {
       ? await readGoogleSecret(organizationId)
       : null;
 
-  const [snapshots, keywords] = await Promise.all([
+  const [snapshots, keywords, noteRows, brainRows] = await Promise.all([
     db
       .select()
       .from(searchConsoleSnapshots)
@@ -130,6 +135,25 @@ export async function getSeoPageData(organizationId: string) {
       .orderBy(desc(searchConsoleSnapshots.createdAt))
       .limit(8),
     getKeywordHistory(db, organizationId),
+    db
+      .select({
+        id: serpNotes.id,
+        query: serpNotes.query,
+        competitorName: serpNotes.competitorName,
+        note: serpNotes.note,
+        source: serpNotes.source,
+        createdAt: serpNotes.createdAt,
+        organizationId: serpNotes.organizationId,
+      })
+      .from(serpNotes)
+      .where(eq(serpNotes.organizationId, organizationId))
+      .orderBy(desc(serpNotes.createdAt))
+      .limit(20),
+    db
+      .select({ competitors: businessBrains.competitors })
+      .from(businessBrains)
+      .where(eq(businessBrains.organizationId, organizationId))
+      .limit(1),
   ]);
 
   return {
@@ -150,6 +174,21 @@ export async function getSeoPageData(organizationId: string) {
       snapshots,
     },
     keywords,
+    serpNotes: noteRows
+      .filter((row) => row.organizationId === organizationId)
+      .map((row) => ({
+        id: row.id,
+        query: row.query,
+        competitorName: row.competitorName,
+        note: row.note,
+        source: row.source,
+        createdAt: row.createdAt,
+      })),
+    knownCompetitors: filledNames(brainRows[0]?.competitors),
   };
+}
+
+function filledNames(values?: string[] | null): string[] {
+  return (values ?? []).map((item) => item.trim()).filter(Boolean);
 }
 
