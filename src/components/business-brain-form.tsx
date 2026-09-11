@@ -153,7 +153,9 @@ export function BusinessBrainForm({
           placeholder="Names only. Separate with commas"
         />
         <p className="text-xs text-muted-foreground">
-          GroovGro will not look these businesses up or scrape their websites.
+          GroovGro will not look these businesses up from this list. Save a
+          competitor website on SEO if you want GroovGro to read that public
+          page.
         </p>
       </div>
       <div className="space-y-2 md:col-span-2">

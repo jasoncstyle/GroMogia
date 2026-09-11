@@ -281,6 +281,13 @@
       "when": 1787512000000,
       "tag": "0039_execution_requests",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1787520000000,
+      "tag": "0040_competitor_sites",
+      "breakpoints": true
     }
   ]
 }

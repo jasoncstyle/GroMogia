@@ -25,6 +25,7 @@ import { GeoNotesPanel } from "@/components/geo-notes-panel";
 import { GeoAuditsPanel } from "@/components/geo-audits-panel";
 import { GeoHistoryPanel } from "@/components/geo-history-panel";
 import { GeoQueriesPanel } from "@/components/geo-queries-panel";
+import { CompetitorSitesPanel } from "@/components/competitor-sites-panel";
 import { SerpNotesPanel } from "@/components/serp-notes-panel";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
@@ -108,7 +109,7 @@ export default async function SeoPage({
           then apply title, description, or heading changes onto that GroovGro
           page. Search Console is read-only. Queries from those snapshots are
           stored as a history and given a conservative estimate rank. You can
-          save a competitor you already see. Worth-a-look queries are compared
+          save a competitor website and read that public page. Worth-a-look queries are compared
           to pages GroovGro already read. You can save a brief to the planner
           and write a workspace draft from it. You can save a draft for later
           review. Pages GroovGro already read
@@ -118,8 +119,9 @@ export default async function SeoPage({
           what you already heard. Latest saved snapshots can show citation
           gaps. GroovGro will not invent topics,
           publish a page, add links or schema to the live website, ask AI
-          systems, scrape answers, look businesses up, scrape search results,
-          buy keyword or SERP data, buy ads, or change Stripe checkout.
+          systems, scrape answers, scrape Google, buy keyword or SERP data,
+          buy ads, or change Stripe checkout. It may read a competitor
+          website you saved.
         </p>
       </div>
 
@@ -293,6 +295,12 @@ export default async function SeoPage({
                 ? [{ id: brief.draft.id, title: brief.draft.title }]
                 : [],
             )}
+            canManage={session.permissions.includes("manage_seo")}
+          />
+
+          <CompetitorSitesPanel
+            sites={data.competitorSites}
+            searches={data.competitorSearches}
             canManage={session.permissions.includes("manage_seo")}
           />
 

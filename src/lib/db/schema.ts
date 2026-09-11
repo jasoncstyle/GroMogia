@@ -815,6 +815,42 @@ export const serpNotes = pgTable(
   ],
 );
 
+export const COMPETITOR_SOURCE_OWNER = "owner";
+export const COMPETITOR_STATUS_SAVED = "saved";
+
+export const competitorSites = pgTable(
+  "competitor_sites",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    url: text("url").notNull(),
+    host: text("host").notNull(),
+    note: text("note").notNull().default(""),
+    title: text("title").notNull().default(""),
+    description: text("description").notNull().default(""),
+    headings: jsonb("headings").$type<string[]>().notNull().default([]),
+    navLabels: jsonb("nav_labels").$type<string[]>().notNull().default([]),
+    modelGuess: text("model_guess").notNull().default(""),
+    marketingGuess: text("marketing_guess").notNull().default(""),
+    competeNote: text("compete_note").notNull().default(""),
+    status: text("status").notNull().default(COMPETITOR_STATUS_SAVED),
+    source: text("source").notNull().default(COMPETITOR_SOURCE_OWNER),
+    lookedAt: timestamp("looked_at", { withTimezone: true }),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("competitor_sites_org_host_idx").on(
+      table.organizationId,
+      table.host,
+    ),
+    index("competitor_sites_org_idx").on(table.organizationId),
+  ],
+);
+
 export const CONTENT_GAP_SOURCE_STORED_PAGES = "stored_pages";
 export const CONTENT_GAP_STATUS_GAP = "gap";
 

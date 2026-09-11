@@ -61,6 +61,8 @@ export type IntelligenceFacts = {
   attributionUnknownCount?: number
   beforeAfterLookCount?: number
   executionRequestCount?: number
+  competitorSiteCount?: number
+  competitorLookCount?: number
 };
 
 export type InsightItem = {
@@ -201,6 +203,8 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const geoAuditGapCount = facts.geoAuditGapCount ?? 0;
   const beforeAfterLookCount = facts.beforeAfterLookCount ?? 0;
   const executionRequestCount = facts.executionRequestCount ?? 0;
+  const competitorSiteCount = facts.competitorSiteCount ?? 0;
+  const competitorLookCount = facts.competitorLookCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -217,6 +221,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Competitor notes you already saved",
       body: `The owner saved ${serpNoteCount} competitor ${serpNoteCount === 1 ? "note" : "notes"} from what they already see. GroovGro did not look these businesses up or scrape search results.`,
       evidence: ["serp_notes.source=owner"],
+      href: "/app/seo",
+    });
+  }
+
+  if (competitorSiteCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Competitor websites you asked GroovGro to read",
+      body: `${competitorSiteCount} competitor ${competitorSiteCount === 1 ? "website is" : "websites are"} saved.${competitorLookCount > 0 ? ` GroovGro read ${competitorLookCount}.` : " GroovGro has not read them yet."} This is a look at a page you named. GroovGro did not scrape Google, copy their words, or buy ads.`,
+      evidence: ["competitor_sites.source=owner"],
       href: "/app/seo",
     });
   }
@@ -383,7 +397,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     observations.push({
       kind: "observation",
       title: "Business context for later search work",
-      body: "The owner saved who to reach, problems they have, known competitors, what makes the business different, or claims to avoid. GroovGro will not look up competitors or write pages from this yet.",
+      body: "The owner saved who to reach, problems they have, known competitors, what makes the business different, or claims to avoid. This form still does not look up competitors or write pages from this yet. Competitor looks live on SEO from a website you name.",
       evidence: ["business_brains seo context"],
       href: "/app/business",
     });
@@ -490,9 +504,37 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Add business context for later search work",
-      body: "On Business, add who you want to reach, problems they are trying to solve, competitors you already know, what makes the business different, or claims GroovGro must never make. GroovGro will not look up competitors or change the live website.",
+      body: "On Business, add who you want to reach, problems they are trying to solve, competitors you already know, what makes the business different, or claims GroovGro must never make. This form still does not look up competitors or change the live website.",
       evidence: ["business_brains seo context missing"],
       href: "/app/business",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
+    knownCompetitorCount > 0 &&
+    competitorSiteCount === 0
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Save a competitor website you already know",
+      body: "On SEO, save a competitor website you already know. GroovGro can read that public page. It will not scrape Google or invent who you compete with.",
+      evidence: ["competitor_sites missing"],
+      href: "/app/seo",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
+    competitorSiteCount > 0 &&
+    competitorLookCount === 0
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Read a competitor website you saved",
+      body: "On SEO, read a competitor website you saved. GroovGro will write a stored look. It will not copy their words, buy ads, or search Google.",
+      evidence: ["competitor_sites.looked_at missing"],
+      href: "/app/seo",
     });
   }
 
@@ -747,6 +789,8 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `attribution_unknown=${facts.attributionUnknownCount ?? 0}`,
     `before_after=${facts.beforeAfterLookCount ?? 0}`,
     `execution=${facts.executionRequestCount ?? 0}`,
+    `competitor_sites=${facts.competitorSiteCount ?? 0}`,
+    `competitor_looks=${facts.competitorLookCount ?? 0}`,
   ].join(" ");
 }
 

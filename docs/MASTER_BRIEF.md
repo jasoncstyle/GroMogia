@@ -1,10 +1,12 @@
 # GroovGro — Project Master Brief
 
-**Version 2.1 — Goal-Driven Growth Architecture** (10 September 2026)
+**Version 2.2 — Business Partner + Competitor Looks** (11 September 2026)
 
 Source of truth for product intent. Architecture and implementation must follow this document unless a later approved decision supersedes it. The V1 brief is archived at [MASTER_BRIEF_V1.md](MASTER_BRIEF_V1.md). Implementation notes and status of each slice: [v2/ARCHITECTURE.md](v2/ARCHITECTURE.md) and [STATUS.md](STATUS.md).
 
-Version 2.1 adds SEO Intelligence, a Content Engine, and AI Visibility / GEO as **modules that feed the same growth loop**. It does not replace V2. It does not make GroovGro a standalone SEO app.
+Version 2.1 added SEO Intelligence, a Content Engine, and AI Visibility / GEO as **modules that feed the same growth loop**. It does not replace V2. It does not make GroovGro a standalone SEO app.
+
+Version 2.2 names the working relationship: GroovGro is a **business partner**. The owner runs day-to-day operations. GroovGro runs the marketing side — it watches, analyzes, and suggests work that can grow the business and bring in more revenue. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. It also records the first competitor-look slice: the owner can save a known competitor website, and GroovGro can read that public page. Finding more competitors from search terms stays **PLANNED** behind an off adapter.
 
 **Product:** GroovGro  
 **Primary domain:** groovgro.com  
@@ -28,6 +30,8 @@ Primary value comes from understanding the relationships between the business, i
 Official intelligence loop:
 
 CONNECT → UNDERSTAND → OBSERVE → ANALYZE → IDENTIFY OPPORTUNITIES → PRIORITIZE → RECOMMEND → OWNER REVIEW → EXECUTE WHEN AUTHORIZED → MEASURE → LEARN → REPEAT
+
+GroovGro is a business partner, not a second operator of the whole company. The owner runs day-to-day operations. GroovGro runs the marketing side: it watches the business, studies competitors the owner names (and later ones it is allowed to find), and suggests work that can grow the business and bring in more revenue. The owner decides. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. GroovGro does not implement marketing work until the owner says so.
 
 The owner should not have to think in separate marketing disciplines. GroovGro should eventually synthesize website, SEO, content, AI visibility, advertising, traffic, leads, customers, and revenue, then recommend the highest-value next action.
 
@@ -119,6 +123,8 @@ Urgent operational issues may bypass the routine review schedule.
 
 Do not build unrestricted autonomy. Growth Director and guarded automation stay feature-flagged off until later phases.
 
+The owner decides what happens. Some suggestions are owner work. Some suggestions wait until the owner authorizes GroovGro. Execute stays off until that authorization exists and the adapter is turned on.
+
 Every automated action must pass authentication, organization authorization, module entitlement, provider capability, risk policy, and automation guardrails. AI must never bypass application authorization.
 
 ## 10. Dashboard and reviews
@@ -139,7 +145,7 @@ Unrestricted Growth Director, autonomous cross-channel budget management, fully 
 
 Do not create fake sophistication. Do not start ads. Do not store payment card data.
 
-Do not build a disconnected SEO / GEO product. Do not clone another company’s branding, wording, or UI. Do not auto-publish content by default. Do not generate large amounts of low-quality content. Do not chase traffic, impressions, or AI mentions without asking whether the business grew. Do not present estimates as facts. Do not treat a single AI answer as absolute truth. Do not scrape providers in violation of their terms. Do not hard-code a fixed list of AI companies through business logic. Do not buy keyword or SERP vendors until an adapter and a cost cap exist.
+Do not build a disconnected SEO / GEO product. Do not clone another company’s branding, wording, or UI. Do not auto-publish content by default. Do not generate large amounts of low-quality content. Do not chase traffic, impressions, or AI mentions without asking whether the business grew. Do not present estimates as facts. Do not treat a single AI answer as absolute truth. Do not scrape Google, Bing, social networks, or other providers in violation of their terms. Reading a public page the owner named — the same way GroovGro reads the owner’s own site — is allowed. Do not copy competitor words onto a live site. Do not hard-code a fixed list of AI companies through business logic. Do not buy keyword or SERP vendors until an adapter and a cost cap exist.
 
 ## 13. Operating principle
 
@@ -172,7 +178,7 @@ Use these labels. Do not make planned work sound shipped.
 
 ## 16. SEO, content, and AI visibility feed Growth Intelligence
 
-**Status:** vision approved 10 September 2026. Phases A–T first slices are implemented. Do not turn on execute, Growth Director, SERP lookup, GEO lookup, or CMS publish.
+**Status:** vision approved 10 September 2026. Partner model recorded 11 September 2026. Phases A–T first slices are implemented. Owner-named competitor looks are implemented on this slice. Do not turn on execute, Growth Director, SERP lookup, competitor search, GEO lookup, or CMS publish.
 
 GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
 
@@ -188,6 +194,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Search Console **read-only** snapshots: totals, top queries, top pages
 - Keyword model and history from those stored Search Console queries, with a conservative estimate rank (no vendor volume)
 - Owner-entered competitor notes for queries the owner already sees (no lookup, scrape, or SERP vendor)
+- Owner-named competitor websites: GroovGro can read that public page and store a compete look (no Google scrape, no copy onto a live site, search discovery off)
 - Content gaps: worth-a-look Search Console queries compared to pages GroovGro already read (no new pages)
 - Content briefs and planner: the owner can save a brief for a stored query (no publish)
 - Content drafts: GroovGro can write a workspace draft from a saved brief (no publish)
@@ -208,7 +215,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 
 - Business knowledge: owner can save who to reach, pain points, known competitors, differentiators, and prohibited claims (Phase D). Later keyword/GEO work still does not read these into a scoring engine.
 - Keywords: Search Console queries are stored as a keyword model with snapshot history (Phase E) and a conservative estimate rank (Phase F). Groups, intent, and paid keyword vendors stay **PLANNED**.
-- Competitor / SERP notes: the owner can save who they already see for a stored query (Phase G first slice). Lookup, scrape, and SERP vendors stay **PLANNED**.
+- Competitor / SERP notes: the owner can save who they already see for a stored query (Phase G first slice). The owner can also save a competitor website and ask GroovGro to read that public page. Search-engine discovery, SERP vendors, and Google scrape stay **PLANNED** / off.
 - Content gaps: worth-a-look stored queries are compared to pages GroovGro already read (Phase H first slice). Generation stays **PLANNED**.
 - Content briefs: the owner can save a planner brief for a stored query (Phase I first slice). Publishing stays **PLANNED**.
 - Content drafts: a workspace draft can be written from a saved brief (Phase J first slice). The owner can save that draft for later CMS review (Phase P first slice). Live CMS write stays **PLANNED**.
@@ -226,7 +233,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 ### PLANNED (not implemented)
 
 - Keyword groups, intent, create-vs-improve, paid keyword vendors
-- Competitor and SERP lookup (contracted, allowed providers only). Owner-entered notes exist.
+- Competitor and SERP lookup (contracted, allowed providers only). Owner-entered notes and owner-named website looks exist. Finding more competitors from the best search terms for the business type stays behind an off adapter. Do not scrape Google.
 - Publishing links or schema onto a live site. Gap detection, briefs, workspace drafts, and page-structure facts exist.
 - Live CMS write after owner approval. A review-only queue and a disabled adapter exist.
 - AI Visibility / GEO adapters, mentions, citations, share of voice, accuracy. Owner-entered notes, a query library, history snapshots, and citation-gap estimates exist. Lookup stays off.
@@ -319,7 +326,7 @@ Do not overwrite the only copy of a metric. Keep snapshots (Search Console alrea
 | D | Business Brain extras SEO/GEO need | **IMPLEMENTED** — owner-entered lists only. No scrape. No keyword engine. |
 | E | Keyword model and history from Search Console | **IMPLEMENTED** — stored GSC queries only. No vendor. No score. |
 | F | Keyword opportunity scoring | **IMPLEMENTED** — estimate from stored GSC numbers only. No vendor volume. No SERP. |
-| G | Competitor and SERP intelligence | **IMPLEMENTED** first slice — owner-entered notes only. No scrape. No vendor. |
+| G | Competitor and SERP intelligence | **IMPLEMENTED** first slice — owner-entered notes. Owner-named website looks are a later slice on the same module. Search discovery stays off. No Google scrape. No vendor. |
 | H | Content gap detection | **IMPLEMENTED** first slice — stored worth-a-look queries vs pages already read. No brief. No new page. |
 | I | Content briefs and planner | **IMPLEMENTED** first slice — owner-entered briefs on the SEO planner. No article copy. No publish. |
 | J | Content generation / optimization | **IMPLEMENTED** first slice — workspace draft from a saved brief. No publish. No live-site edit. |

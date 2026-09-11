@@ -2,6 +2,8 @@
 
 First implementation slice: **V2 growth foundation**. This is not the Growth Director and not autonomous marketing.
 
+GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do.
+
 V1 checkpoint tag: `pre-v2-architecture-checkpoint` (`7d4c9be`). Compare against that tag to see what V2 actually changed.
 
 ## KEEP
@@ -1973,12 +1975,13 @@ Organization
 169. **Phase R — Attribution improvements** — **IMPLEMENTED** this slice. Stored people-to-revenue joins get DIRECT / ASSISTED / ESTIMATED / UNKNOWN labels. Marketing and Intelligence can show those. Matching charges stays on Bookings. No keyword path. No AI referral. No ads. No execute.
 170. **Phase S — Experimentation / before-and-after** — **IMPLEMENTED** this slice. The first and latest stored Goal numbers become `before_after_looks` (`improved` / `same` / `declined`). Intelligence and Next step can show that look. It is not an experiment GroovGro ran and does not change Next step order, buy ads, or change the plan.
 171. **Phase T — Carefully expanded execution** — **IMPLEMENTED** this slice. Owner can save approved work to `execution_requests`. `requestExecute` exists and stays off. Intelligence, Next step, and Your work can show that queue. It does not run the work, reorder Next step, buy ads, send email, or turn on Growth Director. Do not turn on SERP lookup, GEO lookup, or CMS publish. Do not use channel scores or a before-and-after to reorder Next step until Jason asks.
+172. **Competitor looks from owner-named URLs** — **IMPLEMENTED** this slice. Owner can save `competitor_sites` from a public website they already know. GroovGro may fetch that page and store a model guess, marketing guess, and compete note. SEO and Intelligence can show that. `requestCompetitorSearch` exists and stays off. Do not scrape Google. Do not copy their words onto a live site. Do not buy ads or change checkout. Do not add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
 ## Expansion: SEO Intelligence, Content, AI Visibility (10 September 2026)
 
-Canonical product text: [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.1 §§15–19. This section is the implementation map. Do not treat **PLANNED** lists as shipped.
+Canonical product text: [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.2 §§15–19. This section is the implementation map. Do not treat **PLANNED** lists as shipped.
 
 ### Shared recommendation: extend `growth_actions`
 
@@ -2004,11 +2007,11 @@ Fields still later if usage needs them: `effort`, `estimated_cost`, `urgency`, `
 
 ### IMPLEMENTED / PARTIAL / PLANNED
 
-**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work; keyword model and history from stored Search Console queries; conservative keyword estimate ranks from those stored numbers; owner-entered competitor notes; content gaps from stored worth-a-look queries vs pages already read; owner-entered content briefs on the SEO planner; workspace drafts from a saved brief; internal link suggestions and schema type estimates from pages already read; owner-entered AI visibility notes; owner-entered AI query library with lookup off; owner-entered AI visibility history snapshots; citation-gap estimates from those snapshots; owner-entered CMS publish review queue with write off; conservative cross-channel estimates from stored people, page, content, and AI-visibility facts; DIRECT / ASSISTED / ESTIMATED / UNKNOWN labels on stored people-to-revenue joins; first-vs-latest stored Goal before-and-after looks; owner-entered later-run queue from approved work with execute off.
+**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work; keyword model and history from stored Search Console queries; conservative keyword estimate ranks from those stored numbers; owner-entered competitor notes; owner-named competitor website looks with search discovery off; content gaps from stored worth-a-look queries vs pages already read; owner-entered content briefs on the SEO planner; workspace drafts from a saved brief; internal link suggestions and schema type estimates from pages already read; owner-entered AI visibility notes; owner-entered AI query library with lookup off; owner-entered AI visibility history snapshots; citation-gap estimates from those snapshots; owner-entered CMS publish review queue with write off; conservative cross-channel estimates from stored people, page, content, and AI-visibility facts; DIRECT / ASSISTED / ESTIMATED / UNKNOWN labels on stored people-to-revenue joins; first-vs-latest stored Goal before-and-after looks; owner-entered later-run queue from approved work with execute off.
 
-**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution (joins are labeled; keyword → page → person and AI-referral are not); fixed Next step priority (channel estimates are shown and do not reorder it); paused builder; keywords (history and estimate rank stored; groups, intent, and vendor scores not); competitor/SERP (owner notes stored; lookup and vendors not); content (gaps, briefs, workspace drafts, review queue, and page-structure facts stored; live publish not); AI Visibility / GEO (owner notes, query library, history snapshots, and citation-gap estimates stored; live adapters and share of voice not); experimentation (first vs latest stored Goal numbers; A/B and using that look to change the plan not); execution (later-run queue stored; adapter, ads, email, social, and Growth Director stay off).
+**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution (joins are labeled; keyword → page → person and AI-referral are not); fixed Next step priority (channel estimates are shown and do not reorder it); paused builder; keywords (history and estimate rank stored; groups, intent, and vendor scores not); competitor/SERP (owner notes and owner-named website looks stored; search discovery, lookup, and vendors not); content (gaps, briefs, workspace drafts, review queue, and page-structure facts stored; live publish not); AI Visibility / GEO (owner notes, query library, history snapshots, and citation-gap estimates stored; live adapters and share of voice not); experimentation (first vs latest stored Goal numbers; A/B and using that look to change the plan not); execution (later-run queue stored; adapter, ads, email, social, and Growth Director stay off).
 
-**PLANNED:** live CMS write; SERP/competitor lookup engines; using channel scores to reorder Next step; keyword → page and AI-referral attribution; using a before-and-after to change the plan; turning on execute, Growth Director, and guarded automation.
+**PLANNED:** live CMS write; finding more competitors from the best search terms for the business type (allowed adapter only); SERP/competitor lookup engines; using channel scores to reorder Next step; keyword → page and AI-referral attribution; using a before-and-after to change the plan; turning on execute, Growth Director, and guarded automation.
 
 ### Architecture rules
 
