@@ -19,7 +19,7 @@ import {
 } from "@/lib/growth/competitor-looks";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
-import { fetchPublicText } from "@/lib/seo/fetch";
+import { explainPublicFetchFailure, fetchPublicText } from "@/lib/seo/fetch";
 
 const siteSchema = z.object({
   name: z.string().trim().max(200).optional().default(""),
@@ -142,9 +142,7 @@ export async function lookAtCompetitorSite(
     }
     const fetched = await fetchPublicText(site.url);
     if (!fetched.ok || !fetched.body.trim()) {
-      throw new Error(
-        "GroovGro could not read that public page. Check the address. It did not search Google.",
-      );
+      throw new Error(explainPublicFetchFailure(fetched));
     }
     const [brain] = await db
       .select({
