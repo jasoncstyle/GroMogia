@@ -229,7 +229,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     observations.push({
       kind: "observation",
       title: "Competitor websites you asked GroovGro to read",
-      body: `${competitorSiteCount} competitor ${competitorSiteCount === 1 ? "website is" : "websites are"} saved.${competitorLookCount > 0 ? ` GroovGro read ${competitorLookCount}.` : " GroovGro has not read them yet."} This is a look at a page you named. GroovGro did not scrape Google, copy their words, or buy ads.`,
+      body: `${competitorSiteCount} competitor ${competitorSiteCount === 1 ? "website is" : "websites are"} saved.${competitorLookCount > 0 ? ` GroovGro read ${competitorLookCount}.` : " GroovGro has not read them yet."} This is a look at a site you named, including how they sell and market. GroovGro did not scrape Google, copy their words, or buy ads.`,
       evidence: ["competitor_sites.source=owner"],
       href: "/app/seo",
     });

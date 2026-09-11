@@ -17,6 +17,7 @@ import { fetchNamedPublicPage } from "@/lib/growth/page-reader";
 import {
   planCompetitorLook,
   planCompetitorSite,
+  proposeCompetitorInnerPages,
 } from "@/lib/growth/competitor-looks";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
@@ -161,10 +162,23 @@ export async function lookAtCompetitorSite(
       .select({ name: offers.name })
       .from(offers)
       .where(eq(offers.organizationId, session.organizationId));
+    const extraPages: { url: string; html: string }[] = [];
+    if (!pasted) {
+      for (const inner of proposeCompetitorInnerPages({
+        homeUrl: site.url,
+        content: fetched.body,
+      })) {
+        const innerPage = await fetchNamedPublicPage(inner);
+        if (innerPage.ok && innerPage.body.trim()) {
+          extraPages.push({ url: inner, html: innerPage.body });
+        }
+      }
+    }
     const look = planCompetitorLook({
       name: site.name,
       url: site.url,
       html: fetched.body,
+      extraPages,
       ourOffers: offerRows.map((row) => row.name),
       ourDifference: brain?.differentiators ?? [],
     });
