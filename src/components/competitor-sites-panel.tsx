@@ -3,6 +3,7 @@ import {
   lookAtCompetitorSite,
 } from "@/lib/actions/competitor-sites";
 import {
+  type CompetitorCompareView,
   type CompetitorSearchHint,
   type CompetitorSiteView,
 } from "@/lib/growth/competitor-looks";
@@ -22,10 +23,12 @@ import {
 export function CompetitorSitesPanel({
   sites,
   searches,
+  compare,
   canManage = true,
 }: {
   sites: CompetitorSiteView[]
   searches: CompetitorSearchHint[]
+  compare?: CompetitorCompareView | null
   canManage?: boolean
 }) {
   return (
@@ -35,13 +38,19 @@ export function CompetitorSitesPanel({
         <CardDescription>
           Save a competitor website you already know, or open a suggested
           search and save a site you found. GroovGro can read that homepage
-          and a few public pages on the same site, then suggest how to
-          compete. If the site blocks the automated read, paste what you see.
-          It will not scrape Google, copy their words onto your site, or buy
-          ads.
+          and a few public pages on the same site, then compare those looks
+          to what you sell. If the site blocks the automated read, paste what
+          you see. It will not scrape Google, copy their words onto your
+          site, or buy ads.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        {compare ? (
+          <div className="space-y-1 rounded-lg border p-3">
+            <p className="text-sm font-medium">How these sites compare</p>
+            <p className="text-sm text-muted-foreground">{compare.note}</p>
+          </div>
+        ) : null}
         {sites.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             Add a competitor website first. GroovGro will not invent who you

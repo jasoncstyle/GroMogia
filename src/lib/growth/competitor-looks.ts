@@ -19,6 +19,7 @@ export const COMPETITOR_STATUS_LOOKED = "looked";
 export const COMPETITOR_MAX_SHOWN = 12;
 export const COMPETITOR_MAX_SEARCHES = 6;
 export const COMPETITOR_MAX_INNER_PAGES = 3;
+export const COMPETITOR_COMPARE_SOURCE = "stored_looks";
 
 export type CompetitorSiteDraft = {
   organizationId: string
@@ -67,6 +68,16 @@ export type CompetitorSearchHint = {
   query: string
   why: string
   ownerSearchHref: string
+};
+
+export type CompetitorCompareView = {
+  names: string[]
+  sharedSell: string[]
+  sharedMarket: string[]
+  ourLead: string
+  theirLead: string
+  note: string
+  source: typeof COMPETITOR_COMPARE_SOURCE
 };
 
 const BLOCKED_HOST =
@@ -431,6 +442,132 @@ export function proposeCompetitorSearches(input: {
     if (hints.length >= COMPETITOR_MAX_SEARCHES) break;
   }
   return hints.slice(0, COMPETITOR_MAX_SEARCHES);
+}
+
+const SELL_MARKERS = [
+  "training or a course",
+  "a trip people join",
+  "a small or personal group",
+  "products from the page",
+] as const;
+
+const MARKET_MARKERS = [
+  "asks people to book, join, or apply",
+  "markets a course, class, or expedition",
+  "promises a small or personal group",
+  "shows guides or news",
+  "shows a price or package",
+  "sells from the page",
+  "asks people to get in touch",
+] as const;
+
+function joinAnd(values: string[]): string {
+  if (values.length <= 1) return values[0] ?? "";
+  if (values.length === 2) return `${values[0]} and ${values[1]}`;
+  return `${values.slice(0, -1).join(", ")}, and ${values[values.length - 1]}`;
+}
+
+function markersIn(text: string, markers: readonly string[]): string[] {
+  const blob = text.toLowerCase();
+  return markers.filter((marker) => blob.includes(marker.toLowerCase()));
+}
+
+function sharedMarkers(
+  sites: { modelGuess: string; marketingGuess: string }[],
+  pick: (site: { modelGuess: string; marketingGuess: string }) => string[],
+): string[] {
+  const counts = new Map<string, number>();
+  for (const site of sites) {
+    for (const marker of uniqueLabels(pick(site), 8)) {
+      counts.set(marker, (counts.get(marker) ?? 0) + 1);
+    }
+  }
+  const need = sites.length >= 2 ? 2 : 1;
+  return [...counts.entries()]
+    .filter(([, count]) => count >= need)
+    .map(([marker]) => marker);
+}
+
+function siteLead(site: Pick<CompetitorSiteView, "name" | "title" | "headings">): string {
+  return (
+    site.headings.find((heading) => !isGenericWebsiteLabel(heading)) ||
+    site.title.replace(/\s+/g, " ").trim() ||
+    site.name.replace(/\s+/g, " ").trim() ||
+    "their lead"
+  );
+}
+
+export function planCompetitorCompare(input: {
+  sites: Pick<
+    CompetitorSiteView,
+    "name" | "status" | "title" | "headings" | "modelGuess" | "marketingGuess" | "competeNote"
+  >[]
+  ourOffers?: string[]
+  ourDifference?: string[]
+}): CompetitorCompareView | null {
+  const sites = input.sites.filter(
+    (site) =>
+      site.status === COMPETITOR_STATUS_LOOKED ||
+      Boolean(site.competeNote.trim()) ||
+      Boolean(site.modelGuess.trim()),
+  );
+  if (sites.length === 0) return null;
+  const names = uniqueLabels(
+    sites.map((site) => site.name),
+    6,
+  );
+  const sharedSell = sharedMarkers(sites, (site) =>
+    markersIn(site.modelGuess, SELL_MARKERS),
+  );
+  const sharedMarket = sharedMarkers(sites, (site) =>
+    markersIn(site.marketingGuess, MARKET_MARKERS),
+  );
+  const theirLead = siteLead(sites[0]!);
+  const ourLead =
+    (input.ourOffers ?? [])
+      .map((row) => row.replace(/\s+/g, " ").trim())
+      .filter(Boolean)[0] ||
+    (input.ourDifference ?? [])
+      .map((row) => row.replace(/\s+/g, " ").trim())
+      .filter(Boolean)[0] ||
+    "";
+  const who =
+    sites.length === 1
+      ? `${names[0] ?? "This competitor"} is a site you named.`
+      : `These ${sites.length} sites you named are ${joinAnd(names)}.`;
+  const sell = sharedSell.length
+    ? `${sites.length === 1 ? "It sells" : "They sell"} ${joinAnd(sharedSell)}.`
+    : sites.length === 1
+      ? "It did not name a clear offer GroovGro could compare."
+      : "They did not share a clear offer GroovGro could compare.";
+  const marketBits =
+    sites.length === 1
+      ? sharedMarket
+      : sharedMarket.map((bit) =>
+          bit
+            .replace(/^asks /i, "ask ")
+            .replace(/^markets /i, "market ")
+            .replace(/^promises /i, "promise ")
+            .replace(/^shows /i, "show ")
+            .replace(/^sells /i, "sell "),
+        );
+  const market = marketBits.length
+    ? `${sites.length === 1 ? "It" : "They"} ${joinAnd(marketBits)}.`
+    : sites.length === 1
+      ? "It did not show a shared marketing move GroovGro could compare."
+      : "They did not share a marketing move GroovGro could compare.";
+  const next = ourLead
+    ? `A next look is to make “${ourLead}” easier to see than “${theirLead}”.`
+    : `A next look is to name your offer more clearly than “${theirLead}”.`;
+  return {
+    names,
+    sharedSell,
+    sharedMarket,
+    ourLead,
+    theirLead,
+    note: `${who} ${sell} ${market} ${next} This is from competitor websites you asked GroovGro to read, not a reason to copy their words, buy ads, or change checkout.`,
+    source: COMPETITOR_COMPARE_SOURCE,
+  };
 }
 
 export function competitorSitesToShow(

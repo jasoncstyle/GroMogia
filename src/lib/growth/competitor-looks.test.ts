@@ -10,6 +10,7 @@ import {
   normalizeCompetitorUrl,
   planCompeteNote,
   ownerCompetitorSearchHref,
+  planCompetitorCompare,
   planCompetitorLook,
   planCompetitorSite,
   proposeCompetitorInnerPages,
@@ -176,6 +177,76 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(refused.reason, /will not scrape Google/);
   });
 
+  it("compares saved looks to what this business sells", () => {
+    const looked = planCompetitorLook({
+      name: "Harbor Skills",
+      url: "https://harborskills.example/",
+      html: HTML,
+      ourOffers: ["Private coaching"],
+    });
+    const one = planCompetitorCompare({
+      sites: [
+        {
+          name: "Harbor Skills",
+          status: "looked",
+          title: looked.title,
+          headings: looked.headings,
+          modelGuess: looked.modelGuess,
+          marketingGuess: looked.marketingGuess,
+          competeNote: looked.competeNote,
+        },
+      ],
+      ourOffers: ["  Private coaching  "],
+    });
+    assert.ok(one);
+    assert.deepEqual(one.names, ["Harbor Skills"]);
+    assert.equal(one.ourLead, "Private coaching");
+    assert.match(one.note, /Harbor Skills is a site you named/);
+    assert.match(one.note, /Private coaching/);
+    assert.match(one.note, /not a reason to copy their words/);
+    assert.equal(one.source, "stored_looks");
+
+    const two = planCompetitorCompare({
+      sites: [
+        {
+          name: "Harbor Skills",
+          status: "looked",
+          title: "Harbor Skills",
+          headings: ["Weekend beginner class"],
+          modelGuess: "This public site sells training or a course. It leads with “Weekend beginner class”.",
+          marketingGuess: "It asks people to book, join, or apply. It shows a price or package.",
+          competeNote: "saved look",
+        },
+        {
+          name: "Coastal Practice",
+          status: "looked",
+          title: "Coastal Practice",
+          headings: ["Small group trips"],
+          modelGuess: "This public site sells training or a course and a trip people join.",
+          marketingGuess: "It asks people to book, join, or apply. It shows guides or news.",
+          competeNote: "saved look",
+        },
+        {
+          name: "Not read yet",
+          status: "saved",
+          title: "",
+          headings: [],
+          modelGuess: "",
+          marketingGuess: "",
+          competeNote: "",
+        },
+      ],
+      ourDifference: ["Smaller groups"],
+    });
+    assert.ok(two);
+    assert.equal(two.names.includes("Not read yet"), false);
+    assert.match(two.note, /2 sites you named/);
+    assert.match(two.note, /training or a course/);
+    assert.match(two.note, /ask people to book/);
+    assert.match(two.note, /Smaller groups/);
+    assert.equal(planCompetitorCompare({ sites: [] }), null);
+  });
+
   it("does not scrape Google, copy a site, or reorder Next step", () => {
     const helper = readFileSync(
       join(process.cwd(), "src/lib/growth/competitor-looks.ts"),
@@ -220,6 +291,9 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(panel, /Save this competitor/);
     assert.match(panel, /You\s+run the search/);
     assert.match(panel, /ownerSearchHref/);
+    assert.match(panel, /How these sites compare/);
+    assert.match(helper, /planCompetitorCompare/);
+    assert.match(helper, /stored_looks/);
     assert.match(helper, /google\.com\/search/);
     assert.doesNotMatch(action, /google\.com\/search/);
     assert.doesNotMatch(action, /fetch\(.*search/);
@@ -245,13 +319,16 @@ describe("competitor looks from owner-saved URLs", () => {
     );
     assert.match(seoPage, /<CompetitorSitesPanel/);
     assert.match(seoPage, /sites=\{data\.competitorSites\}/);
+    assert.match(seoPage, /compare=\{data\.competitorCompare\}/);
     assert.match(seoPage, /open a suggested search yourself/);
+    assert.match(seoPage, /compare those looks to what you sell/);
     const observe = readFileSync(
       join(process.cwd(), "src/lib/intelligence/observe.ts"),
       "utf8",
     );
     assert.match(observe, /competitorSiteCount/);
     assert.match(observe, /Run a search to find another competitor/);
+    assert.match(observe, /How saved competitor websites compare/);
     assert.match(observe, /will not search Google/);
     assert.doesNotMatch(observe, /coordinateNextStep/);
   });

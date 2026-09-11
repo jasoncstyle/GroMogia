@@ -229,8 +229,18 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     observations.push({
       kind: "observation",
       title: "Competitor websites you asked GroovGro to read",
-      body: `${competitorSiteCount} competitor ${competitorSiteCount === 1 ? "website is" : "websites are"} saved.${competitorLookCount > 0 ? ` GroovGro read ${competitorLookCount}.` : " GroovGro has not read them yet."} This is a look at a site you named, including how they sell and market. GroovGro did not scrape Google, copy their words, or buy ads.`,
+      body: `${competitorSiteCount} competitor ${competitorSiteCount === 1 ? "website is" : "websites are"} saved.${competitorLookCount > 0 ? ` GroovGro read ${competitorLookCount}.` : " GroovGro has not read them yet."} This is a look at a site you named, including how they sell and market.${competitorLookCount > 0 ? " SEO can show how those sites compare to what you sell." : ""} GroovGro did not scrape Google, copy their words, or buy ads.`,
       evidence: ["competitor_sites"],
+      href: "/app/seo",
+    });
+  }
+
+  if (competitorLookCount >= 2) {
+    observations.push({
+      kind: "observation",
+      title: "How saved competitor websites compare",
+      body: `GroovGro compared ${competitorLookCount} competitor websites you named to what you sell. This is from sites you asked it to read, not a Google scrape, and not a reason to copy their words or buy ads.`,
+      evidence: ["competitor_sites.looked_at"],
       href: "/app/seo",
     });
   }
@@ -534,6 +544,19 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Save a competitor website you already know",
       body: "On SEO, save a competitor website you already know. GroovGro can read that public page. It will not scrape Google or invent who you compete with.",
       evidence: ["competitor_sites missing"],
+      href: "/app/seo",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
+    competitorLookCount === 1
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Read another competitor website to compare",
+      body: "On SEO, read a second competitor website you named. GroovGro can then compare how they sell. It will not scrape Google or copy their words.",
+      evidence: ["competitor_sites.compare"],
       href: "/app/seo",
     });
   }
