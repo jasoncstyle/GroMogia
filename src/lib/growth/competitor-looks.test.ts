@@ -140,6 +140,7 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /eq\(competitorSites\.organizationId, session\.organizationId\)/);
     assert.match(action, /fetchPublicText/);
+    assert.match(action, /explainPublicFetchFailure/);
     assert.match(panel, /will not scrape Google/);
     assert.match(panel, /Read this website/);
     for (const source of [helper, search, panel]) {

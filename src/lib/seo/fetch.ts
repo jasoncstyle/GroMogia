@@ -1,13 +1,53 @@
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
 
-const FETCH_TIMEOUT_MS = 10_000;
+const FETCH_TIMEOUT_MS = 15_000;
 export const MAX_HTML_BYTES = 750_000;
+
+const IDENTIFY_HEADERS = {
+  "user-agent": "GroovGroSEO/1.0 (+https://www.groovgro.com)",
+  accept: "text/html,application/xhtml+xml,text/plain,application/xml;q=0.9,*/*;q=0.8",
+};
+
+const COMPATIBLE_HEADERS = {
+  "user-agent": "Mozilla/5.0 (compatible; GroovGro/1.0; +https://www.groovgro.com)",
+  accept: "text/html,application/xhtml+xml,text/plain,application/xml;q=0.9,*/*;q=0.8",
+  "accept-language": "en-US,en;q=0.9",
+};
 
 export type FetchedText = {
   ok: boolean
   status: number
   body: string
 };
+
+export function isChallengeHtml(html: string): boolean {
+  return /just a moment|attention required|cf-browser-verification|checking your browser|enable javascript and cookies to continue|verify you are human/i.test(
+    html,
+  );
+}
+
+export function isUsablePublicHtml(html: string): boolean {
+  const text = html.trim();
+  if (text.length < 40) return false;
+  if (isChallengeHtml(text)) return false;
+  return /<title[\s>]|<h1[\s>]|<meta\s/i.test(text);
+}
+
+export function explainPublicFetchFailure(fetched: FetchedText): string {
+  if (fetched.status === 403 || fetched.status === 401 || fetched.status === 429) {
+    return "This website blocked the automated read. Try again in a minute. GroovGro did not search Google.";
+  }
+  if (fetched.status === 404) {
+    return "That page was not found. Check the address. GroovGro did not search Google.";
+  }
+  if (isChallengeHtml(fetched.body)) {
+    return "This website asked for a human check before showing the page. GroovGro did not search Google.";
+  }
+  if (fetched.status === 0) {
+    return "GroovGro could not reach that website. Check the address. It did not search Google.";
+  }
+  return "GroovGro could not read that public page. Check the address. It did not search Google.";
+}
 
 export async function readCappedResponseText(
   response: Response,
@@ -24,7 +64,8 @@ export async function readCappedResponseText(
   try {
     while (received < maxBytes) {
       const { done, value } = await reader.read();
-      if (done || !value) break;
+      if (done) break;
+      if (!value || value.byteLength === 0) continue;
       const remaining = maxBytes - received;
       if (value.byteLength > remaining) {
         chunks.push(value.slice(0, remaining));
@@ -51,30 +92,52 @@ export async function readCappedResponseText(
   return new TextDecoder("utf-8", { fatal: false }).decode(merged);
 }
 
+function finalizePublicFetch(responseUrl: string, status: number, body: string): FetchedText {
+  if (responseUrl) {
+    const finalUrl = isSafePublicHttpUrl(responseUrl);
+    if (!finalUrl) {
+      return { ok: false, status, body: "" };
+    }
+  }
+  const usable = isUsablePublicHtml(body);
+  return {
+    ok: (status >= 200 && status < 400 && Boolean(body.trim()) && !isChallengeHtml(body)) || usable,
+    status,
+    body: usable || body.trim() ? body : "",
+  };
+}
+
+async function attemptPublicFetch(
+  parsed: URL,
+  headers: Record<string, string>,
+): Promise<FetchedText> {
+  try {
+    const response = await fetch(parsed.toString(), {
+      redirect: "follow",
+      cache: "no-store",
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      headers,
+    });
+    const body = await readCappedResponseText(response);
+    return finalizePublicFetch(response.url, response.status, body);
+  } catch {
+    return { ok: false, status: 0, body: "" };
+  }
+}
+
 export async function fetchPublicText(url: string): Promise<FetchedText> {
   const parsed = isSafePublicHttpUrl(url);
   if (!parsed) {
     return { ok: false, status: 0, body: "" };
   }
 
-  try {
-    const response = await fetch(parsed.toString(), {
-      redirect: "follow",
-      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-      headers: {
-        "user-agent": "GroovGroSEO/1.0 (+https://www.groovgro.com)",
-        accept: "text/html,application/xhtml+xml,text/plain,application/xml;q=0.9,*/*;q=0.8",
-      },
-    });
-    const finalUrl = isSafePublicHttpUrl(response.url);
-    if (!finalUrl) {
-      return { ok: false, status: response.status, body: "" };
-    }
-    const body = await readCappedResponseText(response);
-    return { ok: response.ok, status: response.status, body };
-  } catch {
-    return { ok: false, status: 0, body: "" };
-  }
+  const first = await attemptPublicFetch(parsed, IDENTIFY_HEADERS);
+  if (first.ok) return first;
+
+  const second = await attemptPublicFetch(parsed, COMPATIBLE_HEADERS);
+  if (second.ok) return second;
+
+  return second.status ? second : first;
 }
 
 export function originFromWebsiteUrl(websiteUrl: string): URL | null {
