@@ -40,6 +40,9 @@ export type IntelligenceFacts = {
   contentGapCount?: number
   contentBriefCount?: number
   contentDraftCount?: number
+  internalLinkCount?: number
+  schemaFactCount?: number
+  schemaReviewCount?: number
 };
 
 export type InsightItem = {
@@ -174,6 +177,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const contentGapCount = facts.contentGapCount ?? 0;
   const contentBriefCount = facts.contentBriefCount ?? 0;
   const contentDraftCount = facts.contentDraftCount ?? 0;
+  const internalLinkCount = facts.internalLinkCount ?? 0;
+  const schemaFactCount = facts.schemaFactCount ?? 0;
+  const schemaReviewCount = facts.schemaReviewCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -220,6 +226,26 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Workspace content drafts",
       body: `${contentDraftCount} workspace ${contentDraftCount === 1 ? "draft is" : "drafts are"} saved from a brief. GroovGro did not publish them or change the live website.`,
       evidence: ["content_drafts.status=draft"],
+      href: "/app/seo",
+    });
+  }
+
+  if (internalLinkCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Internal link suggestions from pages already read",
+      body: `${internalLinkCount} stored ${internalLinkCount === 1 ? "page mentions" : "pages mention"} another page title GroovGro already read. GroovGro did not add a link on the live website.`,
+      evidence: ["internal_link_suggestions.source=stored_pages"],
+      href: "/app/seo",
+    });
+  }
+
+  if (schemaFactCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Estimated schema types from pages already read",
+      body: `GroovGro estimated a schema type for ${schemaFactCount} ${schemaFactCount === 1 ? "page" : "pages"} it already read. These are estimates from the stored page group. GroovGro did not add schema to the live website.`,
+      evidence: ["page_schema_facts.source=page_group"],
       href: "/app/seo",
     });
   }
@@ -361,6 +387,19 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (
+    facts.websiteConnected &&
+    (internalLinkCount > 0 || schemaReviewCount > 0)
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review link and schema facts from pages already read",
+      body: "Open SEO to read link suggestions and estimated schema types from pages GroovGro already read. GroovGro will not add links or schema to the live website.",
+      evidence: ["internal_link_suggestions", "page_schema_facts"],
+      href: "/app/seo",
+    });
+  }
+
   if (facts.websiteConnected && namedSources.length === 0) {
     recommendations.push({
       kind: "recommendation",
@@ -440,6 +479,9 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `content_gaps=${facts.contentGapCount ?? 0}`,
     `content_briefs=${facts.contentBriefCount ?? 0}`,
     `content_drafts=${facts.contentDraftCount ?? 0}`,
+    `internal_links=${facts.internalLinkCount ?? 0}`,
+    `schema_facts=${facts.schemaFactCount ?? 0}`,
+    `schema_review=${facts.schemaReviewCount ?? 0}`,
   ].join(" ");
 }
 

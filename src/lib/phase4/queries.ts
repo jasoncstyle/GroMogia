@@ -1,17 +1,28 @@
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
-import { aiActionLogs, contentBriefs, contentDrafts, contentGaps, keywords, payments, serpNotes } from "@/lib/db/schema";
 import {
-  buildIntelligenceBrief,
-  type IntelligenceBrief,
-  type IntelligenceFacts,
-} from "@/lib/intelligence/observe";
+  aiActionLogs,
+  contentBriefs,
+  contentDrafts,
+  contentGaps,
+  internalLinkSuggestions,
+  keywords,
+  pageSchemaFacts,
+  payments,
+  serpNotes,
+} from "@/lib/db/schema";
 import {
   brainSeoContextCounts,
   brainSeoContextSaved,
 } from "@/lib/growth/brain-context";
 import { CONTENT_GAP_STATUS_GAP } from "@/lib/growth/content-gaps";
+import { isDefaultSchemaType } from "@/lib/growth/page-structure";
+import {
+  buildIntelligenceBrief,
+  type IntelligenceBrief,
+  type IntelligenceFacts,
+} from "@/lib/intelligence/observe";
 import { isWaitingActionStatus } from "@/lib/growth/next-step";
 import { isSeoGrowthActionType } from "@/lib/growth/seo-actions";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
@@ -34,12 +45,14 @@ export async function getIntelligenceFacts(
     contentGapCount,
     contentBriefCount,
     contentDraftCount,
+    pageStructureCounts,
   ] = await Promise.all([
     countRecordedKeywords(organizationId),
     countSerpNotes(organizationId),
     countContentGaps(organizationId),
     countContentBriefs(organizationId),
     countContentDrafts(organizationId),
+    countPageStructure(organizationId),
   ]);
 
   const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
@@ -93,6 +106,9 @@ export async function getIntelligenceFacts(
     contentGapCount,
     contentBriefCount,
     contentDraftCount,
+    internalLinkCount: pageStructureCounts.links,
+    schemaFactCount: pageStructureCounts.facts,
+    schemaReviewCount: pageStructureCounts.review,
   };
 }
 
@@ -158,6 +174,34 @@ async function countContentDrafts(organizationId: string): Promise<number> {
     .from(contentDrafts)
     .where(eq(contentDrafts.organizationId, organizationId));
   return Number(row?.value ?? 0);
+}
+
+async function countPageStructure(organizationId: string): Promise<{
+  links: number
+  facts: number
+  review: number
+}> {
+  const db = getDb();
+  if (!db) return { links: 0, facts: 0, review: 0 };
+  const [linkRow, factRows] = await Promise.all([
+    db
+      .select({ value: sql<number>`count(*)::int` })
+      .from(internalLinkSuggestions)
+      .where(eq(internalLinkSuggestions.organizationId, organizationId)),
+    db
+      .select({
+        schemaType: pageSchemaFacts.schemaType,
+        organizationId: pageSchemaFacts.organizationId,
+      })
+      .from(pageSchemaFacts)
+      .where(eq(pageSchemaFacts.organizationId, organizationId)),
+  ]);
+  const facts = factRows.filter((row) => row.organizationId === organizationId);
+  return {
+    links: Number(linkRow[0]?.value ?? 0),
+    facts: facts.length,
+    review: facts.filter((row) => !isDefaultSchemaType(row.schemaType)).length,
+  };
 }
 
 export async function getIntelligencePageData(

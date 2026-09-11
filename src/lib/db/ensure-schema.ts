@@ -326,4 +326,15 @@ export async function ensureSchema(): Promise<void> {
   if (!contentDraftsTable[0]?.name) {
     await applyMigration(sql, "0030_content_drafts.sql");
   }
+
+  const internalLinkTable = (await sql.query(
+    "select to_regclass('public.internal_link_suggestions') as name",
+  )) as RegistryRow[];
+  const pageSchemaTable = (await sql.query(
+    "select to_regclass('public.page_schema_facts') as name",
+  )) as RegistryRow[];
+
+  if (!internalLinkTable[0]?.name || !pageSchemaTable[0]?.name) {
+    await applyMigration(sql, "0031_page_structure.sql");
+  }
 }

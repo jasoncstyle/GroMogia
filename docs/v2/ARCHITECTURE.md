@@ -1963,7 +1963,8 @@ Organization
 159. **Phase H — Content gap detection** — **IMPLEMENTED** first slice. Worth-a-look stored queries are compared to `website_discovered_pages` GroovGro already read. `content_gaps` stores gap or covered. SEO and Intelligence can show a gap. No new page. No scrape.
 160. **Phase I — Content briefs and planner** — **IMPLEMENTED** first slice. Owner can save `content_briefs` on the SEO planner for a stored query. No publish. No Next step.
 161. **Phase J — Content generation / optimization** — **IMPLEMENTED** first slice. Owner can write a `content_drafts` workspace draft from a saved brief. No publish. No live-site edit. No Next step.
-162. **Phases K–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: internal linking, GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters. Do not turn on SERP lookup.
+162. **Phase K — Internal linking and schema** — **IMPLEMENTED** first slice. Pages GroovGro already read can produce `internal_link_suggestions` and `page_schema_facts`. SEO and Intelligence can show those facts. No JSON-LD. No live-site edit. No Next step.
+163. **Phases L–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters. Do not turn on SERP lookup.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
@@ -1995,9 +1996,9 @@ Fields still later if usage needs them: `effort`, `estimated_cost`, `urgency`, `
 
 ### IMPLEMENTED / PARTIAL / PLANNED
 
-**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work; keyword model and history from stored Search Console queries; conservative keyword estimate ranks from those stored numbers; owner-entered competitor notes; content gaps from stored worth-a-look queries vs pages already read; owner-entered content briefs on the SEO planner; workspace drafts from a saved brief.
+**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work; keyword model and history from stored Search Console queries; conservative keyword estimate ranks from those stored numbers; owner-entered competitor notes; content gaps from stored worth-a-look queries vs pages already read; owner-entered content briefs on the SEO planner; workspace drafts from a saved brief; internal link suggestions and schema type estimates from pages already read.
 
-**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder; keywords (history and estimate rank stored; groups, intent, and vendor scores not); competitor/SERP (owner notes stored; lookup and vendors not); content (gaps, briefs, and workspace drafts stored; publish not).
+**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder; keywords (history and estimate rank stored; groups, intent, and vendor scores not); competitor/SERP (owner notes stored; lookup and vendors not); content (gaps, briefs, workspace drafts, and page-structure facts stored; publish and live-site write not).
 
 **PLANNED:** content publish; SERP/competitor lookup engines; CMS write; AI Visibility / GEO; scored cross-channel priority; experiments; execute.
 

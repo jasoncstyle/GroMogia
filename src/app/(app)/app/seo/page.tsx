@@ -17,6 +17,7 @@ import { CopyText } from "@/components/copy-text";
 import { FoldableSample } from "@/components/foldable-sample";
 import { ContentBriefsPanel } from "@/components/content-briefs-panel";
 import { ContentGapsPanel } from "@/components/content-gaps-panel";
+import { PageStructurePanel } from "@/components/page-structure-panel";
 import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { SerpNotesPanel } from "@/components/serp-notes-panel";
@@ -104,9 +105,11 @@ export default async function SeoPage({
           stored as a history and given a conservative estimate rank. You can
           save a competitor you already see. Worth-a-look queries are compared
           to pages GroovGro already read. You can save a brief to the planner
-          and write a workspace draft from it. GroovGro will not invent
-          topics, publish a page, look businesses up, scrape search results,
-          buy keyword or SERP data, buy ads, or change Stripe checkout.
+          and write a workspace draft from it. Pages GroovGro already read
+          can show link suggestions and estimated schema types. GroovGro will
+          not invent topics, publish a page, add links or schema to the live
+          website, look businesses up, scrape search results, buy keyword or
+          SERP data, buy ads, or change Stripe checkout.
         </p>
       </div>
 
@@ -278,6 +281,12 @@ export default async function SeoPage({
             knownCompetitors={data.knownCompetitors}
             querySuggestions={data.keywords.map((keyword) => keyword.query)}
             canManage={session.permissions.includes("manage_seo")}
+          />
+
+          <PageStructurePanel
+            links={data.internalLinks}
+            schemaFacts={data.schemaFacts}
+            pagesRead={data.pagesRead}
           />
 
           {latest && explanation ? (

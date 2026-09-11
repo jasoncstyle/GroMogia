@@ -218,6 +218,13 @@
       "when": 1787440000000,
       "tag": "0030_content_drafts",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1787448000000,
+      "tag": "0031_page_structure",
+      "breakpoints": true
     }
   ]
 }
