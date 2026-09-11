@@ -6,6 +6,7 @@ import {
   brandSettings,
   brandVoiceProfiles,
   businessBrains,
+  contentBriefs,
   integrationConnections,
   searchConsoleSnapshots,
   seoAudits,
@@ -25,6 +26,7 @@ import {
   getContentGaps,
   persistContentGaps,
 } from "@/lib/growth/persist-content-gaps";
+import type { ContentBriefView } from "@/lib/growth/content-briefs";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
 import type { SerpNoteView } from "@/lib/growth/serp-notes";
 import { listBuilderPages, type BuilderPageSummary } from "@/lib/website-builder/queries";
@@ -59,6 +61,7 @@ export async function getSeoPageData(organizationId: string) {
       knownCompetitors: [] as string[],
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
+      contentBriefs: [] as ContentBriefView[],
     };
   }
 
@@ -145,8 +148,15 @@ export async function getSeoPageData(organizationId: string) {
       ? await readGoogleSecret(organizationId)
       : null;
 
-  const [snapshots, keywords, noteRows, brainRows, pageRows, contentGapRows] =
-    await Promise.all([
+  const [
+    snapshots,
+    keywords,
+    noteRows,
+    brainRows,
+    pageRows,
+    contentGapRows,
+    briefRows,
+  ] = await Promise.all([
     db
       .select()
       .from(searchConsoleSnapshots)
@@ -182,6 +192,20 @@ export async function getSeoPageData(organizationId: string) {
       .from(websiteDiscoveredPages)
       .where(eq(websiteDiscoveredPages.organizationId, organizationId)),
     getContentGaps(db, organizationId),
+    db
+      .select({
+        id: contentBriefs.id,
+        query: contentBriefs.query,
+        title: contentBriefs.title,
+        audience: contentBriefs.audience,
+        outline: contentBriefs.outline,
+        createdAt: contentBriefs.createdAt,
+        organizationId: contentBriefs.organizationId,
+      })
+      .from(contentBriefs)
+      .where(eq(contentBriefs.organizationId, organizationId))
+      .orderBy(desc(contentBriefs.createdAt))
+      .limit(20),
   ]);
 
   return {
@@ -219,6 +243,16 @@ export async function getSeoPageData(organizationId: string) {
         page.organizationId === organizationId &&
         pageWasRead({ title: page.title, headings: page.headings, url: "" }),
     ),
+    contentBriefs: briefRows
+      .filter((row) => row.organizationId === organizationId)
+      .map((row) => ({
+        id: row.id,
+        query: row.query,
+        title: row.title,
+        audience: row.audience,
+        outline: row.outline,
+        createdAt: row.createdAt,
+      })),
   };
 }
 

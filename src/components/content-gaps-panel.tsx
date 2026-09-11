@@ -21,7 +21,8 @@ export function ContentGapsPanel({
         <CardDescription>
           GroovGro compared stored Search Console queries marked worth a look
           to pages it already read. It did not invent topics, scrape
-          competitors, write a brief, or create a page.
+          competitors, or create a page. Save a brief on the planner if you
+          want to plan one.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">

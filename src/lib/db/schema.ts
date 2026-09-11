@@ -847,6 +847,32 @@ export const contentGaps = pgTable(
   ],
 );
 
+export const CONTENT_BRIEF_SOURCE_OWNER = "owner";
+export const CONTENT_BRIEF_STATUS_PLANNED = "planned";
+
+export const contentBriefs = pgTable(
+  "content_briefs",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    queryKey: text("query_key").notNull().default(""),
+    query: text("query").notNull().default(""),
+    title: text("title").notNull(),
+    audience: text("audience").notNull().default(""),
+    outline: text("outline").notNull().default(""),
+    status: text("status").notNull().default(CONTENT_BRIEF_STATUS_PLANNED),
+    source: text("source").notNull().default(CONTENT_BRIEF_SOURCE_OWNER),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    index("content_briefs_org_idx").on(table.organizationId),
+    index("content_briefs_org_query_idx").on(table.organizationId, table.queryKey),
+  ],
+);
+
 export type BuilderSectionType =
   | "hero"
   | "text"
