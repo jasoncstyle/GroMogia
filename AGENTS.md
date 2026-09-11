@@ -55,7 +55,8 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 - Phase E first slice is implemented: Search Console queries already stored can become a keyword model with snapshot history. Do not buy keyword data.
 - Phase F first slice is implemented: stored keyword history can receive a conservative estimate rank (worth a look / keep watching / not enough evidence). Do not treat that rank as search volume or a traffic forecast.
 - Phase G first slice is implemented: the owner can save competitor notes they already know on SEO. Do not scrape search results, look businesses up, or buy a SERP vendor.
-- Do not mark later expansion work as implemented. Phases H–T (content, GEO, publishing, execute) stay planned until Jason asks. Do not turn on SERP lookup.
+- Phase H first slice is implemented: worth-a-look Search Console queries can be compared to pages GroovGro already read. Do not invent topics, write a brief, create a page, or scrape competitors.
+- Do not mark later expansion work as implemented. Phases I–T (briefs, generation, GEO, publishing, execute) stay planned until Jason asks. Do not turn on SERP lookup.
 - Do not start ads, Growth Director execution, guarded automation, or autonomous AI.
 - Do not scrape third parties in violation of their terms. Do not hard-code a fixed list of AI vendors through business logic.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.

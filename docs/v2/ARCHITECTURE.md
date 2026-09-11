@@ -1960,7 +1960,8 @@ Organization
 156. **Phase E — Keyword model and history from Search Console** — **IMPLEMENTED** this slice. Stored `search_console_snapshots.top_queries` become `keywords` + `keyword_history`. SEO and Intelligence can show that history. No vendor. No execute.
 157. **Phase F — Keyword opportunity scoring** — **IMPLEMENTED** this slice. Stored keyword history gets `opportunity_score`, `opportunity_label` (`none` / `watch` / `review`), and a plain-English why. Estimate only. No vendor volume. No SERP. No execute.
 158. **Phase G — Competitor and SERP notes** — **IMPLEMENTED** first slice. Owner can save `serp_notes` for a competitor they already know, optionally tied to a stored query. SEO and Intelligence can show that. No scrape. No vendor. Lookup stays off.
-159. **Phases H–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: content, GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters. Do not turn on SERP lookup.
+159. **Phase H — Content gap detection** — **IMPLEMENTED** first slice. Worth-a-look stored queries are compared to `website_discovered_pages` GroovGro already read. `content_gaps` stores gap or covered. SEO and Intelligence can show a gap. No brief. No new page. No scrape.
+160. **Phases I–T** — **PLANNED** in [MASTER_BRIEF.md](../MASTER_BRIEF.md) §16: briefs, generation, GEO, CMS adapters, attribution, experiments, gated execute. Do not rebuild V2 to fit the letters. Do not turn on SERP lookup.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
@@ -1992,11 +1993,11 @@ Fields still later if usage needs them: `effort`, `estimated_cost`, `urgency`, `
 
 ### IMPLEMENTED / PARTIAL / PLANNED
 
-**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work; keyword model and history from stored Search Console queries; conservative keyword estimate ranks from those stored numbers; owner-entered competitor notes.
+**IMPLEMENTED:** page SEO checks; SEO drafts; Search Console read-only snapshots; Brand Voice in-workspace drafts; named-share attribution; Next step recommend-only; existing SEO/Search Console evidence → recommend-only Growth Actions; structured title/evidence/confidence/impact on `growth_actions`; owner-entered Business Brain extras for later search/content work; keyword model and history from stored Search Console queries; conservative keyword estimate ranks from those stored numbers; owner-entered competitor notes; content gaps from stored worth-a-look queries vs pages already read.
 
-**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder; keywords (history and estimate rank stored; groups, intent, and vendor scores not); competitor/SERP (owner notes stored; lookup and vendors not).
+**PARTIALLY IMPLEMENTED:** Business Brain; share-level attribution; fixed Next step priority; paused builder; keywords (history and estimate rank stored; groups, intent, and vendor scores not); competitor/SERP (owner notes stored; lookup and vendors not); content (gaps stored; briefs, planner, and generation not).
 
-**PLANNED:** SERP/competitor lookup engines; content planner and generation; CMS write; AI Visibility / GEO; scored cross-channel priority; experiments; execute.
+**PLANNED:** content briefs and generation; SERP/competitor lookup engines; CMS write; AI Visibility / GEO; scored cross-channel priority; experiments; execute.
 
 ### Architecture rules
 

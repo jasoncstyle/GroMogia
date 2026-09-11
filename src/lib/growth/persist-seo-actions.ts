@@ -6,6 +6,7 @@ import {
   searchConsoleSnapshots,
   seoAudits,
 } from "@/lib/db/schema";
+import { persistContentGaps } from "@/lib/growth/persist-content-gaps";
 import { persistKeywordHistory } from "@/lib/growth/persist-keywords";
 import {
   planSeoGrowthActions,
@@ -196,6 +197,15 @@ async function persistSeoGrowthActionsOnce(
     await persistKeywordHistory(db, organizationId);
   } catch (error) {
     console.error("GroovGro keyword history persist failed", {
+      organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+  }
+
+  try {
+    await persistContentGaps(db, organizationId);
+  } catch (error) {
+    console.error("GroovGro content gap persist failed", {
       organizationId,
       message: error instanceof Error ? error.message : "unknown",
     });

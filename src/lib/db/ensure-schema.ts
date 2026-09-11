@@ -302,4 +302,12 @@ export async function ensureSchema(): Promise<void> {
   if (!serpNotesTable[0]?.name) {
     await applyMigration(sql, "0027_serp_notes.sql");
   }
+
+  const contentGapsTable = (await sql.query(
+    "select to_regclass('public.content_gaps') as name",
+  )) as RegistryRow[];
+
+  if (!contentGapsTable[0]?.name) {
+    await applyMigration(sql, "0028_content_gaps.sql");
+  }
 }

@@ -11,6 +11,7 @@ import {
   seoAudits,
   seoDrafts,
   serpNotes,
+  websiteDiscoveredPages,
   websites,
 } from "@/lib/db/schema";
 import { isGoogleOAuthConfigured } from "@/lib/env";
@@ -18,6 +19,12 @@ import {
   getKeywordHistory,
   persistKeywordHistory,
 } from "@/lib/growth/persist-keywords";
+import type { ContentGapView } from "@/lib/growth/content-gaps";
+import { pageWasRead } from "@/lib/growth/content-gaps";
+import {
+  getContentGaps,
+  persistContentGaps,
+} from "@/lib/growth/persist-content-gaps";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
 import type { SerpNoteView } from "@/lib/growth/serp-notes";
 import { listBuilderPages, type BuilderPageSummary } from "@/lib/website-builder/queries";
@@ -50,6 +57,8 @@ export async function getSeoPageData(organizationId: string) {
       keywords: [] as KeywordWithHistory[],
       serpNotes: [] as SerpNoteView[],
       knownCompetitors: [] as string[],
+      contentGaps: [] as ContentGapView[],
+      pagesRead: false,
     };
   }
 
@@ -57,6 +66,15 @@ export async function getSeoPageData(organizationId: string) {
     await persistKeywordHistory(db, organizationId);
   } catch (error) {
     console.error("GroovGro keyword history persist failed", {
+      organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+  }
+
+  try {
+    await persistContentGaps(db, organizationId);
+  } catch (error) {
+    console.error("GroovGro content gap persist failed", {
       organizationId,
       message: error instanceof Error ? error.message : "unknown",
     });
@@ -127,7 +145,8 @@ export async function getSeoPageData(organizationId: string) {
       ? await readGoogleSecret(organizationId)
       : null;
 
-  const [snapshots, keywords, noteRows, brainRows] = await Promise.all([
+  const [snapshots, keywords, noteRows, brainRows, pageRows, contentGapRows] =
+    await Promise.all([
     db
       .select()
       .from(searchConsoleSnapshots)
@@ -154,6 +173,15 @@ export async function getSeoPageData(organizationId: string) {
       .from(businessBrains)
       .where(eq(businessBrains.organizationId, organizationId))
       .limit(1),
+    db
+      .select({
+        title: websiteDiscoveredPages.title,
+        headings: websiteDiscoveredPages.headings,
+        organizationId: websiteDiscoveredPages.organizationId,
+      })
+      .from(websiteDiscoveredPages)
+      .where(eq(websiteDiscoveredPages.organizationId, organizationId)),
+    getContentGaps(db, organizationId),
   ]);
 
   return {
@@ -185,6 +213,12 @@ export async function getSeoPageData(organizationId: string) {
         createdAt: row.createdAt,
       })),
     knownCompetitors: filledNames(brainRows[0]?.competitors),
+    contentGaps: contentGapRows,
+    pagesRead: pageRows.some(
+      (page) =>
+        page.organizationId === organizationId &&
+        pageWasRead({ title: page.title, headings: page.headings, url: "" }),
+    ),
   };
 }
 

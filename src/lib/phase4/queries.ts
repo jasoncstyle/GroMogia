@@ -1,7 +1,7 @@
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
-import { aiActionLogs, keywords, payments, serpNotes } from "@/lib/db/schema";
+import { aiActionLogs, contentGaps, keywords, payments, serpNotes } from "@/lib/db/schema";
 import {
   buildIntelligenceBrief,
   type IntelligenceBrief,
@@ -11,6 +11,7 @@ import {
   brainSeoContextCounts,
   brainSeoContextSaved,
 } from "@/lib/growth/brain-context";
+import { CONTENT_GAP_STATUS_GAP } from "@/lib/growth/content-gaps";
 import { isWaitingActionStatus } from "@/lib/growth/next-step";
 import { isSeoGrowthActionType } from "@/lib/growth/seo-actions";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
@@ -27,9 +28,10 @@ export async function getIntelligenceFacts(
     countChargesThisMonth(organizationId),
     getGrowthSnapshot(organizationId),
   ]);
-  const [keywordCounts, serpNoteCount] = await Promise.all([
+  const [keywordCounts, serpNoteCount, contentGapCount] = await Promise.all([
     countRecordedKeywords(organizationId),
     countSerpNotes(organizationId),
+    countContentGaps(organizationId),
   ]);
 
   const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
@@ -80,6 +82,7 @@ export async function getIntelligenceFacts(
     keywordReviewCount: keywordCounts.review,
     serpNoteCount,
     knownCompetitorCount: brainSeoContextCounts(growth?.brain ?? null).competitors,
+    contentGapCount,
   };
 }
 
@@ -109,6 +112,21 @@ async function countSerpNotes(organizationId: string): Promise<number> {
     .select({ value: sql<number>`count(*)::int` })
     .from(serpNotes)
     .where(eq(serpNotes.organizationId, organizationId));
+  return Number(row?.value ?? 0);
+}
+
+async function countContentGaps(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(contentGaps)
+    .where(
+      and(
+        eq(contentGaps.organizationId, organizationId),
+        eq(contentGaps.status, CONTENT_GAP_STATUS_GAP),
+      ),
+    );
   return Number(row?.value ?? 0);
 }
 

@@ -815,6 +815,38 @@ export const serpNotes = pgTable(
   ],
 );
 
+export const CONTENT_GAP_SOURCE_STORED_PAGES = "stored_pages";
+export const CONTENT_GAP_STATUS_GAP = "gap";
+
+export const contentGaps = pgTable(
+  "content_gaps",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    queryKey: text("query_key").notNull(),
+    query: text("query").notNull(),
+    status: text("status").notNull().default(CONTENT_GAP_STATUS_GAP),
+    why: text("why").notNull().default(""),
+    matchedPageUrl: text("matched_page_url").notNull().default(""),
+    pageCount: integer("page_count").notNull().default(0),
+    source: text("source").notNull().default(CONTENT_GAP_SOURCE_STORED_PAGES),
+    detectedAt: timestamp("detected_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("content_gaps_org_query_idx").on(
+      table.organizationId,
+      table.queryKey,
+    ),
+    index("content_gaps_org_idx").on(table.organizationId),
+    index("content_gaps_org_status_idx").on(table.organizationId, table.status),
+  ],
+);
+
 export type BuilderSectionType =
   | "hero"
   | "text"
