@@ -1,9 +1,12 @@
 import { createContentBrief } from "@/lib/actions/content-briefs";
+import { createContentDraft } from "@/lib/actions/content-drafts";
 import {
   describeContentBrief,
   suggestBriefOutline,
   type ContentBriefView,
 } from "@/lib/growth/content-briefs";
+import type { ContentDraftView } from "@/lib/growth/content-drafts";
+import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +24,7 @@ export function ContentBriefsPanel({
   querySuggestions,
   canManage = true,
 }: {
-  briefs: ContentBriefView[]
+  briefs: Array<ContentBriefView & { draft?: ContentDraftView | null }>
   querySuggestions: string[]
   canManage?: boolean
 }) {
@@ -30,15 +33,15 @@ export function ContentBriefsPanel({
       <CardHeader>
         <CardTitle>Content planner</CardTitle>
         <CardDescription>
-          Save a brief for a query you already stored. GroovGro will not write
-          the page, generate article copy, or publish.
+          Save a brief, then write a workspace draft from it. GroovGro will
+          not publish or change the live website.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {briefs.length > 0 ? (
           <div className="space-y-3">
             {briefs.map((brief) => (
-              <div key={brief.id} className="space-y-1">
+              <div key={brief.id} className="space-y-2">
                 <p className="text-sm font-medium">{describeContentBrief(brief)}</p>
                 {brief.audience ? (
                   <p className="text-sm text-muted-foreground">
@@ -48,13 +51,36 @@ export function ContentBriefsPanel({
                 {brief.outline ? (
                   <p className="text-sm text-muted-foreground">{brief.outline}</p>
                 ) : null}
+                {brief.draft ? (
+                  <FoldableSample
+                    title="Workspace draft"
+                    subtitle="Not published. GroovGro did not change the live website."
+                  >
+                    <p className="whitespace-pre-wrap text-sm text-muted-foreground">
+                      {brief.draft.body}
+                    </p>
+                  </FoldableSample>
+                ) : null}
+                {canManage ? (
+                  <SaveForm
+                    action={createContentDraft}
+                    successMessage="Workspace draft saved. GroovGro did not publish it or change the live website."
+                  >
+                    <input type="hidden" name="briefId" value={brief.id} />
+                    <SaveButton type="submit" size="sm" variant="outline">
+                      {brief.draft
+                        ? "Write the workspace draft again"
+                        : "Write a workspace draft"}
+                    </SaveButton>
+                  </SaveForm>
+                ) : null}
               </div>
             ))}
           </div>
         ) : (
           <p className="text-sm text-muted-foreground">
-            No briefs yet. Use a stored query or a missing-page query. Later
-            work can write the page. Not in this slice.
+            No briefs yet. Save a brief first. GroovGro will not publish a
+            page from this planner.
           </p>
         )}
 

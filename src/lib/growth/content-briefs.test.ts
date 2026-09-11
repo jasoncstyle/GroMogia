@@ -84,8 +84,7 @@ describe("owner-entered content briefs", () => {
     }
     assert.match(action, /session\.organizationId/);
     assert.match(action, /did not write a page/);
-    assert.match(panel, /will not write/);
-    assert.match(panel, /generate article copy/);
+    assert.match(panel, /will not publish/);
     assert.doesNotMatch(nextStep, /contentBrief|content_brief|Save brief to planner/);
     const seoPage = readFileSync(
       join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),

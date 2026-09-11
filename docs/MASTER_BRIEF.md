@@ -172,7 +172,7 @@ Use these labels. Do not make planned work sound shipped.
 
 ## 16. SEO, content, and AI visibility feed Growth Intelligence
 
-**Status:** vision approved 10 September 2026. Phases A–I first slices are implemented. Do not start Phase J–T until Jason asks.
+**Status:** vision approved 10 September 2026. Phases A–J first slices are implemented. Do not start Phase K–T until Jason asks.
 
 GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
 
@@ -189,7 +189,8 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Keyword model and history from those stored Search Console queries, with a conservative estimate rank (no vendor volume)
 - Owner-entered competitor notes for queries the owner already sees (no lookup, scrape, or SERP vendor)
 - Content gaps: worth-a-look Search Console queries compared to pages GroovGro already read (no new pages)
-- Content briefs and planner: the owner can save a brief for a stored query (no article copy, no publish)
+- Content briefs and planner: the owner can save a brief for a stored query (no publish)
+- Content drafts: GroovGro can write a workspace draft from a saved brief (no publish)
 - Specialists that read and recommend only. Ads, email, and social stay left alone
 - Autonomy in product use: observe, recommend, draft, owner approve. Execute stays off
 
@@ -199,7 +200,8 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Keywords: Search Console queries are stored as a keyword model with snapshot history (Phase E) and a conservative estimate rank (Phase F). Groups, intent, and paid keyword vendors stay **PLANNED**.
 - Competitor / SERP notes: the owner can save who they already see for a stored query (Phase G first slice). Lookup, scrape, and SERP vendors stay **PLANNED**.
 - Content gaps: worth-a-look stored queries are compared to pages GroovGro already read (Phase H first slice). Generation stays **PLANNED**.
-- Content briefs: the owner can save a planner brief for a stored query (Phase I first slice). Article copy and publishing stay **PLANNED**.
+- Content briefs: the owner can save a planner brief for a stored query (Phase I first slice). Publishing stays **PLANNED**.
+- Content drafts: a workspace draft can be written from a saved brief (Phase J first slice). Publishing and live-site edits stay **PLANNED**.
 - Attribution: named share → person → revenue exists. Keyword → page → person and AI-referral do not. Labels DIRECT / ASSISTED / ESTIMATED / UNKNOWN are **PLANNED**
 - Prioritization: Next step uses a fixed owner-assistance order. Scored “SEO vs follow up a person vs fix a page” is **PLANNED**
 - Brand Voice: does not learn from repeated owner edits
@@ -211,7 +213,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 
 - Keyword groups, intent, create-vs-improve, paid keyword vendors
 - Competitor and SERP lookup (contracted, allowed providers only). Owner-entered notes exist.
-- Content generation, internal linking, schema (facts only). Gap detection and owner-entered briefs exist.
+- Internal linking, schema (facts only), and publishing. Gap detection, owner-entered briefs, and workspace drafts exist.
 - CMS publishing adapters (review-first)
 - AI Visibility / GEO: query library, adapters, mentions, citations, share of voice, accuracy, GEO audits
 - Cross-channel scoring, experiments, alerts
@@ -250,7 +252,7 @@ Search volume is not success. Traffic is not success. Prefer activity that produ
 
 ### Content Intelligence (**PARTIALLY IMPLEMENTED**; Brand Voice drafts are **IMPLEMENTED** in-workspace only)
 
-Today: worth-a-look Search Console queries can be compared to pages GroovGro already read. The owner can save a brief to the SEO planner. GroovGro does not write the page.
+Today: worth-a-look Search Console queries can be compared to pages GroovGro already read. The owner can save a brief to the SEO planner and write a workspace draft from it. GroovGro does not publish.
 
 Future workflow: Opportunity → Research → Brief → Draft → Optimization → Review → Publish when authorized → Measure → Learn.
 
@@ -304,7 +306,7 @@ Do not overwrite the only copy of a metric. Keep snapshots (Search Console alrea
 | G | Competitor and SERP intelligence | **IMPLEMENTED** first slice — owner-entered notes only. No scrape. No vendor. |
 | H | Content gap detection | **IMPLEMENTED** first slice — stored worth-a-look queries vs pages already read. No brief. No new page. |
 | I | Content briefs and planner | **IMPLEMENTED** first slice — owner-entered briefs on the SEO planner. No article copy. No publish. |
-| J | Content generation / optimization | **PLANNED** |
+| J | Content generation / optimization | **IMPLEMENTED** first slice — workspace draft from a saved brief. No publish. No live-site edit. |
 | K | Internal linking and schema | **PLANNED** |
 | L | AI Visibility / GEO architecture | **PLANNED** |
 | M | AI query library and provider adapters | **PLANNED** |

@@ -873,6 +873,35 @@ export const contentBriefs = pgTable(
   ],
 );
 
+export const CONTENT_DRAFT_SOURCE_STORED_BRIEF = "stored_brief";
+export const CONTENT_DRAFT_STATUS_DRAFT = "draft";
+
+export const contentDrafts = pgTable(
+  "content_drafts",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    briefId: uuid("brief_id")
+      .notNull()
+      .references(() => contentBriefs.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    body: text("body").notNull().default(""),
+    status: text("status").notNull().default(CONTENT_DRAFT_STATUS_DRAFT),
+    source: text("source").notNull().default(CONTENT_DRAFT_SOURCE_STORED_BRIEF),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("content_drafts_org_brief_idx").on(
+      table.organizationId,
+      table.briefId,
+    ),
+    index("content_drafts_org_idx").on(table.organizationId),
+  ],
+);
+
 export type BuilderSectionType =
   | "hero"
   | "text"

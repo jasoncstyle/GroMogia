@@ -7,6 +7,7 @@ import {
   brandVoiceProfiles,
   businessBrains,
   contentBriefs,
+  contentDrafts,
   integrationConnections,
   searchConsoleSnapshots,
   seoAudits,
@@ -27,6 +28,7 @@ import {
   persistContentGaps,
 } from "@/lib/growth/persist-content-gaps";
 import type { ContentBriefView } from "@/lib/growth/content-briefs";
+import type { ContentDraftView } from "@/lib/growth/content-drafts";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
 import type { SerpNoteView } from "@/lib/growth/serp-notes";
 import { listBuilderPages, type BuilderPageSummary } from "@/lib/website-builder/queries";
@@ -61,7 +63,7 @@ export async function getSeoPageData(organizationId: string) {
       knownCompetitors: [] as string[],
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
-      contentBriefs: [] as ContentBriefView[],
+      contentBriefs: [] as Array<ContentBriefView & { draft?: ContentDraftView | null }>,
     };
   }
 
@@ -156,6 +158,7 @@ export async function getSeoPageData(organizationId: string) {
     pageRows,
     contentGapRows,
     briefRows,
+    draftRows,
   ] = await Promise.all([
     db
       .select()
@@ -206,6 +209,16 @@ export async function getSeoPageData(organizationId: string) {
       .where(eq(contentBriefs.organizationId, organizationId))
       .orderBy(desc(contentBriefs.createdAt))
       .limit(20),
+    db
+      .select({
+        briefId: contentDrafts.briefId,
+        title: contentDrafts.title,
+        body: contentDrafts.body,
+        createdAt: contentDrafts.createdAt,
+        organizationId: contentDrafts.organizationId,
+      })
+      .from(contentDrafts)
+      .where(eq(contentDrafts.organizationId, organizationId)),
   ]);
 
   return {
@@ -245,14 +258,28 @@ export async function getSeoPageData(organizationId: string) {
     ),
     contentBriefs: briefRows
       .filter((row) => row.organizationId === organizationId)
-      .map((row) => ({
-        id: row.id,
-        query: row.query,
-        title: row.title,
-        audience: row.audience,
-        outline: row.outline,
-        createdAt: row.createdAt,
-      })),
+      .map((row) => {
+        const draft = draftRows.find(
+          (item) =>
+            item.organizationId === organizationId && item.briefId === row.id,
+        );
+        return {
+          id: row.id,
+          query: row.query,
+          title: row.title,
+          audience: row.audience,
+          outline: row.outline,
+          createdAt: row.createdAt,
+          draft: draft
+            ? {
+                briefId: draft.briefId,
+                title: draft.title,
+                body: draft.body,
+                createdAt: draft.createdAt,
+              }
+            : null,
+        };
+      }),
   };
 }
 
