@@ -122,6 +122,41 @@ export function lookFromHtml(url: string, html: string): CompetitorLookFacts {
   };
 }
 
+export function lookFromReadableText(url: string, text: string): CompetitorLookFacts {
+  const titleLine = text.match(/^Title:\s*(.+)$/m)?.[1]?.trim() ?? "";
+  const headings = text
+    .split(/\n/)
+    .map((line) => line.trim())
+    .filter((line) => /^#{1,3}\s+\S/.test(line))
+    .map((line) => line.replace(/^#+\s+/, "").trim())
+    .filter(Boolean)
+    .slice(0, 8);
+  const paragraphs = text
+    .split(/\n/)
+    .map((line) => line.replace(/^>\s*/, "").trim())
+    .filter(
+      (line) =>
+        line &&
+        !/^#{1,3}\s+/.test(line) &&
+        !/^Title:/i.test(line) &&
+        !/^URL Source:/i.test(line) &&
+        !/^Markdown Content:/i.test(line),
+    );
+  return {
+    title: titleLine || headings[0] || new URL(url).hostname,
+    description: paragraphs[0] ?? "",
+    headings,
+    navLabels: [],
+  };
+}
+
+export function lookFromPublicContent(url: string, content: string): CompetitorLookFacts {
+  if (/<[a-z][\s\S]*>/i.test(content) && /<title[\s>]|<h1[\s>]|<meta\s/i.test(content)) {
+    return lookFromHtml(url, content);
+  }
+  return lookFromReadableText(url, content);
+}
+
 export function describeCompetitorModel(look: CompetitorLookFacts): string {
   const topics = look.headings.filter((heading) => !isGenericWebsiteLabel(heading));
   if (topics[0]) {
@@ -190,7 +225,7 @@ export function planCompetitorLook(input: {
   ourOffers?: string[]
   ourDifference?: string[]
 }): CompetitorLookDraft {
-  const look = lookFromHtml(input.url, input.html);
+  const look = lookFromPublicContent(input.url, input.html);
   return {
     ...look,
     modelGuess: describeCompetitorModel(look),

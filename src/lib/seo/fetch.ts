@@ -1,6 +1,10 @@
+import http from "node:http";
+import https from "node:https";
+
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
 
-const FETCH_TIMEOUT_MS = 15_000;
+const FETCH_TIMEOUT_MS = 12_000;
+const MAX_REDIRECTS = 5;
 export const MAX_HTML_BYTES = 750_000;
 
 const IDENTIFY_HEADERS = {
@@ -33,9 +37,19 @@ export function isUsablePublicHtml(html: string): boolean {
   return /<title[\s>]|<h1[\s>]|<meta\s/i.test(text);
 }
 
+export function isUsableReadablePage(text: string): boolean {
+  if (isUsablePublicHtml(text)) return true;
+  const trimmed = text.trim();
+  if (isChallengeHtml(trimmed)) return false;
+  if (/^Title:\s+\S/m.test(trimmed) || /^#{1,3}\s+\S/m.test(trimmed)) {
+    return trimmed.length >= 20;
+  }
+  return false;
+}
+
 export function explainPublicFetchFailure(fetched: FetchedText): string {
   if (fetched.status === 403 || fetched.status === 401 || fetched.status === 429) {
-    return "This website blocked the automated read. Try again in a minute. GroovGro did not search Google.";
+    return "This website blocked the automated read. Open it in your browser, paste the public page, and try Read this website again. GroovGro did not search Google.";
   }
   if (fetched.status === 404) {
     return "That page was not found. Check the address. GroovGro did not search Google.";
@@ -99,12 +113,71 @@ function finalizePublicFetch(responseUrl: string, status: number, body: string):
       return { ok: false, status, body: "" };
     }
   }
-  const usable = isUsablePublicHtml(body);
+  const usable = isUsableReadablePage(body);
   return {
-    ok: (status >= 200 && status < 400 && Boolean(body.trim()) && !isChallengeHtml(body)) || usable,
+    ok: (status >= 200 && status < 400 && Boolean(body.trim()) && !isChallengeHtml(body) && usable) || usable,
     status,
     body: usable || body.trim() ? body : "",
   };
+}
+
+function requestWithNode(
+  url: URL,
+  headers: Record<string, string>,
+  redirects = 0,
+): Promise<FetchedText> {
+  return new Promise((resolve) => {
+    const lib = url.protocol === "https:" ? https : http;
+    const req = lib.request(
+      url,
+      {
+        method: "GET",
+        family: 4,
+        timeout: FETCH_TIMEOUT_MS,
+        headers,
+      },
+      (res) => {
+        const status = res.statusCode ?? 0;
+        const location = res.headers.location;
+        if (status >= 300 && status < 400 && location && redirects < MAX_REDIRECTS) {
+          res.resume();
+          let next: URL;
+          try {
+            next = new URL(location, url);
+          } catch {
+            resolve({ ok: false, status, body: "" });
+            return;
+          }
+          if (!isSafePublicHttpUrl(next.toString())) {
+            resolve({ ok: false, status, body: "" });
+            return;
+          }
+          resolve(requestWithNode(next, headers, redirects + 1));
+          return;
+        }
+        const chunks: Buffer[] = [];
+        let received = 0;
+        res.on("data", (chunk) => {
+          if (received >= MAX_HTML_BYTES) return;
+          const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+          const take = buf.subarray(0, MAX_HTML_BYTES - received);
+          chunks.push(take);
+          received += take.length;
+          if (received >= MAX_HTML_BYTES) req.destroy();
+        });
+        res.on("end", () => {
+          resolve(finalizePublicFetch(url.toString(), status, Buffer.concat(chunks).toString("utf8")));
+        });
+        res.on("error", () => resolve({ ok: false, status, body: "" }));
+      },
+    );
+    req.on("timeout", () => {
+      req.destroy();
+      resolve({ ok: false, status: 0, body: "" });
+    });
+    req.on("error", () => resolve({ ok: false, status: 0, body: "" }));
+    req.end();
+  });
 }
 
 async function attemptPublicFetch(
@@ -137,7 +210,10 @@ export async function fetchPublicText(url: string): Promise<FetchedText> {
   const second = await attemptPublicFetch(parsed, COMPATIBLE_HEADERS);
   if (second.ok) return second;
 
-  return second.status ? second : first;
+  const viaNode = await requestWithNode(parsed, COMPATIBLE_HEADERS);
+  if (viaNode.ok) return viaNode;
+
+  return viaNode.status ? viaNode : second.status ? second : first;
 }
 
 export function originFromWebsiteUrl(websiteUrl: string): URL | null {

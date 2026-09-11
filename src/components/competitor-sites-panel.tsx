@@ -33,8 +33,9 @@ export function CompetitorSitesPanel({
         <CardTitle>How we might compete</CardTitle>
         <CardDescription>
           Save a competitor website you already know. GroovGro can read that
-          public page and suggest how to compete. It will not scrape Google,
-          copy their words onto your site, or buy ads.
+          public page and suggest how to compete. If the site blocks the
+          automated read, paste what you see on that public page. It will not
+          scrape Google, copy their words onto your site, or buy ads.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -64,8 +65,20 @@ export function CompetitorSitesPanel({
                   <SaveForm
                     action={lookAtCompetitorSite}
                     successMessage="Competitor look saved. GroovGro did not copy their words, buy ads, or search Google."
+                    className="space-y-3"
                   >
                     <input type="hidden" name="siteId" value={site.id} />
+                    <div className="space-y-2">
+                      <Label htmlFor={`pageText-${site.id}`}>
+                        If the site blocks GroovGro, paste the public page
+                      </Label>
+                      <Textarea
+                        id={`pageText-${site.id}`}
+                        name="pageText"
+                        rows={4}
+                        placeholder="Optional. Paste what you see on that public page. GroovGro will not search Google."
+                      />
+                    </div>
                     <SaveButton type="submit" pendingLabel="Reading…">
                       Read this website
                     </SaveButton>

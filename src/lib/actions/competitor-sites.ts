@@ -13,13 +13,14 @@ import {
   offers,
   websites,
 } from "@/lib/db/schema";
+import { fetchNamedPublicPage } from "@/lib/growth/page-reader";
 import {
   planCompetitorLook,
   planCompetitorSite,
 } from "@/lib/growth/competitor-looks";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
-import { explainPublicFetchFailure, fetchPublicText } from "@/lib/seo/fetch";
+import { explainPublicFetchFailure } from "@/lib/seo/fetch";
 
 const siteSchema = z.object({
   name: z.string().trim().max(200).optional().default(""),
@@ -29,6 +30,7 @@ const siteSchema = z.object({
 
 const lookSchema = z.object({
   siteId: z.string().uuid(),
+  pageText: z.string().trim().max(20_000).optional().default(""),
 });
 
 function revalidateCompetitorSites() {
@@ -119,6 +121,7 @@ export async function lookAtCompetitorSite(
     }
     const parsed = lookSchema.parse({
       siteId: formData.get("siteId") ?? "",
+      pageText: formData.get("pageText") ?? "",
     });
     const db = getDb();
     if (!db) throw new Error("Database is not configured");
@@ -140,7 +143,10 @@ export async function lookAtCompetitorSite(
     if (!site || site.organizationId !== session.organizationId) {
       throw new Error("Pick a saved competitor website first.");
     }
-    const fetched = await fetchPublicText(site.url);
+    const pasted = parsed.pageText.trim();
+    const fetched = pasted
+      ? { ok: true, status: 200, body: pasted }
+      : await fetchNamedPublicPage(site.url);
     if (!fetched.ok || !fetched.body.trim()) {
       throw new Error(explainPublicFetchFailure(fetched));
     }

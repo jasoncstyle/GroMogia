@@ -7,6 +7,7 @@ import {
   fetchPublicText,
   isChallengeHtml,
   isUsablePublicHtml,
+  isUsableReadablePage,
   readCappedResponseText,
 } from "./fetch";
 
@@ -47,7 +48,7 @@ describe("capped public fetch", () => {
 
   it("treats a named public page as readable and rejects a bot check page", () => {
     assert.equal(
-      isUsablePublicHtml("<html><title>Morse Alpha</title><h1>Sailing</h1></html>"),
+      isUsablePublicHtml("<html><title>Harbor Skills</title><h1>Class</h1></html>"),
       true,
     );
     assert.equal(isChallengeHtml("Just a moment... Checking your browser"), true);
@@ -55,9 +56,13 @@ describe("capped public fetch", () => {
       isUsablePublicHtml("<html><title>Just a moment...</title></html>"),
       false,
     );
+    assert.equal(
+      isUsableReadablePage("Title: Harbor Skills\n\n## Weekend beginner class\nBook a date."),
+      true,
+    );
     assert.match(
       explainPublicFetchFailure({ ok: false, status: 403, body: "" }),
-      /blocked the automated read/,
+      /paste the public page/,
     );
     assert.match(
       explainPublicFetchFailure({ ok: false, status: 0, body: "" }),

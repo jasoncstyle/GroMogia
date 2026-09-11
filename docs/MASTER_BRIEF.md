@@ -194,7 +194,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Search Console **read-only** snapshots: totals, top queries, top pages
 - Keyword model and history from those stored Search Console queries, with a conservative estimate rank (no vendor volume)
 - Owner-entered competitor notes for queries the owner already sees (no lookup, scrape, or SERP vendor)
-- Owner-named competitor websites: GroovGro can read that public page and store a compete look (no Google scrape, no copy onto a live site, search discovery off)
+- Owner-named competitor websites: GroovGro can read that public page and store a compete look. If the host blocks GroovGro’s server, it can read the same named URL through a public page reader, or the owner can paste the page (no Google scrape, no copy onto a live site, search discovery off)
 - Content gaps: worth-a-look Search Console queries compared to pages GroovGro already read (no new pages)
 - Content briefs and planner: the owner can save a brief for a stored query (no publish)
 - Content drafts: GroovGro can write a workspace draft from a saved brief (no publish)
