@@ -239,6 +239,13 @@
       "when": 1787464000000,
       "tag": "0033_geo_queries",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1787472000000,
+      "tag": "0034_geo_history",
+      "breakpoints": true
     }
   ]
 }

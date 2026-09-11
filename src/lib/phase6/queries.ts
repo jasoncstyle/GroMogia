@@ -8,6 +8,7 @@ import {
   businessBrains,
   contentBriefs,
   contentDrafts,
+  geoHistory,
   geoNotes,
   geoQueries,
   integrationConnections,
@@ -37,6 +38,11 @@ import {
 import type { ContentBriefView } from "@/lib/growth/content-briefs";
 import type { ContentDraftView } from "@/lib/growth/content-drafts";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
+import {
+  historyToShow,
+  isGeoAnswer,
+  type GeoHistoryView,
+} from "@/lib/geo/history";
 import type { GeoNoteView } from "@/lib/geo/notes";
 import type { GeoQueryView } from "@/lib/geo/queries";
 import type { SerpNoteView } from "@/lib/growth/serp-notes";
@@ -71,6 +77,7 @@ export async function getSeoPageData(organizationId: string) {
       serpNotes: [] as SerpNoteView[],
       geoNotes: [] as GeoNoteView[],
       geoQueries: [] as GeoQueryView[],
+      geoHistory: [] as GeoHistoryView[],
       knownCompetitors: [] as string[],
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
@@ -184,6 +191,7 @@ export async function getSeoPageData(organizationId: string) {
     pageStructure,
     geoNoteRows,
     geoQueryRows,
+    geoHistoryRows,
   ] = await Promise.all([
     db
       .select()
@@ -272,6 +280,21 @@ export async function getSeoPageData(organizationId: string) {
       .where(eq(geoQueries.organizationId, organizationId))
       .orderBy(desc(geoQueries.createdAt))
       .limit(20),
+    db
+      .select({
+        id: geoHistory.id,
+        queryId: geoHistory.queryId,
+        query: geoHistory.query,
+        mentioned: geoHistory.mentioned,
+        cited: geoHistory.cited,
+        note: geoHistory.note,
+        createdAt: geoHistory.createdAt,
+        organizationId: geoHistory.organizationId,
+      })
+      .from(geoHistory)
+      .where(eq(geoHistory.organizationId, organizationId))
+      .orderBy(desc(geoHistory.createdAt))
+      .limit(20),
   ]);
 
   return {
@@ -322,6 +345,28 @@ export async function getSeoPageData(organizationId: string) {
         why: row.why,
         createdAt: row.createdAt,
       })),
+    geoHistory: historyToShow(
+      geoHistoryRows.flatMap((row) => {
+        if (
+          row.organizationId !== organizationId ||
+          !isGeoAnswer(row.mentioned) ||
+          !isGeoAnswer(row.cited)
+        ) {
+          return [];
+        }
+        return [
+          {
+            id: row.id,
+            queryId: row.queryId,
+            query: row.query,
+            mentioned: row.mentioned,
+            cited: row.cited,
+            note: row.note,
+            createdAt: row.createdAt,
+          },
+        ];
+      }),
+    ),
     contentGaps: contentGapRows,
     pagesRead: pageRows.some(
       (page) =>
