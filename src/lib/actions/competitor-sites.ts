@@ -27,6 +27,7 @@ const siteSchema = z.object({
   name: z.string().trim().max(200).optional().default(""),
   url: z.string().trim().min(1).max(500),
   note: z.string().trim().max(2000).optional().default(""),
+  foundFrom: z.string().trim().max(200).optional().default(""),
 });
 
 const lookSchema = z.object({
@@ -54,6 +55,7 @@ export async function createCompetitorSite(
       name: formData.get("name") ?? "",
       url: formData.get("url") ?? "",
       note: formData.get("note") ?? "",
+      foundFrom: formData.get("foundFrom") ?? "",
     });
     const db = getDb();
     if (!db) throw new Error("Database is not configured");
@@ -73,6 +75,7 @@ export async function createCompetitorSite(
       name: parsed.name,
       url: parsed.url,
       note: parsed.note,
+      foundFrom: parsed.foundFrom,
       ownHost,
     });
     const now = new Date();

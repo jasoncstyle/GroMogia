@@ -9,6 +9,7 @@ import {
   lookFromPublicContent,
   normalizeCompetitorUrl,
   planCompeteNote,
+  ownerCompetitorSearchHref,
   planCompetitorLook,
   planCompetitorSite,
   proposeCompetitorInnerPages,
@@ -151,7 +152,21 @@ describe("competitor looks from owner-saved URLs", () => {
     });
     assert.equal(hints[0]?.query, "coastal training");
     assert.equal(hints[1]?.query, "weekend beginner class");
+    assert.equal(
+      hints[0]?.ownerSearchHref,
+      ownerCompetitorSearchHref("coastal training"),
+    );
+    assert.match(hints[0]?.ownerSearchHref ?? "", /google\.com\/search\?q=/);
+    assert.equal(ownerCompetitorSearchHref("   "), null);
+    assert.equal(proposeCompetitorSearches({}).length, 0);
     assert.equal(competitorSearchEnabled(), false);
+    const found = planCompetitorSite({
+      organizationId: ORG_A,
+      url: "https://other.example",
+      foundFrom: "  coastal training  ",
+    });
+    assert.equal(found.source, "owner_search");
+    assert.match(found.note, /coastal training/);
     assert.equal(configuredCompetitorSearchProvider(), "none");
     const refused = requestCompetitorSearch({
       organizationId: ORG_A,
@@ -191,6 +206,7 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(action, /proposeCompetitorInnerPages/);
     assert.match(action, /extraPages/);
     assert.match(action, /pageText/);
+    assert.match(action, /foundFrom/);
     assert.match(action, /explainPublicFetchFailure/);
     assert.match(reader, /r\.jina\.ai/);
     assert.match(reader, /owner-named public page/);
@@ -200,6 +216,13 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(panel, /paste the public page/);
     assert.match(panel, /How they sell/);
     assert.match(panel, /How they market/);
+    assert.match(panel, /Open this search/);
+    assert.match(panel, /Save this competitor/);
+    assert.match(panel, /You\s+run the search/);
+    assert.match(panel, /ownerSearchHref/);
+    assert.match(helper, /google\.com\/search/);
+    assert.doesNotMatch(action, /google\.com\/search/);
+    assert.doesNotMatch(action, /fetch\(.*search/);
     for (const source of [helper, search, panel]) {
       assert.doesNotMatch(source, /cheerio|puppeteer|playwright|openai|anthropic/i);
       assert.doesNotMatch(source, /serpApi|dataforseo|googleusercontent/i);
@@ -222,11 +245,14 @@ describe("competitor looks from owner-saved URLs", () => {
     );
     assert.match(seoPage, /<CompetitorSitesPanel/);
     assert.match(seoPage, /sites=\{data\.competitorSites\}/);
+    assert.match(seoPage, /open a suggested search yourself/);
     const observe = readFileSync(
       join(process.cwd(), "src/lib/intelligence/observe.ts"),
       "utf8",
     );
     assert.match(observe, /competitorSiteCount/);
+    assert.match(observe, /Run a search to find another competitor/);
+    assert.match(observe, /will not search Google/);
     assert.doesNotMatch(observe, /coordinateNextStep/);
   });
 });
