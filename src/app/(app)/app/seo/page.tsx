@@ -111,7 +111,8 @@ export default async function SeoPage({
           stored as a history and given a conservative estimate rank. You can
           save a competitor website and read that homepage plus a few public pages
           on the same site. You can open a suggested search yourself and save a
-          website you found. Worth-a-look queries are compared
+          website you found. GroovGro can compare those looks to what you sell.
+          Worth-a-look queries are compared
           to pages GroovGro already read. You can save a brief to the planner
           and write a workspace draft from it. You can save a draft for later
           review. Pages GroovGro already read
@@ -303,6 +304,7 @@ export default async function SeoPage({
           <CompetitorSitesPanel
             sites={data.competitorSites}
             searches={data.competitorSearches}
+            compare={data.competitorCompare}
             canManage={session.permissions.includes("manage_seo")}
           />
 

@@ -8,6 +8,7 @@ import {
   businessBrains,
   competitorSites,
   cmsPublishRequests,
+  offers,
   contentBriefs,
   contentDrafts,
   geoHistory,
@@ -44,7 +45,9 @@ import type { ContentDraftView } from "@/lib/growth/content-drafts";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
 import {
   competitorSitesToShow,
+  planCompetitorCompare,
   proposeCompetitorSearches,
+  type CompetitorCompareView,
   type CompetitorSearchHint,
   type CompetitorSiteView,
 } from "@/lib/growth/competitor-looks";
@@ -97,6 +100,7 @@ export async function getSeoPageData(organizationId: string) {
       knownCompetitors: [] as string[],
       competitorSites: [] as CompetitorSiteView[],
       competitorSearches: [] as CompetitorSearchHint[],
+      competitorCompare: null as CompetitorCompareView | null,
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
       contentBriefs: [] as Array<ContentBriefView & { draft?: ContentDraftView | null }>,
@@ -223,6 +227,7 @@ export async function getSeoPageData(organizationId: string) {
     geoAuditRows,
     cmsPublishRows,
     competitorSiteRows,
+    offerRows,
   ] = await Promise.all([
     db
       .select()
@@ -248,6 +253,7 @@ export async function getSeoPageData(organizationId: string) {
     db
       .select({
         competitors: businessBrains.competitors,
+        differentiators: businessBrains.differentiators,
         industry: businessBrains.industry,
       })
       .from(businessBrains)
@@ -366,7 +372,35 @@ export async function getSeoPageData(organizationId: string) {
       .where(eq(competitorSites.organizationId, organizationId))
       .orderBy(desc(competitorSites.updatedAt))
       .limit(20),
+    db
+      .select({
+        name: offers.name,
+        organizationId: offers.organizationId,
+      })
+      .from(offers)
+      .where(eq(offers.organizationId, organizationId)),
   ]);
+
+  const competitorSiteViews = competitorSitesToShow(
+    competitorSiteRows
+      .filter((row) => row.organizationId === organizationId)
+      .map((row) => ({
+        id: row.id,
+        name: row.name,
+        url: row.url,
+        host: row.host,
+        note: row.note,
+        title: row.title,
+        description: row.description,
+        headings: row.headings ?? [],
+        navLabels: row.navLabels ?? [],
+        modelGuess: row.modelGuess,
+        marketingGuess: row.marketingGuess,
+        competeNote: row.competeNote,
+        status: row.status,
+        lookedAt: row.lookedAt,
+      })),
+  );
 
   return {
     website: website ?? null,
@@ -397,29 +431,17 @@ export async function getSeoPageData(organizationId: string) {
         createdAt: row.createdAt,
       })),
     knownCompetitors: filledNames(brainRows[0]?.competitors),
-    competitorSites: competitorSitesToShow(
-      competitorSiteRows
-        .filter((row) => row.organizationId === organizationId)
-        .map((row) => ({
-          id: row.id,
-          name: row.name,
-          url: row.url,
-          host: row.host,
-          note: row.note,
-          title: row.title,
-          description: row.description,
-          headings: row.headings ?? [],
-          navLabels: row.navLabels ?? [],
-          modelGuess: row.modelGuess,
-          marketingGuess: row.marketingGuess,
-          competeNote: row.competeNote,
-          status: row.status,
-          lookedAt: row.lookedAt,
-        })),
-    ),
+    competitorSites: competitorSiteViews,
     competitorSearches: proposeCompetitorSearches({
       industry: brainRows[0]?.industry,
       storedQueries: keywords.map((keyword) => keyword.query),
+    }),
+    competitorCompare: planCompetitorCompare({
+      sites: competitorSiteViews,
+      ourOffers: offerRows
+        .filter((row) => row.organizationId === organizationId)
+        .map((row) => row.name),
+      ourDifference: brainRows[0]?.differentiators ?? [],
     }),
     geoNotes: geoNoteRows
       .filter((row) => row.organizationId === organizationId)

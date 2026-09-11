@@ -837,7 +837,7 @@ describe("intelligence observe", () => {
     const saved = buildIntelligenceBrief(
       facts({
         competitorSiteCount: 2,
-        competitorLookCount: 1,
+        competitorLookCount: 2,
       }),
     );
     const observed = saved.observations.find(
@@ -846,11 +846,24 @@ describe("intelligence observe", () => {
     assert.ok(observed);
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /2 competitor websites are saved/);
-    assert.match(observed.body, /GroovGro read 1/);
+    assert.match(observed.body, /GroovGro read 2/);
     assert.match(observed.body, /did not scrape Google/);
+    assert.match(observed.body, /compare to what you sell/);
+    const compared = saved.observations.find(
+      (item) => item.title === "How saved competitor websites compare",
+    );
+    assert.ok(compared);
+    assert.equal(compared.href, "/app/seo");
+    assert.match(compared.body, /2 competitor websites you named/);
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Save a competitor website you already know",
+      ),
+      false,
+    );
+    assert.equal(
+      saved.recommendations.some(
+        (item) => item.title === "Read another competitor website to compare",
       ),
       false,
     );
@@ -873,6 +886,25 @@ describe("intelligence observe", () => {
     assert.ok(readIt);
     assert.equal(readIt.href, "/app/seo");
     assert.match(readIt.body, /will not copy their words/);
+    assert.equal(
+      unread.recommendations.some(
+        (item) => item.title === "Read another competitor website to compare",
+      ),
+      false,
+    );
+
+    const oneLook = buildIntelligenceBrief(
+      facts({
+        competitorSiteCount: 1,
+        competitorLookCount: 1,
+      }),
+    );
+    const compareNext = oneLook.recommendations.find(
+      (item) => item.title === "Read another competitor website to compare",
+    );
+    assert.ok(compareNext);
+    assert.equal(compareNext.href, "/app/seo");
+    assert.match(compareNext.body, /will not scrape Google/);
 
     const missing = buildIntelligenceBrief(
       facts({
