@@ -1,6 +1,6 @@
 # Connect Google Search Console to GroovGro
 
-**How-to (still used).** Search Console is **IMPLEMENTED** as read-only. Keyword history is stored from those snapshots. AI Visibility owner notes, a query library, history snapshots, and citation-gap estimates can be saved on SEO. Lookup adapters stay **off** (master brief §16). This setup does not turn those on.
+**How-to (still used).** Search Console is **IMPLEMENTED** as read-only. Keyword history is stored from those snapshots. AI Visibility owner notes, a query library, history snapshots, and citation-gap estimates can be saved on SEO. A workspace draft can be saved for later CMS review. Lookup and CMS publish adapters stay **off** (master brief §16). This setup does not turn those on.
 
 This is the last Phase 6 step. GroovGro **reads** Search Console. It does **not** edit the website, submit sitemaps, or buy ads.
 

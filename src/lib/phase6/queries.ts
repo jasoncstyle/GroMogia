@@ -6,6 +6,7 @@ import {
   brandSettings,
   brandVoiceProfiles,
   businessBrains,
+  cmsPublishRequests,
   contentBriefs,
   contentDrafts,
   geoHistory,
@@ -35,6 +36,8 @@ import {
   getPageStructure,
   persistPageStructure,
 } from "@/lib/growth/persist-page-structure";
+import type { CmsPublishView } from "@/lib/cms/requests";
+import { publishRequestsToShow } from "@/lib/cms/requests";
 import type { ContentBriefView } from "@/lib/growth/content-briefs";
 import type { ContentDraftView } from "@/lib/growth/content-drafts";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
@@ -88,6 +91,7 @@ export async function getSeoPageData(organizationId: string) {
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
       contentBriefs: [] as Array<ContentBriefView & { draft?: ContentDraftView | null }>,
+      cmsPublishRequests: [] as CmsPublishView[],
       internalLinks: [] as InternalLinkView[],
       schemaFacts: [] as SchemaFactView[],
     };
@@ -208,6 +212,7 @@ export async function getSeoPageData(organizationId: string) {
     geoQueryRows,
     geoHistoryRows,
     geoAuditRows,
+    cmsPublishRows,
   ] = await Promise.all([
     db
       .select()
@@ -260,6 +265,7 @@ export async function getSeoPageData(organizationId: string) {
       .limit(20),
     db
       .select({
+        id: contentDrafts.id,
         briefId: contentDrafts.briefId,
         title: contentDrafts.title,
         body: contentDrafts.body,
@@ -312,6 +318,19 @@ export async function getSeoPageData(organizationId: string) {
       .orderBy(desc(geoHistory.createdAt))
       .limit(20),
     getGeoAudits(db, organizationId),
+    db
+      .select({
+        id: cmsPublishRequests.id,
+        draftId: cmsPublishRequests.draftId,
+        title: cmsPublishRequests.title,
+        note: cmsPublishRequests.note,
+        createdAt: cmsPublishRequests.createdAt,
+        organizationId: cmsPublishRequests.organizationId,
+      })
+      .from(cmsPublishRequests)
+      .where(eq(cmsPublishRequests.organizationId, organizationId))
+      .orderBy(desc(cmsPublishRequests.createdAt))
+      .limit(20),
   ]);
 
   return {
@@ -407,6 +426,7 @@ export async function getSeoPageData(organizationId: string) {
           createdAt: row.createdAt,
           draft: draft
             ? {
+                id: draft.id,
                 briefId: draft.briefId,
                 title: draft.title,
                 body: draft.body,
@@ -415,6 +435,17 @@ export async function getSeoPageData(organizationId: string) {
             : null,
         };
       }),
+    cmsPublishRequests: publishRequestsToShow(
+      cmsPublishRows
+        .filter((row) => row.organizationId === organizationId)
+        .map((row) => ({
+          id: row.id,
+          draftId: row.draftId,
+          title: row.title,
+          note: row.note,
+          createdAt: row.createdAt,
+        })),
+    ),
     internalLinks: pageStructure.links,
     schemaFacts: pageStructure.schemaFacts,
   };

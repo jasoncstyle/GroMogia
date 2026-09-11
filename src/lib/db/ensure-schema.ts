@@ -369,4 +369,12 @@ export async function ensureSchema(): Promise<void> {
   if (!geoAuditsTable[0]?.name) {
     await applyMigration(sql, "0035_geo_audits.sql");
   }
+
+  const cmsPublishTable = (await sql.query(
+    "select to_regclass('public.cms_publish_requests') as name",
+  )) as RegistryRow[];
+
+  if (!cmsPublishTable[0]?.name) {
+    await applyMigration(sql, "0036_cms_publish_requests.sql");
+  }
 }

@@ -24,6 +24,7 @@ export type ContentDraftPlan = {
 };
 
 export type ContentDraftView = {
+  id: string
   briefId: string
   title: string
   body: string
