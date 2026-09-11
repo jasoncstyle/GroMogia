@@ -38,6 +38,11 @@ import {
 import type { ContentBriefView } from "@/lib/growth/content-briefs";
 import type { ContentDraftView } from "@/lib/growth/content-drafts";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
+import type { GeoAuditView } from "@/lib/geo/audits";
+import {
+  getGeoAudits,
+  persistGeoAudits,
+} from "@/lib/geo/persist-audits";
 import {
   historyToShow,
   isGeoAnswer,
@@ -78,6 +83,7 @@ export async function getSeoPageData(organizationId: string) {
       geoNotes: [] as GeoNoteView[],
       geoQueries: [] as GeoQueryView[],
       geoHistory: [] as GeoHistoryView[],
+      geoAudits: [] as GeoAuditView[],
       knownCompetitors: [] as string[],
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
@@ -109,6 +115,15 @@ export async function getSeoPageData(organizationId: string) {
     await persistPageStructure(db, organizationId);
   } catch (error) {
     console.error("GroovGro page structure persist failed", {
+      organizationId,
+      message: error instanceof Error ? error.message : "unknown",
+    });
+  }
+
+  try {
+    await persistGeoAudits(db, organizationId);
+  } catch (error) {
+    console.error("GroovGro GEO audit persist failed", {
       organizationId,
       message: error instanceof Error ? error.message : "unknown",
     });
@@ -192,6 +207,7 @@ export async function getSeoPageData(organizationId: string) {
     geoNoteRows,
     geoQueryRows,
     geoHistoryRows,
+    geoAuditRows,
   ] = await Promise.all([
     db
       .select()
@@ -295,6 +311,7 @@ export async function getSeoPageData(organizationId: string) {
       .where(eq(geoHistory.organizationId, organizationId))
       .orderBy(desc(geoHistory.createdAt))
       .limit(20),
+    getGeoAudits(db, organizationId),
   ]);
 
   return {
@@ -367,6 +384,7 @@ export async function getSeoPageData(organizationId: string) {
         ];
       }),
     ),
+    geoAudits: geoAuditRows,
     contentGaps: contentGapRows,
     pagesRead: pageRows.some(
       (page) =>

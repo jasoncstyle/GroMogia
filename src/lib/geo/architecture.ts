@@ -3,7 +3,8 @@
  *
  * Phase L stores owner-entered notes. Phase M stores an owner-entered
  * query library. Phase N stores owner-entered history snapshots.
- * Adapters stay off. GEO audits (O) stay planned.
+ * Phase O estimates citation gaps from those snapshots.
+ * Adapters stay off. CMS publishing (P) stays planned.
  * GroovGro does not scrape AI answers.
  * Do not add a hard-coded vendor list to business logic.
  */
@@ -31,6 +32,16 @@ export type GeoMentionShape = {
   queryKey: string
   mentioned: "yes" | "no" | "unsure"
   cited: "yes" | "no" | "unsure"
+  source: GeoEvidenceSource
+};
+
+/** An estimate from stored history. Not a live AI answer. */
+export type GeoAuditShape = {
+  organizationId: string
+  queryKey: string
+  mentioned: "yes" | "no" | "unsure"
+  cited: "yes" | "no" | "unsure"
+  status: "citation_gap" | "covered"
   source: GeoEvidenceSource
 };
 

@@ -21,6 +21,7 @@ import { PageStructurePanel } from "@/components/page-structure-panel";
 import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { GeoNotesPanel } from "@/components/geo-notes-panel";
+import { GeoAuditsPanel } from "@/components/geo-audits-panel";
 import { GeoHistoryPanel } from "@/components/geo-history-panel";
 import { GeoQueriesPanel } from "@/components/geo-queries-panel";
 import { SerpNotesPanel } from "@/components/serp-notes-panel";
@@ -112,7 +113,8 @@ export default async function SeoPage({
           can show link suggestions and estimated schema types. You can save
           what you already heard from an AI system. You can save questions to
           remember for later AI visibility. You can save another snapshot of
-          what you already heard. GroovGro will not invent topics,
+          what you already heard. Latest saved snapshots can show citation
+          gaps. GroovGro will not invent topics,
           publish a page, add links or schema to the live website, ask AI
           systems, scrape answers, look businesses up, scrape search results,
           buy keyword or SERP data, buy ads, or change Stripe checkout.
@@ -314,6 +316,11 @@ export default async function SeoPage({
             history={data.geoHistory}
             queries={data.geoQueries}
             canManage={session.permissions.includes("manage_seo")}
+          />
+
+          <GeoAuditsPanel
+            audits={data.geoAudits}
+            hasHistory={data.geoHistory.length > 0}
           />
 
           {latest && explanation ? (

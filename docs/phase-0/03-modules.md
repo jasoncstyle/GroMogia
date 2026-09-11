@@ -27,7 +27,7 @@ Modules are independently enabled capabilities. The codebase may contain a modul
 | `analytics` | Cross-system analytics | 2 (basic), 3 (attribution) | Not a GA clone |
 | `seo` | SEO | 6 | Independent module. **Implemented:** page checks, drafts, Search Console read-only. **Planned:** keyword intelligence and revenue-aware scores (see master brief §15) |
 | `content` | Content engine | later | **Planned.** Briefs and planner feed Goals / Next step. Not a second app. Builder publish stays paused |
-| `ai_visibility` | AI Visibility / GEO | later | **Partial.** Owner-entered notes, a query library, and history snapshots live on SEO. No separate nav. Adapters stay off. No scraping |
+| `ai_visibility` | AI Visibility / GEO | later | **Partial.** Owner-entered notes, a query library, history snapshots, and citation-gap estimates live on SEO. No separate nav. Adapters stay off. No scraping |
 | `social` | Social publishing | 8 | After brand voice exists |
 | `reviews` | Reputation | 8 | Official APIs only |
 | `intelligence` | Growth intelligence | 4 | Reads other modules; does not replace them. SEO / GEO opportunities must land here and on Next step |
