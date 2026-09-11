@@ -17,7 +17,9 @@ import {
   payments,
   competitorSites,
   serpNotes,
+  websiteDiscoveredPages,
 } from "@/lib/db/schema";
+import { planCompetitorPageGaps } from "@/lib/growth/competitor-looks";
 import {
   channelScoreFactsFromCounts,
   channelsWithEvidence,
@@ -66,6 +68,7 @@ export async function getIntelligenceFacts(
     keywordCounts,
     serpNoteCount,
     competitorSiteCounts,
+    competitorPageGapCount,
     contentGapCount,
     contentBriefCount,
     contentDraftCount,
@@ -79,6 +82,7 @@ export async function getIntelligenceFacts(
     countRecordedKeywords(organizationId),
     countSerpNotes(organizationId),
     countCompetitorSites(organizationId),
+    countCompetitorPageGaps(organizationId),
     countContentGaps(organizationId),
     countContentBriefs(organizationId),
     countContentDrafts(organizationId),
@@ -173,6 +177,7 @@ export async function getIntelligenceFacts(
     executionRequestCount: (await getExecutionRequests(organizationId)).length,
     competitorSiteCount: competitorSiteCounts.total,
     competitorLookCount: competitorSiteCounts.looked,
+    competitorPageGapCount,
   };
 }
 
@@ -254,6 +259,51 @@ async function countSerpNotes(organizationId: string): Promise<number> {
     .from(serpNotes)
     .where(eq(serpNotes.organizationId, organizationId));
   return Number(row?.value ?? 0);
+}
+
+async function countCompetitorPageGaps(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [sites, pages] = await Promise.all([
+    db
+      .select({
+        name: competitorSites.name,
+        status: competitorSites.status,
+        headings: competitorSites.headings,
+        navLabels: competitorSites.navLabels,
+        modelGuess: competitorSites.modelGuess,
+        competeNote: competitorSites.competeNote,
+      })
+      .from(competitorSites)
+      .where(eq(competitorSites.organizationId, organizationId)),
+    db
+      .select({
+        url: websiteDiscoveredPages.url,
+        label: websiteDiscoveredPages.label,
+        title: websiteDiscoveredPages.title,
+        description: websiteDiscoveredPages.description,
+        headings: websiteDiscoveredPages.headings,
+      })
+      .from(websiteDiscoveredPages)
+      .where(eq(websiteDiscoveredPages.organizationId, organizationId)),
+  ]);
+  return planCompetitorPageGaps({
+    sites: sites.map((site) => ({
+      name: site.name,
+      status: site.status,
+      headings: site.headings ?? [],
+      navLabels: site.navLabels ?? [],
+      modelGuess: site.modelGuess,
+      competeNote: site.competeNote,
+    })),
+    pages: pages.map((page) => ({
+      url: page.url,
+      label: page.label,
+      title: page.title,
+      description: page.description,
+      headings: page.headings ?? [],
+    })),
+  }).length;
 }
 
 async function countCompetitorSites(organizationId: string): Promise<{

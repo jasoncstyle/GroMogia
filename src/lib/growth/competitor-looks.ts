@@ -4,10 +4,13 @@
  * stays behind an off adapter. Do not copy competitor words onto a
  * live site or treat one page as the whole market.
  */
+import { pageCoversQuery, pageWasRead, type ContentGapPage } from "@/lib/growth/content-gaps";
+import { normalizeOfferKey } from "@/lib/growth/discover";
 import {
   extractWebsitePage,
   isGenericWebsiteLabel,
   linkedDiscoveryUrls,
+  looksLikeBrandTitle,
   pathPriority,
 } from "@/lib/growth/website-discover";
 import { isSafePublicHttpUrl } from "@/lib/seo/audit";
@@ -20,6 +23,7 @@ export const COMPETITOR_MAX_SHOWN = 12;
 export const COMPETITOR_MAX_SEARCHES = 6;
 export const COMPETITOR_MAX_INNER_PAGES = 3;
 export const COMPETITOR_COMPARE_SOURCE = "stored_looks";
+export const COMPETITOR_PAGE_GAP_MAX = 6;
 
 export type CompetitorSiteDraft = {
   organizationId: string
@@ -78,6 +82,12 @@ export type CompetitorCompareView = {
   theirLead: string
   note: string
   source: typeof COMPETITOR_COMPARE_SOURCE
+};
+
+export type CompetitorPageGapView = {
+  label: string
+  fromNames: string[]
+  why: string
 };
 
 const BLOCKED_HOST =
@@ -568,6 +578,84 @@ export function planCompetitorCompare(input: {
     note: `${who} ${sell} ${market} ${next} This is from competitor websites you asked GroovGro to read, not a reason to copy their words, buy ads, or change checkout.`,
     source: COMPETITOR_COMPARE_SOURCE,
   };
+}
+
+function lookedCompetitorSites<
+  T extends { status: string; competeNote?: string; modelGuess?: string },
+>(sites: T[]): T[] {
+  return sites.filter(
+    (site) =>
+      site.status === COMPETITOR_STATUS_LOOKED ||
+      Boolean(site.competeNote?.trim()) ||
+      Boolean(site.modelGuess?.trim()),
+  );
+}
+
+function competitorTopicLabels(input: {
+  headings: string[]
+  navLabels: string[]
+}): string[] {
+  return uniqueLabels(
+    [...input.navLabels, ...input.headings].filter((raw) => {
+      const label = raw.replace(/\s+/g, " ").trim();
+      if (!label || label.length < 3 || label.length > 48) return false;
+      if (isGenericWebsiteLabel(label) || looksLikeBrandTitle(label)) return false;
+      if (/\$|from \$/i.test(label)) return false;
+      if (
+        /(book|reserv|sign up|get started|learn more|click here)/i.test(label) &&
+        label.split(/\s+/).length <= 3
+      ) {
+        return false;
+      }
+      return true;
+    }),
+    8,
+  );
+}
+
+export function planCompetitorPageGaps(input: {
+  sites: Pick<
+    CompetitorSiteView,
+    "name" | "status" | "headings" | "navLabels" | "competeNote" | "modelGuess"
+  >[]
+  pages: ContentGapPage[]
+}): CompetitorPageGapView[] {
+  const sites = lookedCompetitorSites(input.sites);
+  const pagesRead = input.pages.filter(pageWasRead);
+  if (sites.length === 0 || pagesRead.length === 0) return [];
+  const topics = new Map<string, { label: string; names: string[] }>();
+  for (const site of sites) {
+    const name = site.name.replace(/\s+/g, " ").trim() || "this competitor";
+    for (const label of competitorTopicLabels({
+      headings: site.headings,
+      navLabels: site.navLabels,
+    })) {
+      const key = normalizeOfferKey(label);
+      if (!key) continue;
+      const existing = topics.get(key);
+      if (existing) {
+        if (!existing.names.includes(name)) existing.names.push(name);
+        continue;
+      }
+      topics.set(key, { label, names: [name] });
+    }
+  }
+  return [...topics.values()]
+    .filter((topic) => !pagesRead.some((page) => pageCoversQuery(page, topic.label)))
+    .sort(
+      (left, right) =>
+        right.names.length - left.names.length ||
+        left.label.localeCompare(right.label),
+    )
+    .slice(0, COMPETITOR_PAGE_GAP_MAX)
+    .map((topic) => ({
+      label: topic.label,
+      fromNames: topic.names,
+      why:
+        topic.names.length === 1
+          ? `${topic.names[0]} shows “${topic.label}”. GroovGro has not read a matching page on your site. This is not a reason to copy their words or create a page.`
+          : `${joinAnd(topic.names)} show “${topic.label}”. GroovGro has not read a matching page on your site. This is not a reason to copy their words or create a page.`,
+    }));
 }
 
 export function competitorSitesToShow(

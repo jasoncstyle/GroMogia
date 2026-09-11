@@ -4,6 +4,7 @@ import {
 } from "@/lib/actions/competitor-sites";
 import {
   type CompetitorCompareView,
+  type CompetitorPageGapView,
   type CompetitorSearchHint,
   type CompetitorSiteView,
 } from "@/lib/growth/competitor-looks";
@@ -24,11 +25,15 @@ export function CompetitorSitesPanel({
   sites,
   searches,
   compare,
+  pageGaps = [],
+  pagesRead = false,
   canManage = true,
 }: {
   sites: CompetitorSiteView[]
   searches: CompetitorSearchHint[]
   compare?: CompetitorCompareView | null
+  pageGaps?: CompetitorPageGapView[]
+  pagesRead?: boolean
   canManage?: boolean
 }) {
   return (
@@ -39,9 +44,10 @@ export function CompetitorSitesPanel({
           Save a competitor website you already know, or open a suggested
           search and save a site you found. GroovGro can read that homepage
           and a few public pages on the same site, then compare those looks
-          to what you sell. If the site blocks the automated read, paste what
-          you see. It will not scrape Google, copy their words onto your
-          site, or buy ads.
+          to what you sell. It can name topics those sites show that GroovGro
+          has not read on your site. If the site blocks the automated read,
+          paste what you see. It will not scrape Google, copy their words
+          onto your site, create a page, or buy ads.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -49,6 +55,31 @@ export function CompetitorSitesPanel({
           <div className="space-y-1 rounded-lg border p-3">
             <p className="text-sm font-medium">How these sites compare</p>
             <p className="text-sm text-muted-foreground">{compare.note}</p>
+          </div>
+        ) : null}
+        {sites.some((site) => site.competeNote || site.modelGuess) ? (
+          <div className="space-y-2 rounded-lg border p-3">
+            <p className="text-sm font-medium">
+              Pages they show that GroovGro has not read
+            </p>
+            {!pagesRead ? (
+              <p className="text-sm text-muted-foreground">
+                Review pages on your website first. GroovGro will not guess
+                missing pages or create one.
+              </p>
+            ) : pageGaps.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                The pages GroovGro already read on your site cover the topics
+                those competitor sites named. It did not create a page.
+              </p>
+            ) : (
+              pageGaps.map((gap) => (
+                <div key={gap.label} className="space-y-1">
+                  <p className="text-sm font-medium">{gap.label}</p>
+                  <p className="text-sm text-muted-foreground">{gap.why}</p>
+                </div>
+              ))
+            )}
           </div>
         ) : null}
         {sites.length === 0 ? (

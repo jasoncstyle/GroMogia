@@ -63,6 +63,7 @@ export type IntelligenceFacts = {
   executionRequestCount?: number
   competitorSiteCount?: number
   competitorLookCount?: number
+  competitorPageGapCount?: number
 };
 
 export type InsightItem = {
@@ -205,6 +206,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const executionRequestCount = facts.executionRequestCount ?? 0;
   const competitorSiteCount = facts.competitorSiteCount ?? 0;
   const competitorLookCount = facts.competitorLookCount ?? 0;
+  const competitorPageGapCount = facts.competitorPageGapCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -241,6 +243,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "How saved competitor websites compare",
       body: `GroovGro compared ${competitorLookCount} competitor websites you named to what you sell. This is from sites you asked it to read, not a Google scrape, and not a reason to copy their words or buy ads.`,
       evidence: ["competitor_sites.looked_at"],
+      href: "/app/seo",
+    });
+  }
+
+  if (competitorPageGapCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Competitor page topics GroovGro has not read on your site",
+      body: `${competitorPageGapCount} topic${competitorPageGapCount === 1 ? "" : "s"} on competitor websites you named ${competitorPageGapCount === 1 ? "has" : "have"} no matching page among the pages GroovGro already read. This is not a reason to copy their words or create a page.`,
+      evidence: ["competitor_sites.page_gaps"],
       href: "/app/seo",
     });
   }
@@ -548,6 +560,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && competitorPageGapCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review pages competitors show that GroovGro has not read",
+      body: "On SEO, read the topics competitor websites show that GroovGro has not read on your site. It will not copy their words, create a page, or search Google.",
+      evidence: ["competitor_sites.page_gaps"],
+      href: "/app/seo",
+    });
+  }
+
   if (
     facts.websiteConnected &&
     competitorLookCount === 1
@@ -828,6 +850,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `execution=${facts.executionRequestCount ?? 0}`,
     `competitor_sites=${facts.competitorSiteCount ?? 0}`,
     `competitor_looks=${facts.competitorLookCount ?? 0}`,
+    `competitor_page_gaps=${facts.competitorPageGapCount ?? 0}`,
   ].join(" ");
 }
 
