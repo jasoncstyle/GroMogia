@@ -172,7 +172,7 @@ Use these labels. Do not make planned work sound shipped.
 
 ## 16. SEO, content, and AI visibility feed Growth Intelligence
 
-**Status:** vision approved 10 September 2026. Phases A–K first slices are implemented. Do not start Phase L–T until Jason asks.
+**Status:** vision approved 10 September 2026. Phases A–L first slices are implemented. Do not start Phase M–T until Jason asks.
 
 GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
 
@@ -192,6 +192,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Content briefs and planner: the owner can save a brief for a stored query (no publish)
 - Content drafts: GroovGro can write a workspace draft from a saved brief (no publish)
 - Internal link suggestions and schema type estimates from pages GroovGro already read (no live-site write)
+- Owner-entered AI visibility notes from what the owner already heard (no AI query, no scrape)
 - Specialists that read and recommend only. Ads, email, and social stay left alone
 - Autonomy in product use: observe, recommend, draft, owner approve. Execute stays off
 
@@ -204,6 +205,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Content briefs: the owner can save a planner brief for a stored query (Phase I first slice). Publishing stays **PLANNED**.
 - Content drafts: a workspace draft can be written from a saved brief (Phase J first slice). Publishing and live-site edits stay **PLANNED**.
 - Internal links and schema: suggestions and type estimates from pages GroovGro already read (Phase K first slice). Writing links or JSON-LD onto the live site stays **PLANNED**.
+- AI Visibility / GEO: the owner can save what they already heard (Phase L first slice). Query library, adapters, measurement, and audits stay **PLANNED**.
 - Attribution: named share → person → revenue exists. Keyword → page → person and AI-referral do not. Labels DIRECT / ASSISTED / ESTIMATED / UNKNOWN are **PLANNED**
 - Prioritization: Next step uses a fixed owner-assistance order. Scored “SEO vs follow up a person vs fix a page” is **PLANNED**
 - Brand Voice: does not learn from repeated owner edits
@@ -217,7 +219,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Competitor and SERP lookup (contracted, allowed providers only). Owner-entered notes exist.
 - Publishing links or schema onto a live site. Gap detection, briefs, workspace drafts, and page-structure facts exist.
 - CMS publishing adapters (review-first)
-- AI Visibility / GEO: query library, adapters, mentions, citations, share of voice, accuracy, GEO audits
+- AI Visibility / GEO query library, adapters, mentions, citations, share of voice, accuracy, GEO audits. Owner-entered notes exist.
 - Cross-channel scoring, experiments, alerts
 - Cost controls before paid keyword or AI-scan vendors
 - Specialist execute and guarded automation
@@ -262,15 +264,17 @@ Possible later work: brand-voice generation, improve existing pages, recommend n
 
 GroovGro does **not** currently auto-generate or publish a large volume of content.
 
-### AI Visibility / GEO (**PLANNED**)
+### AI Visibility / GEO (**PARTIALLY IMPLEMENTED**)
 
 Traditional SEO: can customers find the business in search engines?
 
 AI Visibility: does the business appear when people ask AI systems questions or ask who to hire?
 
+Today: the owner can save what they already heard when they asked an AI system. GroovGro does not ask AI systems.
+
 Future: query library; brand mentions and citations; competitor mentions and citations; share of voice; trends; content and citation gaps; accuracy issues; GEO audits; recommendations for AI-readable, citable pages.
 
-Possible environments (not a hard-coded vendor list, not all available today): ChatGPT, Google AI experiences, Gemini, Perplexity, Claude, Grok, DeepSeek, and later systems. Use modular **provider adapters**. Confirm API, terms, cost, and permission before any automated query. **Do not scrape.** Do not treat one AI answer as truth. Store history.
+Possible environments (examples only, not a hard-coded vendor list, not all available today): ChatGPT, Google AI experiences, Gemini, Perplexity, Claude, Grok, DeepSeek, and later systems. Use modular **provider adapters**. Confirm API, terms, cost, and permission before any automated query. **Do not scrape.** Do not treat one AI answer as truth. Store history. Lookup stays off until an adapter is approved.
 
 ### Revenue-aware attribution (**PARTIALLY IMPLEMENTED**)
 
@@ -310,7 +314,7 @@ Do not overwrite the only copy of a metric. Keep snapshots (Search Console alrea
 | I | Content briefs and planner | **IMPLEMENTED** first slice — owner-entered briefs on the SEO planner. No article copy. No publish. |
 | J | Content generation / optimization | **IMPLEMENTED** first slice — workspace draft from a saved brief. No publish. No live-site edit. |
 | K | Internal linking and schema | **IMPLEMENTED** first slice — suggestions and type estimates from pages already read. No live-site write. |
-| L | AI Visibility / GEO architecture | **PLANNED** |
+| L | AI Visibility / GEO architecture | **IMPLEMENTED** first slice — owner-entered notes only. No scrape. No adapter. |
 | M | AI query library and provider adapters | **PLANNED** |
 | N | AI visibility measurement and history | **PLANNED** |
 | O | GEO audits and citation gaps | **PLANNED** |

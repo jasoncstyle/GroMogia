@@ -20,6 +20,7 @@ import { ContentGapsPanel } from "@/components/content-gaps-panel";
 import { PageStructurePanel } from "@/components/page-structure-panel";
 import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
+import { GeoNotesPanel } from "@/components/geo-notes-panel";
 import { SerpNotesPanel } from "@/components/serp-notes-panel";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
@@ -106,10 +107,12 @@ export default async function SeoPage({
           save a competitor you already see. Worth-a-look queries are compared
           to pages GroovGro already read. You can save a brief to the planner
           and write a workspace draft from it. Pages GroovGro already read
-          can show link suggestions and estimated schema types. GroovGro will
-          not invent topics, publish a page, add links or schema to the live
-          website, look businesses up, scrape search results, buy keyword or
-          SERP data, buy ads, or change Stripe checkout.
+          can show link suggestions and estimated schema types. You can save
+          what you already heard from an AI system. GroovGro will not invent
+          topics, publish a page, add links or schema to the live website,
+          ask AI systems, scrape answers, look businesses up, scrape search
+          results, buy keyword or SERP data, buy ads, or change Stripe
+          checkout.
         </p>
       </div>
 
@@ -287,6 +290,12 @@ export default async function SeoPage({
             links={data.internalLinks}
             schemaFacts={data.schemaFacts}
             pagesRead={data.pagesRead}
+          />
+
+          <GeoNotesPanel
+            notes={data.geoNotes}
+            querySuggestions={data.keywords.map((keyword) => keyword.query)}
+            canManage={session.permissions.includes("manage_seo")}
           />
 
           {latest && explanation ? (

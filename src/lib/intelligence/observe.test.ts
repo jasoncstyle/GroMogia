@@ -394,6 +394,68 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("observes owner-saved AI visibility notes and does not scrape answers", () => {
+    const saved = buildIntelligenceBrief(
+      facts({
+        recordedKeywordCount: 3,
+        geoNoteCount: 1,
+      }),
+    );
+    const observed = saved.observations.find(
+      (item) => item.title === "AI visibility notes you already saved",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /1 AI visibility note/);
+    assert.match(observed.body, /did not ask an AI system/);
+    assert.equal(
+      saved.recommendations.some(
+        (item) => item.title === "Save what you already hear from AI",
+      ),
+      false,
+    );
+
+    const missing = buildIntelligenceBrief(
+      facts({
+        recordedKeywordCount: 3,
+        geoNoteCount: 0,
+      }),
+    );
+    const recommended = missing.recommendations.find(
+      (item) => item.title === "Save what you already hear from AI",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /will not ask an AI system/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Save what you already hear from AI",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          recordedKeywordCount: 3,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save what you already hear from AI",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          recordedKeywordCount: 0,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save what you already hear from AI",
+      ),
+      false,
+    );
+  });
+
   it("observes stored content gaps and does not write a page", () => {
     const brief = buildIntelligenceBrief(
       facts({

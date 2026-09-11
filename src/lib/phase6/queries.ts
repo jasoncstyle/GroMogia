@@ -8,6 +8,7 @@ import {
   businessBrains,
   contentBriefs,
   contentDrafts,
+  geoNotes,
   integrationConnections,
   searchConsoleSnapshots,
   seoAudits,
@@ -35,6 +36,7 @@ import {
 import type { ContentBriefView } from "@/lib/growth/content-briefs";
 import type { ContentDraftView } from "@/lib/growth/content-drafts";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
+import type { GeoNoteView } from "@/lib/geo/notes";
 import type { SerpNoteView } from "@/lib/growth/serp-notes";
 import { listBuilderPages, type BuilderPageSummary } from "@/lib/website-builder/queries";
 
@@ -65,6 +67,7 @@ export async function getSeoPageData(organizationId: string) {
       searchConsole: emptySearchConsole,
       keywords: [] as KeywordWithHistory[],
       serpNotes: [] as SerpNoteView[],
+      geoNotes: [] as GeoNoteView[],
       knownCompetitors: [] as string[],
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
@@ -176,6 +179,7 @@ export async function getSeoPageData(organizationId: string) {
     briefRows,
     draftRows,
     pageStructure,
+    geoNoteRows,
   ] = await Promise.all([
     db
       .select()
@@ -237,6 +241,21 @@ export async function getSeoPageData(organizationId: string) {
       .from(contentDrafts)
       .where(eq(contentDrafts.organizationId, organizationId)),
     getPageStructure(db, organizationId),
+    db
+      .select({
+        id: geoNotes.id,
+        query: geoNotes.query,
+        place: geoNotes.place,
+        heard: geoNotes.heard,
+        note: geoNotes.note,
+        source: geoNotes.source,
+        createdAt: geoNotes.createdAt,
+        organizationId: geoNotes.organizationId,
+      })
+      .from(geoNotes)
+      .where(eq(geoNotes.organizationId, organizationId))
+      .orderBy(desc(geoNotes.createdAt))
+      .limit(20),
   ]);
 
   return {
@@ -268,6 +287,17 @@ export async function getSeoPageData(organizationId: string) {
         createdAt: row.createdAt,
       })),
     knownCompetitors: filledNames(brainRows[0]?.competitors),
+    geoNotes: geoNoteRows
+      .filter((row) => row.organizationId === organizationId)
+      .map((row) => ({
+        id: row.id,
+        query: row.query,
+        place: row.place,
+        heard: row.heard,
+        note: row.note,
+        source: row.source,
+        createdAt: row.createdAt,
+      })),
     contentGaps: contentGapRows,
     pagesRead: pageRows.some(
       (page) =>

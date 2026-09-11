@@ -968,6 +968,30 @@ export const pageSchemaFacts = pgTable(
   ],
 );
 
+export const GEO_NOTE_SOURCE_OWNER = "owner";
+
+export const geoNotes = pgTable(
+  "geo_notes",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    queryKey: text("query_key").notNull().default(""),
+    query: text("query").notNull().default(""),
+    place: text("place").notNull().default(""),
+    heard: text("heard").notNull(),
+    note: text("note").notNull().default(""),
+    source: text("source").notNull().default(GEO_NOTE_SOURCE_OWNER),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    index("geo_notes_org_idx").on(table.organizationId),
+    index("geo_notes_org_query_idx").on(table.organizationId, table.queryKey),
+  ],
+);
+
 export type BuilderSectionType =
   | "hero"
   | "text"

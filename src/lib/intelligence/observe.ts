@@ -43,6 +43,7 @@ export type IntelligenceFacts = {
   internalLinkCount?: number
   schemaFactCount?: number
   schemaReviewCount?: number
+  geoNoteCount?: number
 };
 
 export type InsightItem = {
@@ -180,6 +181,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const internalLinkCount = facts.internalLinkCount ?? 0;
   const schemaFactCount = facts.schemaFactCount ?? 0;
   const schemaReviewCount = facts.schemaReviewCount ?? 0;
+  const geoNoteCount = facts.geoNoteCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -246,6 +248,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Estimated schema types from pages already read",
       body: `GroovGro estimated a schema type for ${schemaFactCount} ${schemaFactCount === 1 ? "page" : "pages"} it already read. These are estimates from the stored page group. GroovGro did not add schema to the live website.`,
       evidence: ["page_schema_facts.source=page_group"],
+      href: "/app/seo",
+    });
+  }
+
+  if (geoNoteCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "AI visibility notes you already saved",
+      body: `The owner saved ${geoNoteCount} AI visibility ${geoNoteCount === 1 ? "note" : "notes"} from what they already heard. GroovGro did not ask an AI system or scrape answers.`,
+      evidence: ["geo_notes.source=owner"],
       href: "/app/seo",
     });
   }
@@ -400,6 +412,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && keywordCount > 0 && geoNoteCount === 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Save what you already hear from AI",
+      body: "On SEO, save what you already heard when you asked an AI system about this business. GroovGro will not ask an AI system or scrape answers.",
+      evidence: ["geo_notes missing"],
+      href: "/app/seo",
+    });
+  }
+
   if (facts.websiteConnected && namedSources.length === 0) {
     recommendations.push({
       kind: "recommendation",
@@ -482,6 +504,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `internal_links=${facts.internalLinkCount ?? 0}`,
     `schema_facts=${facts.schemaFactCount ?? 0}`,
     `schema_review=${facts.schemaReviewCount ?? 0}`,
+    `geo_notes=${facts.geoNoteCount ?? 0}`,
   ].join(" ");
 }
 

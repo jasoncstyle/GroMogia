@@ -6,6 +6,7 @@ import {
   contentBriefs,
   contentDrafts,
   contentGaps,
+  geoNotes,
   internalLinkSuggestions,
   keywords,
   pageSchemaFacts,
@@ -46,6 +47,7 @@ export async function getIntelligenceFacts(
     contentBriefCount,
     contentDraftCount,
     pageStructureCounts,
+    geoNoteCount,
   ] = await Promise.all([
     countRecordedKeywords(organizationId),
     countSerpNotes(organizationId),
@@ -53,6 +55,7 @@ export async function getIntelligenceFacts(
     countContentBriefs(organizationId),
     countContentDrafts(organizationId),
     countPageStructure(organizationId),
+    countGeoNotes(organizationId),
   ]);
 
   const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
@@ -109,6 +112,7 @@ export async function getIntelligenceFacts(
     internalLinkCount: pageStructureCounts.links,
     schemaFactCount: pageStructureCounts.facts,
     schemaReviewCount: pageStructureCounts.review,
+    geoNoteCount,
   };
 }
 
@@ -129,6 +133,16 @@ async function countRecordedKeywords(organizationId: string): Promise<{
     total: rows.length,
     review: rows.filter((row) => row.opportunityLabel === "review").length,
   };
+}
+
+async function countGeoNotes(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(geoNotes)
+    .where(eq(geoNotes.organizationId, organizationId));
+  return Number(row?.value ?? 0);
 }
 
 async function countSerpNotes(organizationId: string): Promise<number> {
