@@ -67,7 +67,8 @@ The product is **GroovGro** (domain groovgro.com). The GitHub repository may sti
 - Phase Q first slice is implemented: GroovGro can compare stored people, page, content, and AI-visibility evidence with a conservative estimate. Do not use that estimate to reorder Next step, buy ads, or run work.
 - Phase R first slice is implemented: GroovGro can label stored people-to-revenue joins DIRECT, ASSISTED, ESTIMATED, or UNKNOWN. Matching charges stays on Bookings. Do not invent a keyword or AI-referral path, buy ads, or change checkout.
 - Phase S first slice is implemented: GroovGro can compare the first stored Goal number to the latest stored Goal number. Intelligence and Next step can show that look. Do not treat it as an experiment GroovGro ran, buy ads, or change the plan from it.
-- Do not mark later expansion work as implemented. Phase T (carefully expanded execution) stays planned until Jason asks. Do not turn on SERP lookup, GEO lookup, or CMS publish.
+- Phase T first slice is implemented: the owner can save approved work for later. `requestExecute` exists and stays off. Do not run that work, turn on Growth Director, buy ads, send email, or change the live website.
+- Do not mark later expansion work as implemented. Do not turn on SERP lookup, GEO lookup, CMS publish, or execute.
 - Do not start ads, Growth Director execution, guarded automation, or autonomous AI.
 - Do not scrape third parties in violation of their terms. Do not hard-code a fixed list of AI vendors through business logic.
 - Search Console OAuth is read-only (`webmasters.readonly`). Do not request Ads or write scopes.

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ExecutionPanel } from "@/components/execution-panel";
 import { GrowthActionSummary } from "@/components/growth-action-summary";
 import {
   CheckWhatChangedButton,
@@ -21,6 +22,8 @@ import {
 } from "@/lib/growth/owner-work";
 import { workLearningFromResult } from "@/lib/growth/work-learning";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
+import { getExecutionRequests } from "@/lib/execute/queries";
+import { actionsToQueue } from "@/lib/execute/requests";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
 
@@ -29,9 +32,13 @@ export default async function OwnerWorkPage() {
   const snapshot = session.organizationId
     ? await getGrowthSnapshot(session.organizationId)
     : null;
+  const executionRequests = session.organizationId
+    ? await getExecutionRequests(session.organizationId)
+    : [];
   const work = partitionOwnerWork(snapshot?.actions ?? []);
   const canUpdate = hasPermission(session.permissions, "modify_goals");
   const canCheck = hasPermission(session.permissions, "view_decision_history");
+  const canApprove = hasPermission(session.permissions, "approve_actions");
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
@@ -82,6 +89,12 @@ export default async function OwnerWorkPage() {
           )}
         </CardContent>
       </Card>
+
+      <ExecutionPanel
+        requests={executionRequests}
+        actions={actionsToQueue(work.open)}
+        canManage={canApprove}
+      />
 
       {work.waiting.length > 0 ? (
         <Card>

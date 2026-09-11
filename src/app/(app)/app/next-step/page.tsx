@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { BeforeAfterPanel } from "@/components/before-after-panel";
 import { ChannelScorePanel } from "@/components/channel-score-panel";
+import { ExecutionPanel } from "@/components/execution-panel";
 import { ConfirmRejectButtons, GrowthReviewBody, InferredBadge, ReviewConnectedDataButton, SaveGrowthReviewButton } from "@/components/growth-review";
 import { DraftGrowthPlanButton, GrowthPlanReviewButtons, ProposePlanActionsButton } from "@/components/growth-plan-actions";
 import { ActivateGoalButton, DraftNextGoalButton } from "@/components/next-goal-actions";
@@ -53,6 +54,8 @@ import { hasPermission } from "@/lib/permissions";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 import { refreshBeforeAfterLooks } from "@/lib/growth/persist-before-after";
 import { getChannelScoreViews } from "@/lib/phase4/queries";
+import { getExecutionRequests } from "@/lib/execute/queries";
+import { actionsToQueue } from "@/lib/execute/requests";
 
 export default async function NextStepPage({
   searchParams,
@@ -61,7 +64,7 @@ export default async function NextStepPage({
 }) {
   const params = await searchParams;
   const session = await getAppSession();
-  const [step, dashboard, links, slug, channelScores, beforeAfterLooks] =
+  const [step, dashboard, links, slug, channelScores, beforeAfterLooks, executionRequests] =
     session.organizationId
     ? await Promise.all([
         getCoordinatedNextStep(session.organizationId),
@@ -70,8 +73,9 @@ export default async function NextStepPage({
         resolveOrganizationSlug(session.organizationId, session.organizationSlug),
         getChannelScoreViews(session.organizationId),
         refreshBeforeAfterLooks(session.organizationId),
+        getExecutionRequests(session.organizationId),
       ])
-    : [null, null, { offers: [], goals: [] }, "", [], []];
+    : [null, null, { offers: [], goals: [] }, "", [], [], []];
   const canDecide = hasPermission(session.permissions, "view_decision_history");
   const canCheck = canDecide;
   const canApprove = hasPermission(session.permissions, "approve_actions");
@@ -547,6 +551,16 @@ export default async function NextStepPage({
 
           <ChannelScorePanel scores={channelScores} />
           <BeforeAfterPanel looks={beforeAfterLooks} />
+          <ExecutionPanel
+            requests={executionRequests}
+            actions={actionsToQueue(
+              (step?.openWork ?? []).map((action) => ({
+                ...action,
+                status: "approved",
+              })),
+            )}
+            canManage={canApprove}
+          />
 
           {step.waitingActions.length > 0 &&
           step.primary.title !== APPROVE_ACTIONS_STEP_TITLE ? (
