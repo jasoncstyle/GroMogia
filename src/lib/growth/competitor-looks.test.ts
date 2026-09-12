@@ -461,6 +461,7 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(seoPage, /topics those sites show/);
     assert.match(seoPage, /save a brief for one of those topics/);
     assert.match(seoPage, /How we might compete names saved sites/);
+    assert.match(seoPage, /Planned compete moves are listed first/);
     const observe = readFileSync(
       join(process.cwd(), "src/lib/intelligence/observe.ts"),
       "utf8",
