@@ -18,6 +18,7 @@ import {
   sortCompeteMovesForList,
   planCompeteMove,
   planCompeteMoveDone,
+  refuseDuplicateCompeteMoveTitle,
   suggestCompeteMoveFromCompare,
   suggestCompeteMoveFromGap,
 } from "./compete-moves";
@@ -164,6 +165,20 @@ describe("owner-saved compete moves", () => {
       false,
     );
     assert.match(panel, /Already saved as what you will do/);
+    assert.throws(
+      () =>
+        refuseDuplicateCompeteMoveTitle(
+          [{ title: "Cover “Weekend beginner class” on our site" }],
+          "cover “Weekend beginner class” on our site",
+        ),
+      /already saved/,
+    );
+    refuseDuplicateCompeteMoveTitle(
+      [{ title: "Cover “Weekend beginner class” on our site" }],
+      "Cover “Private coaching” on our site",
+    );
+    assert.match(action, /refuseDuplicateCompeteMoveTitle/);
+    assert.match(action, /eq\(competeMoves\.organizationId, session\.organizationId\)/);
     assert.equal(
       countPlannedCompeteMoves([
         { status: COMPETE_MOVE_STATUS_PLANNED },
