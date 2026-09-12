@@ -651,7 +651,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Save a competitor website you already know",
-      body: "On SEO, save a competitor website you already know. GroovGro can read that public page. It will not scrape Google or invent who you compete with.",
+      body: "On SEO, save a competitor website you already know. Saved sites are listed on How we might compete. GroovGro can read that public page. It will not scrape Google or invent who you compete with.",
       evidence: ["competitor_sites missing"],
       href: "/app/seo",
     });
