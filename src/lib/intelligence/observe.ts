@@ -589,7 +589,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Read the later-run queue",
-      body: "Open Next step to read approved work saved for later. GroovGro will not run it, buy ads, or change the live website.",
+      body: `Open Next step to read approved work saved for later. ${executionRequestCount} ${executionRequestCount === 1 ? "is" : "are"} waiting. GroovGro will not run it, buy ads, or change the live website.`,
       evidence: ["execution_requests.status=review"],
       href: "/app/next-step",
     });
