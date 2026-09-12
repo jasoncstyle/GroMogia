@@ -1822,6 +1822,10 @@ describe("intelligence observe", () => {
     assert.match(recommended.body, /2 suggested links/);
     assert.match(recommended.body, /3 schema facts/);
     assert.match(recommended.body, /listed first/);
+    assert.match(
+      recommended.body,
+      /Estimated schema types that are not the default are listed first/,
+    );
     assert.equal(
       withLinks.recommendations.some((item) => /add schema/i.test(item.title)),
       false,
