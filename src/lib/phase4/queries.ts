@@ -16,6 +16,7 @@ import {
   pageSchemaFacts,
   payments,
   competitorSites,
+  offers,
   serpNotes,
   websiteDiscoveredPages,
 } from "@/lib/db/schema";
@@ -42,6 +43,10 @@ import {
 } from "@/lib/growth/brain-context";
 import { GEO_AUDIT_STATUS_GAP } from "@/lib/geo/audits";
 import { CONTENT_BRIEF_SOURCE_COMPETITOR_GAP } from "@/lib/growth/content-briefs";
+import {
+  countDraftOfferChecks,
+  planDraftOfferChecks,
+} from "@/lib/growth/content-drafts";
 import { CONTENT_GAP_STATUS_GAP } from "@/lib/growth/content-gaps";
 import { isDefaultSchemaType } from "@/lib/growth/page-structure";
 import {
@@ -74,6 +79,7 @@ export async function getIntelligenceFacts(
     contentBriefCount,
     competitorGapBriefCount,
     contentDraftCount,
+    draftOfferCheckCounts,
     cmsPublishRequestCount,
     pageStructureCounts,
     geoNoteCount,
@@ -89,6 +95,7 @@ export async function getIntelligenceFacts(
     countContentBriefs(organizationId),
     countCompetitorGapBriefs(organizationId),
     countContentDrafts(organizationId),
+    countDraftOfferCheckFacts(organizationId),
     countCmsPublishRequests(organizationId),
     countPageStructure(organizationId),
     countGeoNotes(organizationId),
@@ -182,6 +189,9 @@ export async function getIntelligenceFacts(
     competitorLookCount: competitorSiteCounts.looked,
     competitorPageGapCount,
     competitorGapBriefCount,
+    draftOfferCheckCount: draftOfferCheckCounts.checked,
+    draftMissingOfferCount: draftOfferCheckCounts.missingOffer,
+    draftNoOfferToCheckCount: draftOfferCheckCounts.noOfferToCheck,
   };
 }
 
@@ -378,6 +388,42 @@ async function countContentDrafts(organizationId: string): Promise<number> {
     .from(contentDrafts)
     .where(eq(contentDrafts.organizationId, organizationId));
   return Number(row?.value ?? 0);
+}
+
+async function countDraftOfferCheckFacts(organizationId: string) {
+  const db = getDb();
+  if (!db) {
+    return countDraftOfferChecks([]);
+  }
+  const [briefRows, draftRows, offerRows] = await Promise.all([
+    db
+      .select({
+        id: contentBriefs.id,
+        source: contentBriefs.source,
+      })
+      .from(contentBriefs)
+      .where(eq(contentBriefs.organizationId, organizationId)),
+    db
+      .select({
+        id: contentDrafts.id,
+        briefId: contentDrafts.briefId,
+        title: contentDrafts.title,
+        body: contentDrafts.body,
+      })
+      .from(contentDrafts)
+      .where(eq(contentDrafts.organizationId, organizationId)),
+    db
+      .select({ name: offers.name })
+      .from(offers)
+      .where(eq(offers.organizationId, organizationId)),
+  ]);
+  return countDraftOfferChecks(
+    planDraftOfferChecks({
+      drafts: draftRows,
+      briefs: briefRows,
+      offers: offerRows.map((row) => row.name),
+    }),
+  );
 }
 
 async function countCmsPublishRequests(organizationId: string): Promise<number> {

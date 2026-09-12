@@ -7,6 +7,9 @@ import { CONTENT_BRIEF_SOURCE_COMPETITOR_GAP } from "@/lib/growth/content-briefs
 
 export const CONTENT_DRAFT_SOURCE_STORED_BRIEF = "stored_brief";
 export const CONTENT_DRAFT_STATUS_DRAFT = "draft";
+export const DRAFT_OFFER_CHECK_NAMES_AN_OFFER = "names_an_offer";
+export const DRAFT_OFFER_CHECK_MISSING_OFFER = "missing_offer";
+export const DRAFT_OFFER_CHECK_NO_OFFER = "no_offer_to_check";
 
 export type ContentDraftBrief = {
   organizationId: string
@@ -35,6 +38,27 @@ export type ContentDraftView = {
   title: string
   body: string
   createdAt: Date
+};
+
+export type DraftOfferCheckStatus =
+  | typeof DRAFT_OFFER_CHECK_NAMES_AN_OFFER
+  | typeof DRAFT_OFFER_CHECK_MISSING_OFFER
+  | typeof DRAFT_OFFER_CHECK_NO_OFFER;
+
+export type DraftOfferCheckView = {
+  draftId: string
+  briefId: string
+  title: string
+  status: DraftOfferCheckStatus
+  namedOffers: string[]
+  note: string
+};
+
+export type DraftOfferCheckCounts = {
+  checked: number
+  namesAnOffer: number
+  missingOffer: number
+  noOfferToCheck: number
 };
 
 export function planContentDraft(input: ContentDraftBrief): ContentDraftPlan {
@@ -105,4 +129,96 @@ export function writeDraftFromBrief(input: ContentDraftBrief): string {
     "GroovGro will not invent prices, reviews, or customer names. Publishing stays off.",
   );
   return lines.join("\n");
+}
+
+function normalizeOfferLabel(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
+}
+
+function uniqueOfferLabels(values?: string[] | null): string[] {
+  const seen = new Set<string>();
+  const labels: string[] = [];
+  for (const value of values ?? []) {
+    const label = normalizeOfferLabel(value);
+    const key = label.toLowerCase();
+    if (label.length < 2 || seen.has(key)) continue;
+    seen.add(key);
+    labels.push(label);
+  }
+  return labels;
+}
+
+function draftNamesOffer(title: string, body: string, offer: string): boolean {
+  const haystack = `${title}\n${body}`.toLowerCase();
+  return haystack.includes(offer.toLowerCase());
+}
+
+export function describeDraftOfferCheck(check: DraftOfferCheckView): string {
+  return check.note;
+}
+
+export function countDraftOfferChecks(
+  checks: DraftOfferCheckView[],
+): DraftOfferCheckCounts {
+  return {
+    checked: checks.length,
+    namesAnOffer: checks.filter(
+      (check) => check.status === DRAFT_OFFER_CHECK_NAMES_AN_OFFER,
+    ).length,
+    missingOffer: checks.filter(
+      (check) => check.status === DRAFT_OFFER_CHECK_MISSING_OFFER,
+    ).length,
+    noOfferToCheck: checks.filter(
+      (check) => check.status === DRAFT_OFFER_CHECK_NO_OFFER,
+    ).length,
+  };
+}
+
+export function planDraftOfferChecks(input: {
+  drafts?: Array<{ id: string; briefId: string; title: string; body: string }> | null
+  briefs?: Array<{ id: string; source?: string | null }> | null
+  offers?: string[] | null
+}): DraftOfferCheckView[] {
+  const gapBriefs = new Set(
+    (input.briefs ?? [])
+      .filter((brief) => brief.source === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP)
+      .map((brief) => brief.id),
+  );
+  const offers = uniqueOfferLabels(input.offers);
+  return (input.drafts ?? [])
+    .filter((draft) => gapBriefs.has(draft.briefId))
+    .map((draft) => {
+      const title = normalizeOfferLabel(draft.title);
+      if (offers.length === 0) {
+        return {
+          draftId: draft.id,
+          briefId: draft.briefId,
+          title,
+          status: DRAFT_OFFER_CHECK_NO_OFFER,
+          namedOffers: [] as string[],
+          note: "GroovGro cannot check this draft against an offer yet. Save what you sell on Offers first. GroovGro did not publish or change the live website.",
+        };
+      }
+      const namedOffers = offers.filter((offer) =>
+        draftNamesOffer(title, draft.body ?? "", offer),
+      );
+      if (namedOffers.length > 0) {
+        return {
+          draftId: draft.id,
+          briefId: draft.briefId,
+          title,
+          status: DRAFT_OFFER_CHECK_NAMES_AN_OFFER,
+          namedOffers,
+          note: `This draft names “${namedOffers[0]}”. GroovGro did not publish or change the live website.`,
+        };
+      }
+      return {
+        draftId: draft.id,
+        briefId: draft.briefId,
+        title,
+        status: DRAFT_OFFER_CHECK_MISSING_OFFER,
+        namedOffers: [] as string[],
+        note: "This draft does not name a saved offer yet. Write it again after you save what you sell. GroovGro did not publish or change the live website.",
+      };
+    });
 }

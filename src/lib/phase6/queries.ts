@@ -41,7 +41,11 @@ import {
 import type { CmsPublishView } from "@/lib/cms/requests";
 import { publishRequestsToShow } from "@/lib/cms/requests";
 import type { ContentBriefView } from "@/lib/growth/content-briefs";
-import type { ContentDraftView } from "@/lib/growth/content-drafts";
+import {
+  planDraftOfferChecks,
+  type ContentDraftView,
+  type DraftOfferCheckView,
+} from "@/lib/growth/content-drafts";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
 import {
   competitorSitesToShow,
@@ -106,7 +110,12 @@ export async function getSeoPageData(organizationId: string) {
       competitorPageGaps: [] as CompetitorPageGapView[],
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
-      contentBriefs: [] as Array<ContentBriefView & { draft?: ContentDraftView | null }>,
+      contentBriefs: [] as Array<
+        ContentBriefView & {
+          draft?: ContentDraftView | null
+          offerCheck?: DraftOfferCheckView | null
+        }
+      >,
       cmsPublishRequests: [] as CmsPublishView[],
       internalLinks: [] as InternalLinkView[],
       schemaFacts: [] as SchemaFactView[],
@@ -408,6 +417,23 @@ export async function getSeoPageData(organizationId: string) {
         lookedAt: row.lookedAt,
       })),
   );
+  const ourOffers = offerRows
+    .filter((row) => row.organizationId === organizationId)
+    .map((row) => row.name);
+  const draftOfferChecks = planDraftOfferChecks({
+    drafts: draftRows
+      .filter((row) => row.organizationId === organizationId)
+      .map((row) => ({
+        id: row.id,
+        briefId: row.briefId,
+        title: row.title,
+        body: row.body,
+      })),
+    briefs: briefRows
+      .filter((row) => row.organizationId === organizationId)
+      .map((row) => ({ id: row.id, source: row.source })),
+    offers: ourOffers,
+  });
 
   return {
     website: website ?? null,
@@ -445,9 +471,7 @@ export async function getSeoPageData(organizationId: string) {
     }),
     competitorCompare: planCompetitorCompare({
       sites: competitorSiteViews,
-      ourOffers: offerRows
-        .filter((row) => row.organizationId === organizationId)
-        .map((row) => row.name),
+      ourOffers,
       ourDifference: brainRows[0]?.differentiators ?? [],
     }),
     competitorPageGaps: planCompetitorPageGaps({
@@ -521,6 +545,8 @@ export async function getSeoPageData(organizationId: string) {
           (item) =>
             item.organizationId === organizationId && item.briefId === row.id,
         );
+        const offerCheck =
+          draftOfferChecks.find((check) => check.draftId === draft?.id) ?? null;
         return {
           id: row.id,
           query: row.query,
@@ -538,6 +564,7 @@ export async function getSeoPageData(organizationId: string) {
                 createdAt: draft.createdAt,
               }
             : null,
+          offerCheck,
         };
       }),
     cmsPublishRequests: publishRequestsToShow(

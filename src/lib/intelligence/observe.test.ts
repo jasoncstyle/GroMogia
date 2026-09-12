@@ -1236,6 +1236,96 @@ describe("intelligence observe", () => {
     assert.match(factsSummary(facts({ cmsPublishRequestCount: 3 })), /cms_publish=3/);
   });
 
+  it("observes competitor-topic draft offer checks and does not publish", () => {
+    const named = buildIntelligenceBrief(
+      facts({
+        draftOfferCheckCount: 2,
+        draftMissingOfferCount: 0,
+        draftNoOfferToCheckCount: 0,
+      }),
+    );
+    const observed = named.observations.find(
+      (item) =>
+        item.title === "Competitor-topic drafts checked against what you sell",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /2 competitor-topic drafts/);
+    assert.match(observed.body, /2 name a saved offer/);
+    assert.match(observed.body, /did not publish/);
+    assert.equal(
+      named.recommendations.some(
+        (item) =>
+          item.title === "Write a competitor-topic draft so it names a saved offer",
+      ),
+      false,
+    );
+
+    const missing = buildIntelligenceBrief(
+      facts({
+        draftOfferCheckCount: 1,
+        draftMissingOfferCount: 1,
+      }),
+    );
+    const rewrite = missing.recommendations.find(
+      (item) =>
+        item.title === "Write a competitor-topic draft so it names a saved offer",
+    );
+    assert.ok(rewrite);
+    assert.equal(rewrite.href, "/app/seo");
+    assert.match(rewrite.body, /will not publish/);
+    const missingNote = missing.observations.find(
+      (item) =>
+        item.title === "Competitor-topic drafts checked against what you sell",
+    );
+    assert.ok(missingNote);
+    assert.match(missingNote.body, /does not name a saved offer/);
+
+    const none = buildIntelligenceBrief(
+      facts({
+        draftOfferCheckCount: 1,
+        draftNoOfferToCheckCount: 1,
+      }),
+    );
+    const saveOffer = none.recommendations.find(
+      (item) =>
+        item.title === "Save what you sell so GroovGro can check that draft",
+    );
+    assert.ok(saveOffer);
+    assert.equal(saveOffer.href, "/app/offers");
+    assert.match(saveOffer.body, /will not publish/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) =>
+          item.title === "Save what you sell so GroovGro can check that draft",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          draftOfferCheckCount: 1,
+          draftMissingOfferCount: 1,
+        }),
+      ).recommendations.some(
+        (item) =>
+          item.title === "Write a competitor-topic draft so it names a saved offer",
+      ),
+      false,
+    );
+    assert.match(
+      factsSummary(
+        facts({
+          draftOfferCheckCount: 2,
+          draftMissingOfferCount: 1,
+          draftNoOfferToCheckCount: 1,
+        }),
+      ),
+      /draft_offer_checks=2 draft_missing_offers=1 draft_no_offer_checks=1/,
+    );
+  });
+
   it("observes link and schema facts and does not write the live site", () => {
     const withLinks = buildIntelligenceBrief(
       facts({

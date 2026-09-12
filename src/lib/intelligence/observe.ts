@@ -65,6 +65,9 @@ export type IntelligenceFacts = {
   competitorLookCount?: number
   competitorPageGapCount?: number
   competitorGapBriefCount?: number
+  draftOfferCheckCount?: number
+  draftMissingOfferCount?: number
+  draftNoOfferToCheckCount?: number
 };
 
 export type InsightItem = {
@@ -209,6 +212,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const competitorLookCount = facts.competitorLookCount ?? 0;
   const competitorPageGapCount = facts.competitorPageGapCount ?? 0;
   const competitorGapBriefCount = facts.competitorGapBriefCount ?? 0;
+  const draftOfferCheckCount = facts.draftOfferCheckCount ?? 0;
+  const draftMissingOfferCount = facts.draftMissingOfferCount ?? 0;
+  const draftNoOfferToCheckCount = facts.draftNoOfferToCheckCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -285,6 +291,18 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Workspace content drafts",
       body: `${contentDraftCount} workspace ${contentDraftCount === 1 ? "draft is" : "drafts are"} saved from a brief. GroovGro did not publish them or change the live website.`,
       evidence: ["content_drafts.status=draft"],
+      href: "/app/seo",
+    });
+  }
+
+  if (draftOfferCheckCount > 0) {
+    const namedCount =
+      draftOfferCheckCount - draftMissingOfferCount - draftNoOfferToCheckCount;
+    observations.push({
+      kind: "observation",
+      title: "Competitor-topic drafts checked against what you sell",
+      body: `GroovGro checked ${draftOfferCheckCount} competitor-topic ${draftOfferCheckCount === 1 ? "draft" : "drafts"} against saved offers.${namedCount > 0 ? ` ${namedCount} name a saved offer.` : ""}${draftMissingOfferCount > 0 ? ` ${draftMissingOfferCount} ${draftMissingOfferCount === 1 ? "does" : "do"} not name a saved offer yet.` : ""}${draftNoOfferToCheckCount > 0 ? ` ${draftNoOfferToCheckCount} cannot be checked until you save what you sell.` : ""} GroovGro did not publish or change the live website.`,
+      evidence: ["content_drafts.offer_check"],
       href: "/app/seo",
     });
   }
@@ -659,6 +677,26 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && draftNoOfferToCheckCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Save what you sell so GroovGro can check that draft",
+      body: "On Offers, save what you sell. GroovGro can then check a competitor-topic draft against that offer. It will not publish or change the live website.",
+      evidence: ["content_drafts.no_offer_to_check"],
+      href: "/app/offers",
+    });
+  }
+
+  if (facts.websiteConnected && draftMissingOfferCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Write a competitor-topic draft so it names a saved offer",
+      body: "On SEO, write that workspace draft again after you save what you sell. GroovGro will not publish or change the live website.",
+      evidence: ["content_drafts.missing_offer"],
+      href: "/app/seo",
+    });
+  }
+
   if (
     facts.websiteConnected &&
     contentDraftCount > 0 &&
@@ -861,6 +899,9 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `competitor_looks=${facts.competitorLookCount ?? 0}`,
     `competitor_page_gaps=${facts.competitorPageGapCount ?? 0}`,
     `competitor_gap_briefs=${facts.competitorGapBriefCount ?? 0}`,
+    `draft_offer_checks=${facts.draftOfferCheckCount ?? 0}`,
+    `draft_missing_offers=${facts.draftMissingOfferCount ?? 0}`,
+    `draft_no_offer_checks=${facts.draftNoOfferToCheckCount ?? 0}`,
   ].join(" ");
 }
 

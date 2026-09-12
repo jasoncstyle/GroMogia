@@ -7,7 +7,13 @@ import { CONTENT_BRIEF_SOURCE_COMPETITOR_GAP } from "./content-briefs";
 import {
   CONTENT_DRAFT_SOURCE_STORED_BRIEF,
   CONTENT_DRAFT_STATUS_DRAFT,
+  DRAFT_OFFER_CHECK_MISSING_OFFER,
+  DRAFT_OFFER_CHECK_NAMES_AN_OFFER,
+  DRAFT_OFFER_CHECK_NO_OFFER,
+  countDraftOfferChecks,
+  describeDraftOfferCheck,
   planContentDraft,
+  planDraftOfferChecks,
   writeDraftFromBrief,
 } from "./content-drafts";
 
@@ -124,5 +130,79 @@ describe("workspace drafts from saved briefs", () => {
       "utf8",
     );
     assert.match(seoPage, /draft from a competitor topic/);
+    assert.match(seoPage, /names a saved offer/);
+    assert.match(panel, /describeDraftOfferCheck/);
+    assert.doesNotMatch(helper, /requestCompetitorSearch|geoLookupEnabled|cmsPublishEnabled/);
+  });
+
+  it("checks a competitor-topic draft against saved offers", () => {
+    const drafts = [
+      {
+        id: "dddddddd-dddd-dddd-dddd-ddddddddddd1",
+        briefId: BRIEF_A,
+        title: "Weekend beginner class",
+        body: writeDraftFromBrief({
+          organizationId: ORG_A,
+          briefId: BRIEF_A,
+          title: "Weekend beginner class",
+          briefSource: CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
+          ourOffers: ["Private coaching"],
+        }),
+      },
+      {
+        id: "dddddddd-dddd-dddd-dddd-ddddddddddd2",
+        briefId: "44444444-4444-4444-4444-444444444444",
+        title: "Harbor tours",
+        body: "A workspace draft about harbor tours.",
+      },
+    ];
+    const briefs = [
+      { id: BRIEF_A, source: CONTENT_BRIEF_SOURCE_COMPETITOR_GAP },
+      { id: "44444444-4444-4444-4444-444444444444", source: "owner" },
+    ];
+    const named = planDraftOfferChecks({
+      drafts,
+      briefs,
+      offers: ["  Private coaching  "],
+    });
+    assert.equal(named.length, 1);
+    assert.equal(named[0]?.status, DRAFT_OFFER_CHECK_NAMES_AN_OFFER);
+    assert.deepEqual(named[0]?.namedOffers, ["Private coaching"]);
+    assert.match(describeDraftOfferCheck(named[0]!), /Private coaching/);
+    assert.match(describeDraftOfferCheck(named[0]!), /did not publish/);
+
+    const missing = planDraftOfferChecks({
+      drafts: [
+        {
+          id: "dddddddd-dddd-dddd-dddd-ddddddddddd3",
+          briefId: BRIEF_A,
+          title: "Weekend beginner class",
+          body: "Cover what a competitor site showed. Do not copy their words.",
+        },
+      ],
+      briefs,
+      offers: ["Private coaching"],
+    });
+    assert.equal(missing[0]?.status, DRAFT_OFFER_CHECK_MISSING_OFFER);
+    assert.match(describeDraftOfferCheck(missing[0]!), /does not name a saved offer/);
+
+    const none = planDraftOfferChecks({
+      drafts,
+      briefs,
+      offers: [],
+    });
+    assert.equal(none[0]?.status, DRAFT_OFFER_CHECK_NO_OFFER);
+    assert.match(describeDraftOfferCheck(none[0]!), /Save what you sell/);
+    assert.deepEqual(countDraftOfferChecks(named), {
+      checked: 1,
+      namesAnOffer: 1,
+      missingOffer: 0,
+      noOfferToCheck: 0,
+    });
+    assert.equal(planDraftOfferChecks({ drafts, briefs: [] }).length, 0);
+    assert.doesNotMatch(
+      JSON.stringify(named),
+      /oceansailing|morsealpha|stripe-osa/i,
+    );
   });
 });
