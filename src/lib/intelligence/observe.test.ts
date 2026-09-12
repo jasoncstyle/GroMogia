@@ -1220,6 +1220,7 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not create a page/);
+    assert.match(recommended.body, /save a brief from that list/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Review queries with no matching page",
