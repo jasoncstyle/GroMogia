@@ -1214,6 +1214,32 @@ describe("intelligence observe", () => {
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /2 worth-a-look queries/);
     assert.match(observed.body, /did not invent topics/);
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentGapCount: 2,
+          contentGapBriefCount: 1,
+        }),
+      ).observations.find(
+        (item) =>
+          item.title ===
+          "Search queries with no matching page GroovGro has read",
+      )?.body ?? "",
+      /1 still has no brief on the planner/,
+    );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentGapCount: 2,
+          contentGapBriefCount: 2,
+        }),
+      ).observations.find(
+        (item) =>
+          item.title ===
+          "Search queries with no matching page GroovGro has read",
+      )?.body ?? "",
+      /All of those already have a brief on the planner/,
+    );
     const recommended = brief.recommendations.find(
       (item) => item.title === "Review queries with no matching page",
     );
