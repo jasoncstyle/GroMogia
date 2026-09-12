@@ -10,6 +10,7 @@ import {
   describeContentBrief,
   hasSavedContentBriefForTopic,
   planContentBrief,
+  plannerQuerySuggestions,
   refuseDuplicateContentBrief,
   suggestBriefOutline,
   suggestBriefOutlineFromCompetitorGap,
@@ -154,5 +155,17 @@ describe("owner-entered content briefs", () => {
     );
     assert.match(action, /refuseDuplicateContentBrief/);
     assert.match(action, /eq\(contentBriefs\.organizationId, session\.organizationId\)/);
+    assert.deepEqual(
+      plannerQuerySuggestions(
+        [
+          "Weekend beginner class",
+          "  weekend beginner class  ",
+          "Private coaching",
+        ],
+        [{ query: "Weekend beginner class", title: "Weekend beginner class" }],
+      ),
+      ["Private coaching"],
+    );
+    assert.match(seoPage, /plannerQuerySuggestions/);
   });
 });

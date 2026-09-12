@@ -25,6 +25,7 @@ import { GeoNotesPanel } from "@/components/geo-notes-panel";
 import { GeoAuditsPanel } from "@/components/geo-audits-panel";
 import { GeoHistoryPanel } from "@/components/geo-history-panel";
 import { GeoQueriesPanel } from "@/components/geo-queries-panel";
+import { plannerQuerySuggestions } from "@/lib/growth/content-briefs";
 import { CompetitorSitesPanel } from "@/components/competitor-sites-panel";
 import { SerpNotesPanel } from "@/components/serp-notes-panel";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -293,11 +294,14 @@ export default async function SeoPage({
               title: request.title,
               note: request.note,
             }))}
-            querySuggestions={[
-              ...data.contentGaps.map((gap) => gap.query),
-              ...data.competitorPageGaps.map((gap) => gap.label),
-              ...data.keywords.map((keyword) => keyword.query),
-            ].filter((query, index, rows) => rows.indexOf(query) === index)}
+            querySuggestions={plannerQuerySuggestions(
+              [
+                ...data.contentGaps.map((gap) => gap.query),
+                ...data.competitorPageGaps.map((gap) => gap.label),
+                ...data.keywords.map((keyword) => keyword.query),
+              ],
+              data.contentBriefs,
+            )}
             canManage={session.permissions.includes("manage_seo")}
           />
 
