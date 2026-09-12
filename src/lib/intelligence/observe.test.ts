@@ -984,6 +984,7 @@ describe("intelligence observe", () => {
     assert.ok(reviewGaps);
     assert.equal(reviewGaps.href, "/app/seo");
     assert.match(reviewGaps.body, /will not copy their words/);
+    assert.match(reviewGaps.body, /listed first/);
     const saveBrief = pageGaps.recommendations.find(
       (item) => item.title === "Save a brief for a competitor page topic",
     );
