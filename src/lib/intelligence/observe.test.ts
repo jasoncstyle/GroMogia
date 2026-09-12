@@ -551,6 +551,7 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not ask an AI system/);
     assert.match(recommended.body, /treat one answer as truth/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save visibility history from what you already heard",
