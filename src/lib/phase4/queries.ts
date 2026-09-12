@@ -41,6 +41,7 @@ import {
   brainSeoContextSaved,
 } from "@/lib/growth/brain-context";
 import { GEO_AUDIT_STATUS_GAP } from "@/lib/geo/audits";
+import { CONTENT_BRIEF_SOURCE_COMPETITOR_GAP } from "@/lib/growth/content-briefs";
 import { CONTENT_GAP_STATUS_GAP } from "@/lib/growth/content-gaps";
 import { isDefaultSchemaType } from "@/lib/growth/page-structure";
 import {
@@ -71,6 +72,7 @@ export async function getIntelligenceFacts(
     competitorPageGapCount,
     contentGapCount,
     contentBriefCount,
+    competitorGapBriefCount,
     contentDraftCount,
     cmsPublishRequestCount,
     pageStructureCounts,
@@ -85,6 +87,7 @@ export async function getIntelligenceFacts(
     countCompetitorPageGaps(organizationId),
     countContentGaps(organizationId),
     countContentBriefs(organizationId),
+    countCompetitorGapBriefs(organizationId),
     countContentDrafts(organizationId),
     countCmsPublishRequests(organizationId),
     countPageStructure(organizationId),
@@ -178,6 +181,7 @@ export async function getIntelligenceFacts(
     competitorSiteCount: competitorSiteCounts.total,
     competitorLookCount: competitorSiteCounts.looked,
     competitorPageGapCount,
+    competitorGapBriefCount,
   };
 }
 
@@ -336,6 +340,21 @@ async function countContentGaps(organizationId: string): Promise<number> {
       and(
         eq(contentGaps.organizationId, organizationId),
         eq(contentGaps.status, CONTENT_GAP_STATUS_GAP),
+      ),
+    );
+  return Number(row?.value ?? 0);
+}
+
+async function countCompetitorGapBriefs(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(contentBriefs)
+    .where(
+      and(
+        eq(contentBriefs.organizationId, organizationId),
+        eq(contentBriefs.source, CONTENT_BRIEF_SOURCE_COMPETITOR_GAP),
       ),
     );
   return Number(row?.value ?? 0);

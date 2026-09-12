@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { join } from "node:path";
 
+import { CONTENT_BRIEF_SOURCE_COMPETITOR_GAP } from "./content-briefs";
 import {
   CONTENT_DRAFT_SOURCE_STORED_BRIEF,
   CONTENT_DRAFT_STATUS_DRAFT,
@@ -44,6 +45,18 @@ describe("workspace drafts from saved briefs", () => {
     });
     assert.match(body, /did not say what to cover yet/);
     assert.match(body, /will not invent prices/);
+    const fromGap = writeDraftFromBrief({
+      organizationId: ORG_A,
+      briefId: BRIEF_A,
+      title: "Weekend beginner class",
+      briefSource: CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
+      ourOffers: ["  Private coaching  "],
+      ourDifference: ["Smaller groups"],
+    });
+    assert.match(fromGap, /Do not copy a competitor/);
+    assert.match(fromGap, /Private coaching/);
+    assert.match(fromGap, /Smaller groups/);
+    assert.doesNotMatch(fromGap, /\$\d|5-star|Jane Doe/i);
   });
 
   it("requires an organization, brief, and title", () => {
@@ -100,8 +113,16 @@ describe("workspace drafts from saved briefs", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /eq\(contentBriefs\.organizationId, session\.organizationId\)/);
     assert.match(action, /did not publish/);
+    assert.match(action, /briefSource: brief\.source/);
+    assert.match(action, /ourOffers/);
     assert.match(panel, /Write a workspace draft/);
+    assert.match(panel, /this business’s words/);
     assert.match(panel, /will not publish/);
     assert.doesNotMatch(nextStep, /contentDraft|content_draft|Write a workspace draft/);
+    const seoPage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
+      "utf8",
+    );
+    assert.match(seoPage, /draft from a competitor topic/);
   });
 });

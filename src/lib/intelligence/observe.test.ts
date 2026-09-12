@@ -1078,6 +1078,20 @@ describe("intelligence observe", () => {
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /2 content briefs/);
     assert.match(observed.body, /did not publish a page/);
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentBriefCount: 2,
+          competitorGapBriefCount: 1,
+        }),
+      ).observations.find((item) => item.title === "Content briefs on the planner")
+        ?.body ?? "",
+      /1 is from a competitor page topic/,
+    );
+    assert.match(
+      factsSummary(facts({ competitorGapBriefCount: 1 })),
+      /competitor_gap_briefs=1/,
+    );
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Save a content brief to the planner",
@@ -1149,6 +1163,7 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not publish/);
+    assert.match(recommended.body, /copy a competitor/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Write a workspace draft from a brief",

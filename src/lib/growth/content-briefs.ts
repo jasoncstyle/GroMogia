@@ -24,6 +24,7 @@ export type ContentBriefView = {
   title: string
   audience: string
   outline: string
+  source?: string
   createdAt: Date
 };
 
@@ -90,8 +91,12 @@ export function planContentBrief(input: {
 }
 
 export function describeContentBrief(
-  brief: Pick<ContentBriefView, "query" | "title">,
+  brief: Pick<ContentBriefView, "query" | "title" | "source">,
 ): string {
+  const fromGap = brief.source === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP;
+  if (brief.query && fromGap) {
+    return `Planned from a competitor topic: “${brief.title}” for “${brief.query}”.`;
+  }
   if (brief.query) {
     return `Planned: “${brief.title}” for “${brief.query}”.`;
   }

@@ -115,7 +115,8 @@ export default async function SeoPage({
           It can name topics those sites show that GroovGro has not read on
           your site. You can save a brief for one of those topics. Worth-a-look queries are compared
           to pages GroovGro already read. You can save a brief to the planner
-          and write a workspace draft from it. You can save a draft for later
+          and write a workspace draft from it. A draft from a competitor topic
+          uses this business’s words. You can save a draft for later
           review. Pages GroovGro already read
           can show link suggestions and estimated schema types. You can save
           what you already heard from an AI system. You can save questions to
