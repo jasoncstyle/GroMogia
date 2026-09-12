@@ -66,6 +66,7 @@ export type IntelligenceFacts = {
   competitorPageGapCount?: number
   competeMoveCount?: number
   competeMoveDoneCount?: number
+  competeMovePlannedCount?: number
   competitorGapBriefCount?: number
   draftOfferCheckCount?: number
   draftMissingOfferCount?: number
@@ -218,6 +219,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const competitorPageGapCount = facts.competitorPageGapCount ?? 0;
   const competeMoveCount = facts.competeMoveCount ?? 0;
   const competeMoveDoneCount = facts.competeMoveDoneCount ?? 0;
+  const competeMovePlannedCount =
+    facts.competeMovePlannedCount ??
+    Math.max(0, competeMoveCount - competeMoveDoneCount);
   const competitorGapBriefCount = facts.competitorGapBriefCount ?? 0;
   const draftOfferCheckCount = facts.draftOfferCheckCount ?? 0;
   const draftMissingOfferCount = facts.draftMissingOfferCount ?? 0;
@@ -269,7 +273,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     observations.push({
       kind: "observation",
       title: "Compete moves you said you will do",
-      body: `The owner saved ${competeMoveCount} ${competeMoveCount === 1 ? "move" : "moves"} they will do.${competeMoveDoneCount > 0 ? ` ${competeMoveDoneCount} ${competeMoveDoneCount === 1 ? "is" : "are"} marked done.` : ""} GroovGro did not do that work or change the live website.`,
+      body: `The owner saved ${competeMoveCount} ${competeMoveCount === 1 ? "move" : "moves"} they will do.${competeMoveDoneCount > 0 ? ` ${competeMoveDoneCount} ${competeMoveDoneCount === 1 ? "is" : "are"} marked done.` : ""}${competeMovePlannedCount > 0 ? ` ${competeMovePlannedCount} ${competeMovePlannedCount === 1 ? "is" : "are"} still planned.` : competeMoveDoneCount > 0 ? " None are still planned." : ""} GroovGro did not do that work or change the live website.`,
       evidence: ["compete_moves.source=owner"],
       href: "/app/seo",
     });
@@ -968,6 +972,10 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `competitor_page_gaps=${facts.competitorPageGapCount ?? 0}`,
     `compete_moves=${facts.competeMoveCount ?? 0}`,
     `compete_moves_done=${facts.competeMoveDoneCount ?? 0}`,
+    `compete_moves_planned=${
+      facts.competeMovePlannedCount ??
+      Math.max(0, (facts.competeMoveCount ?? 0) - (facts.competeMoveDoneCount ?? 0))
+    }`,
     `competitor_gap_briefs=${facts.competitorGapBriefCount ?? 0}`,
     `draft_offer_checks=${facts.draftOfferCheckCount ?? 0}`,
     `draft_missing_offers=${facts.draftMissingOfferCount ?? 0}`,
