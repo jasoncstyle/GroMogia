@@ -2,6 +2,7 @@ import { createGeoQuery } from "@/lib/actions/geo-queries";
 import {
   describeGeoQuery,
   describeGeoQueriesHeading,
+  geoQueriesNeedingWhy,
   sortGeoQueriesForPanel,
   type GeoQueryView,
 } from "@/lib/geo/queries";
@@ -27,10 +28,13 @@ export function GeoQueriesPanel({
   canManage?: boolean
 }) {
   const listed = sortGeoQueriesForPanel(queries);
+  const needingWhyCount = geoQueriesNeedingWhy(queries).length;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{describeGeoQueriesHeading(queries.length)}</CardTitle>
+        <CardTitle>
+          {describeGeoQueriesHeading(queries.length, needingWhyCount)}
+        </CardTitle>
         <CardDescription>
           Save questions you already care about. Questions that still need a why are listed first. GroovGro will not ask an AI
           system, scrape answers, or treat one answer as truth.
