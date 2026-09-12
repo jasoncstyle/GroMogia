@@ -1106,6 +1106,35 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not do that work/);
+    const fromCompare = buildIntelligenceBrief(
+      facts({
+        competitorLookCount: 2,
+        competeMoveCount: 0,
+      }),
+    );
+    const compareRec = fromCompare.recommendations.find(
+      (item) => item.title === "Save what you will do from that compare",
+    );
+    assert.ok(compareRec);
+    assert.equal(compareRec.href, "/app/seo");
+    assert.match(compareRec.body, /will not do that work/);
+    assert.equal(
+      fromCompare.recommendations.some(
+        (item) => item.title === "Save what you will do to compete",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          competitorLookCount: 2,
+          competeMoveCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save what you will do from that compare",
+      ),
+      false,
+    );
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save what you will do to compete",
