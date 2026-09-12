@@ -45,7 +45,9 @@ import {
 import { GEO_AUDIT_STATUS_GAP } from "@/lib/geo/audits";
 import { CONTENT_BRIEF_SOURCE_COMPETITOR_GAP } from "@/lib/growth/content-briefs";
 import {
+  countDraftDifferenceChecks,
   countDraftOfferChecks,
+  planDraftDifferenceChecks,
   planDraftOfferChecks,
 } from "@/lib/growth/content-drafts";
 import { CONTENT_GAP_STATUS_GAP } from "@/lib/growth/content-gaps";
@@ -82,6 +84,7 @@ export async function getIntelligenceFacts(
     competitorGapBriefCount,
     contentDraftCount,
     draftOfferCheckCounts,
+    draftDifferenceCheckCounts,
     cmsPublishRequestCount,
     pageStructureCounts,
     geoNoteCount,
@@ -99,6 +102,10 @@ export async function getIntelligenceFacts(
     countCompetitorGapBriefs(organizationId),
     countContentDrafts(organizationId),
     countDraftOfferCheckFacts(organizationId),
+    countDraftDifferenceCheckFacts(
+      organizationId,
+      growth?.brain?.differentiators,
+    ),
     countCmsPublishRequests(organizationId),
     countPageStructure(organizationId),
     countGeoNotes(organizationId),
@@ -196,6 +203,9 @@ export async function getIntelligenceFacts(
     draftOfferCheckCount: draftOfferCheckCounts.checked,
     draftMissingOfferCount: draftOfferCheckCounts.missingOffer,
     draftNoOfferToCheckCount: draftOfferCheckCounts.noOfferToCheck,
+    draftDifferenceCheckCount: draftDifferenceCheckCounts.checked,
+    draftMissingDifferenceCount: draftDifferenceCheckCounts.missingDifference,
+    draftNoDifferenceToCheckCount: draftDifferenceCheckCounts.noDifferenceToCheck,
   };
 }
 
@@ -436,6 +446,41 @@ async function countDraftOfferCheckFacts(organizationId: string) {
       drafts: draftRows,
       briefs: briefRows,
       offers: offerRows.map((row) => row.name),
+    }),
+  );
+}
+
+async function countDraftDifferenceCheckFacts(
+  organizationId: string,
+  differences?: string[] | null,
+) {
+  const db = getDb();
+  if (!db) {
+    return countDraftDifferenceChecks([]);
+  }
+  const [briefRows, draftRows] = await Promise.all([
+    db
+      .select({
+        id: contentBriefs.id,
+        source: contentBriefs.source,
+      })
+      .from(contentBriefs)
+      .where(eq(contentBriefs.organizationId, organizationId)),
+    db
+      .select({
+        id: contentDrafts.id,
+        briefId: contentDrafts.briefId,
+        title: contentDrafts.title,
+        body: contentDrafts.body,
+      })
+      .from(contentDrafts)
+      .where(eq(contentDrafts.organizationId, organizationId)),
+  ]);
+  return countDraftDifferenceChecks(
+    planDraftDifferenceChecks({
+      drafts: draftRows,
+      briefs: briefRows,
+      differences,
     }),
   );
 }

@@ -10,6 +10,9 @@ export const CONTENT_DRAFT_STATUS_DRAFT = "draft";
 export const DRAFT_OFFER_CHECK_NAMES_AN_OFFER = "names_an_offer";
 export const DRAFT_OFFER_CHECK_MISSING_OFFER = "missing_offer";
 export const DRAFT_OFFER_CHECK_NO_OFFER = "no_offer_to_check";
+export const DRAFT_DIFFERENCE_CHECK_NAMES = "names_a_difference";
+export const DRAFT_DIFFERENCE_CHECK_MISSING = "missing_difference";
+export const DRAFT_DIFFERENCE_CHECK_NO = "no_difference_to_check";
 
 export type ContentDraftBrief = {
   organizationId: string
@@ -59,6 +62,27 @@ export type DraftOfferCheckCounts = {
   namesAnOffer: number
   missingOffer: number
   noOfferToCheck: number
+};
+
+export type DraftDifferenceCheckStatus =
+  | typeof DRAFT_DIFFERENCE_CHECK_NAMES
+  | typeof DRAFT_DIFFERENCE_CHECK_MISSING
+  | typeof DRAFT_DIFFERENCE_CHECK_NO;
+
+export type DraftDifferenceCheckView = {
+  draftId: string
+  briefId: string
+  title: string
+  status: DraftDifferenceCheckStatus
+  namedDifferences: string[]
+  note: string
+};
+
+export type DraftDifferenceCheckCounts = {
+  checked: number
+  namesADifference: number
+  missingDifference: number
+  noDifferenceToCheck: number
 };
 
 export function planContentDraft(input: ContentDraftBrief): ContentDraftPlan {
@@ -219,6 +243,78 @@ export function planDraftOfferChecks(input: {
         status: DRAFT_OFFER_CHECK_MISSING_OFFER,
         namedOffers: [] as string[],
         note: "This draft does not name a saved offer yet. Write it again after you save what you sell. GroovGro did not publish or change the live website.",
+      };
+    });
+}
+
+export function describeDraftDifferenceCheck(
+  check: DraftDifferenceCheckView,
+): string {
+  return check.note;
+}
+
+export function countDraftDifferenceChecks(
+  checks: DraftDifferenceCheckView[],
+): DraftDifferenceCheckCounts {
+  return {
+    checked: checks.length,
+    namesADifference: checks.filter(
+      (check) => check.status === DRAFT_DIFFERENCE_CHECK_NAMES,
+    ).length,
+    missingDifference: checks.filter(
+      (check) => check.status === DRAFT_DIFFERENCE_CHECK_MISSING,
+    ).length,
+    noDifferenceToCheck: checks.filter(
+      (check) => check.status === DRAFT_DIFFERENCE_CHECK_NO,
+    ).length,
+  };
+}
+
+export function planDraftDifferenceChecks(input: {
+  drafts?: Array<{ id: string; briefId: string; title: string; body: string }> | null
+  briefs?: Array<{ id: string; source?: string | null }> | null
+  differences?: string[] | null
+}): DraftDifferenceCheckView[] {
+  const gapBriefs = new Set(
+    (input.briefs ?? [])
+      .filter((brief) => brief.source === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP)
+      .map((brief) => brief.id),
+  );
+  const differences = uniqueOfferLabels(input.differences);
+  return (input.drafts ?? [])
+    .filter((draft) => gapBriefs.has(draft.briefId))
+    .map((draft) => {
+      const title = normalizeOfferLabel(draft.title);
+      if (differences.length === 0) {
+        return {
+          draftId: draft.id,
+          briefId: draft.briefId,
+          title,
+          status: DRAFT_DIFFERENCE_CHECK_NO,
+          namedDifferences: [] as string[],
+          note: "GroovGro cannot check this draft against what makes the business different yet. Save that on Business first. GroovGro did not publish or change the live website.",
+        };
+      }
+      const namedDifferences = differences.filter((difference) =>
+        draftNamesOffer(title, draft.body ?? "", difference),
+      );
+      if (namedDifferences.length > 0) {
+        return {
+          draftId: draft.id,
+          briefId: draft.briefId,
+          title,
+          status: DRAFT_DIFFERENCE_CHECK_NAMES,
+          namedDifferences,
+          note: `This draft names “${namedDifferences[0]}”. GroovGro did not publish or change the live website.`,
+        };
+      }
+      return {
+        draftId: draft.id,
+        briefId: draft.briefId,
+        title,
+        status: DRAFT_DIFFERENCE_CHECK_MISSING,
+        namedDifferences: [] as string[],
+        note: "This draft does not name what makes this business different yet. Write it again after you save that on Business. GroovGro did not publish or change the live website.",
       };
     });
 }

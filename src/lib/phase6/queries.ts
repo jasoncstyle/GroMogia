@@ -47,8 +47,10 @@ import {
 } from "@/lib/growth/compete-moves";
 import type { ContentBriefView } from "@/lib/growth/content-briefs";
 import {
+  planDraftDifferenceChecks,
   planDraftOfferChecks,
   type ContentDraftView,
+  type DraftDifferenceCheckView,
   type DraftOfferCheckView,
 } from "@/lib/growth/content-drafts";
 import type { KeywordWithHistory } from "@/lib/growth/keywords";
@@ -120,6 +122,7 @@ export async function getSeoPageData(organizationId: string) {
         ContentBriefView & {
           draft?: ContentDraftView | null
           offerCheck?: DraftOfferCheckView | null
+          differenceCheck?: DraftDifferenceCheckView | null
         }
       >,
       cmsPublishRequests: [] as CmsPublishView[],
@@ -453,6 +456,20 @@ export async function getSeoPageData(organizationId: string) {
       .map((row) => ({ id: row.id, source: row.source })),
     offers: ourOffers,
   });
+  const draftDifferenceChecks = planDraftDifferenceChecks({
+    drafts: draftRows
+      .filter((row) => row.organizationId === organizationId)
+      .map((row) => ({
+        id: row.id,
+        briefId: row.briefId,
+        title: row.title,
+        body: row.body,
+      })),
+    briefs: briefRows
+      .filter((row) => row.organizationId === organizationId)
+      .map((row) => ({ id: row.id, source: row.source })),
+    differences: brainRows[0]?.differentiators ?? [],
+  });
 
   return {
     website: website ?? null,
@@ -576,6 +593,9 @@ export async function getSeoPageData(organizationId: string) {
         );
         const offerCheck =
           draftOfferChecks.find((check) => check.draftId === draft?.id) ?? null;
+        const differenceCheck =
+          draftDifferenceChecks.find((check) => check.draftId === draft?.id) ??
+          null;
         return {
           id: row.id,
           query: row.query,
@@ -594,6 +614,7 @@ export async function getSeoPageData(organizationId: string) {
               }
             : null,
           offerCheck,
+          differenceCheck,
         };
       }),
     cmsPublishRequests: publishRequestsToShow(
