@@ -172,6 +172,7 @@ describe("owner-entered GEO history", () => {
       "utf8",
     );
     assert.match(seoPage, /GeoHistoryPanel/);
+    assert.match(seoPage, /Questions that still need a snapshot are listed first/);
     const catalog = readFileSync(
       join(process.cwd(), "src/lib/modules/catalog.ts"),
       "utf8",
