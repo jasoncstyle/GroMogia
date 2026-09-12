@@ -2091,6 +2091,10 @@ Organization
 285. **Channel-compare heading shows how many compares sit there** — **IMPLEMENTED** this slice. The stored-evidence compare heading on SEO says how many channel compares GroovGro estimated. GroovGro does not change Next step or add a Next step loop.
 286. **Before-and-after heading shows how many looks sit there** — **IMPLEMENTED** this slice. The before-and-after heading on SEO says how many stored Goal looks sit there. GroovGro does not change the plan or add a Next step loop.
 287. **Status text names recorded-query, competitor-note, channel, and before-after heading counts** — **IMPLEMENTED** this slice. Architecture and status summaries name those SEO heading counts. GroovGro does not publish or add a Next step loop.
+288. **Intelligence names how many worth-a-look queries are listed** — **IMPLEMENTED** this slice. Intelligence can say how many stored Search Console queries marked worth a look are listed on SEO. GroovGro does not buy keyword data or add a Next step loop.
+289. **Intelligence names how many stored channel compares are listed** — **IMPLEMENTED** this slice. Intelligence can say how many stored channel compares are listed. GroovGro does not change Next step or add a Next step loop.
+290. **Intelligence names how many stored before-and-after looks are listed** — **IMPLEMENTED** this slice. Intelligence can say how many stored before-and-after looks are listed. GroovGro does not change the plan or add a Next step loop.
+291. **Status text names Intelligence listed counts for queries, channels, and before-and-after looks** — **IMPLEMENTED** this slice. Architecture and status summaries name those Intelligence listed counts. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
