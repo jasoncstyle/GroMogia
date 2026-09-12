@@ -124,6 +124,8 @@ describe("workspace drafts from saved briefs", () => {
     assert.match(panel, /Write a workspace draft/);
     assert.match(panel, /this business’s words/);
     assert.match(panel, /will not publish/);
+    assert.match(panel, /Save for later review/);
+    assert.match(panel, /createCmsPublishRequest/);
     assert.doesNotMatch(nextStep, /contentDraft|content_draft|Write a workspace draft/);
     const seoPage = readFileSync(
       join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
@@ -131,6 +133,8 @@ describe("workspace drafts from saved briefs", () => {
     );
     assert.match(seoPage, /draft from a competitor topic/);
     assert.match(seoPage, /names a saved offer/);
+    assert.match(seoPage, /queuedDraftIds/);
+    assert.match(seoPage, /later review from[\s\S]*the planner/);
     assert.match(panel, /describeDraftOfferCheck/);
     assert.doesNotMatch(helper, /requestCompetitorSearch|geoLookupEnabled|cmsPublishEnabled/);
   });

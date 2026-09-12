@@ -705,7 +705,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Save a draft for later CMS review",
-      body: "On SEO, save a workspace draft for later review. GroovGro will not publish or change the live website.",
+      body: "On SEO, save a workspace draft for later review from the Content planner. GroovGro will not publish or change the live website.",
       evidence: ["cms_publish_requests missing"],
       href: "/app/seo",
     });
