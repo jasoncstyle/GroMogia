@@ -52,11 +52,16 @@ export function ContentBriefsPanel({
   canManage?: boolean
 }) {
   const briefsToShow = sortContentBriefsForPlanner(briefs);
+  const needingDraftCount = briefsNeedingDraft(briefs).length;
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          {describePlannerHeading(queuedReviews.length, briefs.length)}
+          {describePlannerHeading(
+            queuedReviews.length,
+            briefs.length,
+            needingDraftCount,
+          )}
         </CardTitle>
         <CardDescription>
           Save a brief, including from a missing-page query, then write a
