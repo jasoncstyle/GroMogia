@@ -11,8 +11,11 @@ import {
   describeContentBrief,
   hasSavedContentBriefForTopic,
   planContentBrief,
+  briefsNeedingDraft,
+  briefsWithDraft,
   plannerQuerySuggestions,
   refuseDuplicateContentBrief,
+  shouldGroupPlannerBriefs,
   sortContentBriefsForPlanner,
   suggestBriefOutline,
   suggestBriefOutlineFromCompetitorGap,
@@ -193,5 +196,29 @@ describe("owner-entered content briefs", () => {
       ]).map((row) => row.id),
       ["needs-draft", "with-draft", "also-draft"],
     );
+    assert.equal(
+      shouldGroupPlannerBriefs([
+        { id: "with-draft", draft: { id: "d1" } },
+        { id: "needs-draft" },
+      ]),
+      true,
+    );
+    assert.equal(shouldGroupPlannerBriefs([{ id: "needs-draft" }]), false);
+    assert.deepEqual(
+      briefsNeedingDraft([
+        { id: "with-draft", draft: { id: "d1" } },
+        { id: "needs-draft" },
+      ]).map((row) => row.id),
+      ["needs-draft"],
+    );
+    assert.deepEqual(
+      briefsWithDraft([
+        { id: "with-draft", draft: { id: "d1" } },
+        { id: "needs-draft" },
+      ]).map((row) => row.id),
+      ["with-draft"],
+    );
+    assert.match(panel, /Still need a workspace draft/);
+    assert.match(panel, /Already has a workspace draft/);
   });
 });
