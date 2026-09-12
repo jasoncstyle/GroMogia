@@ -8,6 +8,7 @@ import {
   CONTENT_GAP_STATUS_GAP,
   contentGapsNeedingBrief,
   contentGapsWithBrief,
+  describeContentGapGroupHeading,
   describeContentGapsHeading,
   shouldGroupContentGaps,
   sortContentGapsForPanel,
@@ -196,8 +197,15 @@ describe("content gap detection from stored pages", () => {
     );
     assert.match(panel, /describeContentGapsHeading\(gaps.length, briefedCount\)/);
     assert.match(panel, /sortContentGapsForPanel/);
-    assert.match(panel, /Still need a brief/);
-    assert.match(panel, /Already have a brief/);
+    assert.match(panel, /describeContentGapGroupHeading/);
+    assert.equal(
+      describeContentGapGroupHeading("need", 2),
+      "Still need a brief · 2",
+    );
+    assert.equal(
+      describeContentGapGroupHeading("have", 1),
+      "Already have a brief · 1",
+    );
     assert.equal(
       shouldGroupContentGaps(
         [{ query: "Private coaching" }, { query: "Weekend beginner class" }],
