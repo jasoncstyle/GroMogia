@@ -150,6 +150,7 @@ describe("workspace drafts from saved briefs", () => {
     assert.match(seoPage, /still need later review are listed first/);
     assert.match(seoPage, /Suggested links are listed first/);
     assert.match(seoPage, /Estimated schema types that are not the default are listed first/);
+    assert.match(seoPage, /Notes that name a question are listed first/);
     assert.match(seoPage, /Citation gaps are listed first/);
     assert.match(panel, /describeDraftOfferCheck/);
     assert.match(panel, /describeDraftDifferenceCheck/);

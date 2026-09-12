@@ -153,6 +153,7 @@ describe("owner-entered GEO notes", () => {
       "utf8",
     );
     assert.match(seoPage, /GeoNotesPanel/);
+    assert.match(seoPage, /Notes that name a question are listed first/);
     const catalog = readFileSync(
       join(process.cwd(), "src/lib/modules/catalog.ts"),
       "utf8",
