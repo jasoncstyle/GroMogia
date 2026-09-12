@@ -11,6 +11,7 @@ import {
   CMS_PUBLISH_STATUS_REVIEW,
   describeCmsPublishRequest,
   describePlannerHeading,
+  describePublishQueueCopy,
   describePublishQueueHeading,
   draftsWaitingToQueue,
   planCmsPublishRequest,
@@ -119,8 +120,9 @@ describe("CMS publish review queue and disabled adapter", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /eq\(contentDrafts\.organizationId, session\.organizationId\)/);
     assert.match(action, /did not publish/);
-    assert.match(panel, /will not publish/);
-    assert.match(panel, /adapter stays off/);
+    assert.match(panel, /describePublishQueueCopy/);
+    assert.match(describePublishQueueCopy(0), /will not publish/);
+    assert.match(describePublishQueueCopy(0), /adapter stays off/);
     const briefsPanel = readFileSync(
       join(process.cwd(), "src/components/content-briefs-panel.tsx"),
       "utf8",
@@ -170,6 +172,12 @@ describe("CMS publish review queue and disabled adapter", () => {
       "Drafts ready to publish later · 2 waiting · 1 still needs later review",
     );
     assert.match(panel, /openDrafts.length/);
+    assert.equal(
+      describePublishQueueCopy(0),
+      "Save a workspace draft for later review. GroovGro will not publish, write a CMS, or change the live website. The adapter stays off.",
+    );
+    assert.match(describePublishQueueCopy(1), /listed first/);
+    assert.match(panel, /describePublishQueueCopy/);
     assert.deepEqual(
       draftsWaitingToQueue(
         [
