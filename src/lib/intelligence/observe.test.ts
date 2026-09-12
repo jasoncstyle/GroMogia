@@ -924,6 +924,7 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not scrape Google/);
+    assert.match(recommended.body, /How we might compete/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save a competitor website you already know",
