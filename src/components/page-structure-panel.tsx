@@ -1,4 +1,5 @@
 import {
+  describePageStructureGroupHeading,
   describePageStructureHeading,
   type InternalLinkView,
   type SchemaFactView,
@@ -42,7 +43,9 @@ export function PageStructurePanel({
         ) : (
           <>
             <div className="space-y-3">
-              <p className="text-sm font-medium">Suggested links</p>
+              <p className="text-sm font-medium">
+                {describePageStructureGroupHeading("links", links.length)}
+              </p>
               {links.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                   No stored page mentions another page&apos;s title strongly
@@ -66,7 +69,9 @@ export function PageStructurePanel({
               )}
             </div>
             <div className="space-y-3">
-              <p className="text-sm font-medium">Estimated schema types</p>
+              <p className="text-sm font-medium">
+                {describePageStructureGroupHeading("schema", schemaFacts.length)}
+              </p>
               {schemaFacts.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                   GroovGro has not stored schema estimates from the pages it
