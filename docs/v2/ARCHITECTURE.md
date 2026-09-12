@@ -2064,6 +2064,11 @@ Organization
 258. **Later-review copy names remaining drafts listed first** — **IMPLEMENTED** this slice. The later-review queue says drafts that still need later review are listed first. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 259. **Intelligence names remaining later-review drafts listed first** — **IMPLEMENTED** this slice. Intelligence can say remaining workspace drafts that still need later review are listed first. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 260. **Status text names remaining later-review drafts** — **IMPLEMENTED** this slice. Architecture and status summaries name the later-review heading, page copy, and Intelligence that remaining drafts are listed first. GroovGro does not publish or add a Next step loop.
+261. **SEO intro names remaining later-review drafts listed first** — **IMPLEMENTED** this slice. The SEO page says drafts that still need later review are listed first. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+262. **Planner heading shows remaining later-review drafts** — **IMPLEMENTED** this slice. The Content planner heading says how many workspace drafts still need later review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+263. **Planner copy names remaining later-review drafts listed first** — **IMPLEMENTED** this slice. The Content planner says drafts that still need later review are listed first. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+264. **Intelligence names Later review for waiting drafts** — **IMPLEMENTED** this slice. Intelligence can say waiting later-review drafts are listed on Later review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+265. **Status text names remaining later-review planner and SEO copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the SEO intro, planner heading, planner copy, and Intelligence Later review note. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
