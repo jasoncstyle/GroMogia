@@ -2004,6 +2004,7 @@ Organization
 198. **Intelligence recommends a compete move from a stored compare** — **IMPLEMENTED** this slice. When GroovGro has compared saved competitor websites and the owner has not saved a compete move, Intelligence can recommend saving one from that compare. GroovGro does not do the work, copy their words, publish, or add a Next step loop.
 199. **Planner heading shows later-review count** — **IMPLEMENTED** this slice. The Content planner heading says how many workspace drafts are saved for later CMS review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 200. **Later-review queue heading shows how many are waiting** — **IMPLEMENTED** this slice. The later-review queue heading on SEO says how many drafts are waiting. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+201. **Hide already-queued drafts from the later-review form** — **IMPLEMENTED** this slice. The later-review form on SEO hides workspace drafts already saved for later review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 

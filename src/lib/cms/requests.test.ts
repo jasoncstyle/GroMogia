@@ -12,6 +12,7 @@ import {
   describeCmsPublishRequest,
   describePlannerHeading,
   describePublishQueueHeading,
+  draftsWaitingToQueue,
   planCmsPublishRequest,
   publishRequestsToShow,
 } from "./requests";
@@ -139,6 +140,17 @@ describe("CMS publish review queue and disabled adapter", () => {
       describePublishQueueHeading(2),
       "Drafts ready to publish later · 2 waiting",
     );
+    assert.deepEqual(
+      draftsWaitingToQueue(
+        [
+          { id: "draft-open", title: "Open draft" },
+          { id: "draft-queued", title: "Queued draft" },
+        ],
+        [{ draftId: "draft-queued" }],
+      ).map((draft) => draft.id),
+      ["draft-open"],
+    );
+    assert.match(panel, /All workspace drafts are already saved for later review/);
     assert.doesNotMatch(briefsPanel, /requestCmsPublish|cmsPublishEnabled\(\)/);
     assert.match(adapter, /never fetches/);
     assert.match(queries, /eq\(cmsPublishRequests\.organizationId, organizationId\)/);

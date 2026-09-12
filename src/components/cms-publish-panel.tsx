@@ -2,6 +2,7 @@ import { createCmsPublishRequest } from "@/lib/actions/cms-publish";
 import {
   describeCmsPublishRequest,
   describePublishQueueHeading,
+  draftsWaitingToQueue,
   type CmsPublishView,
 } from "@/lib/cms/requests";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -27,6 +28,7 @@ export function CmsPublishPanel({
   drafts: Array<{ id: string; title: string }>
   canManage?: boolean
 }) {
+  const openDrafts = draftsWaitingToQueue(drafts, requests);
   return (
     <Card>
       <CardHeader>
@@ -62,7 +64,7 @@ export function CmsPublishPanel({
           </div>
         )}
 
-        {canManage && drafts.length > 0 ? (
+        {canManage && openDrafts.length > 0 ? (
           <SaveForm
             action={createCmsPublishRequest}
             successMessage="Publish request saved. GroovGro did not publish or change the live website."
@@ -81,7 +83,7 @@ export function CmsPublishPanel({
                 <option value="" disabled>
                   Pick a workspace draft
                 </option>
-                {drafts.map((draft) => (
+                {openDrafts.map((draft) => (
                   <option key={draft.id} value={draft.id}>
                     {draft.title}
                   </option>
@@ -101,6 +103,11 @@ export function CmsPublishPanel({
             </div>
             <SaveButton type="submit">Save for later review</SaveButton>
           </SaveForm>
+        ) : canManage && drafts.length > 0 ? (
+          <p className="text-sm text-muted-foreground">
+            All workspace drafts are already saved for later review. GroovGro
+            did not publish or change the live website.
+          </p>
         ) : canManage ? null : (
           <p className="text-sm text-muted-foreground">
             An owner or admin can save a draft for later review. GroovGro will

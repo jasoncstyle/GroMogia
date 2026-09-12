@@ -75,3 +75,11 @@ export function describePublishQueueHeading(queuedCount: number): string {
   }
   return `Drafts ready to publish later · ${queuedCount} waiting`;
 }
+
+export function draftsWaitingToQueue<T extends { id: string }>(
+  drafts: T[],
+  requests: Array<{ draftId: string }>,
+): T[] {
+  const queued = new Set(requests.map((row) => row.draftId));
+  return drafts.filter((draft) => !queued.has(draft.id));
+}
