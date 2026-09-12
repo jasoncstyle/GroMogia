@@ -143,6 +143,16 @@ export function plannerQuerySuggestions(
   });
 }
 
+export function sortContentBriefsForPlanner<T extends { draft?: unknown }>(
+  briefs: T[],
+): T[] {
+  return [...briefs].sort((left, right) => {
+    const leftDraft = left.draft ? 1 : 0;
+    const rightDraft = right.draft ? 1 : 0;
+    return leftDraft - rightDraft;
+  });
+}
+
 export function describeContentBrief(
   brief: Pick<ContentBriefView, "query" | "title" | "source">,
 ): string {
