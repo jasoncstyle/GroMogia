@@ -21,7 +21,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Execute stays off until that authorization exists and the adapter is turned on.
 
-**Remaining brief and draft groups (this branch):** SEO headings and Intelligence can say how many missing-page queries, competitor page topics, planner briefs, and workspace drafts still need the next owner step. Mixed lists group remaining work first. GroovGro does not write the page, publish, scrape Google, buy ads, or change checkout.
+**Remaining brief and draft groups (this branch):** SEO headings and Intelligence can say how many missing-page queries, competitor page topics, planner briefs, and workspace drafts still need the next owner step. Mixed lists group remaining work first. Intelligence points at those remaining groups and hides a review after every item already has a brief. GroovGro does not write the page, publish, scrape Google, buy ads, or change checkout.
 
 Phase T first slice is in #113. Phases A–T first slices are on `main`. Growth Director and guarded automation stay off. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 
