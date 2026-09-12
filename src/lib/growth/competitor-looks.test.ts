@@ -416,6 +416,7 @@ describe("competitor looks from owner-saved URLs", () => {
       ["Weekend beginner class", "Private coaching"],
     );
     assert.match(panel, /Save a brief for this topic/);
+    assert.match(panel, /listed first/);
     assert.match(helper, /planCompetitorCompare/);
     assert.match(helper, /planCompetitorPageGaps/);
     assert.match(helper, /stored_looks/);
