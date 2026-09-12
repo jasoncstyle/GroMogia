@@ -1283,6 +1283,30 @@ describe("intelligence observe", () => {
       saved.recommendations.some(
         (item) => item.title === "Save a content brief to the planner",
       ),
+      true,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          contentGapCount: 1,
+          contentBriefCount: 1,
+          competitorGapBriefCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a content brief to the planner",
+      ),
+      true,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          contentGapCount: 1,
+          contentBriefCount: 1,
+          contentGapBriefCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a content brief to the planner",
+      ),
       false,
     );
 

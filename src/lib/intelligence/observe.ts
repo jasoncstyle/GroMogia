@@ -725,11 +725,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
-  if (
-    facts.websiteConnected &&
-    contentGapCount > 0 &&
-    contentBriefCount === 0
-  ) {
+  if (facts.websiteConnected && contentGapCount > contentGapBriefCount) {
     recommendations.push({
       kind: "recommendation",
       title: "Save a content brief to the planner",
