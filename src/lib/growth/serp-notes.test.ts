@@ -7,6 +7,7 @@ import {
   describeSerpNote,
   describeSerpNotesHeading,
   knownCompetitorsNeedingNote,
+  sortKnownCompetitorsForNotes,
   planSerpNote,
   SERP_NOTE_SOURCE_OWNER,
 } from "./serp-notes";
@@ -100,6 +101,15 @@ describe("owner-entered SERP notes", () => {
       "Who else you already see · 2 · 1 still needs a note",
     );
     assert.match(panel, /knownCompetitorsNeedingNote/);
+    assert.match(panel, /sortKnownCompetitorsForNotes/);
+    assert.match(panel, /listed first/);
+    assert.deepEqual(
+      sortKnownCompetitorsForNotes(
+        ["Harbor Tours", "Private coaching"],
+        [{ competitorName: "Harbor Tours" }],
+      ),
+      ["Private coaching", "Harbor Tours"],
+    );
     assert.deepEqual(
       knownCompetitorsNeedingNote(
         ["Harbor Tours", "Private coaching"],
