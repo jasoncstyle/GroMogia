@@ -19,7 +19,12 @@ export function ChannelScorePanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{describeChannelScoreHeading(scores.length)}</CardTitle>
+        <CardTitle>
+          {describeChannelScoreHeading(
+            scores.length,
+            scores.filter((row) => row.label === "review").length,
+          )}
+        </CardTitle>
         <CardDescription>
           These ranks are estimates from stored workspace facts. GroovGro
           will not change today&apos;s Next step from this estimate, buy
