@@ -196,11 +196,21 @@ export function planContentGaps(input: {
   return { toUpsert, skipped };
 }
 
-export function describeContentGapsHeading(gapCount: number): string {
+export function describeContentGapsHeading(
+  gapCount: number,
+  briefedCount = 0,
+): string {
   if (gapCount <= 0) {
     return "Queries with no matching page GroovGro has read";
   }
-  return `Queries with no matching page GroovGro has read · ${gapCount}`;
+  if (briefedCount <= 0) {
+    return `Queries with no matching page GroovGro has read · ${gapCount}`;
+  }
+  if (briefedCount >= gapCount) {
+    return `Queries with no matching page GroovGro has read · ${gapCount} · all have a brief`;
+  }
+  const verb = briefedCount === 1 ? "has" : "have";
+  return `Queries with no matching page GroovGro has read · ${gapCount} · ${briefedCount} already ${verb} a brief`;
 }
 
 export function gapsToShow(rows: ContentGapDraft[]): ContentGapView[] {
