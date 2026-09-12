@@ -650,13 +650,15 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       evidence: ["competitor_sites.page_gaps"],
       href: "/app/seo",
     });
-    recommendations.push({
-      kind: "recommendation",
-      title: "Save a brief for a competitor page topic",
-      body: "On SEO, save a planner brief for a topic a competitor site shows. GroovGro will not write the page, copy their words, or search Google.",
-      evidence: ["content_briefs.competitor_gap"],
-      href: "/app/seo",
-    });
+    if (competitorGapBriefCount === 0) {
+      recommendations.push({
+        kind: "recommendation",
+        title: "Save a brief for a competitor page topic",
+        body: "On SEO, save a planner brief for a topic a competitor site shows. GroovGro will not write the page, copy their words, or search Google.",
+        evidence: ["content_briefs.competitor_gap"],
+        href: "/app/seo",
+      });
+    }
   }
 
   if (
