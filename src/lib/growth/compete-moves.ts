@@ -54,3 +54,17 @@ export function describeCompeteMove(
 export function competeMovesToShow(rows: CompeteMoveView[]): CompeteMoveView[] {
   return rows.slice(0, COMPETE_MOVE_MAX_SHOWN);
 }
+
+export function suggestCompeteMoveFromGap(label?: string | null): {
+  title: string
+  note: string
+} {
+  const topic = (label ?? "").trim().replace(/\s+/g, " ");
+  if (!topic) {
+    return { title: "", note: "" };
+  }
+  return {
+    title: `Cover “${topic}” on our site`,
+    note: "A competitor site you named shows this topic. GroovGro has not read it on your pages. GroovGro will not do this or create the page.",
+  };
+}
