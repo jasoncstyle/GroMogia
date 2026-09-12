@@ -254,6 +254,7 @@ describe("page structure from stored pages", () => {
     assert.match(persist, /eq\(pageSchemaFacts\.organizationId, organizationId\)/);
     assert.match(panel, /will not add links or schema/);
     assert.match(panel, /listed first/);
+    assert.match(panel, /Estimated schema types that are not the default are listed first/);
     assert.match(helper, /sortSchemaFactsForPanel/);
     assert.deepEqual(
       sortSchemaFactsForPanel([
