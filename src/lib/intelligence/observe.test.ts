@@ -1578,6 +1578,7 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not publish/);
     assert.match(recommended.body, /Content planner/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       missing.recommendations.some(
         (item) => item.title === "Review a draft you saved for later",
