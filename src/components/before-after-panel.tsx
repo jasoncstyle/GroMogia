@@ -18,7 +18,12 @@ export function BeforeAfterPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{describeBeforeAfterHeading(looks.length)}</CardTitle>
+        <CardTitle>
+          {describeBeforeAfterHeading(
+            looks.length,
+            looks.filter((row) => row.status === "declined").length,
+          )}
+        </CardTitle>
         <CardDescription>
           These looks compare the first stored Goal number to the latest
           stored Goal number. This is not an experiment GroovGro ran.
