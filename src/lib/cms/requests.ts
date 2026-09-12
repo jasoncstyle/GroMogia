@@ -65,6 +65,7 @@ export function publishRequestsToShow(rows: CmsPublishView[]): CmsPublishView[] 
 export function describePlannerHeading(
   queuedCount: number,
   briefCount = 0,
+  needingDraftCount = 0,
 ): string {
   if (briefCount <= 0 && queuedCount <= 0) {
     return "Content planner";
@@ -73,10 +74,16 @@ export function describePlannerHeading(
     return `Content planner · ${queuedCount} saved for later review`;
   }
   const briefs = `${briefCount} ${briefCount === 1 ? "brief" : "briefs"}`;
+  const remaining =
+    needingDraftCount <= 0
+      ? ""
+      : needingDraftCount >= briefCount
+        ? " · all still need a draft"
+        : ` · ${needingDraftCount} still ${needingDraftCount === 1 ? "needs" : "need"} a draft`;
   if (queuedCount <= 0) {
-    return `Content planner · ${briefs}`;
+    return `Content planner · ${briefs}${remaining}`;
   }
-  return `Content planner · ${briefs} · ${queuedCount} saved for later review`;
+  return `Content planner · ${briefs}${remaining} · ${queuedCount} saved for later review`;
 }
 
 export function describePublishQueueHeading(queuedCount: number): string {
