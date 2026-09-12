@@ -361,6 +361,7 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(panel, /ownerSearchHref/);
     assert.match(panel, /How these sites compare/);
     assert.match(panel, /Pages they show that GroovGro has not read/);
+    assert.match(panel, /Save a brief for this topic/);
     assert.match(helper, /planCompetitorCompare/);
     assert.match(helper, /planCompetitorPageGaps/);
     assert.match(helper, /stored_looks/);
@@ -394,6 +395,7 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(seoPage, /open a suggested search yourself/);
     assert.match(seoPage, /compare those looks to what you sell/);
     assert.match(seoPage, /topics those sites show/);
+    assert.match(seoPage, /save a brief for one of those topics/);
     const observe = readFileSync(
       join(process.cwd(), "src/lib/intelligence/observe.ts"),
       "utf8",
@@ -403,6 +405,7 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(observe, /How saved competitor websites compare/);
     assert.match(observe, /competitorPageGapCount/);
     assert.match(observe, /Competitor page topics GroovGro has not read/);
+    assert.match(observe, /Save a brief for a competitor page topic/);
     assert.match(observe, /will not search Google/);
     assert.doesNotMatch(observe, /coordinateNextStep/);
   });

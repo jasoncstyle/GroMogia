@@ -1,7 +1,9 @@
+import { createContentBrief } from "@/lib/actions/content-briefs";
 import {
   createCompetitorSite,
   lookAtCompetitorSite,
 } from "@/lib/actions/competitor-sites";
+import { suggestBriefOutlineFromCompetitorGap } from "@/lib/growth/content-briefs";
 import {
   type CompetitorCompareView,
   type CompetitorPageGapView,
@@ -45,7 +47,8 @@ export function CompetitorSitesPanel({
           search and save a site you found. GroovGro can read that homepage
           and a few public pages on the same site, then compare those looks
           to what you sell. It can name topics those sites show that GroovGro
-          has not read on your site. If the site blocks the automated read,
+          has not read on your site. You can save a brief for one of those
+          topics. If the site blocks the automated read,
           paste what you see. It will not scrape Google, copy their words
           onto your site, create a page, or buy ads.
         </CardDescription>
@@ -73,12 +76,50 @@ export function CompetitorSitesPanel({
                 those competitor sites named. It did not create a page.
               </p>
             ) : (
-              pageGaps.map((gap) => (
-                <div key={gap.label} className="space-y-1">
+              pageGaps.map((gap) => {
+                const fieldKey = gap.label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                return (
+                <div key={gap.label} className="space-y-2">
                   <p className="text-sm font-medium">{gap.label}</p>
                   <p className="text-sm text-muted-foreground">{gap.why}</p>
+                  {canManage ? (
+                    <SaveForm
+                      action={createContentBrief}
+                      successMessage="Content brief saved to the planner. GroovGro did not write a page or copy their words."
+                    >
+                      <input type="hidden" name="query" value={gap.label} />
+                      <input type="hidden" name="title" value={gap.label} />
+                      <input
+                        type="hidden"
+                        name="source"
+                        value="competitor_gap"
+                      />
+                      <input
+                        type="hidden"
+                        name="fromNames"
+                        value={gap.fromNames.join(", ")}
+                      />
+                      <input
+                        type="hidden"
+                        name="outline"
+                        value={suggestBriefOutlineFromCompetitorGap(
+                          gap.label,
+                          gap.fromNames,
+                        )}
+                      />
+                      <SaveButton
+                        type="submit"
+                        size="sm"
+                        variant="outline"
+                        id={`save-brief-${fieldKey}`}
+                      >
+                        Save a brief for this topic
+                      </SaveButton>
+                    </SaveForm>
+                  ) : null}
                 </div>
-              ))
+                );
+              })
             )}
           </div>
         ) : null}

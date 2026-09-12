@@ -4,11 +4,13 @@ import { describe, it } from "node:test";
 import { join } from "node:path";
 
 import {
+  CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
   CONTENT_BRIEF_SOURCE_OWNER,
   CONTENT_BRIEF_STATUS_PLANNED,
   describeContentBrief,
   planContentBrief,
   suggestBriefOutline,
+  suggestBriefOutlineFromCompetitorGap,
   suggestBriefTitle,
 } from "./content-briefs";
 
@@ -48,6 +50,19 @@ describe("owner-entered content briefs", () => {
     assert.equal(draft.title, "harbor tours");
     assert.equal(suggestBriefTitle("  harbor tours  "), "harbor tours");
     assert.match(suggestBriefOutline("harbor tours"), /will not generate that page/);
+    const fromGap = planContentBrief({
+      organizationId: ORG_A,
+      query: "Weekend beginner class",
+      source: CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
+      fromNames: ["Harbor Skills"],
+    });
+    assert.equal(fromGap.source, CONTENT_BRIEF_SOURCE_COMPETITOR_GAP);
+    assert.match(fromGap.outline, /Harbor Skills/);
+    assert.match(fromGap.outline, /Do not copy their words/);
+    assert.match(
+      suggestBriefOutlineFromCompetitorGap("Weekend beginner class", ["Harbor Skills"]),
+      /will not generate or publish that page/,
+    );
   });
 
   it("requires an organization and a title or query", () => {
@@ -84,8 +99,15 @@ describe("owner-entered content briefs", () => {
     }
     assert.match(action, /session\.organizationId/);
     assert.match(action, /did not write a page/);
+    assert.match(action, /fromNames/);
     assert.match(panel, /will not publish/);
-    assert.doesNotMatch(nextStep, /contentBrief|content_brief|Save brief to planner/);
+    assert.doesNotMatch(nextStep, /contentBrief|content_brief|Save brief to planner|Save a brief for this topic/);
+    const competitorPanel = readFileSync(
+      join(process.cwd(), "src/components/competitor-sites-panel.tsx"),
+      "utf8",
+    );
+    assert.match(competitorPanel, /Save a brief for this topic/);
+    assert.match(competitorPanel, /competitor_gap/);
     const seoPage = readFileSync(
       join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
       "utf8",

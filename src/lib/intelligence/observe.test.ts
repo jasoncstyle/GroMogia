@@ -958,6 +958,12 @@ describe("intelligence observe", () => {
     assert.ok(reviewGaps);
     assert.equal(reviewGaps.href, "/app/seo");
     assert.match(reviewGaps.body, /will not copy their words/);
+    const saveBrief = pageGaps.recommendations.find(
+      (item) => item.title === "Save a brief for a competitor page topic",
+    );
+    assert.ok(saveBrief);
+    assert.equal(saveBrief.href, "/app/seo");
+    assert.match(saveBrief.body, /will not write the page/);
     assert.equal(
       buildIntelligenceBrief(
         facts({
@@ -966,6 +972,17 @@ describe("intelligence observe", () => {
         }),
       ).recommendations.some(
         (item) => item.title === "Review pages competitors show that GroovGro has not read",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          competitorPageGapCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a brief for a competitor page topic",
       ),
       false,
     );

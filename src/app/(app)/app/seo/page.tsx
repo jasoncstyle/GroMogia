@@ -113,7 +113,7 @@ export default async function SeoPage({
           on the same site. You can open a suggested search yourself and save a
           website you found. GroovGro can compare those looks to what you sell.
           It can name topics those sites show that GroovGro has not read on
-          your site. Worth-a-look queries are compared
+          your site. You can save a brief for one of those topics. Worth-a-look queries are compared
           to pages GroovGro already read. You can save a brief to the planner
           and write a workspace draft from it. You can save a draft for later
           review. Pages GroovGro already read
@@ -287,6 +287,7 @@ export default async function SeoPage({
             briefs={data.contentBriefs}
             querySuggestions={[
               ...data.contentGaps.map((gap) => gap.query),
+              ...data.competitorPageGaps.map((gap) => gap.label),
               ...data.keywords.map((keyword) => keyword.query),
             ].filter((query, index, rows) => rows.indexOf(query) === index)}
             canManage={session.permissions.includes("manage_seo")}
