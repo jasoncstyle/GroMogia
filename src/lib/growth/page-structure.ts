@@ -96,6 +96,20 @@ export function describePageStructureHeading(
   return `${base}${links}${schema}`;
 }
 
+export function describePageStructureGroupHeading(
+  group: "links" | "schema",
+  count: number,
+): string {
+  if (group === "links") {
+    return count <= 0
+      ? "Suggested links"
+      : `Suggested links · ${count}`;
+  }
+  return count <= 0
+    ? "Estimated schema types"
+    : `Estimated schema types · ${count}`;
+}
+
 export function pageDisplayTitle(page: StructurePage): string {
   return (page.title ?? "").trim() || (page.label ?? "").trim() || page.url;
 }
