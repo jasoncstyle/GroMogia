@@ -292,10 +292,20 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   }
 
   if (contentGapCount > 0) {
+    const remainingContentGapBriefs = Math.max(
+      0,
+      contentGapCount - contentGapBriefCount,
+    );
+    const remainingNote =
+      contentGapBriefCount <= 0
+        ? ""
+        : remainingContentGapBriefs <= 0
+          ? " All of those already have a brief on the planner."
+          : ` ${remainingContentGapBriefs} still ${remainingContentGapBriefs === 1 ? "has" : "have"} no brief on the planner.`;
     observations.push({
       kind: "observation",
       title: "Search queries with no matching page GroovGro has read",
-      body: `${contentGapCount} worth-a-look ${contentGapCount === 1 ? "query has" : "queries have"} no matching page among the pages GroovGro already read. GroovGro did not invent topics or create a page.`,
+      body: `${contentGapCount} worth-a-look ${contentGapCount === 1 ? "query has" : "queries have"} no matching page among the pages GroovGro already read.${remainingNote} GroovGro did not invent topics or create a page.`,
       evidence: ["content_gaps.status=gap"],
       href: "/app/seo",
     });
