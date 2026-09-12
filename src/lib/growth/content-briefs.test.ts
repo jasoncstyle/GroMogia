@@ -10,6 +10,7 @@ import {
   describeContentBrief,
   hasSavedContentBriefForTopic,
   planContentBrief,
+  refuseDuplicateContentBrief,
   suggestBriefOutline,
   suggestBriefOutlineFromCompetitorGap,
   suggestBriefTitle,
@@ -139,5 +140,19 @@ describe("owner-entered content briefs", () => {
       false,
     );
     assert.equal(hasSavedContentBriefForTopic([], "Weekend beginner class"), false);
+    assert.throws(
+      () =>
+        refuseDuplicateContentBrief(
+          [{ query: "Weekend beginner class", title: "Weekend beginner class" }],
+          "weekend beginner class",
+        ),
+      /already on the planner/,
+    );
+    refuseDuplicateContentBrief(
+      [{ query: "Private coaching", title: "Private coaching" }],
+      "Weekend beginner class",
+    );
+    assert.match(action, /refuseDuplicateContentBrief/);
+    assert.match(action, /eq\(contentBriefs\.organizationId, session\.organizationId\)/);
   });
 });

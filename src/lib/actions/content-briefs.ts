@@ -1,5 +1,6 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -7,7 +8,10 @@ import { recordAudit } from "@/lib/audit";
 import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import { contentBriefs } from "@/lib/db/schema";
-import { planContentBrief } from "@/lib/growth/content-briefs";
+import {
+  planContentBrief,
+  refuseDuplicateContentBrief,
+} from "@/lib/growth/content-briefs";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
@@ -55,6 +59,14 @@ export async function createContentBrief(formData: FormData): Promise<ActionResu
     });
     const db = getDb();
     if (!db) throw new Error("Database is not configured");
+    const existing = await db
+      .select({
+        query: contentBriefs.query,
+        title: contentBriefs.title,
+      })
+      .from(contentBriefs)
+      .where(eq(contentBriefs.organizationId, session.organizationId));
+    refuseDuplicateContentBrief(existing, draft.query || draft.title);
     const [row] = await db
       .insert(contentBriefs)
       .values({

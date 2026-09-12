@@ -105,6 +105,15 @@ export function hasSavedContentBriefForTopic(
   });
 }
 
+export function refuseDuplicateContentBrief(
+  briefs: Pick<ContentBriefView, "query" | "title">[],
+  topic?: string | null,
+): void {
+  if (hasSavedContentBriefForTopic(briefs, topic)) {
+    throw new Error("That brief is already on the planner.");
+  }
+}
+
 export function describeContentBrief(
   brief: Pick<ContentBriefView, "query" | "title" | "source">,
 ): string {
