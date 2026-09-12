@@ -124,6 +124,7 @@ describe("CMS publish review queue and disabled adapter", () => {
     );
     assert.match(briefsPanel, /Save for later review/);
     assert.match(briefsPanel, /createCmsPublishRequest/);
+    assert.match(briefsPanel, /Where you already publish/);
     assert.doesNotMatch(briefsPanel, /requestCmsPublish|cmsPublishEnabled\(\)/);
     assert.match(adapter, /never fetches/);
     assert.match(queries, /eq\(cmsPublishRequests\.organizationId, organizationId\)/);

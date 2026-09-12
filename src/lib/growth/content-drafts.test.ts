@@ -132,6 +132,7 @@ describe("workspace drafts from saved briefs", () => {
     assert.match(panel, /will not publish/);
     assert.match(panel, /Save for later review/);
     assert.match(panel, /createCmsPublishRequest/);
+    assert.match(panel, /Where you already publish/);
     assert.doesNotMatch(nextStep, /contentDraft|content_draft|Write a workspace draft/);
     const seoPage = readFileSync(
       join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
