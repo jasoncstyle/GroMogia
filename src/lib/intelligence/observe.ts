@@ -857,7 +857,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Review link and schema facts from pages already read",
-      body: `Open SEO to read link suggestions and estimated schema types from pages GroovGro already read. ${internalLinkCount} suggested ${internalLinkCount === 1 ? "link" : "links"} and ${schemaFactCount} schema ${schemaFactCount === 1 ? "fact" : "facts"} are listed. Suggested links are listed first. GroovGro will not add links or schema to the live website.`,
+      body: `Open SEO to read link suggestions and estimated schema types from pages GroovGro already read. ${internalLinkCount} suggested ${internalLinkCount === 1 ? "link" : "links"} and ${schemaFactCount} schema ${schemaFactCount === 1 ? "fact" : "facts"} are listed. Suggested links are listed first. Estimated schema types that are not the default are listed first. GroovGro will not add links or schema to the live website.`,
       evidence: ["internal_link_suggestions", "page_schema_facts"],
       href: "/app/seo",
     });
