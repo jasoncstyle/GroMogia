@@ -295,6 +295,10 @@ describe("page structure from stored pages", () => {
       "Estimated schema types · 1",
     );
     assert.equal(
+      describePageStructureGroupHeading("schema", 3, 1),
+      "Estimated schema types · 3 · 1 not the default",
+    );
+    assert.equal(
       describePageStructureHeading(0, 0),
       "Links and schema facts from pages GroovGro already read",
     );
@@ -302,6 +306,11 @@ describe("page structure from stored pages", () => {
       describePageStructureHeading(2, 1),
       "Links and schema facts from pages GroovGro already read · 2 suggested links · 1 schema fact",
     );
+    assert.equal(
+      describePageStructureHeading(2, 3, 1),
+      "Links and schema facts from pages GroovGro already read · 2 suggested links · 3 schema facts · 1 not the default",
+    );
+    assert.match(panel, /isDefaultSchemaType/);
     assert.doesNotMatch(nextStep, /internalLink|page_schema|Add schema|internal link/);
     const seoPersist = readFileSync(
       join(process.cwd(), "src/lib/growth/persist-seo-actions.ts"),

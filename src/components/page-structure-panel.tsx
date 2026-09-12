@@ -1,6 +1,7 @@
 import {
   describePageStructureGroupHeading,
   describePageStructureHeading,
+  isDefaultSchemaType,
   type InternalLinkView,
   type SchemaFactView,
 } from "@/lib/growth/page-structure";
@@ -21,11 +22,18 @@ export function PageStructurePanel({
   schemaFacts: SchemaFactView[]
   pagesRead: boolean
 }) {
+  const schemaReviewCount = schemaFacts.filter(
+    (fact) => !isDefaultSchemaType(fact.schemaType),
+  ).length;
   return (
     <Card>
       <CardHeader>
         <CardTitle>
-          {describePageStructureHeading(links.length, schemaFacts.length)}
+          {describePageStructureHeading(
+            links.length,
+            schemaFacts.length,
+            schemaReviewCount,
+          )}
         </CardTitle>
         <CardDescription>
           GroovGro compared pages it already read. If one page&apos;s stored
@@ -70,7 +78,11 @@ export function PageStructurePanel({
             </div>
             <div className="space-y-3">
               <p className="text-sm font-medium">
-                {describePageStructureGroupHeading("schema", schemaFacts.length)}
+                {describePageStructureGroupHeading(
+                  "schema",
+                  schemaFacts.length,
+                  schemaReviewCount,
+                )}
               </p>
               {schemaFacts.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
