@@ -2,6 +2,7 @@ import { createCmsPublishRequest } from "@/lib/actions/cms-publish";
 import {
   describeCmsPublishRequest,
   describePublishQueueCopy,
+  describePublishQueueEmpty,
   describePublishQueueHeading,
   draftsWaitingToQueue,
   type CmsPublishView,
@@ -48,8 +49,7 @@ export function CmsPublishPanel({
           </p>
         ) : requests.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No drafts are waiting for later review. A later allowed adapter
-            can publish after you approve. Not in this slice.
+            {describePublishQueueEmpty(openDrafts.length)}
           </p>
         ) : (
           <div className="space-y-2">
