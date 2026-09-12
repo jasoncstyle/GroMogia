@@ -178,6 +178,10 @@ describe("cross-channel opportunity scoring", () => {
       describeChannelScoreHeading(3),
       "What stored evidence says to compare · 3",
     );
+    assert.equal(
+      describeChannelScoreHeading(3, 1),
+      "What stored evidence says to compare · 3 · 1 worth a look",
+    );
     assert.match(panel, /Next step from this estimate/);
     assert.match(panel, /buy\s+ads, or run work/);
     assert.match(intelligence, /ChannelScorePanel/);
