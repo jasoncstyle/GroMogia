@@ -76,8 +76,8 @@ export function ContentBriefsPanel({
           Save a brief, including from a missing-page query, then write a
           workspace draft from it. Briefs that still need a draft are listed first.
           GroovGro can check a competitor-topic draft against what you sell. You
-          can save that draft for later review. It will not publish or change the
-          live website.
+          can save that draft for later review. Drafts that still need later review are listed first.
+          It will not publish or change the live website.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
