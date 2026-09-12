@@ -1,7 +1,10 @@
 import { createContentBrief } from "@/lib/actions/content-briefs";
 import { createCmsPublishRequest } from "@/lib/actions/cms-publish";
 import { createContentDraft } from "@/lib/actions/content-drafts";
-import { describeCmsPublishRequest } from "@/lib/cms/requests";
+import {
+  describeCmsPublishRequest,
+  describePlannerHeading,
+} from "@/lib/cms/requests";
 import {
   describeContentBrief,
   suggestBriefOutline,
@@ -47,7 +50,7 @@ export function ContentBriefsPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Content planner</CardTitle>
+        <CardTitle>{describePlannerHeading(queuedReviews.length)}</CardTitle>
         <CardDescription>
           Save a brief, then write a workspace draft from it. GroovGro can
           check a competitor-topic draft against what you sell. You can save

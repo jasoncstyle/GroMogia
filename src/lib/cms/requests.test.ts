@@ -10,6 +10,7 @@ import {
   CMS_PUBLISH_SOURCE_OWNER,
   CMS_PUBLISH_STATUS_REVIEW,
   describeCmsPublishRequest,
+  describePlannerHeading,
   planCmsPublishRequest,
   publishRequestsToShow,
 } from "./requests";
@@ -125,6 +126,12 @@ describe("CMS publish review queue and disabled adapter", () => {
     assert.match(briefsPanel, /Save for later review/);
     assert.match(briefsPanel, /createCmsPublishRequest/);
     assert.match(briefsPanel, /Where you already publish/);
+    assert.match(briefsPanel, /describePlannerHeading/);
+    assert.equal(describePlannerHeading(0), "Content planner");
+    assert.equal(
+      describePlannerHeading(2),
+      "Content planner · 2 saved for later review",
+    );
     assert.doesNotMatch(briefsPanel, /requestCmsPublish|cmsPublishEnabled\(\)/);
     assert.match(adapter, /never fetches/);
     assert.match(queries, /eq\(cmsPublishRequests\.organizationId, organizationId\)/);

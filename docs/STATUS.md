@@ -21,7 +21,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Execute stays off until that authorization exists and the adapter is turned on.
 
-**Compete move from a compare recommendation (this branch):** When GroovGro has compared saved competitor websites and the owner has not saved a compete move, Intelligence can recommend saving one from that compare. GroovGro does not do the work, copy their words, publish, scrape Google, buy ads, or change checkout.
+**Planner later-review heading (this branch):** The Content planner heading says how many workspace drafts are saved for later CMS review. GroovGro does not publish, scrape Google, buy ads, or change checkout. The adapter stays off.
 
 Phase T first slice is in #113. Phases A–T first slices are on `main`. Growth Director and guarded automation stay off. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 
