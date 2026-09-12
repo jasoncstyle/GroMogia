@@ -46,7 +46,7 @@ export default async function OwnerWorkPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Your work</h1>
         <p className="text-muted-foreground">
           These are actions you approved. You do them here or on Next step.
-          GroovGro does not run marketing, send email, change ads, or edit
+          Remaining later-run work is listed first. GroovGro does not run marketing, send email, change ads, or edit
           the live website.
         </p>
       </div>
