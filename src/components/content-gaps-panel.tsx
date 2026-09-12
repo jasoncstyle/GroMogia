@@ -7,6 +7,7 @@ import {
 import {
   contentGapsNeedingBrief,
   contentGapsWithBrief,
+  describeContentGapGroupHeading,
   describeContentGapsHeading,
   shouldGroupContentGaps,
   sortContentGapsForPanel,
@@ -36,6 +37,8 @@ export function ContentGapsPanel({
     hasSavedContentBriefForTopic(briefs, query);
   const briefedCount = gaps.filter((gap) => isSaved(gap.query)).length;
   const gapsToShow = sortContentGapsForPanel(gaps, isSaved);
+  const needRows = contentGapsNeedingBrief(gapsToShow, isSaved);
+  const haveRows = contentGapsWithBrief(gapsToShow, isSaved);
   return (
     <Card>
       <CardHeader>
@@ -63,12 +66,12 @@ export function ContentGapsPanel({
           (shouldGroupContentGaps(gapsToShow, isSaved)
             ? [
                 {
-                  label: "Still need a brief",
-                  rows: contentGapsNeedingBrief(gapsToShow, isSaved),
+                  label: describeContentGapGroupHeading("need", needRows.length),
+                  rows: needRows,
                 },
                 {
-                  label: "Already have a brief",
-                  rows: contentGapsWithBrief(gapsToShow, isSaved),
+                  label: describeContentGapGroupHeading("have", haveRows.length),
+                  rows: haveRows,
                 },
               ]
             : [{ label: "", rows: gapsToShow }]
