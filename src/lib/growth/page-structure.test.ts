@@ -250,6 +250,7 @@ describe("page structure from stored pages", () => {
     assert.match(persist, /eq\(internalLinkSuggestions\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(pageSchemaFacts\.organizationId, organizationId\)/);
     assert.match(panel, /will not add links or schema/);
+    assert.match(panel, /listed first/);
     assert.match(panel, /describePageStructureHeading/);
     assert.match(panel, /describePageStructureGroupHeading/);
     assert.equal(describePageStructureGroupHeading("links", 2), "Suggested links · 2");
