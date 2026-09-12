@@ -9,6 +9,7 @@ import {
   describeGeoHistory,
   describeGeoHistoryHeading,
   queriesNeedingHistory,
+  sortQueriesForHistory,
   GEO_ANSWER_NO,
   GEO_ANSWER_UNSURE,
   GEO_ANSWER_YES,
@@ -136,6 +137,15 @@ describe("owner-entered GEO history", () => {
     assert.match(panel, /will not ask an AI system/);
     assert.match(panel, /describeGeoHistoryHeading/);
     assert.match(panel, /queriesNeedingHistory/);
+    assert.match(panel, /sortQueriesForHistory/);
+    assert.match(panel, /listed first/);
+    assert.deepEqual(
+      sortQueriesForHistory(
+        [{ id: "q-saved" }, { id: "q-open" }],
+        [{ queryId: "q-saved" }],
+      ).map((query) => query.id),
+      ["q-open", "q-saved"],
+    );
     assert.equal(describeGeoHistoryHeading(0), "What you already measured");
     assert.equal(describeGeoHistoryHeading(2), "What you already measured · 2");
     assert.equal(

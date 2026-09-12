@@ -87,6 +87,20 @@ export function describeGeoHistory(
   return `For “${row.query}”, the owner already heard mentioned: ${row.mentioned}, cited: ${row.cited}.`;
 }
 
+export function sortQueriesForHistory<T extends { id: string }>(
+  queries: T[],
+  history: Array<{ queryId: string }>,
+): T[] {
+  const needing = new Set(
+    queriesNeedingHistory(queries, history).map((query) => query.id),
+  );
+  return [...queries].sort((left, right) => {
+    const leftNeed = needing.has(left.id) ? 0 : 1;
+    const rightNeed = needing.has(right.id) ? 0 : 1;
+    return leftNeed - rightNeed;
+  });
+}
+
 export function queriesNeedingHistory<T extends { id: string }>(
   queries: T[],
   history: Array<{ queryId: string }>,
