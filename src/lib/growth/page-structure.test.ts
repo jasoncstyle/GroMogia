@@ -5,6 +5,7 @@ import { join } from "node:path";
 
 import {
   DEFAULT_SCHEMA_TYPE,
+  describePageStructureGroupHeading,
   describePageStructureHeading,
   isDefaultSchemaType,
   linksToShow,
@@ -250,6 +251,12 @@ describe("page structure from stored pages", () => {
     assert.match(persist, /eq\(pageSchemaFacts\.organizationId, organizationId\)/);
     assert.match(panel, /will not add links or schema/);
     assert.match(panel, /describePageStructureHeading/);
+    assert.match(panel, /describePageStructureGroupHeading/);
+    assert.equal(describePageStructureGroupHeading("links", 2), "Suggested links · 2");
+    assert.equal(
+      describePageStructureGroupHeading("schema", 1),
+      "Estimated schema types · 1",
+    );
     assert.equal(
       describePageStructureHeading(0, 0),
       "Links and schema facts from pages GroovGro already read",
