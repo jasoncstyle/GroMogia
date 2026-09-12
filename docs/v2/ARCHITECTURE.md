@@ -2125,6 +2125,9 @@ Organization
 319. **Intelligence names remaining known competitor names listed first** — **IMPLEMENTED** this slice. Intelligence can say Business-known competitor names that still need a note are listed first. GroovGro does not scrape search results or add a Next step loop.
 320. **Status text names remaining competitor-note heading and listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the competitor-notes heading, list order, and Intelligence copy for remaining known names. GroovGro does not publish or add a Next step loop.
 321. **SEO intro names remaining known competitor names listed first** — **IMPLEMENTED** this slice. The SEO page says Business-known competitor names that still need a note are listed first. GroovGro does not scrape search results or add a Next step loop.
+322. **Intelligence names suggested links listed first** — **IMPLEMENTED** this slice. Intelligence can say suggested links are listed first on SEO. GroovGro does not add links or schema to the live website or add a Next step loop.
+323. **Links-and-schema copy names suggested links listed first** — **IMPLEMENTED** this slice. The links-and-schema card says suggested links are listed first. GroovGro does not add links or schema to the live website or add a Next step loop.
+324. **Status text names suggested-link listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name Intelligence and page copy that suggested links are listed first. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
