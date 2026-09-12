@@ -731,7 +731,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Save a content brief to the planner",
-      body: "On SEO, save a brief for a missing-page query. GroovGro will not publish a page.",
+      body: "On SEO, save a brief for a missing-page query from that list or the planner. GroovGro will not publish a page.",
       evidence: ["content_briefs missing"],
       href: "/app/seo",
     });
