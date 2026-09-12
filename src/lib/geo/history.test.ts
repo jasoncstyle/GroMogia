@@ -7,6 +7,7 @@ import { requestGeoLookup } from "./adapter";
 import { GEO_EVIDENCE_OWNER } from "./architecture";
 import {
   describeGeoHistory,
+  describeGeoHistoryHeading,
   GEO_ANSWER_NO,
   GEO_ANSWER_UNSURE,
   GEO_ANSWER_YES,
@@ -132,6 +133,9 @@ describe("owner-entered GEO history", () => {
     assert.match(action, /eq\(geoQueries\.organizationId, session\.organizationId\)/);
     assert.match(action, /did not ask an AI system/);
     assert.match(panel, /will not ask an AI system/);
+    assert.match(panel, /describeGeoHistoryHeading/);
+    assert.equal(describeGeoHistoryHeading(0), "What you already measured");
+    assert.equal(describeGeoHistoryHeading(2), "What you already measured · 2");
     assert.match(panel, /treat one answer as truth/);
     assert.match(queries, /eq\(geoHistory\.organizationId, organizationId\)/);
 
