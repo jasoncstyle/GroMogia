@@ -50,3 +50,10 @@ export function describeSerpNote(note: Pick<SerpNoteView, "query" | "competitorN
   }
   return `The owner already knows ${note.competitorName}.`;
 }
+
+export function describeSerpNotesHeading(noteCount = 0): string {
+  if (noteCount <= 0) {
+    return "Who else you already see";
+  }
+  return `Who else you already see · ${noteCount}`;
+}
