@@ -818,6 +818,7 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/next-step");
     assert.match(recommended.body, /will not run it/);
     assert.match(recommended.body, /will not run it, buy ads/);
+    assert.match(recommended.body, /2 are waiting/);
     assert.equal(
       buildIntelligenceBrief(facts()).observations.some(
         (item) => item.title === "Approved work saved for later",
