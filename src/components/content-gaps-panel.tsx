@@ -1,4 +1,7 @@
-import type { ContentGapView } from "@/lib/growth/content-gaps";
+import {
+  describeContentGapsHeading,
+  type ContentGapView,
+} from "@/lib/growth/content-gaps";
 import {
   Card,
   CardContent,
@@ -17,7 +20,7 @@ export function ContentGapsPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Queries with no matching page GroovGro has read</CardTitle>
+        <CardTitle>{describeContentGapsHeading(gaps.length)}</CardTitle>
         <CardDescription>
           GroovGro compared stored Search Console queries marked worth a look
           to pages it already read. It did not invent topics, scrape
