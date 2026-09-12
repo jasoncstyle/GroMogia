@@ -125,7 +125,7 @@ export default async function SeoPage({
           can show link suggestions and estimated schema types. Suggested links are listed first. Estimated schema types that are not the default are listed first. You can save
           what you already heard from an AI system. Notes that name a question are listed first. You can save questions to
           remember for later AI visibility. Questions that still need a why are listed first. You can save another snapshot of
-          what you already heard. Latest saved snapshots can show citation
+          what you already heard. Questions that still need a snapshot are listed first. Latest saved snapshots can show citation
           gaps. Citation gaps are listed first. GroovGro will not invent topics,
           publish a page, add links or schema to the live website, ask AI
           systems, scrape answers, scrape Google, buy keyword or SERP data,
