@@ -1,5 +1,6 @@
 "use server";
 
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -7,7 +8,7 @@ import { recordAudit } from "@/lib/audit";
 import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import { competeMoves } from "@/lib/db/schema";
-import { planCompeteMove } from "@/lib/growth/compete-moves";
+import { planCompeteMove, planCompeteMoveDone } from "@/lib/growth/compete-moves";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
@@ -62,5 +63,54 @@ export async function createCompeteMove(
     });
     revalidateCompeteMoves();
     return "Compete move saved. GroovGro did not do this or change the live website.";
+  });
+}
+
+const doneSchema = z.object({
+  moveId: z.string().uuid(),
+});
+
+export async function completeCompeteMove(
+  formData: FormData,
+): Promise<ActionResult> {
+  return runAction("Could not mark that compete move done.", async () => {
+    const session = await requireOrgSession();
+    if (!hasPermission(session.permissions, "manage_seo")) {
+      throw new Error("You do not have permission to update compete moves.");
+    }
+    const parsed = doneSchema.parse({
+      moveId: formData.get("moveId") ?? "",
+    });
+    const draft = planCompeteMoveDone({
+      organizationId: session.organizationId,
+      moveId: parsed.moveId,
+    });
+    const db = getDb();
+    if (!db) throw new Error("Database is not configured");
+    const [row] = await db
+      .update(competeMoves)
+      .set({
+        status: draft.status,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(competeMoves.id, draft.moveId),
+          eq(competeMoves.organizationId, session.organizationId),
+        ),
+      )
+      .returning({ id: competeMoves.id });
+    if (!row) {
+      throw new Error("Pick a saved move first.");
+    }
+    await recordAudit({
+      organizationId: session.organizationId,
+      actorUserId: session.userId,
+      action: "compete_move.done",
+      targetType: "compete_move",
+      targetId: row.id,
+    });
+    revalidateCompeteMoves();
+    return "Marked as done. GroovGro did not do this or change the live website.";
   });
 }

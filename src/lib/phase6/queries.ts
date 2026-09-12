@@ -410,6 +410,7 @@ export async function getSeoPageData(organizationId: string) {
         id: competeMoves.id,
         title: competeMoves.title,
         note: competeMoves.note,
+        status: competeMoves.status,
         createdAt: competeMoves.createdAt,
         organizationId: competeMoves.organizationId,
       })
@@ -517,6 +518,7 @@ export async function getSeoPageData(organizationId: string) {
           id: row.id,
           title: row.title,
           note: row.note,
+          status: row.status,
           createdAt: row.createdAt,
         })),
     ),

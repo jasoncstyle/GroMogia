@@ -5,10 +5,12 @@ import { join } from "node:path";
 
 import {
   COMPETE_MOVE_SOURCE_OWNER,
+  COMPETE_MOVE_STATUS_DONE,
   COMPETE_MOVE_STATUS_PLANNED,
   competeMovesToShow,
   describeCompeteMove,
   planCompeteMove,
+  planCompeteMoveDone,
   suggestCompeteMoveFromGap,
 } from "./compete-moves";
 
@@ -90,6 +92,26 @@ describe("owner-saved compete moves", () => {
     assert.match(action, /did not do this/);
     assert.match(panel, /What I will do/);
     assert.match(panel, /createCompeteMove/);
+    assert.match(panel, /completeCompeteMove/);
+    assert.match(panel, /I did this/);
+    assert.match(action, /eq\(competeMoves\.organizationId, session\.organizationId\)/);
+    const done = planCompeteMoveDone({
+      organizationId: ORG_A,
+      moveId: "55555555-5555-5555-5555-555555555555",
+    });
+    assert.equal(done.status, COMPETE_MOVE_STATUS_DONE);
+    assert.match(
+      describeCompeteMove({
+        title: "Name private coaching on the class page",
+        note: "",
+        status: COMPETE_MOVE_STATUS_DONE,
+      }),
+      /You did/,
+    );
+    assert.throws(
+      () => planCompeteMoveDone({ organizationId: ORG_A, moveId: "" }),
+      /Pick a saved move/,
+    );
     assert.doesNotMatch(nextStep, /competeMove|compete_move|What I will do/);
     const seoPage = readFileSync(
       join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
