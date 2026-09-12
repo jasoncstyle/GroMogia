@@ -4,6 +4,7 @@ import { createSerpNote } from "@/lib/actions/serp-notes";
 import {
   describeSerpNote,
   describeSerpNotesHeading,
+  knownCompetitorsNeedingNote,
   type SerpNoteView,
 } from "@/lib/growth/serp-notes";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -29,10 +30,13 @@ export function SerpNotesPanel({
   querySuggestions: string[]
   canManage?: boolean
 }) {
+  const remainingKnown = knownCompetitorsNeedingNote(knownCompetitors, notes);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{describeSerpNotesHeading(notes.length)}</CardTitle>
+        <CardTitle>
+          {describeSerpNotesHeading(notes.length, remainingKnown.length)}
+        </CardTitle>
         <CardDescription>
           Save competitors you already know for a search query. GroovGro will
           not look these businesses up, scrape search results, or buy a SERP
