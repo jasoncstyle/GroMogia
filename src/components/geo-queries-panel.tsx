@@ -2,6 +2,7 @@ import { createGeoQuery } from "@/lib/actions/geo-queries";
 import {
   describeGeoQuery,
   describeGeoQueriesHeading,
+  sortGeoQueriesForPanel,
   type GeoQueryView,
 } from "@/lib/geo/queries";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -25,6 +26,7 @@ export function GeoQueriesPanel({
   querySuggestions: string[]
   canManage?: boolean
 }) {
+  const listed = sortGeoQueriesForPanel(queries);
   return (
     <Card>
       <CardHeader>
@@ -35,9 +37,9 @@ export function GeoQueriesPanel({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {queries.length > 0 ? (
+        {listed.length > 0 ? (
           <div className="space-y-2">
-            {queries.map((row) => (
+            {listed.map((row) => (
               <div key={row.id} className="space-y-1">
                 <p className="text-sm font-medium">{describeGeoQuery(row)}</p>
               </div>
