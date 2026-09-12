@@ -196,6 +196,13 @@ export function planContentGaps(input: {
   return { toUpsert, skipped };
 }
 
+export function describeContentGapsHeading(gapCount: number): string {
+  if (gapCount <= 0) {
+    return "Queries with no matching page GroovGro has read";
+  }
+  return `Queries with no matching page GroovGro has read · ${gapCount}`;
+}
+
 export function gapsToShow(rows: ContentGapDraft[]): ContentGapView[] {
   return rows
     .filter((row) => row.status === CONTENT_GAP_STATUS_GAP)
