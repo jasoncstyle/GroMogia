@@ -2079,6 +2079,13 @@ Organization
 273. **Intelligence names how many citation gaps are listed** — **IMPLEMENTED** this slice. Intelligence can say how many citation gaps are listed on SEO. GroovGro does not ask an AI system or add a Next step loop.
 274. **Intelligence names how many link and schema facts are listed** — **IMPLEMENTED** this slice. Intelligence can say how many suggested links and schema facts are listed on SEO. GroovGro does not add links or schema to the live website or add a Next step loop.
 275. **Status text names citation and page-structure counts** — **IMPLEMENTED** this slice. Architecture and status summaries name citation-gap and links-and-schema heading, group, and Intelligence counts. GroovGro does not publish or add a Next step loop.
+276. **AI-visibility notes heading shows how many notes sit there** — **IMPLEMENTED** this slice. The AI-visibility notes heading on SEO says how many notes are saved. GroovGro does not ask an AI system or add a Next step loop.
+277. **Library-questions heading shows how many questions sit there** — **IMPLEMENTED** this slice. The library-questions heading on SEO says how many questions are saved. GroovGro does not ask an AI system or add a Next step loop.
+278. **Visibility-history heading shows how many snapshots sit there** — **IMPLEMENTED** this slice. The visibility-history heading on SEO says how many snapshots are saved. GroovGro does not ask an AI system or add a Next step loop.
+279. **Visibility-history heading shows remaining questions without a snapshot** — **IMPLEMENTED** this slice. The visibility-history heading says how many library questions still need a snapshot. GroovGro does not ask an AI system or add a Next step loop.
+280. **Visibility-history form lists remaining questions first** — **IMPLEMENTED** this slice. The visibility-history form lists library questions that still need a snapshot first. GroovGro does not ask an AI system or add a Next step loop.
+281. **Intelligence names remaining library questions listed first** — **IMPLEMENTED** this slice. Intelligence can say library questions that still need a snapshot are listed first. GroovGro does not ask an AI system or add a Next step loop.
+282. **Status text names AI-visibility heading and remaining snapshot counts** — **IMPLEMENTED** this slice. Architecture and status summaries name AI-visibility note, library-question, and visibility-history heading counts, remaining questions, and listed-first copy. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
