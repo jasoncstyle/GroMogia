@@ -661,11 +661,19 @@ export function planCompetitorPageGaps(input: {
 export function describeCompetitorPageGapsHeading(
   gapCount: number,
   pagesRead = true,
+  briefedCount = 0,
 ): string {
   if (!pagesRead || gapCount <= 0) {
     return "Pages they show that GroovGro has not read";
   }
-  return `Pages they show that GroovGro has not read · ${gapCount}`;
+  if (briefedCount <= 0) {
+    return `Pages they show that GroovGro has not read · ${gapCount}`;
+  }
+  if (briefedCount >= gapCount) {
+    return `Pages they show that GroovGro has not read · ${gapCount} · all have a brief`;
+  }
+  const verb = briefedCount === 1 ? "has" : "have";
+  return `Pages they show that GroovGro has not read · ${gapCount} · ${briefedCount} already ${verb} a brief`;
 }
 
 export function competitorSitesToShow(
