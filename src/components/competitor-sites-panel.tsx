@@ -11,6 +11,7 @@ import { suggestBriefOutlineFromCompetitorGap } from "@/lib/growth/content-brief
 import {
   COMPETE_MOVE_STATUS_DONE,
   describeCompeteMove,
+  suggestCompeteMoveFromCompare,
   suggestCompeteMoveFromGap,
   type CompeteMoveView,
 } from "@/lib/growth/compete-moves";
@@ -60,17 +61,37 @@ export function CompetitorSitesPanel({
           and a few public pages on the same site, then compare those looks
           to what you sell. It can name topics those sites show that GroovGro
           has not read on your site. You can save a brief for one of those
-          topics. You can save what you will do, including from one of those
-          topics. If the site blocks the automated read,
+          topics. You can save what you will do, including from a compare or
+          one of those topics. If the site blocks the automated read,
           paste what you see. It will not scrape Google, copy their words
           onto your site, create a page, or buy ads.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {compare ? (
-          <div className="space-y-1 rounded-lg border p-3">
+          <div className="space-y-2 rounded-lg border p-3">
             <p className="text-sm font-medium">How these sites compare</p>
             <p className="text-sm text-muted-foreground">{compare.note}</p>
+            {canManage && suggestCompeteMoveFromCompare(compare).title ? (
+              <SaveForm
+                action={createCompeteMove}
+                successMessage="Compete move saved. GroovGro did not do this or change the live website."
+              >
+                <input
+                  type="hidden"
+                  name="title"
+                  value={suggestCompeteMoveFromCompare(compare).title}
+                />
+                <input
+                  type="hidden"
+                  name="note"
+                  value={suggestCompeteMoveFromCompare(compare).note}
+                />
+                <SaveButton type="submit" size="sm" variant="outline">
+                  I will do this compare
+                </SaveButton>
+              </SaveForm>
+            ) : null}
           </div>
         ) : null}
         {moves.length > 0 ? (
