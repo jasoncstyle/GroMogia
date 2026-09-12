@@ -14,7 +14,9 @@ import {
 } from "@/lib/growth/content-briefs";
 import {
   COMPETE_MOVE_STATUS_DONE,
+  countPlannedCompeteMoves,
   describeCompeteMove,
+  describeCompeteMoveListHeading,
   hasSavedCompeteMoveTitle,
   suggestCompeteMoveFromCompare,
   suggestCompeteMoveFromGap,
@@ -112,7 +114,12 @@ export function CompetitorSitesPanel({
         ) : null}
         {moves.length > 0 ? (
           <div className="space-y-2 rounded-lg border p-3">
-            <p className="text-sm font-medium">What I will do</p>
+            <p className="text-sm font-medium">
+              {describeCompeteMoveListHeading(
+                countPlannedCompeteMoves(moves),
+                moves.length,
+              )}
+            </p>
             {moves.map((move) => (
               <div key={move.id} className="space-y-2">
                 <p className="text-sm font-medium">{describeCompeteMove(move)}</p>

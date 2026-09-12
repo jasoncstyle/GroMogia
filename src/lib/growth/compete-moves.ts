@@ -82,6 +82,25 @@ export function competeMovesToShow(rows: CompeteMoveView[]): CompeteMoveView[] {
   return rows.slice(0, COMPETE_MOVE_MAX_SHOWN);
 }
 
+export function countPlannedCompeteMoves(
+  moves: Pick<CompeteMoveView, "status">[],
+): number {
+  return moves.filter((move) => move.status !== COMPETE_MOVE_STATUS_DONE).length;
+}
+
+export function describeCompeteMoveListHeading(
+  plannedCount: number,
+  totalCount: number,
+): string {
+  if (totalCount <= 0) {
+    return "What I will do";
+  }
+  if (plannedCount > 0) {
+    return `What I will do · ${plannedCount} still planned`;
+  }
+  return "What I will do · all marked done";
+}
+
 export function normalizeCompeteMoveTitle(title?: string | null): string {
   return (title ?? "").trim().replace(/\s+/g, " ").toLowerCase();
 }
