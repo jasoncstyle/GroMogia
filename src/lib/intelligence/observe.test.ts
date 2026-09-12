@@ -1113,6 +1113,42 @@ describe("intelligence observe", () => {
       false,
     );
     assert.match(factsSummary(facts({ competeMoveCount: 3 })), /compete_moves=3/);
+    const markDone = buildIntelligenceBrief(
+      facts({
+        competeMoveCount: 2,
+        competeMoveDoneCount: 1,
+        competeMovePlannedCount: 1,
+      }),
+    ).recommendations.find(
+      (item) => item.title === "Mark a compete move done when you finish it",
+    );
+    assert.ok(markDone);
+    assert.equal(markDone.href, "/app/seo");
+    assert.match(markDone.body, /will not do that work/);
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          competeMoveCount: 2,
+          competeMoveDoneCount: 2,
+          competeMovePlannedCount: 0,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Mark a compete move done when you finish it",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          competeMoveCount: 1,
+          competeMovePlannedCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Mark a compete move done when you finish it",
+      ),
+      false,
+    );
   });
 
   it("observes stored content gaps and does not write a page", () => {
