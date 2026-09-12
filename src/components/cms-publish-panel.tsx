@@ -1,6 +1,7 @@
 import { createCmsPublishRequest } from "@/lib/actions/cms-publish";
 import {
   describeCmsPublishRequest,
+  describePublishQueueHeading,
   type CmsPublishView,
 } from "@/lib/cms/requests";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -29,7 +30,7 @@ export function CmsPublishPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Drafts ready to publish later</CardTitle>
+        <CardTitle>{describePublishQueueHeading(requests.length)}</CardTitle>
         <CardDescription>
           Save a workspace draft for later review. GroovGro will not publish,
           write a CMS, or change the live website. The adapter stays off.

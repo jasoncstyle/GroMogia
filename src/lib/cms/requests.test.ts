@@ -11,6 +11,7 @@ import {
   CMS_PUBLISH_STATUS_REVIEW,
   describeCmsPublishRequest,
   describePlannerHeading,
+  describePublishQueueHeading,
   planCmsPublishRequest,
   publishRequestsToShow,
 } from "./requests";
@@ -131,6 +132,12 @@ describe("CMS publish review queue and disabled adapter", () => {
     assert.equal(
       describePlannerHeading(2),
       "Content planner · 2 saved for later review",
+    );
+    assert.match(panel, /describePublishQueueHeading/);
+    assert.equal(describePublishQueueHeading(0), "Drafts ready to publish later");
+    assert.equal(
+      describePublishQueueHeading(2),
+      "Drafts ready to publish later · 2 waiting",
     );
     assert.doesNotMatch(briefsPanel, /requestCmsPublish|cmsPublishEnabled\(\)/);
     assert.match(adapter, /never fetches/);
