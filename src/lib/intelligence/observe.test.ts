@@ -335,8 +335,20 @@ describe("intelligence observe", () => {
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /1 competitor note/);
     assert.match(observed.body, /did not look these businesses up/);
+    const remaining = saved.recommendations.find(
+      (item) => item.title === "Save a competitor you already see",
+    );
+    assert.ok(remaining);
+    assert.match(remaining.body, /1 still needs a note/);
+    assert.match(remaining.body, /listed first/);
     assert.equal(
-      saved.recommendations.some(
+      buildIntelligenceBrief(
+        facts({
+          recordedKeywordCount: 3,
+          knownCompetitorCount: 2,
+          serpNoteCount: 2,
+        }),
+      ).recommendations.some(
         (item) => item.title === "Save a competitor you already see",
       ),
       false,
@@ -356,6 +368,7 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not look anyone up/);
     assert.match(recommended.body, /listed first/);
+    assert.match(recommended.body, /2 still need a note/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save a competitor you already see",
