@@ -7,6 +7,7 @@ import {
   competitorHost,
   competitorPageGapsNeedingBrief,
   competitorPageGapsWithBrief,
+  describeCompetitorPageGapGroupHeading,
   describeCompetitorPageGapsHeading,
   shouldGroupCompetitorPageGaps,
   sortCompetitorPageGapsForPanel,
@@ -385,8 +386,15 @@ describe("competitor looks from owner-saved URLs", () => {
     );
     assert.match(panel, /briefedPageGapCount/);
     assert.match(panel, /sortCompetitorPageGapsForPanel/);
-    assert.match(panel, /Still need a brief/);
-    assert.match(panel, /Already have a brief/);
+    assert.match(panel, /describeCompetitorPageGapGroupHeading/);
+    assert.equal(
+      describeCompetitorPageGapGroupHeading("need", 2),
+      "Still need a brief · 2",
+    );
+    assert.equal(
+      describeCompetitorPageGapGroupHeading("have", 1),
+      "Already have a brief · 1",
+    );
     assert.equal(
       shouldGroupCompetitorPageGaps(
         [{ label: "Private coaching" }, { label: "Weekend beginner class" }],

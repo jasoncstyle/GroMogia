@@ -28,6 +28,7 @@ import {
 import {
   competitorPageGapsNeedingBrief,
   competitorPageGapsWithBrief,
+  describeCompetitorPageGapGroupHeading,
   describeCompetitorPageGapsHeading,
   shouldGroupCompetitorPageGaps,
   sortCompetitorPageGapsForPanel,
@@ -75,6 +76,14 @@ export function CompetitorSitesPanel({
   ).length;
   const pageGapsToShow = sortCompetitorPageGapsForPanel(
     pageGaps,
+    isBriefSaved,
+  );
+  const needPageGaps = competitorPageGapsNeedingBrief(
+    pageGapsToShow,
+    isBriefSaved,
+  );
+  const havePageGaps = competitorPageGapsWithBrief(
+    pageGapsToShow,
     isBriefSaved,
   );
   return (
@@ -197,18 +206,18 @@ export function CompetitorSitesPanel({
               (shouldGroupCompetitorPageGaps(pageGapsToShow, isBriefSaved)
                 ? [
                     {
-                      label: "Still need a brief",
-                      rows: competitorPageGapsNeedingBrief(
-                        pageGapsToShow,
-                        isBriefSaved,
+                      label: describeCompetitorPageGapGroupHeading(
+                        "need",
+                        needPageGaps.length,
                       ),
+                      rows: needPageGaps,
                     },
                     {
-                      label: "Already have a brief",
-                      rows: competitorPageGapsWithBrief(
-                        pageGapsToShow,
-                        isBriefSaved,
+                      label: describeCompetitorPageGapGroupHeading(
+                        "have",
+                        havePageGaps.length,
                       ),
+                      rows: havePageGaps,
                     },
                   ]
                 : [{ label: "", rows: pageGapsToShow }]
