@@ -51,9 +51,29 @@ export function describeSerpNote(note: Pick<SerpNoteView, "query" | "competitorN
   return `The owner already knows ${note.competitorName}.`;
 }
 
-export function describeSerpNotesHeading(noteCount = 0): string {
-  if (noteCount <= 0) {
+export function knownCompetitorsNeedingNote(
+  knownCompetitors: string[],
+  notes: Array<{ competitorName: string }>,
+): string[] {
+  const saved = new Set(
+    notes.map((note) => note.competitorName.trim().toLowerCase()).filter(Boolean),
+  );
+  return knownCompetitors.filter(
+    (name) => !saved.has(name.trim().toLowerCase()),
+  );
+}
+
+export function describeSerpNotesHeading(
+  noteCount = 0,
+  remainingCount = 0,
+): string {
+  if (noteCount <= 0 && remainingCount <= 0) {
     return "Who else you already see";
   }
-  return `Who else you already see · ${noteCount}`;
+  const notes = noteCount <= 0 ? "" : ` · ${noteCount}`;
+  const remaining =
+    remainingCount <= 0
+      ? ""
+      : ` · ${remainingCount} still ${remainingCount === 1 ? "needs" : "need"} a note`;
+  return `Who else you already see${notes}${remaining}`;
 }
