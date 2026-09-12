@@ -68,6 +68,7 @@ export type IntelligenceFacts = {
   competeMoveDoneCount?: number
   competeMovePlannedCount?: number
   competitorGapBriefCount?: number
+  contentGapBriefCount?: number
   draftOfferCheckCount?: number
   draftMissingOfferCount?: number
   draftNoOfferToCheckCount?: number
@@ -223,6 +224,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     facts.competeMovePlannedCount ??
     Math.max(0, competeMoveCount - competeMoveDoneCount);
   const competitorGapBriefCount = facts.competitorGapBriefCount ?? 0;
+  const contentGapBriefCount = facts.contentGapBriefCount ?? 0;
   const draftOfferCheckCount = facts.draftOfferCheckCount ?? 0;
   const draftMissingOfferCount = facts.draftMissingOfferCount ?? 0;
   const draftNoOfferToCheckCount = facts.draftNoOfferToCheckCount ?? 0;
@@ -303,7 +305,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     observations.push({
       kind: "observation",
       title: "Content briefs on the planner",
-      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner.${competitorGapBriefCount > 0 ? ` ${competitorGapBriefCount} ${competitorGapBriefCount === 1 ? "is" : "are"} from a competitor page topic.` : ""} GroovGro did not publish a page or copy a competitor.`,
+      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner.${competitorGapBriefCount > 0 ? ` ${competitorGapBriefCount} ${competitorGapBriefCount === 1 ? "is" : "are"} from a competitor page topic.` : ""}${contentGapBriefCount > 0 ? ` ${contentGapBriefCount} ${contentGapBriefCount === 1 ? "is" : "are"} from a missing-page query.` : ""} GroovGro did not publish a page or copy a competitor.`,
       evidence: ["content_briefs"],
       href: "/app/seo",
     });
@@ -1007,6 +1009,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
       Math.max(0, (facts.competeMoveCount ?? 0) - (facts.competeMoveDoneCount ?? 0))
     }`,
     `competitor_gap_briefs=${facts.competitorGapBriefCount ?? 0}`,
+    `content_gap_briefs=${facts.contentGapBriefCount ?? 0}`,
     `draft_offer_checks=${facts.draftOfferCheckCount ?? 0}`,
     `draft_missing_offers=${facts.draftMissingOfferCount ?? 0}`,
     `draft_no_offer_checks=${facts.draftNoOfferToCheckCount ?? 0}`,
