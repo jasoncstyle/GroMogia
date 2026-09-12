@@ -171,6 +171,7 @@ describe("content gap detection from stored pages", () => {
     assert.match(persist, /eq\(websiteDiscoveredPages\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(contentGaps\.organizationId, organizationId\)/);
     assert.match(panel, /did not invent topics/);
+    assert.match(panel, /listed first/);
     assert.match(panel, /Save a brief for this query/);
     assert.match(panel, /createContentBrief/);
     assert.match(panel, /content_gap/);
