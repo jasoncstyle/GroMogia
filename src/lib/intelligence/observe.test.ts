@@ -780,6 +780,7 @@ describe("intelligence observe", () => {
     assert.match(recommended.body, /not an experiment GroovGro ran/);
     assert.match(recommended.body, /will not buy ads/);
     assert.match(recommended.body, /2 looks are listed/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(facts()).observations.some(
         (item) => item.title === "What a stored before and after shows",
