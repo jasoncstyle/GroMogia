@@ -1042,6 +1042,22 @@ describe("intelligence observe", () => {
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /2 moves/);
     assert.match(observed.body, /did not do that work/);
+    const done = buildIntelligenceBrief(
+      facts({
+        competeMoveCount: 2,
+        competeMoveDoneCount: 1,
+      }),
+    );
+    assert.match(
+      done.observations.find(
+        (item) => item.title === "Compete moves you said you will do",
+      )?.body ?? "",
+      /1 is marked done/,
+    );
+    assert.match(
+      factsSummary(facts({ competeMoveCount: 3, competeMoveDoneCount: 1 })),
+      /compete_moves=3 compete_moves_done=1/,
+    );
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Save what you will do to compete",
