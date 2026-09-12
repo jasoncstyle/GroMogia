@@ -16,6 +16,7 @@ import {
   COMPETE_MOVE_STATUS_DONE,
   countPlannedCompeteMoves,
   describeCompeteMove,
+  describeCompeteMoveGroupHeading,
   describeCompeteMoveListHeading,
   doneCompeteMoves,
   hasSavedCompeteMoveTitle,
@@ -149,8 +150,20 @@ export function CompetitorSitesPanel({
             </p>
             {(shouldGroupCompeteMoves(moves)
               ? [
-                  { label: "Still planned", rows: plannedCompeteMoves(moves) },
-                  { label: "Marked done", rows: doneCompeteMoves(moves) },
+                  {
+                    label: describeCompeteMoveGroupHeading(
+                      "planned",
+                      plannedCompeteMoves(moves).length,
+                    ),
+                    rows: plannedCompeteMoves(moves),
+                  },
+                  {
+                    label: describeCompeteMoveGroupHeading(
+                      "done",
+                      doneCompeteMoves(moves).length,
+                    ),
+                    rows: doneCompeteMoves(moves),
+                  },
                 ]
               : [{ label: "", rows: moves }]
             ).map((group) => (

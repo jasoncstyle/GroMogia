@@ -114,6 +114,16 @@ export function shouldGroupCompeteMoves(
   return plannedCompeteMoves(moves).length > 0 && doneCompeteMoves(moves).length > 0;
 }
 
+export function describeCompeteMoveGroupHeading(
+  kind: "planned" | "done",
+  count: number,
+): string {
+  if (kind === "planned") {
+    return `Still planned · ${count}`;
+  }
+  return `Marked done · ${count}`;
+}
+
 export function describeCompeteMoveListHeading(
   plannedCount: number,
   totalCount: number,
