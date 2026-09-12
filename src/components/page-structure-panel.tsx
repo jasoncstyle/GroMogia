@@ -1,4 +1,8 @@
-import type { InternalLinkView, SchemaFactView } from "@/lib/growth/page-structure";
+import {
+  describePageStructureHeading,
+  type InternalLinkView,
+  type SchemaFactView,
+} from "@/lib/growth/page-structure";
 import {
   Card,
   CardContent,
@@ -19,7 +23,9 @@ export function PageStructurePanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Links and schema facts from pages GroovGro already read</CardTitle>
+        <CardTitle>
+          {describePageStructureHeading(links.length, schemaFacts.length)}
+        </CardTitle>
         <CardDescription>
           GroovGro compared pages it already read. If one page&apos;s stored
           text mentions another page&apos;s title, it suggests a link. Schema
