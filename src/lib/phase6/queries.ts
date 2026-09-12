@@ -7,6 +7,7 @@ import {
   brandVoiceProfiles,
   businessBrains,
   competitorSites,
+  competeMoves,
   cmsPublishRequests,
   offers,
   contentBriefs,
@@ -40,6 +41,10 @@ import {
 } from "@/lib/growth/persist-page-structure";
 import type { CmsPublishView } from "@/lib/cms/requests";
 import { publishRequestsToShow } from "@/lib/cms/requests";
+import {
+  competeMovesToShow,
+  type CompeteMoveView,
+} from "@/lib/growth/compete-moves";
 import type { ContentBriefView } from "@/lib/growth/content-briefs";
 import {
   planDraftOfferChecks,
@@ -108,6 +113,7 @@ export async function getSeoPageData(organizationId: string) {
       competitorSearches: [] as CompetitorSearchHint[],
       competitorCompare: null as CompetitorCompareView | null,
       competitorPageGaps: [] as CompetitorPageGapView[],
+      competeMoves: [] as CompeteMoveView[],
       contentGaps: [] as ContentGapView[],
       pagesRead: false,
       contentBriefs: [] as Array<
@@ -240,6 +246,7 @@ export async function getSeoPageData(organizationId: string) {
     cmsPublishRows,
     competitorSiteRows,
     offerRows,
+    competeMoveRows,
   ] = await Promise.all([
     db
       .select()
@@ -395,6 +402,18 @@ export async function getSeoPageData(organizationId: string) {
       })
       .from(offers)
       .where(eq(offers.organizationId, organizationId)),
+    db
+      .select({
+        id: competeMoves.id,
+        title: competeMoves.title,
+        note: competeMoves.note,
+        createdAt: competeMoves.createdAt,
+        organizationId: competeMoves.organizationId,
+      })
+      .from(competeMoves)
+      .where(eq(competeMoves.organizationId, organizationId))
+      .orderBy(desc(competeMoves.createdAt))
+      .limit(20),
   ]);
 
   const competitorSiteViews = competitorSitesToShow(
@@ -474,6 +493,16 @@ export async function getSeoPageData(organizationId: string) {
       ourOffers,
       ourDifference: brainRows[0]?.differentiators ?? [],
     }),
+    competeMoves: competeMovesToShow(
+      competeMoveRows
+        .filter((row) => row.organizationId === organizationId)
+        .map((row) => ({
+          id: row.id,
+          title: row.title,
+          note: row.note,
+          createdAt: row.createdAt,
+        })),
+    ),
     competitorPageGaps: planCompetitorPageGaps({
       sites: competitorSiteViews,
       pages: pageRows

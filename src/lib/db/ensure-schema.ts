@@ -409,4 +409,12 @@ export async function ensureSchema(): Promise<void> {
   if (!competitorSitesTable[0]?.name) {
     await applyMigration(sql, "0040_competitor_sites.sql");
   }
+
+  const competeMovesTable = (await sql.query(
+    "select to_regclass('public.compete_moves') as name",
+  )) as RegistryRow[];
+
+  if (!competeMovesTable[0]?.name) {
+    await applyMigration(sql, "0041_compete_moves.sql");
+  }
 }

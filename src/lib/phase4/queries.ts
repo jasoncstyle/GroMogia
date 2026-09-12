@@ -15,6 +15,7 @@ import {
   keywords,
   pageSchemaFacts,
   payments,
+  competeMoves,
   competitorSites,
   offers,
   serpNotes,
@@ -75,6 +76,7 @@ export async function getIntelligenceFacts(
     serpNoteCount,
     competitorSiteCounts,
     competitorPageGapCount,
+    competeMoveCount,
     contentGapCount,
     contentBriefCount,
     competitorGapBriefCount,
@@ -91,6 +93,7 @@ export async function getIntelligenceFacts(
     countSerpNotes(organizationId),
     countCompetitorSites(organizationId),
     countCompetitorPageGaps(organizationId),
+    countCompeteMoves(organizationId),
     countContentGaps(organizationId),
     countContentBriefs(organizationId),
     countCompetitorGapBriefs(organizationId),
@@ -188,6 +191,7 @@ export async function getIntelligenceFacts(
     competitorSiteCount: competitorSiteCounts.total,
     competitorLookCount: competitorSiteCounts.looked,
     competitorPageGapCount,
+    competeMoveCount,
     competitorGapBriefCount,
     draftOfferCheckCount: draftOfferCheckCounts.checked,
     draftMissingOfferCount: draftOfferCheckCounts.missingOffer,
@@ -272,6 +276,16 @@ async function countSerpNotes(organizationId: string): Promise<number> {
     .select({ value: sql<number>`count(*)::int` })
     .from(serpNotes)
     .where(eq(serpNotes.organizationId, organizationId));
+  return Number(row?.value ?? 0);
+}
+
+async function countCompeteMoves(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(competeMoves)
+    .where(eq(competeMoves.organizationId, organizationId));
   return Number(row?.value ?? 0);
 }
 

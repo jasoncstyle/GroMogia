@@ -851,6 +851,26 @@ export const competitorSites = pgTable(
   ],
 );
 
+export const COMPETE_MOVE_SOURCE_OWNER = "owner";
+export const COMPETE_MOVE_STATUS_PLANNED = "planned";
+
+export const competeMoves = pgTable(
+  "compete_moves",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    note: text("note").notNull().default(""),
+    status: text("status").notNull().default(COMPETE_MOVE_STATUS_PLANNED),
+    source: text("source").notNull().default(COMPETE_MOVE_SOURCE_OWNER),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [index("compete_moves_org_idx").on(table.organizationId)],
+);
+
 export const CONTENT_GAP_SOURCE_STORED_PAGES = "stored_pages";
 export const CONTENT_GAP_STATUS_GAP = "gap";
 
