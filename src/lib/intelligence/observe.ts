@@ -739,8 +739,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
 
   if (
     facts.websiteConnected &&
-    contentBriefCount > 0 &&
-    contentDraftCount === 0
+    contentBriefCount > contentDraftCount
   ) {
     recommendations.push({
       kind: "recommendation",

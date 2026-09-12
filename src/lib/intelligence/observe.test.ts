@@ -1326,6 +1326,16 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not publish/);
     assert.match(recommended.body, /copy a competitor/);
+    assert.ok(
+      buildIntelligenceBrief(
+        facts({
+          contentBriefCount: 2,
+          contentDraftCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Write a workspace draft from a brief",
+      ),
+    );
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Write a workspace draft from a brief",
