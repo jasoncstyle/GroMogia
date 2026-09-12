@@ -205,7 +205,12 @@ describe("owner-entered content briefs", () => {
       ]),
       true,
     );
-    assert.equal(shouldGroupPlannerBriefs([{ id: "needs-draft" }]), false);
+    assert.equal(
+      shouldGroupPlannerBriefs<{ id: string; draft?: { id: string } }>([
+        { id: "needs-draft" },
+      ]),
+      false,
+    );
     assert.deepEqual(
       briefsNeedingDraft([
         { id: "with-draft", draft: { id: "d1" } },
