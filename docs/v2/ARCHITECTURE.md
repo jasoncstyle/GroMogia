@@ -2086,6 +2086,11 @@ Organization
 280. **Visibility-history form lists remaining questions first** — **IMPLEMENTED** this slice. The visibility-history form lists library questions that still need a snapshot first. GroovGro does not ask an AI system or add a Next step loop.
 281. **Intelligence names remaining library questions listed first** — **IMPLEMENTED** this slice. Intelligence can say library questions that still need a snapshot are listed first. GroovGro does not ask an AI system or add a Next step loop.
 282. **Status text names AI-visibility heading and remaining snapshot counts** — **IMPLEMENTED** this slice. Architecture and status summaries name AI-visibility note, library-question, and visibility-history heading counts, remaining questions, and listed-first copy. GroovGro does not publish or add a Next step loop.
+283. **Recorded-queries heading shows how many queries sit there** — **IMPLEMENTED** this slice. The recorded-queries heading on SEO says how many Search Console queries GroovGro has stored. GroovGro does not buy keyword data or add a Next step loop.
+284. **Competitor-notes heading shows how many notes sit there** — **IMPLEMENTED** this slice. The competitor-notes heading on SEO says how many owner-saved notes sit there. GroovGro does not scrape search results or add a Next step loop.
+285. **Channel-compare heading shows how many compares sit there** — **IMPLEMENTED** this slice. The stored-evidence compare heading on SEO says how many channel compares GroovGro estimated. GroovGro does not change Next step or add a Next step loop.
+286. **Before-and-after heading shows how many looks sit there** — **IMPLEMENTED** this slice. The before-and-after heading on SEO says how many stored Goal looks sit there. GroovGro does not change the plan or add a Next step loop.
+287. **Status text names recorded-query, competitor-note, channel, and before-after heading counts** — **IMPLEMENTED** this slice. Architecture and status summaries name those SEO heading counts. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
