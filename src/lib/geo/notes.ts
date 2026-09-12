@@ -63,11 +63,20 @@ export function describeGeoNote(
   return `The owner already heard: ${note.heard}`;
 }
 
-export function describeGeoNotesHeading(noteCount = 0): string {
-  if (noteCount <= 0) {
+export function geoNotesNamingAQuestion<T extends { query?: string | null }>(
+  rows: T[],
+): T[] {
+  return rows.filter((row) => Boolean((row.query ?? "").trim()));
+}
+
+export function describeGeoNotesHeading(noteCount = 0, namedQueryCount = 0): string {
+  if (noteCount <= 0 && namedQueryCount <= 0) {
     return "What you already hear from AI";
   }
-  return `What you already hear from AI · ${noteCount}`;
+  const notes = noteCount <= 0 ? "" : ` · ${noteCount}`;
+  const named =
+    namedQueryCount <= 0 ? "" : ` · ${namedQueryCount} name a question`;
+  return `What you already hear from AI${notes}${named}`;
 }
 
 export function sortGeoNotesForPanel<T extends { query?: string | null }>(
