@@ -50,6 +50,13 @@ export type ChannelScoreDraft = ChannelScore & {
 const ESTIMATE =
   "This is an estimate from stored workspace facts, not a traffic or revenue forecast.";
 
+export function describeChannelScoreHeading(scoreCount = 0): string {
+  if (scoreCount <= 0) {
+    return "What stored evidence says to compare";
+  }
+  return `What stored evidence says to compare · ${scoreCount}`;
+}
+
 export function channelScoreLabelTitle(label: ChannelScoreLabel): string {
   if (label === "review") return "Worth a look";
   if (label === "watch") return "Keep watching";
