@@ -9,6 +9,7 @@ import {
   COMPETE_MOVE_STATUS_PLANNED,
   competeMovesToShow,
   describeCompeteMove,
+  hasSavedCompeteMoveTitle,
   planCompeteMove,
   planCompeteMoveDone,
   suggestCompeteMoveFromCompare,
@@ -137,5 +138,25 @@ describe("owner-saved compete moves", () => {
     assert.match(fromCompare.title, /Weekend beginner class/);
     assert.match(fromCompare.note, /will not do this/);
     assert.equal(suggestCompeteMoveFromCompare(null).title, "");
+    assert.equal(
+      hasSavedCompeteMoveTitle(
+        [{ title: "Cover “Weekend beginner class” on our site" }],
+        "  cover “Weekend beginner class” on our site  ",
+      ),
+      true,
+    );
+    assert.equal(
+      hasSavedCompeteMoveTitle(
+        [{ title: "Cover “Weekend beginner class” on our site" }],
+        "Cover “Private coaching” on our site",
+      ),
+      false,
+    );
+    assert.equal(hasSavedCompeteMoveTitle([], "Cover this"), false);
+    assert.equal(
+      hasSavedCompeteMoveTitle([{ title: "Cover this" }], ""),
+      false,
+    );
+    assert.match(panel, /Already saved as what you will do/);
   });
 });
