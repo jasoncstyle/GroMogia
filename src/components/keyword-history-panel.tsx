@@ -1,5 +1,6 @@
 import {
   describeKeywordHistory,
+  describeKeywordHistoryHeading,
   formatPosition,
   latestKeywordPoint,
   type KeywordWithHistory,
@@ -23,7 +24,7 @@ export function KeywordHistoryPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Queries GroovGro has recorded</CardTitle>
+        <CardTitle>{describeKeywordHistoryHeading(keywords.length)}</CardTitle>
         <CardDescription>
           These come from Search Console snapshots GroovGro already stored.
           GroovGro can mark a query worth a look, keep watching, or not enough
