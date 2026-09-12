@@ -179,6 +179,10 @@ describe("keyword history from Search Console", () => {
     assert.match(panel, /describeKeywordHistoryHeading/);
     assert.equal(describeKeywordHistoryHeading(0), "Queries GroovGro has recorded");
     assert.equal(describeKeywordHistoryHeading(3), "Queries GroovGro has recorded · 3");
+    assert.equal(
+      describeKeywordHistoryHeading(3, 1),
+      "Queries GroovGro has recorded · 3 · 1 worth a look",
+    );
     assert.doesNotMatch(panel, /search volume forecast/i);
   });
 });

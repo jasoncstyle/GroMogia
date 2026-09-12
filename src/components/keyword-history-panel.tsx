@@ -24,7 +24,13 @@ export function KeywordHistoryPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{describeKeywordHistoryHeading(keywords.length)}</CardTitle>
+        <CardTitle>
+          {describeKeywordHistoryHeading(
+            keywords.length,
+            keywords.filter((keyword) => keyword.opportunityLabel === "review")
+              .length,
+          )}
+        </CardTitle>
         <CardDescription>
           These come from Search Console snapshots GroovGro already stored.
           GroovGro can mark a query worth a look, keep watching, or not enough
