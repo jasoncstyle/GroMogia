@@ -117,8 +117,8 @@ export default async function SeoPage({
           to pages GroovGro already read. You can save a brief to the planner
           and write a workspace draft from it. A draft from a competitor topic
           uses this business’s words. GroovGro can check whether that draft
-          names a saved offer. You can save a draft for later
-          review. Pages GroovGro already read
+          names a saved offer. You can save that draft for later review from
+          the planner. Pages GroovGro already read
           can show link suggestions and estimated schema types. You can save
           what you already heard from an AI system. You can save questions to
           remember for later AI visibility. You can save another snapshot of
@@ -287,6 +287,9 @@ export default async function SeoPage({
 
           <ContentBriefsPanel
             briefs={data.contentBriefs}
+            queuedDraftIds={data.cmsPublishRequests.map(
+              (request) => request.draftId,
+            )}
             querySuggestions={[
               ...data.contentGaps.map((gap) => gap.query),
               ...data.competitorPageGaps.map((gap) => gap.label),

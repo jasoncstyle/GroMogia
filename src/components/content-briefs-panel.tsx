@@ -1,4 +1,5 @@
 import { createContentBrief } from "@/lib/actions/content-briefs";
+import { createCmsPublishRequest } from "@/lib/actions/cms-publish";
 import { createContentDraft } from "@/lib/actions/content-drafts";
 import {
   describeContentBrief,
@@ -25,6 +26,7 @@ import {
 
 export function ContentBriefsPanel({
   briefs,
+  queuedDraftIds = [],
   querySuggestions,
   canManage = true,
 }: {
@@ -34,6 +36,7 @@ export function ContentBriefsPanel({
       offerCheck?: DraftOfferCheckView | null
     }
   >
+  queuedDraftIds?: string[]
   querySuggestions: string[]
   canManage?: boolean
 }) {
@@ -43,8 +46,9 @@ export function ContentBriefsPanel({
         <CardTitle>Content planner</CardTitle>
         <CardDescription>
           Save a brief, then write a workspace draft from it. GroovGro can
-          check a competitor-topic draft against what you sell. It will not
-          publish or change the live website.
+          check a competitor-topic draft against what you sell. You can save
+          that draft for later review. It will not publish or change the live
+          website.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -90,6 +94,25 @@ export function ContentBriefsPanel({
                       {brief.draft
                         ? "Write the workspace draft again"
                         : "Write a workspace draft"}
+                    </SaveButton>
+                  </SaveForm>
+                ) : null}
+                {brief.draft && queuedDraftIds.includes(brief.draft.id) ? (
+                  <p className="text-sm text-muted-foreground">
+                    Saved for later review. GroovGro did not publish or change
+                    the live website.
+                  </p>
+                ) : null}
+                {canManage &&
+                brief.draft &&
+                !queuedDraftIds.includes(brief.draft.id) ? (
+                  <SaveForm
+                    action={createCmsPublishRequest}
+                    successMessage="Publish request saved. GroovGro did not publish or change the live website."
+                  >
+                    <input type="hidden" name="draftId" value={brief.draft.id} />
+                    <SaveButton type="submit" size="sm" variant="outline">
+                      Save for later review
                     </SaveButton>
                   </SaveForm>
                 ) : null}

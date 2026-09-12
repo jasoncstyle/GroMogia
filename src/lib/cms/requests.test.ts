@@ -118,6 +118,13 @@ describe("CMS publish review queue and disabled adapter", () => {
     assert.match(action, /did not publish/);
     assert.match(panel, /will not publish/);
     assert.match(panel, /adapter stays off/);
+    const briefsPanel = readFileSync(
+      join(process.cwd(), "src/components/content-briefs-panel.tsx"),
+      "utf8",
+    );
+    assert.match(briefsPanel, /Save for later review/);
+    assert.match(briefsPanel, /createCmsPublishRequest/);
+    assert.doesNotMatch(briefsPanel, /requestCmsPublish|cmsPublishEnabled\(\)/);
     assert.match(adapter, /never fetches/);
     assert.match(queries, /eq\(cmsPublishRequests\.organizationId, organizationId\)/);
 
