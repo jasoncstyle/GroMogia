@@ -64,6 +64,9 @@ export function CompetitorSitesPanel({
   pagesRead?: boolean
   canManage?: boolean
 }) {
+  const briefedPageGapCount = pageGaps.filter((gap) =>
+    hasSavedContentBriefForTopic(briefs, gap.label),
+  ).length;
   return (
     <Card>
       <CardHeader>
@@ -163,7 +166,11 @@ export function CompetitorSitesPanel({
         {sites.some((site) => site.competeNote || site.modelGuess) ? (
           <div className="space-y-2 rounded-lg border p-3">
             <p className="text-sm font-medium">
-              {describeCompetitorPageGapsHeading(pageGaps.length, pagesRead)}
+              {describeCompetitorPageGapsHeading(
+                pageGaps.length,
+                pagesRead,
+                briefedPageGapCount,
+              )}
             </p>
             {!pagesRead ? (
               <p className="text-sm text-muted-foreground">
