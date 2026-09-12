@@ -13,6 +13,8 @@ import {
   EXECUTION_SOURCE_OWNER,
   EXECUTION_STATUS_REVIEW,
   actionsToQueue,
+  actionsWaitingToQueue,
+  describeExecutionHeading,
   describeExecutionRequest,
   executionActionTitle,
   isAllowedExecutionAction,
@@ -167,6 +169,20 @@ describe("later-run queue and disabled execute adapter", () => {
     assert.match(actionFile, /did not run it/);
     assert.match(panel, /will not run it/);
     assert.match(panel, /adapter stays off/);
+    assert.match(panel, /describeExecutionHeading/);
+    assert.match(panel, /actionsWaitingToQueue/);
+    assert.equal(describeExecutionHeading(0), "What is waiting to run later");
+    assert.equal(
+      describeExecutionHeading(2, 1),
+      "What is waiting to run later · 2 waiting · 1 still needs a later-run save",
+    );
+    assert.deepEqual(
+      actionsWaitingToQueue(
+        [{ id: "open" }, { id: "queued" }],
+        [{ actionId: "queued" }],
+      ).map((action) => action.id),
+      ["open"],
+    );
     assert.match(adapter, /never fetches/);
     assert.match(queries, /eq\(executionRequests\.organizationId, organizationId\)/);
 
