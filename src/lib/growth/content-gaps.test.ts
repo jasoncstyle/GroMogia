@@ -152,6 +152,10 @@ describe("content gap detection from stored pages", () => {
       join(process.cwd(), "src/components/content-gaps-panel.tsx"),
       "utf8",
     );
+    const seoPage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
+      "utf8",
+    );
     const nextStep = readFileSync(
       join(process.cwd(), "src/lib/growth/next-step.ts"),
       "utf8",
@@ -163,7 +167,10 @@ describe("content gap detection from stored pages", () => {
     assert.match(persist, /eq\(websiteDiscoveredPages\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(contentGaps\.organizationId, organizationId\)/);
     assert.match(panel, /did not invent topics/);
-    assert.match(panel, /Save a brief on the planner/);
+    assert.match(panel, /Save a brief for this query/);
+    assert.match(panel, /createContentBrief/);
+    assert.match(panel, /Already saved on the planner/);
+    assert.match(seoPage, /briefs=\{data\.contentBriefs\}/);
     assert.match(panel, /describeContentGapsHeading/);
     assert.equal(
       describeContentGapsHeading(0),
