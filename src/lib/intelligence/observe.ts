@@ -322,10 +322,17 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   }
 
   if (contentBriefCount > 0) {
+    const remainingDrafts = Math.max(0, contentBriefCount - contentDraftCount);
+    const remainingDraftNote =
+      contentDraftCount <= 0
+        ? ""
+        : remainingDrafts <= 0
+          ? " All of those already have a workspace draft."
+          : ` ${remainingDrafts} still ${remainingDrafts === 1 ? "needs" : "need"} a workspace draft.`;
     observations.push({
       kind: "observation",
       title: "Content briefs on the planner",
-      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner.${competitorGapBriefCount > 0 ? ` ${competitorGapBriefCount} ${competitorGapBriefCount === 1 ? "is" : "are"} from a competitor page topic.` : ""}${contentGapBriefCount > 0 ? ` ${contentGapBriefCount} ${contentGapBriefCount === 1 ? "is" : "are"} from a missing-page query.` : ""} GroovGro did not publish a page or copy a competitor.`,
+      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner.${competitorGapBriefCount > 0 ? ` ${competitorGapBriefCount} ${competitorGapBriefCount === 1 ? "is" : "are"} from a competitor page topic.` : ""}${contentGapBriefCount > 0 ? ` ${contentGapBriefCount} ${contentGapBriefCount === 1 ? "is" : "are"} from a missing-page query.` : ""}${remainingDraftNote} GroovGro did not publish a page or copy a competitor.`,
       evidence: ["content_briefs"],
       href: "/app/seo",
     });

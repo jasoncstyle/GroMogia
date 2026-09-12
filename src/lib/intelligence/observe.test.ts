@@ -1331,6 +1331,26 @@ describe("intelligence observe", () => {
       factsSummary(facts({ contentGapBriefCount: 1 })),
       /content_gap_briefs=1/,
     );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentBriefCount: 2,
+          contentDraftCount: 1,
+        }),
+      ).observations.find((item) => item.title === "Content briefs on the planner")
+        ?.body ?? "",
+      /1 still needs a workspace draft/,
+    );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentBriefCount: 2,
+          contentDraftCount: 2,
+        }),
+      ).observations.find((item) => item.title === "Content briefs on the planner")
+        ?.body ?? "",
+      /All of those already have a workspace draft/,
+    );
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Save a content brief to the planner",
