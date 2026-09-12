@@ -1,5 +1,7 @@
 import { createExecutionRequest } from "@/lib/actions/execution";
 import {
+  actionsWaitingToQueue,
+  describeExecutionHeading,
   describeExecutionRequest,
   executionActionTitle,
   type ExecutionAction,
@@ -28,10 +30,13 @@ export function ExecutionPanel({
   actions: ExecutionAction[]
   canManage?: boolean
 }) {
+  const openActions = actionsWaitingToQueue(actions, requests);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>What is waiting to run later</CardTitle>
+        <CardTitle>
+          {describeExecutionHeading(requests.length, openActions.length)}
+        </CardTitle>
         <CardDescription>
           Save approved work for later. GroovGro will not run it, buy ads,
           send email, or change the live website. The adapter stays off.
