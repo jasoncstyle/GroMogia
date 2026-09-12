@@ -1,7 +1,11 @@
 import Link from "next/link";
 
 import { createSerpNote } from "@/lib/actions/serp-notes";
-import { describeSerpNote, type SerpNoteView } from "@/lib/growth/serp-notes";
+import {
+  describeSerpNote,
+  describeSerpNotesHeading,
+  type SerpNoteView,
+} from "@/lib/growth/serp-notes";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,7 +32,7 @@ export function SerpNotesPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Who else you already see</CardTitle>
+        <CardTitle>{describeSerpNotesHeading(notes.length)}</CardTitle>
         <CardDescription>
           Save competitors you already know for a search query. GroovGro will
           not look these businesses up, scrape search results, or buy a SERP
