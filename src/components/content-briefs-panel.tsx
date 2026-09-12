@@ -1,6 +1,7 @@
 import { createContentBrief } from "@/lib/actions/content-briefs";
 import { createCmsPublishRequest } from "@/lib/actions/cms-publish";
 import { createContentDraft } from "@/lib/actions/content-drafts";
+import { describeCmsPublishRequest } from "@/lib/cms/requests";
 import {
   describeContentBrief,
   suggestBriefOutline,
@@ -28,7 +29,7 @@ import {
 
 export function ContentBriefsPanel({
   briefs,
-  queuedDraftIds = [],
+  queuedReviews = [],
   querySuggestions,
   canManage = true,
 }: {
@@ -39,7 +40,7 @@ export function ContentBriefsPanel({
       differenceCheck?: DraftDifferenceCheckView | null
     }
   >
-  queuedDraftIds?: string[]
+  queuedReviews?: Array<{ draftId: string; title: string; note: string }>
   querySuggestions: string[]
   canManage?: boolean
 }) {
@@ -105,15 +106,21 @@ export function ContentBriefsPanel({
                     </SaveButton>
                   </SaveForm>
                 ) : null}
-                {brief.draft && queuedDraftIds.includes(brief.draft.id) ? (
+                {brief.draft &&
+                queuedReviews.some((row) => row.draftId === brief.draft?.id) ? (
                   <p className="text-sm text-muted-foreground">
-                    Saved for later review. GroovGro did not publish or change
-                    the live website.
+                    {describeCmsPublishRequest(
+                      queuedReviews.find((row) => row.draftId === brief.draft?.id) ?? {
+                        title: brief.draft.title,
+                        note: "",
+                      },
+                    )}{" "}
+                    GroovGro did not publish or change the live website.
                   </p>
                 ) : null}
                 {canManage &&
                 brief.draft &&
-                !queuedDraftIds.includes(brief.draft.id) ? (
+                !queuedReviews.some((row) => row.draftId === brief.draft?.id) ? (
                   <SaveForm
                     action={createCmsPublishRequest}
                     successMessage="Publish request saved. GroovGro did not publish or change the live website."
