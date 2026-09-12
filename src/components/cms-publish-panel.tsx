@@ -32,7 +32,9 @@ export function CmsPublishPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{describePublishQueueHeading(requests.length)}</CardTitle>
+        <CardTitle>
+          {describePublishQueueHeading(requests.length, openDrafts.length)}
+        </CardTitle>
         <CardDescription>
           Save a workspace draft for later review. GroovGro will not publish,
           write a CMS, or change the live website. The adapter stays off.
