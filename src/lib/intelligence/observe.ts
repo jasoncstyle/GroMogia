@@ -691,7 +691,10 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
-  if (facts.websiteConnected && competitorPageGapCount > 0) {
+  if (
+    facts.websiteConnected &&
+    competitorPageGapCount > competitorGapBriefCount
+  ) {
     recommendations.push({
       kind: "recommendation",
       title: "Review pages competitors show that GroovGro has not read",
@@ -699,15 +702,13 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       evidence: ["competitor_sites.page_gaps"],
       href: "/app/seo",
     });
-    if (competitorPageGapCount > competitorGapBriefCount) {
-      recommendations.push({
-        kind: "recommendation",
-        title: "Save a brief for a competitor page topic",
-        body: "On SEO, save a planner brief for a topic a competitor site shows. Topics that still need a brief are listed first. GroovGro will not write the page, copy their words, or search Google.",
-        evidence: ["content_briefs.competitor_gap"],
-        href: "/app/seo",
-      });
-    }
+    recommendations.push({
+      kind: "recommendation",
+      title: "Save a brief for a competitor page topic",
+      body: "On SEO, save a planner brief for a topic a competitor site shows. Topics that still need a brief are listed first. GroovGro will not write the page, copy their words, or search Google.",
+      evidence: ["content_briefs.competitor_gap"],
+      href: "/app/seo",
+    });
   }
 
   if (
