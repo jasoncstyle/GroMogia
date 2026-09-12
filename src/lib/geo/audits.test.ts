@@ -211,6 +211,7 @@ describe("GEO audits from saved history", () => {
     assert.match(persist, /eq\(geoAudits\.organizationId, organizationId\)/);
     assert.match(panel, /will not ask an AI system/);
     assert.match(panel, /treat one answer as truth/);
+    assert.match(panel, /Citation gaps are listed first/);
     assert.match(panel, /describeCitationGapsHeading/);
     assert.equal(
       describeCitationGapsHeading(0),
