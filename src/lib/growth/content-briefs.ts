@@ -114,6 +114,22 @@ export function refuseDuplicateContentBrief(
   }
 }
 
+export function plannerQuerySuggestions(
+  suggestions: string[],
+  briefs: Pick<ContentBriefView, "query" | "title">[],
+): string[] {
+  return suggestions.filter((query, index, rows) => {
+    const title = suggestBriefTitle(query);
+    if (!title) {
+      return false;
+    }
+    return (
+      rows.findIndex((row) => suggestBriefTitle(row) === title) === index &&
+      !hasSavedContentBriefForTopic(briefs, title)
+    );
+  });
+}
+
 export function describeContentBrief(
   brief: Pick<ContentBriefView, "query" | "title" | "source">,
 ): string {
