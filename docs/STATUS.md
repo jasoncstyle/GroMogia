@@ -21,7 +21,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Execute stays off until that authorization exists and the adapter is turned on.
 
-**Hide an already-saved compete move (this branch):** SEO hides “I will cover this” or “I will do this compare” when that exact title is already saved. GroovGro does not do the work, publish, scrape Google, buy ads, or change checkout.
+**Planned compete moves on Intelligence (this branch):** Intelligence can say how many owner-saved compete moves are still planned. GroovGro does not do the work, publish, scrape Google, buy ads, or change checkout.
 
 Phase T first slice is in #113. Phases A–T first slices are on `main`. Growth Director and guarded automation stay off. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 

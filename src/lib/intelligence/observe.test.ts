@@ -1055,8 +1055,26 @@ describe("intelligence observe", () => {
       /1 is marked done/,
     );
     assert.match(
+      done.observations.find(
+        (item) => item.title === "Compete moves you said you will do",
+      )?.body ?? "",
+      /1 is still planned/,
+    );
+    assert.match(
       factsSummary(facts({ competeMoveCount: 3, competeMoveDoneCount: 1 })),
-      /compete_moves=3 compete_moves_done=1/,
+      /compete_moves=3 compete_moves_done=1 compete_moves_planned=2/,
+    );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          competeMoveCount: 2,
+          competeMoveDoneCount: 2,
+          competeMovePlannedCount: 0,
+        }),
+      ).observations.find(
+        (item) => item.title === "Compete moves you said you will do",
+      )?.body ?? "",
+      /None are still planned/,
     );
     assert.equal(
       saved.recommendations.some(

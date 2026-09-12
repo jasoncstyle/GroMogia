@@ -203,6 +203,7 @@ export async function getIntelligenceFacts(
     competitorPageGapCount,
     competeMoveCount,
     competeMoveDoneCount,
+    competeMovePlannedCount: Math.max(0, competeMoveCount - competeMoveDoneCount),
     competitorGapBriefCount,
     draftOfferCheckCount: draftOfferCheckCounts.checked,
     draftMissingOfferCount: draftOfferCheckCounts.missingOffer,
