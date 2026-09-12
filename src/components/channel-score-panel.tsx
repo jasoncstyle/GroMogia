@@ -26,8 +26,8 @@ export function ChannelScorePanel({
           )}
         </CardTitle>
         <CardDescription>
-          These ranks are estimates from stored workspace facts. GroovGro
-          will not change today&apos;s Next step from this estimate, buy
+          These ranks are estimates from stored workspace facts. Channels worth a look are listed first.
+          GroovGro will not change today&apos;s Next step from this estimate, buy
           ads, or run work.
         </CardDescription>
       </CardHeader>
