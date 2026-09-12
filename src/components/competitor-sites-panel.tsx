@@ -11,6 +11,7 @@ import { suggestBriefOutlineFromCompetitorGap } from "@/lib/growth/content-brief
 import {
   COMPETE_MOVE_STATUS_DONE,
   describeCompeteMove,
+  hasSavedCompeteMoveTitle,
   suggestCompeteMoveFromCompare,
   suggestCompeteMoveFromGap,
   type CompeteMoveView,
@@ -73,24 +74,33 @@ export function CompetitorSitesPanel({
             <p className="text-sm font-medium">How these sites compare</p>
             <p className="text-sm text-muted-foreground">{compare.note}</p>
             {canManage && suggestCompeteMoveFromCompare(compare).title ? (
-              <SaveForm
-                action={createCompeteMove}
-                successMessage="Compete move saved. GroovGro did not do this or change the live website."
-              >
-                <input
-                  type="hidden"
-                  name="title"
-                  value={suggestCompeteMoveFromCompare(compare).title}
-                />
-                <input
-                  type="hidden"
-                  name="note"
-                  value={suggestCompeteMoveFromCompare(compare).note}
-                />
-                <SaveButton type="submit" size="sm" variant="outline">
-                  I will do this compare
-                </SaveButton>
-              </SaveForm>
+              hasSavedCompeteMoveTitle(
+                moves,
+                suggestCompeteMoveFromCompare(compare).title,
+              ) ? (
+                <p className="text-sm text-muted-foreground">
+                  Already saved as what you will do.
+                </p>
+              ) : (
+                <SaveForm
+                  action={createCompeteMove}
+                  successMessage="Compete move saved. GroovGro did not do this or change the live website."
+                >
+                  <input
+                    type="hidden"
+                    name="title"
+                    value={suggestCompeteMoveFromCompare(compare).title}
+                  />
+                  <input
+                    type="hidden"
+                    name="note"
+                    value={suggestCompeteMoveFromCompare(compare).note}
+                  />
+                  <SaveButton type="submit" size="sm" variant="outline">
+                    I will do this compare
+                  </SaveButton>
+                </SaveForm>
+              )
             ) : null}
           </div>
         ) : null}
@@ -177,21 +187,27 @@ export function CompetitorSitesPanel({
                     </SaveForm>
                   ) : null}
                   {canManage ? (
-                    <SaveForm
-                      action={createCompeteMove}
-                      successMessage="Compete move saved. GroovGro did not do this or change the live website."
-                    >
-                      <input type="hidden" name="title" value={fromGap.title} />
-                      <input type="hidden" name="note" value={fromGap.note} />
-                      <SaveButton
-                        type="submit"
-                        size="sm"
-                        variant="outline"
-                        id={`save-move-${fieldKey}`}
+                    hasSavedCompeteMoveTitle(moves, fromGap.title) ? (
+                      <p className="text-sm text-muted-foreground">
+                        Already saved as what you will do.
+                      </p>
+                    ) : (
+                      <SaveForm
+                        action={createCompeteMove}
+                        successMessage="Compete move saved. GroovGro did not do this or change the live website."
                       >
-                        I will cover this
-                      </SaveButton>
-                    </SaveForm>
+                        <input type="hidden" name="title" value={fromGap.title} />
+                        <input type="hidden" name="note" value={fromGap.note} />
+                        <SaveButton
+                          type="submit"
+                          size="sm"
+                          variant="outline"
+                          id={`save-move-${fieldKey}`}
+                        >
+                          I will cover this
+                        </SaveButton>
+                      </SaveForm>
+                    )
                   ) : null}
                 </div>
                 );
