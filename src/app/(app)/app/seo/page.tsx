@@ -288,9 +288,11 @@ export default async function SeoPage({
 
           <ContentBriefsPanel
             briefs={data.contentBriefs}
-            queuedDraftIds={data.cmsPublishRequests.map(
-              (request) => request.draftId,
-            )}
+            queuedReviews={data.cmsPublishRequests.map((request) => ({
+              draftId: request.draftId,
+              title: request.title,
+              note: request.note,
+            }))}
             querySuggestions={[
               ...data.contentGaps.map((gap) => gap.query),
               ...data.competitorPageGaps.map((gap) => gap.label),
