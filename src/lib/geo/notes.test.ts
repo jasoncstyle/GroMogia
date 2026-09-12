@@ -8,6 +8,7 @@ import {
   describeGeoNote,
   describeGeoNotesHeading,
   planGeoNote,
+  sortGeoNotesForPanel,
   GEO_NOTE_SOURCE_OWNER,
 } from "./notes";
 import { configuredGeoProvider, geoLookupEnabled } from "./provider";
@@ -110,6 +111,15 @@ describe("owner-entered GEO notes", () => {
     assert.match(action, /did not ask an AI system/);
     assert.match(panel, /will not ask AI systems/);
     assert.match(panel, /describeGeoNotesHeading/);
+    assert.match(panel, /sortGeoNotesForPanel/);
+    assert.deepEqual(
+      sortGeoNotesForPanel([
+        { query: "", heard: "They named someone else." },
+        { query: "Who to hire for harbor day trips", heard: "They named us." },
+        { query: "  ", heard: "Unsure." },
+      ]).map((row) => row.query),
+      ["Who to hire for harbor day trips", "", "  "],
+    );
     assert.equal(describeGeoNotesHeading(0), "What you already hear from AI");
     assert.equal(describeGeoNotesHeading(2), "What you already hear from AI · 2");
     assert.match(panel, /scrape answers/);

@@ -69,3 +69,14 @@ export function describeGeoNotesHeading(noteCount = 0): string {
   }
   return `What you already hear from AI · ${noteCount}`;
 }
+
+export function sortGeoNotesForPanel<T extends { query?: string | null }>(
+  rows: T[],
+): T[] {
+  return [...rows].sort((left, right) => {
+    const leftQuery = (left.query ?? "").trim() ? 0 : 1;
+    const rightQuery = (right.query ?? "").trim() ? 0 : 1;
+    if (leftQuery !== rightQuery) return leftQuery - rightQuery;
+    return 0;
+  });
+}
