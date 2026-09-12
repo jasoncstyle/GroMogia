@@ -1807,6 +1807,7 @@ describe("intelligence observe", () => {
     assert.match(recommended.body, /will not add links or schema/);
     assert.match(recommended.body, /2 suggested links/);
     assert.match(recommended.body, /3 schema facts/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       withLinks.recommendations.some((item) => /add schema/i.test(item.title)),
       false,
