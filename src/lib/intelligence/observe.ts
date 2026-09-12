@@ -795,6 +795,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && cmsPublishRequestCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review a draft you saved for later",
+      body: "On SEO, read a workspace draft you saved for later review. GroovGro will not publish or change the live website.",
+      evidence: ["cms_publish_requests.status=review"],
+      href: "/app/seo",
+    });
+  }
+
   if (
     facts.websiteConnected &&
     (internalLinkCount > 0 || schemaReviewCount > 0)
