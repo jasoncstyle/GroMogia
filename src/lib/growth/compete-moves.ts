@@ -124,6 +124,22 @@ export function describeCompeteMoveGroupHeading(
   return `Marked done · ${count}`;
 }
 
+export function describeCompeteCardHeading(
+  siteCount = 0,
+  plannedCount = 0,
+): string {
+  if (siteCount <= 0 && plannedCount <= 0) {
+    return "How we might compete";
+  }
+  const sites =
+    siteCount <= 0
+      ? ""
+      : ` · ${siteCount} ${siteCount === 1 ? "site" : "sites"}`;
+  const planned =
+    plannedCount <= 0 ? "" : ` · ${plannedCount} still planned`;
+  return `How we might compete${sites}${planned}`;
+}
+
 export function describeCompeteMoveListHeading(
   plannedCount: number,
   totalCount: number,
