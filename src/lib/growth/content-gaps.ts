@@ -224,6 +224,30 @@ export function sortContentGapsForPanel<T extends { query: string }>(
   });
 }
 
+export function contentGapsNeedingBrief<T extends { query: string }>(
+  gaps: T[],
+  isSaved: (query: string) => boolean,
+): T[] {
+  return gaps.filter((gap) => !isSaved(gap.query));
+}
+
+export function contentGapsWithBrief<T extends { query: string }>(
+  gaps: T[],
+  isSaved: (query: string) => boolean,
+): T[] {
+  return gaps.filter((gap) => isSaved(gap.query));
+}
+
+export function shouldGroupContentGaps<T extends { query: string }>(
+  gaps: T[],
+  isSaved: (query: string) => boolean,
+): boolean {
+  return (
+    contentGapsNeedingBrief(gaps, isSaved).length > 0 &&
+    contentGapsWithBrief(gaps, isSaved).length > 0
+  );
+}
+
 export function gapsToShow(rows: ContentGapDraft[]): ContentGapView[] {
   return rows
     .filter((row) => row.status === CONTENT_GAP_STATUS_GAP)
