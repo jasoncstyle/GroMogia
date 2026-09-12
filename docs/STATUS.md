@@ -21,7 +21,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Execute stays off until that authorization exists and the adapter is turned on.
 
-**Remaining brief and draft groups (this branch):** SEO headings, page copy, and Intelligence can say how many missing-page queries, competitor page topics, planner briefs, workspace drafts, and compete moves still need the next owner step. Mixed lists group remaining work first and count each group. Intelligence points at those remaining groups and hides a review after every item already has a brief. GroovGro does not write the page, publish, scrape Google, buy ads, or change checkout.
+**Remaining brief and draft groups (this branch):** SEO headings, page copy, and Intelligence can say how many missing-page queries, competitor page topics, planner briefs, workspace drafts, and compete moves still need the next owner step. Mixed lists group remaining work first and count each group. The later-review queue heading names remaining drafts. Intelligence and that queue say remaining drafts are listed first. Intelligence points at those remaining groups and hides a review after every item already has a brief. GroovGro does not write the page, publish, scrape Google, buy ads, or change checkout.
 
 Phase T first slice is in #113. Phases A–T first slices are on `main`. Growth Director and guarded automation stay off. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 
@@ -155,7 +155,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 ## What is already working
 
 - Competitor looks (this branch): the owner can save a known competitor website on SEO. GroovGro can read that public page and write a compete look. Intelligence can notice it. GroovGro does not scrape Google, copy their words, buy ads, or search for more businesses yet. The search adapter stays off.
-- Phase P CMS publish review: the owner can save a workspace draft for later CMS review. SEO and Intelligence can show that queue. GroovGro does not publish or change the live website. The adapter stays off.
+- Phase P CMS publish review: the owner can save a workspace draft for later CMS review. SEO and Intelligence can show that queue, including remaining drafts that still need later review listed first. GroovGro does not publish or change the live website. The adapter stays off.
 - Phase O citation gaps: GroovGro can estimate citation gaps from the latest saved visibility snapshot. SEO and Intelligence can show those gaps. GroovGro does not ask AI systems, scrape answers, or treat one answer as truth. The adapter stays off.
 - Phase N visibility history: the owner can save another snapshot of what they already heard for a saved library question. SEO and Intelligence can show that history. GroovGro does not ask AI systems, scrape answers, or treat one answer as truth. The adapter stays off.
 - Phase M query library: the owner can save questions to remember for later AI visibility. SEO and Intelligence can show them. GroovGro does not ask AI systems. The adapter stays off.
