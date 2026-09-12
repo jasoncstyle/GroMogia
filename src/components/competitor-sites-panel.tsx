@@ -87,7 +87,8 @@ export function CompetitorSitesPanel({
           and a few public pages on the same site, then compare those looks
           to what you sell. It can name topics those sites show that GroovGro
           has not read on your site. You can save a brief for one of those
-          topics. You can save what you will do, including from a compare or
+          topics. Topics that still need a brief are listed first. You can
+          save what you will do, including from a compare or
           one of those topics. If the site blocks the automated read,
           paste what you see. It will not scrape Google, copy their words
           onto your site, create a page, or buy ads.
