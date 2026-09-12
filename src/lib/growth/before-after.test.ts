@@ -230,6 +230,10 @@ describe("stored before-and-after looks", () => {
       describeBeforeAfterHeading(2),
       "What a stored before and after shows · 2",
     );
+    assert.equal(
+      describeBeforeAfterHeading(2, 1),
+      "What a stored before and after shows · 2 · 1 moved down",
+    );
     assert.match(panel, /will not buy ads/);
     const intelligence = readFileSync(
       join(process.cwd(), "src/app/(app)/app/intelligence/page.tsx"),
