@@ -9,10 +9,13 @@ import {
   COMPETE_MOVE_STATUS_PLANNED,
   competeMovesToShow,
   countPlannedCompeteMoves,
-  sortCompeteMovesForList,
   describeCompeteMove,
   describeCompeteMoveListHeading,
+  doneCompeteMoves,
   hasSavedCompeteMoveTitle,
+  plannedCompeteMoves,
+  shouldGroupCompeteMoves,
+  sortCompeteMovesForList,
   planCompeteMove,
   planCompeteMoveDone,
   suggestCompeteMoveFromCompare,
@@ -216,5 +219,32 @@ describe("owner-saved compete moves", () => {
       ])[0]?.id,
       "planned-keep",
     );
+    assert.equal(
+      shouldGroupCompeteMoves([
+        { status: COMPETE_MOVE_STATUS_PLANNED },
+        { status: COMPETE_MOVE_STATUS_DONE },
+      ]),
+      true,
+    );
+    assert.equal(
+      shouldGroupCompeteMoves([{ status: COMPETE_MOVE_STATUS_PLANNED }]),
+      false,
+    );
+    assert.equal(
+      plannedCompeteMoves([
+        { id: "a", status: COMPETE_MOVE_STATUS_DONE },
+        { id: "b", status: COMPETE_MOVE_STATUS_PLANNED },
+      ]).map((row) => row.id)[0],
+      "b",
+    );
+    assert.equal(
+      doneCompeteMoves([
+        { id: "a", status: COMPETE_MOVE_STATUS_DONE },
+        { id: "b", status: COMPETE_MOVE_STATUS_PLANNED },
+      ]).map((row) => row.id)[0],
+      "a",
+    );
+    assert.match(panel, /Still planned/);
+    assert.match(panel, /Marked done/);
   });
 });

@@ -17,7 +17,10 @@ import {
   countPlannedCompeteMoves,
   describeCompeteMove,
   describeCompeteMoveListHeading,
+  doneCompeteMoves,
   hasSavedCompeteMoveTitle,
+  plannedCompeteMoves,
+  shouldGroupCompeteMoves,
   suggestCompeteMoveFromCompare,
   suggestCompeteMoveFromGap,
   type CompeteMoveView,
@@ -120,23 +123,38 @@ export function CompetitorSitesPanel({
                 moves.length,
               )}
             </p>
-            {moves.map((move) => (
-              <div key={move.id} className="space-y-2">
-                <p className="text-sm font-medium">{describeCompeteMove(move)}</p>
-                <p className="text-xs text-muted-foreground">
-                  {move.createdAt.toLocaleString()}
-                </p>
-                {canManage && move.status !== COMPETE_MOVE_STATUS_DONE ? (
-                  <SaveForm
-                    action={completeCompeteMove}
-                    successMessage="Marked as done. GroovGro did not do this or change the live website."
-                  >
-                    <input type="hidden" name="moveId" value={move.id} />
-                    <SaveButton type="submit" size="sm" variant="outline">
-                      I did this
-                    </SaveButton>
-                  </SaveForm>
+            {(shouldGroupCompeteMoves(moves)
+              ? [
+                  { label: "Still planned", rows: plannedCompeteMoves(moves) },
+                  { label: "Marked done", rows: doneCompeteMoves(moves) },
+                ]
+              : [{ label: "", rows: moves }]
+            ).map((group) => (
+              <div key={group.label || "moves"} className="space-y-2">
+                {group.label ? (
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {group.label}
+                  </p>
                 ) : null}
+                {group.rows.map((move) => (
+                  <div key={move.id} className="space-y-2">
+                    <p className="text-sm font-medium">{describeCompeteMove(move)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {move.createdAt.toLocaleString()}
+                    </p>
+                    {canManage && move.status !== COMPETE_MOVE_STATUS_DONE ? (
+                      <SaveForm
+                        action={completeCompeteMove}
+                        successMessage="Marked as done. GroovGro did not do this or change the live website."
+                      >
+                        <input type="hidden" name="moveId" value={move.id} />
+                        <SaveButton type="submit" size="sm" variant="outline">
+                          I did this
+                        </SaveButton>
+                      </SaveForm>
+                    ) : null}
+                  </div>
+                ))}
               </div>
             ))}
           </div>
