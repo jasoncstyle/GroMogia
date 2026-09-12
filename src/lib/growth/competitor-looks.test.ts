@@ -371,6 +371,15 @@ describe("competitor looks from owner-saved URLs", () => {
       describeCompetitorPageGapsHeading(2, true),
       "Pages they show that GroovGro has not read · 2",
     );
+    assert.equal(
+      describeCompetitorPageGapsHeading(2, true, 1),
+      "Pages they show that GroovGro has not read · 2 · 1 already has a brief",
+    );
+    assert.equal(
+      describeCompetitorPageGapsHeading(2, true, 2),
+      "Pages they show that GroovGro has not read · 2 · all have a brief",
+    );
+    assert.match(panel, /briefedPageGapCount/);
     assert.match(panel, /Save a brief for this topic/);
     assert.match(helper, /planCompetitorCompare/);
     assert.match(helper, /planCompetitorPageGaps/);
