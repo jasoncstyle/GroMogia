@@ -2069,6 +2069,10 @@ Organization
 263. **Planner copy names remaining later-review drafts listed first** — **IMPLEMENTED** this slice. The Content planner says drafts that still need later review are listed first. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 264. **Intelligence names Later review for waiting drafts** — **IMPLEMENTED** this slice. Intelligence can say waiting later-review drafts are listed on Later review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 265. **Status text names remaining later-review planner and SEO copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the SEO intro, planner heading, planner copy, and Intelligence Later review note. GroovGro does not publish or add a Next step loop.
+266. **Empty later-review queue names remaining drafts** — **IMPLEMENTED** this slice. When no drafts are saved for later review yet, the Later review panel names remaining workspace drafts and says they are listed first in the form. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+267. **Intelligence names how many drafts still need later review** — **IMPLEMENTED** this slice. Intelligence can say how many workspace drafts still need later review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+268. **Intelligence names how many drafts are waiting on Later review** — **IMPLEMENTED** this slice. Intelligence can say how many drafts are waiting on Later review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+269. **Status text names remaining later-review counts** — **IMPLEMENTED** this slice. Architecture and status summaries name the empty-queue remaining copy and Intelligence remaining and waiting counts. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
