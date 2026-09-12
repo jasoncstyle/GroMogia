@@ -2119,6 +2119,7 @@ Organization
 313. **Before-and-after copy names looks that moved down listed first** — **IMPLEMENTED** this slice. The before-and-after card says looks that moved down are listed first. GroovGro does not change the plan or add a Next step loop.
 314. **Intelligence names looks that moved down listed first** — **IMPLEMENTED** this slice. Intelligence can say stored before-and-after looks that moved down are listed first. GroovGro does not change the plan or add a Next step loop.
 315. **Status text names moved-down before-and-after heading and listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the before-and-after heading, page copy, and Intelligence copy for looks that moved down. GroovGro does not publish or add a Next step loop.
+316. **SEO intro names looks that moved down listed first** — **IMPLEMENTED** this slice. The SEO page says stored before-and-after looks that moved down are listed first. GroovGro does not change the plan or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
