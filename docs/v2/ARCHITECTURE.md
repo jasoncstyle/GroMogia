@@ -2147,6 +2147,12 @@ Organization
 341. **AI visibility notes heading shows how many name a question** — **IMPLEMENTED** this slice. The AI visibility notes heading says how many saved notes already name a question. GroovGro does not ask an AI system or add a Next step loop.
 342. **SEO intro names notes that name a question listed first** — **IMPLEMENTED** this slice. The SEO page says AI visibility notes that name a question are listed first. GroovGro does not ask an AI system or add a Next step loop.
 343. **Status text names AI visibility note listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the AI visibility notes heading, list order, Intelligence recommendation, and SEO intro copy for notes that name a question. GroovGro does not publish or add a Next step loop.
+344. **Library questions that still need a why are listed first** — **IMPLEMENTED** this slice. The library-questions list shows questions that still need a why first. GroovGro does not ask an AI system or add a Next step loop.
+345. **Library-questions copy names questions that still need a why listed first** — **IMPLEMENTED** this slice. The library-questions card says questions that still need a why are listed first. GroovGro does not ask an AI system or add a Next step loop.
+346. **Intelligence names questions that still need a why listed first** — **IMPLEMENTED** this slice. Intelligence can point at saved library questions and say questions that still need a why are listed first. GroovGro does not ask an AI system or add a Next step loop.
+347. **Library-questions heading shows how many still need a why** — **IMPLEMENTED** this slice. The library-questions heading says how many saved questions still need a why. GroovGro does not ask an AI system or add a Next step loop.
+348. **SEO intro names questions that still need a why listed first** — **IMPLEMENTED** this slice. The SEO page says library questions that still need a why are listed first. GroovGro does not ask an AI system or add a Next step loop.
+349. **Status text names library-question listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the library-questions heading, list order, Intelligence recommendation, and SEO intro copy for questions that still need a why. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
