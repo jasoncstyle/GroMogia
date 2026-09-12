@@ -7,6 +7,7 @@ import {
   CONTENT_GAP_STATUS_COVERED,
   CONTENT_GAP_STATUS_GAP,
   describeContentGapsHeading,
+  sortContentGapsForPanel,
   gapsToShow,
   pageCoversQuery,
   planContentGaps,
@@ -190,6 +191,14 @@ describe("content gap detection from stored pages", () => {
       "Queries with no matching page GroovGro has read · 3 · all have a brief",
     );
     assert.match(panel, /describeContentGapsHeading\(gaps.length, briefedCount\)/);
+    assert.match(panel, /sortContentGapsForPanel/);
+    assert.deepEqual(
+      sortContentGapsForPanel(
+        [{ query: "Private coaching" }, { query: "Weekend beginner class" }],
+        (query) => query === "Private coaching",
+      ).map((row) => row.query),
+      ["Weekend beginner class", "Private coaching"],
+    );
     assert.doesNotMatch(nextStep, /contentGap|content_gap|Write a brief|Save a brief for this query/);
     const seoPersist = readFileSync(
       join(process.cwd(), "src/lib/growth/persist-seo-actions.ts"),

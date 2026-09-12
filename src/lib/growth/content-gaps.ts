@@ -213,6 +213,17 @@ export function describeContentGapsHeading(
   return `Queries with no matching page GroovGro has read · ${gapCount} · ${briefedCount} already ${verb} a brief`;
 }
 
+export function sortContentGapsForPanel<T extends { query: string }>(
+  gaps: T[],
+  isSaved: (query: string) => boolean,
+): T[] {
+  return [...gaps].sort((left, right) => {
+    const leftSaved = isSaved(left.query) ? 1 : 0;
+    const rightSaved = isSaved(right.query) ? 1 : 0;
+    return leftSaved - rightSaved;
+  });
+}
+
 export function gapsToShow(rows: ContentGapDraft[]): ContentGapView[] {
   return rows
     .filter((row) => row.status === CONTENT_GAP_STATUS_GAP)

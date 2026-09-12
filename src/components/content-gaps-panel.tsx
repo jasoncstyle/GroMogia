@@ -6,6 +6,7 @@ import {
 } from "@/lib/growth/content-briefs";
 import {
   describeContentGapsHeading,
+  sortContentGapsForPanel,
   type ContentGapView,
 } from "@/lib/growth/content-gaps";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -31,6 +32,9 @@ export function ContentGapsPanel({
   const briefedCount = gaps.filter((gap) =>
     hasSavedContentBriefForTopic(briefs, gap.query),
   ).length;
+  const gapsToShow = sortContentGapsForPanel(gaps, (query) =>
+    hasSavedContentBriefForTopic(briefs, query),
+  );
   return (
     <Card>
       <CardHeader>
@@ -54,7 +58,7 @@ export function ContentGapsPanel({
             already read. Tiny Search Console rows stay out of this list.
           </p>
         ) : (
-          gaps.map((gap) => {
+          gapsToShow.map((gap) => {
             const fieldKey = gap.queryKey.replace(/[^a-z0-9]+/g, "-");
             return (
               <div key={gap.queryKey} className="space-y-2">
