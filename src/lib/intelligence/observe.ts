@@ -897,6 +897,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && geoQueryCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review questions saved for later AI visibility",
+      body: `Open SEO to read questions you already care about. ${geoQueryCount} ${geoQueryCount === 1 ? "question is" : "questions are"} listed. Questions that still need a why are listed first. GroovGro will not ask an AI system or scrape answers.`,
+      evidence: ["geo_queries.source=owner"],
+      href: "/app/seo",
+    });
+  }
+
   if (
     facts.websiteConnected &&
     geoQueryCount > 0 &&
