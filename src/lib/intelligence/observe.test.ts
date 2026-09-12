@@ -1468,6 +1468,7 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not publish/);
     assert.match(recommended.body, /copy a competitor/);
+    assert.match(recommended.body, /listed first/);
     assert.ok(
       buildIntelligenceBrief(
         facts({
