@@ -106,6 +106,13 @@ export function describePublishQueueHeading(
   return `Drafts ready to publish later · ${queuedCount} waiting · ${waitingCount} still ${waitingCount === 1 ? "needs" : "need"} later review`;
 }
 
+export function describePublishQueueEmpty(waitingCount = 0): string {
+  if (waitingCount <= 0) {
+    return "No drafts are waiting for later review. A later allowed adapter can publish after you approve. Not in this slice.";
+  }
+  return `${waitingCount} still ${waitingCount === 1 ? "needs" : "need"} later review. Remaining drafts are listed first in the form. A later allowed adapter can publish after you approve. Not in this slice.`;
+}
+
 export function describePublishQueueCopy(waitingCount = 0): string {
   const remaining =
     waitingCount <= 0
