@@ -14,6 +14,7 @@ import {
   EXECUTION_STATUS_REVIEW,
   actionsToQueue,
   actionsWaitingToQueue,
+  describeExecutionCopy,
   describeExecutionHeading,
   describeExecutionRequest,
   executionActionTitle,
@@ -167,8 +168,10 @@ describe("later-run queue and disabled execute adapter", () => {
       /eq\(growthActions\.organizationId, session\.organizationId\)/,
     );
     assert.match(actionFile, /did not run it/);
-    assert.match(panel, /will not run it/);
-    assert.match(panel, /adapter stays off/);
+    assert.match(describeExecutionCopy(0), /will not run it/);
+    assert.match(describeExecutionCopy(0), /adapter stays off/);
+    assert.match(describeExecutionCopy(1), /listed first/);
+    assert.match(panel, /describeExecutionCopy/);
     assert.match(panel, /describeExecutionHeading/);
     assert.match(panel, /actionsWaitingToQueue/);
     assert.match(panel, /openActions.length/);

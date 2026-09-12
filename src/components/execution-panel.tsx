@@ -1,6 +1,7 @@
 import { createExecutionRequest } from "@/lib/actions/execution";
 import {
   actionsWaitingToQueue,
+  describeExecutionCopy,
   describeExecutionHeading,
   describeExecutionRequest,
   executionActionTitle,
@@ -38,8 +39,7 @@ export function ExecutionPanel({
           {describeExecutionHeading(requests.length, openActions.length)}
         </CardTitle>
         <CardDescription>
-          Save approved work for later. GroovGro will not run it, buy ads,
-          send email, or change the live website. The adapter stays off.
+          {describeExecutionCopy(openActions.length)}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
