@@ -623,13 +623,23 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     (competitorLookCount > 0 || competitorPageGapCount > 0) &&
     competeMoveCount === 0
   ) {
-    recommendations.push({
-      kind: "recommendation",
-      title: "Save what you will do to compete",
-      body: "On SEO, save what you will do after looking at a competitor site. GroovGro will not do that work or change the live website.",
-      evidence: ["compete_moves missing"],
-      href: "/app/seo",
-    });
+    if (competitorLookCount >= 2) {
+      recommendations.push({
+        kind: "recommendation",
+        title: "Save what you will do from that compare",
+        body: "On SEO, save what you will do from how saved competitor websites compare to what you sell. GroovGro will not do that work, copy their words, or change the live website.",
+        evidence: ["compete_moves.compare missing"],
+        href: "/app/seo",
+      });
+    } else {
+      recommendations.push({
+        kind: "recommendation",
+        title: "Save what you will do to compete",
+        body: "On SEO, save what you will do after looking at a competitor site. GroovGro will not do that work or change the live website.",
+        evidence: ["compete_moves missing"],
+        href: "/app/seo",
+      });
+    }
   }
 
   if (facts.websiteConnected && competeMovePlannedCount > 0) {
