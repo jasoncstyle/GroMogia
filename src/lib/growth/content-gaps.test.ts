@@ -169,6 +169,7 @@ describe("content gap detection from stored pages", () => {
     assert.match(panel, /did not invent topics/);
     assert.match(panel, /Save a brief for this query/);
     assert.match(panel, /createContentBrief/);
+    assert.match(panel, /content_gap/);
     assert.match(panel, /Already saved on the planner/);
     assert.match(seoPage, /briefs=\{data\.contentBriefs\}/);
     assert.match(panel, /describeContentGapsHeading/);

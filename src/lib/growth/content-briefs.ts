@@ -5,6 +5,7 @@ import { normalizeQueryKey } from "@/lib/growth/seo-actions";
  */
 export const CONTENT_BRIEF_SOURCE_OWNER = "owner";
 export const CONTENT_BRIEF_SOURCE_COMPETITOR_GAP = "competitor_gap";
+export const CONTENT_BRIEF_SOURCE_CONTENT_GAP = "content_gap";
 export const CONTENT_BRIEF_STATUS_PLANNED = "planned";
 
 export type ContentBriefDraft = {
@@ -15,7 +16,10 @@ export type ContentBriefDraft = {
   audience: string
   outline: string
   status: typeof CONTENT_BRIEF_STATUS_PLANNED
-  source: typeof CONTENT_BRIEF_SOURCE_OWNER | typeof CONTENT_BRIEF_SOURCE_COMPETITOR_GAP
+  source:
+    | typeof CONTENT_BRIEF_SOURCE_OWNER
+    | typeof CONTENT_BRIEF_SOURCE_COMPETITOR_GAP
+    | typeof CONTENT_BRIEF_SOURCE_CONTENT_GAP
 };
 
 export type ContentBriefView = {
@@ -74,10 +78,15 @@ export function planContentBrief(input: {
   if (!title) {
     throw new Error("Add a working title for this brief.");
   }
-  const fromGap = input.source === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP;
+  const fromCompetitor = input.source === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP;
+  const fromContentGap = input.source === CONTENT_BRIEF_SOURCE_CONTENT_GAP;
   const outline =
     (input.outline ?? "").trim() ||
-    (fromGap ? suggestBriefOutlineFromCompetitorGap(query || title, input.fromNames) : "");
+    (fromCompetitor
+      ? suggestBriefOutlineFromCompetitorGap(query || title, input.fromNames)
+      : fromContentGap
+        ? suggestBriefOutline(query || title)
+        : "");
   return {
     organizationId: input.organizationId,
     query,
@@ -86,7 +95,11 @@ export function planContentBrief(input: {
     audience: (input.audience ?? "").trim(),
     outline,
     status: CONTENT_BRIEF_STATUS_PLANNED,
-    source: fromGap ? CONTENT_BRIEF_SOURCE_COMPETITOR_GAP : CONTENT_BRIEF_SOURCE_OWNER,
+    source: fromCompetitor
+      ? CONTENT_BRIEF_SOURCE_COMPETITOR_GAP
+      : fromContentGap
+        ? CONTENT_BRIEF_SOURCE_CONTENT_GAP
+        : CONTENT_BRIEF_SOURCE_OWNER,
   };
 }
 
@@ -134,8 +147,12 @@ export function describeContentBrief(
   brief: Pick<ContentBriefView, "query" | "title" | "source">,
 ): string {
   const fromGap = brief.source === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP;
+  const fromContentGap = brief.source === CONTENT_BRIEF_SOURCE_CONTENT_GAP;
   if (brief.query && fromGap) {
     return `Planned from a competitor topic: “${brief.title}” for “${brief.query}”.`;
+  }
+  if (brief.query && fromContentGap) {
+    return `Planned from a missing-page query: “${brief.title}” for “${brief.query}”.`;
   }
   if (brief.query) {
     return `Planned: “${brief.title}” for “${brief.query}”.`;

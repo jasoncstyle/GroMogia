@@ -5,6 +5,7 @@ import { join } from "node:path";
 
 import {
   CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
+  CONTENT_BRIEF_SOURCE_CONTENT_GAP,
   CONTENT_BRIEF_SOURCE_OWNER,
   CONTENT_BRIEF_STATUS_PLANNED,
   describeContentBrief,
@@ -73,6 +74,20 @@ describe("owner-entered content briefs", () => {
     assert.match(
       suggestBriefOutlineFromCompetitorGap("Weekend beginner class", ["Harbor Skills"]),
       /will not generate or publish that page/,
+    );
+    const fromQuery = planContentBrief({
+      organizationId: ORG_A,
+      query: "Weekend beginner class",
+      source: CONTENT_BRIEF_SOURCE_CONTENT_GAP,
+    });
+    assert.equal(fromQuery.source, CONTENT_BRIEF_SOURCE_CONTENT_GAP);
+    assert.equal(
+      describeContentBrief({
+        query: fromQuery.query,
+        title: fromQuery.title,
+        source: CONTENT_BRIEF_SOURCE_CONTENT_GAP,
+      }),
+      "Planned from a missing-page query: “Weekend beginner class” for “Weekend beginner class”.",
     );
   });
 
