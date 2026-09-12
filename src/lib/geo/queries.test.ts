@@ -11,6 +11,7 @@ import {
   GEO_QUERY_SOURCE_OWNER,
   GEO_QUERY_STATUS_PLANNED,
   planGeoQuery,
+  sortGeoQueriesForPanel,
 } from "./queries";
 import { configuredGeoProvider, geoLookupEnabled } from "./provider";
 
@@ -95,6 +96,19 @@ describe("GEO query library and disabled adapter", () => {
     assert.match(action, /did not ask an AI system/);
     assert.match(panel, /will not ask an AI/);
     assert.match(panel, /describeGeoQueriesHeading/);
+    assert.match(panel, /sortGeoQueriesForPanel/);
+    assert.deepEqual(
+      sortGeoQueriesForPanel([
+        { query: "Who to hire for harbor day trips", why: "I already ask this." },
+        { query: "Weekend beginner class nearby", why: "" },
+        { query: "Private coaching", why: "  " },
+      ]).map((row) => row.query),
+      [
+        "Weekend beginner class nearby",
+        "Private coaching",
+        "Who to hire for harbor day trips",
+      ],
+    );
     assert.equal(
       describeGeoQueriesHeading(0),
       "Questions to remember for later AI visibility",

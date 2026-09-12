@@ -59,3 +59,14 @@ export function describeGeoQueriesHeading(queryCount = 0): string {
   }
   return `Questions to remember for later AI visibility · ${queryCount}`;
 }
+
+export function sortGeoQueriesForPanel<T extends { why?: string | null }>(
+  rows: T[],
+): T[] {
+  return [...rows].sort((left, right) => {
+    const leftWhy = (left.why ?? "").trim() ? 1 : 0;
+    const rightWhy = (right.why ?? "").trim() ? 1 : 0;
+    if (leftWhy !== rightWhy) return leftWhy - rightWhy;
+    return 0;
+  });
+}
