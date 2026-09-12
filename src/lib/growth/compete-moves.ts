@@ -82,6 +82,21 @@ export function competeMovesToShow(rows: CompeteMoveView[]): CompeteMoveView[] {
   return rows.slice(0, COMPETE_MOVE_MAX_SHOWN);
 }
 
+export function normalizeCompeteMoveTitle(title?: string | null): string {
+  return (title ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+export function hasSavedCompeteMoveTitle(
+  moves: Pick<CompeteMoveView, "title">[],
+  title?: string | null,
+): boolean {
+  const needle = normalizeCompeteMoveTitle(title);
+  if (!needle) {
+    return false;
+  }
+  return moves.some((move) => normalizeCompeteMoveTitle(move.title) === needle);
+}
+
 export function suggestCompeteMoveFromCompare(input?: {
   ourLead?: string | null
   theirLead?: string | null

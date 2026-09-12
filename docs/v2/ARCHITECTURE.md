@@ -1992,6 +1992,7 @@ Organization
 186. **Intelligence shows compete moves marked done** — **IMPLEMENTED** this slice. Intelligence can say how many owner-saved compete moves are marked done. GroovGro does not do the work, publish, or add a Next step loop.
 187. **Planner shows the later-review note on a queued draft** — **IMPLEMENTED** this slice. A Content planner draft saved for later review shows the owner note. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 188. **Compete move from a stored compare** — **IMPLEMENTED** this slice. Owner can save a compete move from how saved competitor sites compare to this business. GroovGro does not do the work, copy their words, publish, or add a Next step loop.
+189. **Hide a compete-move button that is already saved** — **IMPLEMENTED** this slice. SEO hides “I will cover this” or “I will do this compare” when that exact title is already saved. GroovGro does not do the work, publish, or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
