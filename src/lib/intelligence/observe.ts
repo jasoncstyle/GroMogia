@@ -282,10 +282,20 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   }
 
   if (competitorPageGapCount > 0) {
+    const remainingCompetitorGapBriefs = Math.max(
+      0,
+      competitorPageGapCount - competitorGapBriefCount,
+    );
+    const remainingNote =
+      competitorGapBriefCount <= 0
+        ? ""
+        : remainingCompetitorGapBriefs <= 0
+          ? " All of those already have a brief on the planner."
+          : ` ${remainingCompetitorGapBriefs} still ${remainingCompetitorGapBriefs === 1 ? "has" : "have"} no brief on the planner.`;
     observations.push({
       kind: "observation",
       title: "Competitor page topics GroovGro has not read on your site",
-      body: `${competitorPageGapCount} topic${competitorPageGapCount === 1 ? "" : "s"} on competitor websites you named ${competitorPageGapCount === 1 ? "has" : "have"} no matching page among the pages GroovGro already read. This is not a reason to copy their words or create a page.`,
+      body: `${competitorPageGapCount} topic${competitorPageGapCount === 1 ? "" : "s"} on competitor websites you named ${competitorPageGapCount === 1 ? "has" : "have"} no matching page among the pages GroovGro already read.${remainingNote} This is not a reason to copy their words or create a page.`,
       evidence: ["competitor_sites.page_gaps"],
       href: "/app/seo",
     });

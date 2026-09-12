@@ -952,6 +952,32 @@ describe("intelligence observe", () => {
     assert.equal(gapObserved.href, "/app/seo");
     assert.match(gapObserved.body, /2 topics/);
     assert.match(gapObserved.body, /not a reason to copy their words or create a page/);
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          competitorPageGapCount: 2,
+          competitorGapBriefCount: 1,
+        }),
+      ).observations.find(
+        (item) =>
+          item.title ===
+          "Competitor page topics GroovGro has not read on your site",
+      )?.body ?? "",
+      /1 still has no brief on the planner/,
+    );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          competitorPageGapCount: 2,
+          competitorGapBriefCount: 2,
+        }),
+      ).observations.find(
+        (item) =>
+          item.title ===
+          "Competitor page topics GroovGro has not read on your site",
+      )?.body ?? "",
+      /All of those already have a brief on the planner/,
+    );
     const reviewGaps = pageGaps.recommendations.find(
       (item) => item.title === "Review pages competitors show that GroovGro has not read",
     );
