@@ -339,10 +339,20 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   }
 
   if (contentDraftCount > 0) {
+    const remainingReviews = Math.max(
+      0,
+      contentDraftCount - cmsPublishRequestCount,
+    );
+    const remainingReviewNote =
+      cmsPublishRequestCount <= 0
+        ? ""
+        : remainingReviews <= 0
+          ? " All of those are already saved for later review."
+          : ` ${remainingReviews} ${remainingReviews === 1 ? "is" : "are"} still not saved for later review.`;
     observations.push({
       kind: "observation",
       title: "Workspace content drafts",
-      body: `${contentDraftCount} workspace ${contentDraftCount === 1 ? "draft is" : "drafts are"} saved from a brief. GroovGro did not publish them or change the live website.`,
+      body: `${contentDraftCount} workspace ${contentDraftCount === 1 ? "draft is" : "drafts are"} saved from a brief.${remainingReviewNote} GroovGro did not publish them or change the live website.`,
       evidence: ["content_drafts.status=draft"],
       href: "/app/seo",
     });

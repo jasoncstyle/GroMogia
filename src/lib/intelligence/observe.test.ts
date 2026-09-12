@@ -1428,6 +1428,26 @@ describe("intelligence observe", () => {
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /2 workspace drafts/);
     assert.match(observed.body, /did not publish/);
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentDraftCount: 2,
+          cmsPublishRequestCount: 1,
+        }),
+      ).observations.find((item) => item.title === "Workspace content drafts")
+        ?.body ?? "",
+      /1 is still not saved for later review/,
+    );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentDraftCount: 2,
+          cmsPublishRequestCount: 2,
+        }),
+      ).observations.find((item) => item.title === "Workspace content drafts")
+        ?.body ?? "",
+      /All of those are already saved for later review/,
+    );
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Write a workspace draft from a brief",
