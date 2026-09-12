@@ -52,3 +52,10 @@ export function describeGeoQuery(row: Pick<GeoQueryView, "query" | "why">): stri
   }
   return `Remember: “${row.query}”.`;
 }
+
+export function describeGeoQueriesHeading(queryCount = 0): string {
+  if (queryCount <= 0) {
+    return "Questions to remember for later AI visibility";
+  }
+  return `Questions to remember for later AI visibility · ${queryCount}`;
+}

@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { requestGeoLookup } from "./adapter";
 import { GEO_EVIDENCE_OWNER } from "./architecture";
 import {
+  describeGeoQueriesHeading,
   describeGeoQuery,
   GEO_QUERY_SOURCE_OWNER,
   GEO_QUERY_STATUS_PLANNED,
@@ -93,6 +94,15 @@ describe("GEO query library and disabled adapter", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /did not ask an AI system/);
     assert.match(panel, /will not ask an AI/);
+    assert.match(panel, /describeGeoQueriesHeading/);
+    assert.equal(
+      describeGeoQueriesHeading(0),
+      "Questions to remember for later AI visibility",
+    );
+    assert.equal(
+      describeGeoQueriesHeading(2),
+      "Questions to remember for later AI visibility · 2",
+    );
     assert.match(panel, /scrape answers/);
     assert.match(adapter, /never fetches/);
     assert.match(queries, /eq\(geoQueries\.organizationId, organizationId\)/);
