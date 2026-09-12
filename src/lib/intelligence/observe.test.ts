@@ -1794,6 +1794,8 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not add links or schema/);
+    assert.match(recommended.body, /2 suggested links/);
+    assert.match(recommended.body, /3 schema facts/);
     assert.equal(
       withLinks.recommendations.some((item) => /add schema/i.test(item.title)),
       false,
