@@ -226,6 +226,7 @@ describe("later-run queue and disabled execute adapter", () => {
     assert.match(nextStepPage, /ExecutionPanel/);
     assert.match(workPage, /ExecutionPanel/);
     assert.match(intelligence, /ExecutionPanel/);
+    assert.match(intelligence, /Remaining later-run work is listed first/);
     assert.match(bootstrap, /growth_director/);
     assert.match(
       bootstrap,
