@@ -793,8 +793,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
 
   if (
     facts.websiteConnected &&
-    contentDraftCount > 0 &&
-    cmsPublishRequestCount === 0
+    contentDraftCount > cmsPublishRequestCount
   ) {
     recommendations.push({
       kind: "recommendation",
