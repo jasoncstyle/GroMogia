@@ -2157,6 +2157,8 @@ Organization
 351. **Status text names visibility-history SEO intro listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the SEO intro copy that questions that still need a snapshot are listed first. GroovGro does not publish or add a Next step loop.
 352. **SEO intro names channels worth a look listed first** — **IMPLEMENTED** this slice. The SEO page says stored channel compares that are worth a look are listed first. GroovGro does not change Next step or add a Next step loop.
 353. **Status text names channel-compare SEO intro listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the SEO intro copy that channels worth a look are listed first. GroovGro does not publish or add a Next step loop.
+354. **SEO intro names planned compete moves listed first** — **IMPLEMENTED** this slice. The SEO page says planned compete moves are listed first. GroovGro does not do the work or add a Next step loop.
+355. **Status text names planned-compete SEO intro listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the SEO intro copy that planned compete moves are listed first. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
