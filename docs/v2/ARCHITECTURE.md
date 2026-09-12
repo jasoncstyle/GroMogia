@@ -1985,6 +1985,7 @@ Organization
 179. **Check a competitor-topic workspace draft against saved offers** — **IMPLEMENTED** this slice. SEO checks whether a competitor-topic workspace draft names a saved offer. Intelligence can show that. GroovGro does not rewrite the live site, publish, scrape Google, or add a Next step loop.
 180. **Save a planner workspace draft for later CMS review** — **IMPLEMENTED** this slice. Owner can save a Content planner workspace draft, including a competitor-topic draft, for later review without leaving that draft. `requestCmsPublish` stays off. GroovGro does not publish, scrape Google, or add a Next step loop.
 181. **Owner-saved compete move** — **IMPLEMENTED** this slice. Owner can save what they will do after looking at a competitor site. SEO and Intelligence can show that. GroovGro does not do the work, publish, scrape Google, or add a Next step loop.
+182. **Compete move from a competitor page-topic gap** — **IMPLEMENTED** this slice. Owner can save “I will cover this” from a competitor page topic GroovGro has not read on this business’s pages. GroovGro does not do the work, create the page, publish, scrape Google, or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 

@@ -9,6 +9,7 @@ import {
   competeMovesToShow,
   describeCompeteMove,
   planCompeteMove,
+  suggestCompeteMoveFromGap,
 } from "./compete-moves";
 
 const ORG_A = "11111111-1111-1111-1111-111111111111";
@@ -99,5 +100,10 @@ describe("owner-saved compete moves", () => {
       JSON.stringify(planCompeteMove({ organizationId: ORG_A, title: "Write a page" })),
       /oceansailing|morsealpha|stripe-osa/i,
     );
+    const fromGap = suggestCompeteMoveFromGap("  Weekend beginner class  ");
+    assert.equal(fromGap.title, "Cover “Weekend beginner class” on our site");
+    assert.match(fromGap.note, /will not do this/);
+    assert.equal(suggestCompeteMoveFromGap("").title, "");
+    assert.match(panel, /I will cover this/);
   });
 });
