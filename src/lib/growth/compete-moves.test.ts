@@ -11,6 +11,7 @@ import {
   countPlannedCompeteMoves,
   describeCompeteMove,
   describeCompeteMoveGroupHeading,
+  describeCompeteCardHeading,
   describeCompeteMoveListHeading,
   doneCompeteMoves,
   hasSavedCompeteMoveTitle,
@@ -196,6 +197,12 @@ describe("owner-saved compete moves", () => {
       "What I will do · all marked done",
     );
     assert.match(panel, /describeCompeteMoveListHeading/);
+    assert.match(panel, /describeCompeteCardHeading/);
+    assert.equal(describeCompeteCardHeading(0, 0), "How we might compete");
+    assert.equal(
+      describeCompeteCardHeading(2, 1),
+      "How we might compete · 2 sites · 1 still planned",
+    );
     const sorted = sortCompeteMovesForList([
       {
         id: "done-first",
