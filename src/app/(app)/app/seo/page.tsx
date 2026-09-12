@@ -126,7 +126,7 @@ export default async function SeoPage({
           what you already heard from an AI system. You can save questions to
           remember for later AI visibility. You can save another snapshot of
           what you already heard. Latest saved snapshots can show citation
-          gaps. GroovGro will not invent topics,
+          gaps. Citation gaps are listed first. GroovGro will not invent topics,
           publish a page, add links or schema to the live website, ask AI
           systems, scrape answers, scrape Google, buy keyword or SERP data,
           buy ads, or change Stripe checkout. It may read a competitor

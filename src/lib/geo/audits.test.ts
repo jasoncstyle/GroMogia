@@ -233,6 +233,7 @@ describe("GEO audits from saved history", () => {
       "utf8",
     );
     assert.match(seoPage, /GeoAuditsPanel/);
+    assert.match(seoPage, /Citation gaps are listed first/);
     const seoPersist = readFileSync(
       join(process.cwd(), "src/lib/growth/persist-seo-actions.ts"),
       "utf8",
