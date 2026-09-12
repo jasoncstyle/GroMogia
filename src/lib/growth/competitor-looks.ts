@@ -676,6 +676,17 @@ export function describeCompetitorPageGapsHeading(
   return `Pages they show that GroovGro has not read · ${gapCount} · ${briefedCount} already ${verb} a brief`;
 }
 
+export function sortCompetitorPageGapsForPanel<T extends { label: string }>(
+  gaps: T[],
+  isSaved: (label: string) => boolean,
+): T[] {
+  return [...gaps].sort((left, right) => {
+    const leftSaved = isSaved(left.label) ? 1 : 0;
+    const rightSaved = isSaved(right.label) ? 1 : 0;
+    return leftSaved - rightSaved;
+  });
+}
+
 export function competitorSitesToShow(
   rows: CompetitorSiteView[],
 ): CompetitorSiteView[] {
