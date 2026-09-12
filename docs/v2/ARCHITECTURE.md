@@ -2141,6 +2141,12 @@ Organization
 335. **Intelligence names how many schema types are not the default** — **IMPLEMENTED** this slice. Intelligence can say how many estimated schema types are not the default. GroovGro does not add schema to the live website or add a Next step loop.
 336. **SEO intro names non-default schema types listed first** — **IMPLEMENTED** this slice. The SEO page says estimated schema types that are not the default are listed first. GroovGro does not add schema to the live website or add a Next step loop.
 337. **Status text names remaining competitor-note and non-default schema copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the remaining competitor-note recommendation and non-default schema heading, list order, and Intelligence copy. GroovGro does not publish or add a Next step loop.
+338. **AI visibility notes that name a question are listed first** — **IMPLEMENTED** this slice. The AI visibility notes list shows notes that already name a question first. GroovGro does not ask an AI system or add a Next step loop.
+339. **AI visibility notes copy names notes that name a question listed first** — **IMPLEMENTED** this slice. The AI visibility notes card says notes that name a question are listed first. GroovGro does not ask an AI system or add a Next step loop.
+340. **Intelligence names notes that name a question listed first** — **IMPLEMENTED** this slice. Intelligence can point at saved AI visibility notes and say notes that name a question are listed first. GroovGro does not ask an AI system or add a Next step loop.
+341. **AI visibility notes heading shows how many name a question** — **IMPLEMENTED** this slice. The AI visibility notes heading says how many saved notes already name a question. GroovGro does not ask an AI system or add a Next step loop.
+342. **SEO intro names notes that name a question listed first** — **IMPLEMENTED** this slice. The SEO page says AI visibility notes that name a question are listed first. GroovGro does not ask an AI system or add a Next step loop.
+343. **Status text names AI visibility note listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the AI visibility notes heading, list order, Intelligence recommendation, and SEO intro copy for notes that name a question. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
