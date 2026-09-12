@@ -138,11 +138,16 @@ export function planKeywordHistory(input: {
   };
 }
 
-export function describeKeywordHistoryHeading(keywordCount = 0): string {
-  if (keywordCount <= 0) {
+export function describeKeywordHistoryHeading(
+  keywordCount = 0,
+  reviewCount = 0,
+): string {
+  if (keywordCount <= 0 && reviewCount <= 0) {
     return "Queries GroovGro has recorded";
   }
-  return `Queries GroovGro has recorded · ${keywordCount}`;
+  const recorded = keywordCount <= 0 ? "" : ` · ${keywordCount}`;
+  const review = reviewCount <= 0 ? "" : ` · ${reviewCount} worth a look`;
+  return `Queries GroovGro has recorded${recorded}${review}`;
 }
 
 export function describeKeywordHistory(points: KeywordHistoryPoint[]): string {
