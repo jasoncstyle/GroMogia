@@ -2032,6 +2032,13 @@ Organization
 226. **Intelligence shows briefs that still need a workspace draft** — **IMPLEMENTED** this slice. Intelligence can say how many planner briefs still need a workspace draft, or that all of those already have one. GroovGro does not publish or add a Next step loop.
 227. **Intelligence shows drafts that still need later review** — **IMPLEMENTED** this slice. Intelligence can say how many workspace drafts are still not saved for later review, or that all of those already are. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 228. **Status text names remaining brief and draft counts** — **IMPLEMENTED** this slice. Architecture and status summaries name remaining missing-page briefs, competitor-topic briefs, workspace drafts, and later-review drafts. GroovGro does not publish or add a Next step loop.
+229. **Planner heading shows how many briefs still need a draft** — **IMPLEMENTED** this slice. The Content planner heading says how many saved briefs still need a workspace draft. GroovGro does not publish or add a Next step loop.
+230. **Intelligence names planner briefs listed first** — **IMPLEMENTED** this slice. Intelligence can say briefs that still need a workspace draft are listed first. GroovGro does not publish or add a Next step loop.
+231. **SEO lists missing-page queries that still need a brief first** — **IMPLEMENTED** this slice. The missing-page query list shows queries without a planner brief before queries that already have one. GroovGro does not write the page, publish, or add a Next step loop.
+232. **SEO lists competitor page topics that still need a brief first** — **IMPLEMENTED** this slice. The competitor page-topic list shows topics without a planner brief before topics that already have one. GroovGro does not write the page, publish, or add a Next step loop.
+233. **SEO groups missing-page queries that still need a brief** — **IMPLEMENTED** this slice. When some missing-page queries already have a brief and some do not, SEO labels those groups. GroovGro does not write the page, publish, or add a Next step loop.
+234. **SEO groups competitor page topics that still need a brief** — **IMPLEMENTED** this slice. When some competitor page topics already have a brief and some do not, SEO labels those groups. GroovGro does not write the page, publish, or add a Next step loop.
+235. **Status text names remaining brief and draft groups** — **IMPLEMENTED** this slice. Architecture and status summaries name grouped remaining work on the planner, missing-page list, and competitor page-topic list. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
