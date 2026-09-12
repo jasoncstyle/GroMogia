@@ -67,8 +67,8 @@ export function ExecutionPanel({
           </div>
         )}
 
-        {canManage && actions.length > 0 ? (
-          <SaveForm
+        {canManage && openActions.length > 0 ? (
+          <SaveForm>
             action={createExecutionRequest}
             successMessage="Later-run request saved. GroovGro did not run it, buy ads, or change the live website."
             className="grid gap-3"
@@ -86,7 +86,7 @@ export function ExecutionPanel({
                 <option value="" disabled>
                   Pick approved work
                 </option>
-                {actions.map((action) => (
+                {openActions.map((action) => (
                   <option key={action.id} value={action.id}>
                     {executionActionTitle(action)}
                   </option>
@@ -106,6 +106,11 @@ export function ExecutionPanel({
             </div>
             <SaveButton type="submit">Save for later</SaveButton>
           </SaveForm>
+        ) : canManage && actions.length > 0 ? (
+          <p className="text-sm text-muted-foreground">
+            All approved work is already saved for later. GroovGro did not
+            run it, buy ads, or change the live website.
+          </p>
         ) : canManage ? null : (
           <p className="text-sm text-muted-foreground">
             An owner or admin can save approved work for later. GroovGro will
