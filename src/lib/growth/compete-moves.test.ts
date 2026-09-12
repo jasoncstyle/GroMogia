@@ -10,6 +10,7 @@ import {
   competeMovesToShow,
   countPlannedCompeteMoves,
   describeCompeteMove,
+  describeCompeteMoveGroupHeading,
   describeCompeteMoveListHeading,
   doneCompeteMoves,
   hasSavedCompeteMoveTitle,
@@ -259,7 +260,14 @@ describe("owner-saved compete moves", () => {
       ]).map((row) => row.id)[0],
       "a",
     );
-    assert.match(panel, /Still planned/);
-    assert.match(panel, /Marked done/);
+    assert.match(panel, /describeCompeteMoveGroupHeading/);
+    assert.equal(
+      describeCompeteMoveGroupHeading("planned", 2),
+      "Still planned · 2",
+    );
+    assert.equal(
+      describeCompeteMoveGroupHeading("done", 1),
+      "Marked done · 1",
+    );
   });
 });
