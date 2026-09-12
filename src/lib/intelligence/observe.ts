@@ -873,6 +873,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && geoNoteCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review AI visibility notes you already saved",
+      body: `Open SEO to read what you already heard from an AI system. ${geoNoteCount} ${geoNoteCount === 1 ? "note is" : "notes are"} listed. Notes that name a question are listed first. GroovGro will not ask an AI system or scrape answers.`,
+      evidence: ["geo_notes.source=owner"],
+      href: "/app/seo",
+    });
+  }
+
   if (
     facts.websiteConnected &&
     (keywordCount > 0 || geoNoteCount > 0) &&
