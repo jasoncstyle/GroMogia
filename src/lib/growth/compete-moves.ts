@@ -142,6 +142,15 @@ export function hasSavedCompeteMoveTitle(
   return moves.some((move) => normalizeCompeteMoveTitle(move.title) === needle);
 }
 
+export function refuseDuplicateCompeteMoveTitle(
+  moves: Pick<CompeteMoveView, "title">[],
+  title?: string | null,
+): void {
+  if (hasSavedCompeteMoveTitle(moves, title)) {
+    throw new Error("That compete move is already saved.");
+  }
+}
+
 export function suggestCompeteMoveFromCompare(input?: {
   ourLead?: string | null
   theirLead?: string | null

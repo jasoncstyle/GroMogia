@@ -2009,6 +2009,7 @@ Organization
 203. **Intelligence still recommends a workspace draft when another brief is open** — **IMPLEMENTED** this slice. Intelligence keeps recommending a workspace draft when a saved brief does not have one yet. GroovGro does not publish or add a Next step loop.
 204. **Content-gap heading shows how many queries are missing** — **IMPLEMENTED** this slice. The missing-page query list on SEO says how many worth-a-look queries have no matching page GroovGro has read. GroovGro does not write a page, publish, or add a Next step loop.
 205. **Competitor page-topic heading shows how many topics are missing** — **IMPLEMENTED** this slice. The competitor page-topic list on SEO says how many topics GroovGro has not read on this business’s pages. GroovGro does not create a page, publish, or add a Next step loop.
+206. **Refuse a duplicate compete-move title** — **IMPLEMENTED** this slice. Saving what the owner will do refuses a title that is already saved. GroovGro does not do the work, publish, or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
