@@ -165,6 +165,11 @@ describe("CMS publish review queue and disabled adapter", () => {
       describePublishQueueHeading(2),
       "Drafts ready to publish later · 2 waiting",
     );
+    assert.equal(
+      describePublishQueueHeading(2, 1),
+      "Drafts ready to publish later · 2 waiting · 1 still needs later review",
+    );
+    assert.match(panel, /openDrafts.length/);
     assert.deepEqual(
       draftsWaitingToQueue(
         [
