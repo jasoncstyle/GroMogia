@@ -7,6 +7,7 @@ import {
   CHANNEL_IDS,
   CHANNEL_SCORE_SOURCE_STORED,
   channelScoreLabelTitle,
+  describeChannelScoreHeading,
   channelsWithEvidence,
   compareChannelScores,
   planChannelScores,
@@ -168,6 +169,15 @@ describe("cross-channel opportunity scoring", () => {
     assert.match(persist, /eq\(leadRecords\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(growthActions\.organizationId, organizationId\)/);
     assert.match(panel, /will not change today/);
+    assert.match(panel, /describeChannelScoreHeading/);
+    assert.equal(
+      describeChannelScoreHeading(0),
+      "What stored evidence says to compare",
+    );
+    assert.equal(
+      describeChannelScoreHeading(3),
+      "What stored evidence says to compare · 3",
+    );
     assert.match(panel, /Next step from this estimate/);
     assert.match(panel, /buy\s+ads, or run work/);
     assert.match(intelligence, /ChannelScorePanel/);
