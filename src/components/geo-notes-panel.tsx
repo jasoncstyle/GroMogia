@@ -33,7 +33,7 @@ export function GeoNotesPanel({
         <CardTitle>{describeGeoNotesHeading(notes.length)}</CardTitle>
         <CardDescription>
           Save what you already heard when you asked an AI system about this
-          business. GroovGro will not ask AI systems, scrape answers, or treat
+          business. Notes that name a question are listed first. GroovGro will not ask AI systems, scrape answers, or treat
           one answer as truth.
         </CardDescription>
       </CardHeader>

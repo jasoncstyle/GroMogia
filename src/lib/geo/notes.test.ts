@@ -110,6 +110,7 @@ describe("owner-entered GEO notes", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /did not ask an AI system/);
     assert.match(panel, /will not ask AI systems/);
+    assert.match(panel, /Notes that name a question are listed first/);
     assert.match(panel, /describeGeoNotesHeading/);
     assert.match(panel, /sortGeoNotesForPanel/);
     assert.deepEqual(
