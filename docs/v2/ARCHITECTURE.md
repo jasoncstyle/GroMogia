@@ -2133,6 +2133,14 @@ Organization
 327. **Intelligence names citation gaps listed first** — **IMPLEMENTED** this slice. Intelligence can say citation gaps are listed first on SEO. GroovGro does not ask an AI system or add a Next step loop.
 328. **SEO intro names citation gaps listed first** — **IMPLEMENTED** this slice. The SEO page says citation gaps are listed first. GroovGro does not ask an AI system or add a Next step loop.
 329. **Status text names citation-gap listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name Intelligence and page copy that citation gaps are listed first. GroovGro does not publish or add a Next step loop.
+330. **Intelligence keeps the competitor-note recommendation while names remain** — **IMPLEMENTED** this slice. Intelligence still asks the owner to save a competitor note while Business-known names outnumber saved notes, and it says how many still need a note. GroovGro does not scrape search results or add a Next step loop.
+331. **Estimated schema types list non-default types first** — **IMPLEMENTED** this slice. The links-and-schema list shows estimated schema types that are not the default first. GroovGro does not add schema to the live website or add a Next step loop.
+332. **Links-and-schema copy names non-default schema types listed first** — **IMPLEMENTED** this slice. The links-and-schema card says estimated schema types that are not the default are listed first. GroovGro does not add schema to the live website or add a Next step loop.
+333. **Intelligence names non-default schema types listed first** — **IMPLEMENTED** this slice. Intelligence can say estimated schema types that are not the default are listed first on SEO. GroovGro does not add schema to the live website or add a Next step loop.
+334. **Links-and-schema headings show how many schema types are not the default** — **IMPLEMENTED** this slice. The links-and-schema headings say how many estimated schema types are not the default. GroovGro does not add schema to the live website or add a Next step loop.
+335. **Intelligence names how many schema types are not the default** — **IMPLEMENTED** this slice. Intelligence can say how many estimated schema types are not the default. GroovGro does not add schema to the live website or add a Next step loop.
+336. **SEO intro names non-default schema types listed first** — **IMPLEMENTED** this slice. The SEO page says estimated schema types that are not the default are listed first. GroovGro does not add schema to the live website or add a Next step loop.
+337. **Status text names remaining competitor-note and non-default schema copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the remaining competitor-note recommendation and non-default schema heading, list order, and Intelligence copy. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
