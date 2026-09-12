@@ -1,4 +1,5 @@
 import { canDraftNextGoal } from "@/lib/growth/next-goal";
+import { isSearchLoopStepTitle } from "@/lib/growth/search-loop";
 import { extraShareClause, type GoalShareRow } from "@/lib/growth/progress";
 import { labelFor } from "@/lib/growth/types";
 
@@ -138,7 +139,8 @@ export function skipsDuplicateNextStepAction(title: string): boolean {
     text === REVIEW_SITE_STEP_TITLE ||
     text === APPROVE_ACTIONS_STEP_TITLE ||
     text === OWNER_WORK_STEP_TITLE ||
-    text === CHECK_CHANGED_STEP_TITLE
+    text === CHECK_CHANGED_STEP_TITLE ||
+    isSearchLoopStepTitle(text)
   );
 }
 
@@ -149,7 +151,8 @@ export function hasDedicatedNextStepControls(title: string): boolean {
     text === ACTIVATE_GOAL_STEP_TITLE ||
     text === DRAFT_PLAN_STEP_TITLE ||
     text === APPROVE_PLAN_STEP_TITLE ||
-    text === PROPOSE_ACTIONS_STEP_TITLE
+    text === PROPOSE_ACTIONS_STEP_TITLE ||
+    isSearchLoopStepTitle(text)
   );
 }
 
@@ -169,11 +172,16 @@ export function showsDedicatedNextStepControl(
   if (text === DRAFT_PLAN_STEP_TITLE) return Boolean(access.canDraftPlan && access.goalId);
   if (text === APPROVE_PLAN_STEP_TITLE) return Boolean(access.planId);
   if (text === PROPOSE_ACTIONS_STEP_TITLE) return Boolean(access.canDraftPlan && access.planId);
+  if (isSearchLoopStepTitle(text)) return true;
   return false;
 }
 
 export function openPageLabelForNextStep(title: string): string | null {
   return null;
+}
+
+export function isSearchLoopNextStep(title: string): boolean {
+  return isSearchLoopStepTitle(title);
 }
 
 export function isSeoDraftNextStep(title: string): boolean {

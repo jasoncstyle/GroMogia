@@ -320,6 +320,34 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("recommends finishing one search-to-page loop", () => {
+    const brief = buildIntelligenceBrief(
+      facts({
+        searchLoopQuery: "harbor sailing lessons",
+        searchLoopStep: "save_brief",
+      }),
+    );
+    const observed = brief.observations.find(
+      (item) => item.title === "Search-to-page loop",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /harbor sailing lessons/);
+    assert.match(observed.body, /will not publish/);
+    const recommended = brief.recommendations.find(
+      (item) => item.title === "Finish the search-to-page loop",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /paste it on the existing site/);
+    assert.equal(
+      buildIntelligenceBrief(facts({ searchLoopStep: "done" })).recommendations.some(
+        (item) => item.title === "Finish the search-to-page loop",
+      ),
+      false,
+    );
+  });
+
   it("observes owner-saved competitor notes and does not scrape search results", () => {
     const saved = buildIntelligenceBrief(
       facts({

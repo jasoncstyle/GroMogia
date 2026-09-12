@@ -23,6 +23,7 @@ import { LeadCreateForm } from "@/components/lead-create-form";
 import { LeadFollowUpButtons } from "@/components/lead-follow-up";
 import { CopyLink } from "@/components/copy-link";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
+import { SearchLoopPanel } from "@/components/search-loop-panel";
 import { TrackingSnippet } from "@/components/tracking-snippet";
 import { SaveConnectedProgressButton } from "@/components/save-connected-progress-button";
 import { StripeReadCopyPanel } from "@/components/stripe-read-copy-panel";
@@ -47,7 +48,7 @@ import { formatLeadOrigin } from "@/lib/marketing/named-link";
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { hrefForGrowthAction } from "@/lib/growth/owner-work";
 import { resolveOrganizationSlug } from "@/lib/org";
-import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, FIX_SEO_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSaveBusinessNextStep, isSaveProgressNextStep, isSaveReviewScheduleNextStep, isSearchConsoleNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, isStripeReadCopyNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
+import { ACTIVATE_GOAL_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, CONNECT_WEBSITE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, FIX_SEO_STEP_TITLE, GOAL_REACHED_STEP_TITLE, hasDedicatedNextStepControls, isAddBrandVoiceExampleNextStep, isAddGoalNextStep, isAddOfferNextStep, isDraftBrandVoiceNextStep, isFollowUpLeadsNextStep, isPasteSnippetNextStep, isReadGoalNextStep, isReviewScheduleNextStep, isSaveBrandNextStep, isSaveBrandVoiceNextStep, isSaveBusinessNextStep, isSaveProgressNextStep, isSaveReviewScheduleNextStep, isSearchConsoleNextStep, isSearchLoopNextStep, isSeoDraftNextStep, isShareLeadFormNextStep, isStripeReadCopyNextStep, openPageLabelForNextStep, OWNER_WORK_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, showsDedicatedNextStepControl } from "@/lib/growth/plan-draft";
 import { labelFor } from "@/lib/growth/types";
 import { buildGrowthStory, storyFactsFromWorkspace } from "@/lib/growth/story";
 import { hasPermission } from "@/lib/permissions";
@@ -466,6 +467,14 @@ export default async function NextStepPage({
               ) : isAddOfferNextStep(step.primary.title) ? (
                 <>
                   <OfferCreateForm disabled={!canManageOffers} />
+                </>
+              ) : isSearchLoopNextStep(step.primary.title) && step.searchLoop ? (
+                <>
+                  <SearchLoopPanel
+                    loop={step.searchLoop}
+                    canManage={canManageSeo}
+                    embed
+                  />
                 </>
               ) : isAddGoalNextStep(step.primary.title) ? (
                 <>

@@ -191,7 +191,7 @@ describe("cross-channel opportunity scoring", () => {
     assert.doesNotMatch(nextStep, /channelScore|channel_score|scoreGrowthChannels/);
     assert.match(
       nextStep,
-      /drafts \?\? ownerWork \?\? checkChanged \?\? reviewSite \?\? activate \?\? draftPlan \?\? approvePlan \?\? proposeActions \?\? waitingApprove \?\? learning/,
+      /drafts \?\? ownerWork \?\? checkChanged \?\? reviewSite \?\? activate \?\? draftPlan \?\? approvePlan \?\? proposeActions \?\? waitingApprove \?\? searchLoop \?\? learning/,
     );
     const catalog = readFileSync(
       join(process.cwd(), "src/lib/modules/catalog.ts"),

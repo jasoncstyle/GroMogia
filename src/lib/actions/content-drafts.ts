@@ -13,7 +13,9 @@ import {
   contentDrafts,
   offers,
 } from "@/lib/db/schema";
+import { CONTENT_BRIEF_SOURCE_CONTENT_GAP } from "@/lib/growth/content-briefs";
 import { planContentDraft } from "@/lib/growth/content-drafts";
+import { matchOfferToQuery } from "@/lib/growth/search-loop";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
@@ -68,6 +70,11 @@ export async function createContentDraft(formData: FormData): Promise<ActionResu
       .select({ name: offers.name })
       .from(offers)
       .where(eq(offers.organizationId, session.organizationId));
+    const offerNames = offerRows.map((row) => row.name);
+    const matchedOffer =
+      brief.source === CONTENT_BRIEF_SOURCE_CONTENT_GAP
+        ? matchOfferToQuery(brief.query || brief.title, offerNames)
+        : "";
     const draft = planContentDraft({
       organizationId: session.organizationId,
       briefId: brief.id,
@@ -76,7 +83,7 @@ export async function createContentDraft(formData: FormData): Promise<ActionResu
       audience: brief.audience,
       outline: brief.outline,
       briefSource: brief.source,
-      ourOffers: offerRows.map((row) => row.name),
+      ourOffers: matchedOffer ? [matchedOffer, ...offerNames] : offerNames,
       ourDifference: brain?.differentiators ?? [],
     });
     const now = new Date();

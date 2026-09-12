@@ -55,6 +55,7 @@ import {
   planDraftOfferChecks,
 } from "@/lib/growth/content-drafts";
 import { CONTENT_GAP_STATUS_GAP } from "@/lib/growth/content-gaps";
+import { getSearchLoopView } from "@/lib/growth/search-loop-query";
 import { isDefaultSchemaType } from "@/lib/growth/page-structure";
 import {
   buildIntelligenceBrief,
@@ -97,6 +98,7 @@ export async function getIntelligenceFacts(
     geoQueryCount,
     geoHistoryCount,
     geoAuditGapCount,
+    searchLoop,
   ] = await Promise.all([
     countRecordedKeywords(organizationId),
     countSerpNotes(organizationId),
@@ -120,6 +122,7 @@ export async function getIntelligenceFacts(
     countGeoQueries(organizationId),
     countGeoHistory(organizationId),
     countGeoAuditGaps(organizationId),
+    getSearchLoopView(organizationId),
   ]);
 
   const activeGoal = (growth?.activeGoals ?? []).find((goal) => goal.shareNote);
@@ -217,6 +220,8 @@ export async function getIntelligenceFacts(
     draftDifferenceCheckCount: draftDifferenceCheckCounts.checked,
     draftMissingDifferenceCount: draftDifferenceCheckCounts.missingDifference,
     draftNoDifferenceToCheckCount: draftDifferenceCheckCounts.noDifferenceToCheck,
+    searchLoopQuery: searchLoop.query,
+    searchLoopStep: searchLoop.step,
   };
 }
 

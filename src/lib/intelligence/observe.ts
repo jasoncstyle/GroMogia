@@ -75,6 +75,8 @@ export type IntelligenceFacts = {
   draftDifferenceCheckCount?: number
   draftMissingDifferenceCount?: number
   draftNoDifferenceToCheckCount?: number
+  searchLoopQuery?: string
+  searchLoopStep?: string
 };
 
 export type InsightItem = {
@@ -231,12 +233,30 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const draftDifferenceCheckCount = facts.draftDifferenceCheckCount ?? 0;
   const draftMissingDifferenceCount = facts.draftMissingDifferenceCount ?? 0;
   const draftNoDifferenceToCheckCount = facts.draftNoDifferenceToCheckCount ?? 0;
+  const searchLoopQuery = (facts.searchLoopQuery ?? "").replace(/\s+/g, " ").trim();
+  const searchLoopStep = (facts.searchLoopStep ?? "").trim();
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
       title: "Search queries from Search Console",
       body: `GroovGro recorded ${keywordCount} search quer${keywordCount === 1 ? "y" : "ies"} from stored Search Console snapshots and ranked them from those numbers.${keywordReviewCount > 0 ? ` ${keywordReviewCount} ${keywordReviewCount === 1 ? "is" : "are"} marked worth a look.` : ""} This is an estimate, not search volume or a traffic forecast.`,
       evidence: ["keywords", "keyword_history", "search_console_snapshots"],
+      href: "/app/seo",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
+    searchLoopQuery &&
+    searchLoopStep &&
+    searchLoopStep !== "wait" &&
+    searchLoopStep !== "done"
+  ) {
+    observations.push({
+      kind: "observation",
+      title: "Search-to-page loop",
+      body: `The next search-to-page work is “${searchLoopQuery}”. Finish that one loop on SEO: brief, draft, paste on the existing site, then check stored Search Console numbers and the Goal. GroovGro will not publish, scrape Google, or change checkout.`,
+      evidence: ["keywords", "content_briefs", "content_drafts", "search_loop"],
       href: "/app/seo",
     });
   }
@@ -602,6 +622,22 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       body: "Open Next step to read what GroovGro found and what it recommends. Approving does not change the live website, Search Console, or ads.",
       evidence: ["growth_actions.module=seo status=proposed"],
       href: "/app/next-step",
+    });
+  }
+
+  if (
+    facts.websiteConnected &&
+    searchLoopQuery &&
+    searchLoopStep &&
+    searchLoopStep !== "wait" &&
+    searchLoopStep !== "done"
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Finish the search-to-page loop",
+      body: `Open SEO to finish “${searchLoopQuery}”: save a brief, write a draft in this business’s words, paste it on the existing site, then check stored Search Console numbers and the Goal. GroovGro will not publish, scrape Google, or change the live website.`,
+      evidence: ["search_loop"],
+      href: "/app/seo",
     });
   }
 
@@ -1071,6 +1107,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `draft_difference_checks=${facts.draftDifferenceCheckCount ?? 0}`,
     `draft_missing_differences=${facts.draftMissingDifferenceCount ?? 0}`,
     `draft_no_difference_checks=${facts.draftNoDifferenceToCheckCount ?? 0}`,
+    `search_loop=${facts.searchLoopStep || "none"}`,
   ].join(" ");
 }
 
