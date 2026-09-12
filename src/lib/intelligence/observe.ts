@@ -579,7 +579,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Read the stored before and after",
-      body: "Open Next step to read the first stored Goal number next to the latest stored Goal number. This is not an experiment GroovGro ran. GroovGro will not buy ads or change the plan.",
+      body: `Open Next step to read the first stored Goal number next to the latest stored Goal number. ${beforeAfterLookCount} ${beforeAfterLookCount === 1 ? "look is" : "looks are"} listed. This is not an experiment GroovGro ran. GroovGro will not buy ads or change the plan.`,
       evidence: ["before_after_looks.source=stored_goal"],
       href: "/app/next-step",
     });
