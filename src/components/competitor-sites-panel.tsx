@@ -99,9 +99,10 @@ export function CompetitorSitesPanel({
           has not read on your site. You can save a brief for one of those
           topics. Topics that still need a brief are listed first. You can
           save what you will do, including from a compare or
-          one of those topics. If the site blocks the automated read,
-          paste what you see. It will not scrape Google, copy their words
-          onto your site, create a page, or buy ads.
+          one of those topics. Moves still planned are listed first. If the
+          site blocks the automated read, paste what you see. It will not
+          scrape Google, copy their words onto your site, create a page, or
+          buy ads.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
