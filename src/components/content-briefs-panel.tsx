@@ -7,6 +7,7 @@ import {
 } from "@/lib/cms/requests";
 import {
   describeContentBrief,
+  sortContentBriefsForPlanner,
   suggestBriefOutline,
   type ContentBriefView,
 } from "@/lib/growth/content-briefs";
@@ -47,6 +48,7 @@ export function ContentBriefsPanel({
   querySuggestions: string[]
   canManage?: boolean
 }) {
+  const briefsToShow = sortContentBriefsForPlanner(briefs);
   return (
     <Card>
       <CardHeader>
@@ -63,7 +65,7 @@ export function ContentBriefsPanel({
       <CardContent className="space-y-4">
         {briefs.length > 0 ? (
           <div className="space-y-3">
-            {briefs.map((brief) => (
+            {briefsToShow.map((brief) => (
               <div key={brief.id} className="space-y-2">
                 <p className="text-sm font-medium">{describeContentBrief(brief)}</p>
                 {brief.audience ? (
