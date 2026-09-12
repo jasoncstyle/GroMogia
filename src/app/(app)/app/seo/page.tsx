@@ -316,6 +316,7 @@ export default async function SeoPage({
             searches={data.competitorSearches}
             compare={data.competitorCompare}
             pageGaps={data.competitorPageGaps}
+            briefs={data.contentBriefs}
             moves={data.competeMoves}
             pagesRead={data.pagesRead}
             canManage={session.permissions.includes("manage_seo")}

@@ -90,6 +90,21 @@ export function planContentBrief(input: {
   };
 }
 
+export function hasSavedContentBriefForTopic(
+  briefs: Pick<ContentBriefView, "query" | "title">[],
+  topic?: string | null,
+): boolean {
+  const needle = normalizeQueryKey(suggestBriefTitle(topic));
+  if (!needle) {
+    return false;
+  }
+  return briefs.some((brief) => {
+    const query = normalizeQueryKey(brief.query ?? "");
+    const title = normalizeQueryKey(brief.title ?? "");
+    return query === needle || title === needle;
+  });
+}
+
 export function describeContentBrief(
   brief: Pick<ContentBriefView, "query" | "title" | "source">,
 ): string {

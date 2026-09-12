@@ -7,7 +7,11 @@ import {
   createCompetitorSite,
   lookAtCompetitorSite,
 } from "@/lib/actions/competitor-sites";
-import { suggestBriefOutlineFromCompetitorGap } from "@/lib/growth/content-briefs";
+import {
+  hasSavedContentBriefForTopic,
+  suggestBriefOutlineFromCompetitorGap,
+  type ContentBriefView,
+} from "@/lib/growth/content-briefs";
 import {
   COMPETE_MOVE_STATUS_DONE,
   describeCompeteMove,
@@ -40,6 +44,7 @@ export function CompetitorSitesPanel({
   searches,
   compare,
   pageGaps = [],
+  briefs = [],
   moves = [],
   pagesRead = false,
   canManage = true,
@@ -48,6 +53,7 @@ export function CompetitorSitesPanel({
   searches: CompetitorSearchHint[]
   compare?: CompetitorCompareView | null
   pageGaps?: CompetitorPageGapView[]
+  briefs?: Pick<ContentBriefView, "query" | "title">[]
   moves?: CompeteMoveView[]
   pagesRead?: boolean
   canManage?: boolean
@@ -152,39 +158,45 @@ export function CompetitorSitesPanel({
                   <p className="text-sm font-medium">{gap.label}</p>
                   <p className="text-sm text-muted-foreground">{gap.why}</p>
                   {canManage ? (
-                    <SaveForm
-                      action={createContentBrief}
-                      successMessage="Content brief saved to the planner. GroovGro did not write a page or copy their words."
-                    >
-                      <input type="hidden" name="query" value={gap.label} />
-                      <input type="hidden" name="title" value={gap.label} />
-                      <input
-                        type="hidden"
-                        name="source"
-                        value="competitor_gap"
-                      />
-                      <input
-                        type="hidden"
-                        name="fromNames"
-                        value={gap.fromNames.join(", ")}
-                      />
-                      <input
-                        type="hidden"
-                        name="outline"
-                        value={suggestBriefOutlineFromCompetitorGap(
-                          gap.label,
-                          gap.fromNames,
-                        )}
-                      />
-                      <SaveButton
-                        type="submit"
-                        size="sm"
-                        variant="outline"
-                        id={`save-brief-${fieldKey}`}
+                    hasSavedContentBriefForTopic(briefs, gap.label) ? (
+                      <p className="text-sm text-muted-foreground">
+                        Already saved on the planner.
+                      </p>
+                    ) : (
+                      <SaveForm
+                        action={createContentBrief}
+                        successMessage="Content brief saved to the planner. GroovGro did not write a page or copy their words."
                       >
-                        Save a brief for this topic
-                      </SaveButton>
-                    </SaveForm>
+                        <input type="hidden" name="query" value={gap.label} />
+                        <input type="hidden" name="title" value={gap.label} />
+                        <input
+                          type="hidden"
+                          name="source"
+                          value="competitor_gap"
+                        />
+                        <input
+                          type="hidden"
+                          name="fromNames"
+                          value={gap.fromNames.join(", ")}
+                        />
+                        <input
+                          type="hidden"
+                          name="outline"
+                          value={suggestBriefOutlineFromCompetitorGap(
+                            gap.label,
+                            gap.fromNames,
+                          )}
+                        />
+                        <SaveButton
+                          type="submit"
+                          size="sm"
+                          variant="outline"
+                          id={`save-brief-${fieldKey}`}
+                        >
+                          Save a brief for this topic
+                        </SaveButton>
+                      </SaveForm>
+                    )
                   ) : null}
                   {canManage ? (
                     hasSavedCompeteMoveTitle(moves, fromGap.title) ? (
