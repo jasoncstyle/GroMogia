@@ -711,6 +711,16 @@ export function shouldGroupCompetitorPageGaps<T extends { label: string }>(
   );
 }
 
+export function describeCompetitorPageGapGroupHeading(
+  kind: "need" | "have",
+  count: number,
+): string {
+  if (kind === "need") {
+    return `Still need a brief · ${count}`;
+  }
+  return `Already have a brief · ${count}`;
+}
+
 export function competitorSitesToShow(
   rows: CompetitorSiteView[],
 ): CompetitorSiteView[] {
