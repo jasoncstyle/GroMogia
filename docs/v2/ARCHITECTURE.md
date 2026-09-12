@@ -2106,6 +2106,10 @@ Organization
 300. **Status text names the compete card heading counts** — **IMPLEMENTED** this slice. Architecture and status summaries name the How we might compete heading counts for saved sites and planned moves. GroovGro does not publish or add a Next step loop.
 301. **Intelligence names How we might compete for saved sites** — **IMPLEMENTED** this slice. Intelligence can say saved competitor sites are listed on How we might compete. GroovGro does not scrape Google or add a Next step loop.
 302. **SEO intro names How we might compete heading counts** — **IMPLEMENTED** this slice. The SEO page says How we might compete names saved sites and planned moves. GroovGro does not scrape Google or add a Next step loop.
+303. **Recorded-queries heading shows how many are worth a look** — **IMPLEMENTED** this slice. The recorded-queries heading on SEO says how many stored Search Console queries are worth a look. GroovGro does not buy keyword data or add a Next step loop.
+304. **Recorded-queries list shows worth-a-look queries first** — **IMPLEMENTED** this slice. The recorded-queries list on SEO shows worth-a-look queries first. GroovGro does not buy keyword data or add a Next step loop.
+305. **Intelligence names worth-a-look queries listed first** — **IMPLEMENTED** this slice. Intelligence can say recorded queries that are worth a look are listed first. GroovGro does not buy keyword data or add a Next step loop.
+306. **Status text names worth-a-look query heading and listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the recorded-queries heading, list order, and Intelligence copy for worth-a-look queries. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
