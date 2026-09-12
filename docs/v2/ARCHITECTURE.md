@@ -2015,6 +2015,7 @@ Organization
 209. **Intelligence still recommends a competitor-topic brief when another topic is open** — **IMPLEMENTED** this slice. Intelligence keeps recommending a competitor-topic brief when another missing topic does not have one yet. GroovGro does not write the page, publish, or add a Next step loop.
 210. **Content brief from a stored missing-page query** — **IMPLEMENTED** this slice. Owner can save a planner brief from a worth-a-look query GroovGro has not read on this business’s pages. GroovGro does not write the page, publish, or add a Next step loop.
 211. **Intelligence names the missing-page list for a new brief** — **IMPLEMENTED** this slice. Intelligence can say a missing-page brief can be saved from that list or the planner. GroovGro does not write the page, publish, or add a Next step loop.
+212. **SEO intro names a brief from a missing-page query** — **IMPLEMENTED** this slice. The SEO page says the owner can save a brief for a missing-page query or on the planner. GroovGro does not write the page, publish, or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
