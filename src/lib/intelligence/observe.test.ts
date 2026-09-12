@@ -1371,6 +1371,17 @@ describe("intelligence observe", () => {
       ),
       false,
     );
+    const stillOpen = buildIntelligenceBrief(
+      facts({
+        contentDraftCount: 2,
+        cmsPublishRequestCount: 1,
+      }),
+    );
+    assert.ok(
+      stillOpen.recommendations.some(
+        (item) => item.title === "Save a draft for later CMS review",
+      ),
+    );
 
     const missing = buildIntelligenceBrief(
       facts({

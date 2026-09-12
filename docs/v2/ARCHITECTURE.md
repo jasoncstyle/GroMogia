@@ -2005,6 +2005,7 @@ Organization
 199. **Planner heading shows later-review count** — **IMPLEMENTED** this slice. The Content planner heading says how many workspace drafts are saved for later CMS review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 200. **Later-review queue heading shows how many are waiting** — **IMPLEMENTED** this slice. The later-review queue heading on SEO says how many drafts are waiting. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 201. **Hide already-queued drafts from the later-review form** — **IMPLEMENTED** this slice. The later-review form on SEO hides workspace drafts already saved for later review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+202. **Intelligence still recommends later-review when another draft is open** — **IMPLEMENTED** this slice. Intelligence keeps recommending later CMS review when a workspace draft is not in that queue yet. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 

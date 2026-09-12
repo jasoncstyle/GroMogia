@@ -21,7 +21,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Execute stays off until that authorization exists and the adapter is turned on.
 
-**Hide already-queued later-review drafts (this branch):** The later-review form on SEO hides workspace drafts already saved for later review. GroovGro does not publish, scrape Google, buy ads, or change checkout. The adapter stays off.
+**Later-review recommendation for an open draft (this branch):** Intelligence keeps recommending later CMS review when a workspace draft is not in that queue yet. GroovGro does not publish, scrape Google, buy ads, or change checkout. The adapter stays off.
 
 Phase T first slice is in #113. Phases A–T first slices are on `main`. Growth Director and guarded automation stay off. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 
