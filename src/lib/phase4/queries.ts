@@ -43,6 +43,7 @@ import {
   brainSeoContextSaved,
 } from "@/lib/growth/brain-context";
 import { GEO_AUDIT_STATUS_GAP } from "@/lib/geo/audits";
+import { COMPETE_MOVE_STATUS_DONE } from "@/lib/growth/compete-moves";
 import { CONTENT_BRIEF_SOURCE_COMPETITOR_GAP } from "@/lib/growth/content-briefs";
 import {
   countDraftDifferenceChecks,
@@ -79,6 +80,7 @@ export async function getIntelligenceFacts(
     competitorSiteCounts,
     competitorPageGapCount,
     competeMoveCount,
+    competeMoveDoneCount,
     contentGapCount,
     contentBriefCount,
     competitorGapBriefCount,
@@ -97,6 +99,7 @@ export async function getIntelligenceFacts(
     countCompetitorSites(organizationId),
     countCompetitorPageGaps(organizationId),
     countCompeteMoves(organizationId),
+    countCompeteMovesDone(organizationId),
     countContentGaps(organizationId),
     countContentBriefs(organizationId),
     countCompetitorGapBriefs(organizationId),
@@ -199,6 +202,7 @@ export async function getIntelligenceFacts(
     competitorLookCount: competitorSiteCounts.looked,
     competitorPageGapCount,
     competeMoveCount,
+    competeMoveDoneCount,
     competitorGapBriefCount,
     draftOfferCheckCount: draftOfferCheckCounts.checked,
     draftMissingOfferCount: draftOfferCheckCounts.missingOffer,
@@ -296,6 +300,21 @@ async function countCompeteMoves(organizationId: string): Promise<number> {
     .select({ value: sql<number>`count(*)::int` })
     .from(competeMoves)
     .where(eq(competeMoves.organizationId, organizationId));
+  return Number(row?.value ?? 0);
+}
+
+async function countCompeteMovesDone(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(competeMoves)
+    .where(
+      and(
+        eq(competeMoves.organizationId, organizationId),
+        eq(competeMoves.status, COMPETE_MOVE_STATUS_DONE),
+      ),
+    );
   return Number(row?.value ?? 0);
 }
 
