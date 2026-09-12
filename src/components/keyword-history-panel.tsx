@@ -1,6 +1,7 @@
 import {
   describeKeywordHistory,
   describeKeywordHistoryHeading,
+  sortKeywordsForPanel,
   formatPosition,
   latestKeywordPoint,
   type KeywordWithHistory,
@@ -19,7 +20,7 @@ export function KeywordHistoryPanel({
 }: {
   keywords: KeywordWithHistory[]
 }) {
-  const rows = keywords.slice(0, 12);
+  const rows = sortKeywordsForPanel(keywords).slice(0, 12);
 
   return (
     <Card>
@@ -34,7 +35,7 @@ export function KeywordHistoryPanel({
         <CardDescription>
           These come from Search Console snapshots GroovGro already stored.
           GroovGro can mark a query worth a look, keep watching, or not enough
-          evidence. That rank is an estimate from stored numbers, not search volume or a traffic forecast.
+          evidence. Queries worth a look are listed first. That rank is an estimate from stored numbers, not search volume or a traffic forecast.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
