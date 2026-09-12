@@ -28,10 +28,13 @@ export function ContentGapsPanel({
   pagesRead: boolean
   canManage?: boolean
 }) {
+  const briefedCount = gaps.filter((gap) =>
+    hasSavedContentBriefForTopic(briefs, gap.query),
+  ).length;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{describeContentGapsHeading(gaps.length)}</CardTitle>
+        <CardTitle>{describeContentGapsHeading(gaps.length, briefedCount)}</CardTitle>
         <CardDescription>
           GroovGro compared stored Search Console queries marked worth a look
           to pages it already read. It did not invent topics, scrape

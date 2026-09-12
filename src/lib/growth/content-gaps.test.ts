@@ -181,6 +181,15 @@ describe("content gap detection from stored pages", () => {
       describeContentGapsHeading(3),
       "Queries with no matching page GroovGro has read · 3",
     );
+    assert.equal(
+      describeContentGapsHeading(3, 1),
+      "Queries with no matching page GroovGro has read · 3 · 1 already has a brief",
+    );
+    assert.equal(
+      describeContentGapsHeading(3, 3),
+      "Queries with no matching page GroovGro has read · 3 · all have a brief",
+    );
+    assert.match(panel, /describeContentGapsHeading\(gaps.length, briefedCount\)/);
     assert.doesNotMatch(nextStep, /contentGap|content_gap|Write a brief|Save a brief for this query/);
     const seoPersist = readFileSync(
       join(process.cwd(), "src/lib/growth/persist-seo-actions.ts"),
