@@ -117,8 +117,20 @@ export function ContentBriefsPanel({
                   <SaveForm
                     action={createCmsPublishRequest}
                     successMessage="Publish request saved. GroovGro did not publish or change the live website."
+                    className="grid gap-3"
                   >
                     <input type="hidden" name="draftId" value={brief.draft.id} />
+                    <div className="space-y-2">
+                      <Label htmlFor={`plannerReviewNote-${brief.draft.id}`}>
+                        Where you already publish, if you want
+                      </Label>
+                      <Textarea
+                        id={`plannerReviewNote-${brief.draft.id}`}
+                        name="note"
+                        rows={2}
+                        placeholder="Optional. GroovGro will not publish or change the live website."
+                      />
+                    </div>
                     <SaveButton type="submit" size="sm" variant="outline">
                       Save for later review
                     </SaveButton>
