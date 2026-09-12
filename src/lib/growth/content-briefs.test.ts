@@ -112,6 +112,7 @@ describe("owner-entered content briefs", () => {
     assert.match(action, /did not write a page/);
     assert.match(action, /fromNames/);
     assert.match(panel, /will not publish/);
+    assert.match(panel, /missing-page query/);
     assert.doesNotMatch(nextStep, /contentBrief|content_brief|Save brief to planner|Save a brief for this topic/);
     const competitorPanel = readFileSync(
       join(process.cwd(), "src/components/competitor-sites-panel.tsx"),

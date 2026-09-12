@@ -2017,6 +2017,7 @@ Organization
 211. **Intelligence names the missing-page list for a new brief** — **IMPLEMENTED** this slice. Intelligence can say a missing-page brief can be saved from that list or the planner. GroovGro does not write the page, publish, or add a Next step loop.
 212. **SEO intro names a brief from a missing-page query** — **IMPLEMENTED** this slice. The SEO page says the owner can save a brief for a missing-page query or on the planner. GroovGro does not write the page, publish, or add a Next step loop.
 213. **Intelligence names a brief from the missing-page list** — **IMPLEMENTED** this slice. Intelligence can say a missing-page query can get a planner brief from that list. GroovGro does not write the page, publish, or add a Next step loop.
+214. **Planner copy names a brief from a missing-page query** — **IMPLEMENTED** this slice. The Content planner says a brief can come from a missing-page query. GroovGro does not write the page, publish, or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
