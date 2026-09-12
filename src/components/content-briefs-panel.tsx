@@ -9,6 +9,7 @@ import {
   briefsNeedingDraft,
   briefsWithDraft,
   describeContentBrief,
+  describePlannerGroupHeading,
   shouldGroupPlannerBriefs,
   sortContentBriefsForPlanner,
   suggestBriefOutline,
@@ -53,6 +54,8 @@ export function ContentBriefsPanel({
 }) {
   const briefsToShow = sortContentBriefsForPlanner(briefs);
   const needingDraftCount = briefsNeedingDraft(briefs).length;
+  const needBriefs = briefsNeedingDraft(briefsToShow);
+  const haveBriefs = briefsWithDraft(briefsToShow);
   return (
     <Card>
       <CardHeader>
@@ -77,12 +80,12 @@ export function ContentBriefsPanel({
             {(shouldGroupPlannerBriefs(briefsToShow)
               ? [
                   {
-                    label: "Still need a workspace draft",
-                    rows: briefsNeedingDraft(briefsToShow),
+                    label: describePlannerGroupHeading("need", needBriefs.length),
+                    rows: needBriefs,
                   },
                   {
-                    label: "Already has a workspace draft",
-                    rows: briefsWithDraft(briefsToShow),
+                    label: describePlannerGroupHeading("have", haveBriefs.length),
+                    rows: haveBriefs,
                   },
                 ]
               : [{ label: "", rows: briefsToShow }]

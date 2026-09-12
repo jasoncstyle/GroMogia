@@ -173,6 +173,16 @@ export function shouldGroupPlannerBriefs<T extends { draft?: unknown }>(
   );
 }
 
+export function describePlannerGroupHeading(
+  kind: "need" | "have",
+  count: number,
+): string {
+  if (kind === "need") {
+    return `Still need a workspace draft · ${count}`;
+  }
+  return `Already has a workspace draft · ${count}`;
+}
+
 export function describeContentBrief(
   brief: Pick<ContentBriefView, "query" | "title" | "source">,
 ): string {
