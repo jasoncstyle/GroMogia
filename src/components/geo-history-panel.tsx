@@ -2,6 +2,7 @@ import { createGeoHistory } from "@/lib/actions/geo-history";
 import {
   describeGeoHistory,
   describeGeoHistoryHeading,
+  queriesNeedingHistory,
   GEO_ANSWER_NO,
   GEO_ANSWER_UNSURE,
   GEO_ANSWER_YES,
@@ -31,10 +32,13 @@ export function GeoHistoryPanel({
   queries: GeoQueryView[]
   canManage?: boolean
 }) {
+  const needingCount = queriesNeedingHistory(queries, history).length;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{describeGeoHistoryHeading(history.length)}</CardTitle>
+        <CardTitle>
+          {describeGeoHistoryHeading(history.length, needingCount)}
+        </CardTitle>
         <CardDescription>
           Save another snapshot of what you already heard for a library
           question. GroovGro will not ask an AI system, scrape answers, or
