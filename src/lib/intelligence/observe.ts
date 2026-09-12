@@ -660,7 +660,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       evidence: ["competitor_sites.page_gaps"],
       href: "/app/seo",
     });
-    if (competitorGapBriefCount === 0) {
+    if (competitorPageGapCount > competitorGapBriefCount) {
       recommendations.push({
         kind: "recommendation",
         title: "Save a brief for a competitor page topic",
