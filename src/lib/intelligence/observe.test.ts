@@ -1580,6 +1580,10 @@ describe("intelligence observe", () => {
     assert.match(recommended.body, /will not publish/);
     assert.match(recommended.body, /Content planner/);
     assert.match(recommended.body, /listed first/);
+    assert.match(recommended.body, /1 still needs later review/);
+    assert.match(stillOpen.recommendations.find(
+      (item) => item.title === "Save a draft for later CMS review",
+    )?.body ?? "", /1 still needs later review/);
     assert.equal(
       missing.recommendations.some(
         (item) => item.title === "Review a draft you saved for later",

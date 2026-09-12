@@ -830,10 +830,11 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     facts.websiteConnected &&
     contentDraftCount > cmsPublishRequestCount
   ) {
+    const remainingReviews = contentDraftCount - cmsPublishRequestCount;
     recommendations.push({
       kind: "recommendation",
       title: "Save a draft for later CMS review",
-      body: "On SEO, save a workspace draft for later review from the Content planner. Drafts that still need later review are listed first. GroovGro will not publish or change the live website.",
+      body: `On SEO, save a workspace draft for later review from the Content planner. ${remainingReviews} still ${remainingReviews === 1 ? "needs" : "need"} later review. Drafts that still need later review are listed first. GroovGro will not publish or change the live website.`,
       evidence: ["cms_publish_requests missing"],
       href: "/app/seo",
     });
