@@ -129,6 +129,14 @@ export function actionsWaitingToQueue<T extends { id: string }>(
   return actions.filter((action) => !queued.has(action.id));
 }
 
+export function describeExecutionCopy(waitingCount = 0): string {
+  const remaining =
+    waitingCount <= 0
+      ? ""
+      : " Approved work that still needs a later-run save is listed first.";
+  return `Save approved work for later.${remaining} GroovGro will not run it, buy ads, send email, or change the live website. The adapter stays off.`;
+}
+
 export function describeExecutionHeading(
   queuedCount = 0,
   waitingCount = 0,
