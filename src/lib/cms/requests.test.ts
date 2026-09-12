@@ -171,6 +171,7 @@ describe("CMS publish review queue and disabled adapter", () => {
     assert.match(briefsPanel, /needingDraftCount/);
     assert.match(briefsPanel, /needingReviewCount/);
     assert.match(briefsPanel, /draftsWaitingToQueue/);
+    assert.match(briefsPanel, /still need later review are listed first/);
     assert.match(panel, /describePublishQueueHeading/);
     assert.equal(describePublishQueueHeading(0), "Drafts ready to publish later");
     assert.equal(
