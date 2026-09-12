@@ -1330,6 +1330,12 @@ describe("intelligence observe", () => {
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /2 drafts/);
     assert.match(observed.body, /did not publish/);
+    const reviewQueued = saved.recommendations.find(
+      (item) => item.title === "Review a draft you saved for later",
+    );
+    assert.ok(reviewQueued);
+    assert.equal(reviewQueued.href, "/app/seo");
+    assert.match(reviewQueued.body, /will not publish/);
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Save a draft for later CMS review",
@@ -1351,8 +1357,25 @@ describe("intelligence observe", () => {
     assert.match(recommended.body, /will not publish/);
     assert.match(recommended.body, /Content planner/);
     assert.equal(
+      missing.recommendations.some(
+        (item) => item.title === "Review a draft you saved for later",
+      ),
+      false,
+    );
+    assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save a draft for later CMS review",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          cmsPublishRequestCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Review a draft you saved for later",
       ),
       false,
     );
