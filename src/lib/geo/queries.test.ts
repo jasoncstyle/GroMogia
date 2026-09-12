@@ -146,6 +146,7 @@ describe("GEO query library and disabled adapter", () => {
       "utf8",
     );
     assert.match(seoPage, /GeoQueriesPanel/);
+    assert.match(seoPage, /Questions that still need a why are listed first/);
     const catalog = readFileSync(
       join(process.cwd(), "src/lib/modules/catalog.ts"),
       "utf8",
