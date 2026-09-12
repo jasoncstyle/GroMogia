@@ -115,7 +115,7 @@ export default async function SeoPage({
           website you found. GroovGro can compare those looks to what you sell.
           It can name topics those sites show that GroovGro has not read on
           your site. You can save a brief for one of those topics. You can save
-          what you will do, including from one of those topics. Worth-a-look
+          what you will do, including from one of those topics. How we might compete names saved sites and planned moves. Worth-a-look
           queries are compared to pages GroovGro already read. You can save a
           brief for one of those queries, or on the planner, then write a
           workspace draft from it. Queries and topics that still need a brief
