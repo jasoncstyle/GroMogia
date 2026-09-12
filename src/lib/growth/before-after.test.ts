@@ -7,6 +7,7 @@ import {
   BEFORE_AFTER_SOURCE_STORED_GOAL,
   beforeAfterStatusTitle,
   describeBeforeAfter,
+  describeBeforeAfterHeading,
   earliestAndLatestSnapshots,
   looksToShow,
   planBeforeAfterLooks,
@@ -220,6 +221,15 @@ describe("stored before-and-after looks", () => {
     );
     assert.match(persist, /eq\(beforeAfterLooks\.organizationId, organizationId\)/);
     assert.match(panel, /not an experiment GroovGro ran/);
+    assert.match(panel, /describeBeforeAfterHeading/);
+    assert.equal(
+      describeBeforeAfterHeading(0),
+      "What a stored before and after shows",
+    );
+    assert.equal(
+      describeBeforeAfterHeading(2),
+      "What a stored before and after shows · 2",
+    );
     assert.match(panel, /will not buy ads/);
     const intelligence = readFileSync(
       join(process.cwd(), "src/app/(app)/app/intelligence/page.tsx"),
