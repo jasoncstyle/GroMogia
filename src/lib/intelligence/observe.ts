@@ -895,7 +895,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Save visibility history from what you already heard",
-      body: "On SEO, save another snapshot of what you already heard for a library question. GroovGro will not ask an AI system, scrape answers, or treat one answer as truth.",
+      body: "On SEO, save another snapshot of what you already heard for a library question. Questions that still need a snapshot are listed first. GroovGro will not ask an AI system, scrape answers, or treat one answer as truth.",
       evidence: ["geo_history missing"],
       href: "/app/seo",
     });
