@@ -90,10 +90,28 @@ export function competeMovesToShow(rows: CompeteMoveView[]): CompeteMoveView[] {
   return sortCompeteMovesForList(rows).slice(0, COMPETE_MOVE_MAX_SHOWN);
 }
 
+export function plannedCompeteMoves<T extends Pick<CompeteMoveView, "status">>(
+  moves: T[],
+): T[] {
+  return moves.filter((move) => move.status !== COMPETE_MOVE_STATUS_DONE);
+}
+
+export function doneCompeteMoves<T extends Pick<CompeteMoveView, "status">>(
+  moves: T[],
+): T[] {
+  return moves.filter((move) => move.status === COMPETE_MOVE_STATUS_DONE);
+}
+
 export function countPlannedCompeteMoves(
   moves: Pick<CompeteMoveView, "status">[],
 ): number {
-  return moves.filter((move) => move.status !== COMPETE_MOVE_STATUS_DONE).length;
+  return plannedCompeteMoves(moves).length;
+}
+
+export function shouldGroupCompeteMoves(
+  moves: Pick<CompeteMoveView, "status">[],
+): boolean {
+  return plannedCompeteMoves(moves).length > 0 && doneCompeteMoves(moves).length > 0;
 }
 
 export function describeCompeteMoveListHeading(
