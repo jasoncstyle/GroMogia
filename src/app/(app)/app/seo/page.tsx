@@ -122,7 +122,7 @@ export default async function SeoPage({
           are listed first. A draft from a competitor topic uses this
           business’s words. GroovGro can check whether that draft names a saved offer or what makes this business different. You can save that
           draft for later review from the planner. Drafts that still need later review are listed first. Pages GroovGro already read
-          can show link suggestions and estimated schema types. You can save
+          can show link suggestions and estimated schema types. Suggested links are listed first. You can save
           what you already heard from an AI system. You can save questions to
           remember for later AI visibility. You can save another snapshot of
           what you already heard. Latest saved snapshots can show citation
