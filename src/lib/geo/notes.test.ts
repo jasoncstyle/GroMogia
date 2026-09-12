@@ -7,6 +7,7 @@ import { GEO_EVIDENCE_OWNER, isOwnerGeoEvidence } from "./architecture";
 import {
   describeGeoNote,
   describeGeoNotesHeading,
+  geoNotesNamingAQuestion,
   planGeoNote,
   sortGeoNotesForPanel,
   GEO_NOTE_SOURCE_OWNER,
@@ -113,6 +114,15 @@ describe("owner-entered GEO notes", () => {
     assert.match(panel, /Notes that name a question are listed first/);
     assert.match(panel, /describeGeoNotesHeading/);
     assert.match(panel, /sortGeoNotesForPanel/);
+    assert.match(panel, /geoNotesNamingAQuestion/);
+    assert.equal(
+      geoNotesNamingAQuestion([
+        { query: "Who to hire for harbor day trips" },
+        { query: "" },
+        { query: "  " },
+      ]).length,
+      1,
+    );
     assert.deepEqual(
       sortGeoNotesForPanel([
         { query: "", heard: "They named someone else." },
@@ -123,6 +133,10 @@ describe("owner-entered GEO notes", () => {
     );
     assert.equal(describeGeoNotesHeading(0), "What you already hear from AI");
     assert.equal(describeGeoNotesHeading(2), "What you already hear from AI · 2");
+    assert.equal(
+      describeGeoNotesHeading(3, 1),
+      "What you already hear from AI · 3 · 1 name a question",
+    );
     assert.match(panel, /scrape answers/);
     assert.match(panel, /treat\s+one answer as truth/);
     assert.match(provider, /does not scrape AI answers/);
