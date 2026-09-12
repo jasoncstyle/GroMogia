@@ -169,6 +169,7 @@ describe("cross-channel opportunity scoring", () => {
     assert.match(persist, /eq\(leadRecords\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(growthActions\.organizationId, organizationId\)/);
     assert.match(panel, /will not change today/);
+    assert.match(panel, /listed first/);
     assert.match(panel, /describeChannelScoreHeading/);
     assert.equal(
       describeChannelScoreHeading(0),
