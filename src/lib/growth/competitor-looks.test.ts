@@ -6,6 +6,7 @@ import { join } from "node:path";
 import {
   competitorHost,
   describeCompetitorPageGapsHeading,
+  sortCompetitorPageGapsForPanel,
   lookFromHtml,
   lookFromPublicContent,
   normalizeCompetitorUrl,
@@ -380,6 +381,14 @@ describe("competitor looks from owner-saved URLs", () => {
       "Pages they show that GroovGro has not read · 2 · all have a brief",
     );
     assert.match(panel, /briefedPageGapCount/);
+    assert.match(panel, /sortCompetitorPageGapsForPanel/);
+    assert.deepEqual(
+      sortCompetitorPageGapsForPanel(
+        [{ label: "Private coaching" }, { label: "Weekend beginner class" }],
+        (label) => label === "Private coaching",
+      ).map((row) => row.label),
+      ["Weekend beginner class", "Private coaching"],
+    );
     assert.match(panel, /Save a brief for this topic/);
     assert.match(helper, /planCompetitorCompare/);
     assert.match(helper, /planCompetitorPageGaps/);

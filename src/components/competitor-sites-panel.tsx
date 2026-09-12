@@ -27,6 +27,7 @@ import {
 } from "@/lib/growth/compete-moves";
 import {
   describeCompetitorPageGapsHeading,
+  sortCompetitorPageGapsForPanel,
   type CompetitorCompareView,
   type CompetitorPageGapView,
   type CompetitorSearchHint,
@@ -67,6 +68,9 @@ export function CompetitorSitesPanel({
   const briefedPageGapCount = pageGaps.filter((gap) =>
     hasSavedContentBriefForTopic(briefs, gap.label),
   ).length;
+  const pageGapsToShow = sortCompetitorPageGapsForPanel(pageGaps, (label) =>
+    hasSavedContentBriefForTopic(briefs, label),
+  );
   return (
     <Card>
       <CardHeader>
@@ -183,7 +187,7 @@ export function CompetitorSitesPanel({
                 those competitor sites named. It did not create a page.
               </p>
             ) : (
-              pageGaps.map((gap) => {
+              pageGapsToShow.map((gap) => {
                 const fieldKey = gap.label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
                 const fromGap = suggestCompeteMoveFromGap(gap.label);
                 return (
