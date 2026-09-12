@@ -695,7 +695,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Review pages competitors show that GroovGro has not read",
-      body: "On SEO, read the topics competitor websites show that GroovGro has not read on your site. It will not copy their words, create a page, or search Google.",
+      body: "On SEO, read the topics competitor websites show that GroovGro has not read on your site. Topics that still need a brief are listed first. It will not copy their words, create a page, or search Google.",
       evidence: ["competitor_sites.page_gaps"],
       href: "/app/seo",
     });
