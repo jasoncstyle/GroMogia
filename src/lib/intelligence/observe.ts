@@ -609,7 +609,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Review the ranked search queries",
-      body: "Open SEO to read which stored Search Console queries GroovGro marked worth a look. This is an estimate from stored numbers. GroovGro will not change the live website or buy keyword data.",
+      body: `Open SEO to read which stored Search Console queries GroovGro marked worth a look. ${keywordReviewCount} ${keywordReviewCount === 1 ? "is" : "are"} listed. This is an estimate from stored numbers. GroovGro will not change the live website or buy keyword data.`,
       evidence: ["keywords.opportunity_label=review"],
       href: "/app/seo",
     });
