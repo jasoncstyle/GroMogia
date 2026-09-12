@@ -15,6 +15,7 @@ import {
   actionsToQueue,
   actionsWaitingToQueue,
   describeExecutionCopy,
+  describeExecutionEmpty,
   describeExecutionHeading,
   describeExecutionRequest,
   executionActionTitle,
@@ -172,6 +173,9 @@ describe("later-run queue and disabled execute adapter", () => {
     assert.match(describeExecutionCopy(0), /adapter stays off/);
     assert.match(describeExecutionCopy(1), /listed first/);
     assert.match(panel, /describeExecutionCopy/);
+    assert.match(panel, /describeExecutionEmpty/);
+    assert.match(describeExecutionEmpty(0), /No approved work is waiting/);
+    assert.match(describeExecutionEmpty(2), /listed first/);
     assert.match(panel, /describeExecutionHeading/);
     assert.match(panel, /actionsWaitingToQueue/);
     assert.match(panel, /openActions.length/);
