@@ -6,6 +6,7 @@ import { join } from "node:path";
 import {
   describeKeywordHistory,
   describeKeywordHistoryHeading,
+  sortKeywordsForPanel,
   planKeywordHistory,
   type KeywordSnapshotInput,
 } from "./keywords";
@@ -177,6 +178,15 @@ describe("keyword history from Search Console", () => {
     );
     assert.match(panel, /not search volume or a traffic forecast/);
     assert.match(panel, /describeKeywordHistoryHeading/);
+    assert.match(panel, /sortKeywordsForPanel/);
+    assert.match(panel, /listed first/);
+    assert.deepEqual(
+      sortKeywordsForPanel([
+        { opportunityLabel: "watch" },
+        { opportunityLabel: "review" },
+      ]).map((row) => row.opportunityLabel),
+      ["review", "watch"],
+    );
     assert.equal(describeKeywordHistoryHeading(0), "Queries GroovGro has recorded");
     assert.equal(describeKeywordHistoryHeading(3), "Queries GroovGro has recorded · 3");
     assert.equal(
