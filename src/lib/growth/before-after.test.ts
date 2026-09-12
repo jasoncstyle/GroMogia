@@ -245,6 +245,7 @@ describe("stored before-and-after looks", () => {
       "utf8",
     );
     assert.match(intelligence, /BeforeAfterPanel/);
+    assert.match(intelligence, /Looks that moved down are listed first/);
     assert.match(nextStepPage, /BeforeAfterPanel/);
     assert.match(nextStepPage, /refreshBeforeAfterLooks/);
     const queries = readFileSync(

@@ -41,7 +41,7 @@ export default async function IntelligencePage() {
         <h1 className="text-2xl font-semibold tracking-tight">Intelligence</h1>
         <p className="text-muted-foreground">
           Observe and recommend only. This page is the briefing from connected
-          data. Read specialists and save them on Next step. Channels worth a look are listed first. GroovGro will
+          data. Read specialists and save them on Next step. Channels worth a look are listed first. Looks that moved down are listed first. GroovGro will
           not send email, change ads, edit a website, or take a payment.
           Live checkout stays on the existing Stripe destination.
         </p>
