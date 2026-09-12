@@ -2057,6 +2057,9 @@ Organization
 251. **Status text names group heading counts** — **IMPLEMENTED** this slice. Architecture and status summaries name counted remaining-work groups on the planner, missing-page list, and competitor page-topic list. GroovGro does not publish or add a Next step loop.
 252. **Compete-move group headings show how many sit in each group** — **IMPLEMENTED** this slice. When some compete moves are still planned and some are marked done, those group headings include a count. GroovGro does not do the work, publish, or add a Next step loop.
 253. **Status text names compete-move group heading counts** — **IMPLEMENTED** this slice. Architecture and status summaries name counted planned and done compete-move groups. GroovGro does not publish or add a Next step loop.
+254. **Intelligence names planned compete moves listed first** — **IMPLEMENTED** this slice. Intelligence can say planned compete moves are listed first. GroovGro does not do the work, publish, or add a Next step loop.
+255. **Compete card copy names planned moves listed first** — **IMPLEMENTED** this slice. The compete card says still-planned moves are listed first. GroovGro does not do the work, publish, or add a Next step loop.
+256. **Status text names planned compete moves listed first** — **IMPLEMENTED** this slice. Architecture and status summaries name Intelligence and compete-card copy that planned moves are listed first. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
