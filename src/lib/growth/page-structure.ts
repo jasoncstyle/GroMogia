@@ -77,6 +77,25 @@ export function isDefaultSchemaType(schemaType: string): boolean {
   return schemaType === DEFAULT_SCHEMA_TYPE;
 }
 
+export function describePageStructureHeading(
+  linkCount = 0,
+  schemaCount = 0,
+): string {
+  const base = "Links and schema facts from pages GroovGro already read";
+  if (linkCount <= 0 && schemaCount <= 0) {
+    return base;
+  }
+  const links =
+    linkCount <= 0
+      ? ""
+      : ` · ${linkCount} suggested ${linkCount === 1 ? "link" : "links"}`;
+  const schema =
+    schemaCount <= 0
+      ? ""
+      : ` · ${schemaCount} schema ${schemaCount === 1 ? "fact" : "facts"}`;
+  return `${base}${links}${schema}`;
+}
+
 export function pageDisplayTitle(page: StructurePage): string {
   return (page.title ?? "").trim() || (page.label ?? "").trim() || page.url;
 }
