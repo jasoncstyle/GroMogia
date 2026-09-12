@@ -7,12 +7,18 @@ import { CONTENT_BRIEF_SOURCE_COMPETITOR_GAP } from "./content-briefs";
 import {
   CONTENT_DRAFT_SOURCE_STORED_BRIEF,
   CONTENT_DRAFT_STATUS_DRAFT,
+  DRAFT_DIFFERENCE_CHECK_MISSING,
+  DRAFT_DIFFERENCE_CHECK_NAMES,
+  DRAFT_DIFFERENCE_CHECK_NO,
   DRAFT_OFFER_CHECK_MISSING_OFFER,
   DRAFT_OFFER_CHECK_NAMES_AN_OFFER,
   DRAFT_OFFER_CHECK_NO_OFFER,
+  countDraftDifferenceChecks,
   countDraftOfferChecks,
+  describeDraftDifferenceCheck,
   describeDraftOfferCheck,
   planContentDraft,
+  planDraftDifferenceChecks,
   planDraftOfferChecks,
   writeDraftFromBrief,
 } from "./content-drafts";
@@ -136,6 +142,8 @@ describe("workspace drafts from saved briefs", () => {
     assert.match(seoPage, /queuedDraftIds/);
     assert.match(seoPage, /later review from[\s\S]*the planner/);
     assert.match(panel, /describeDraftOfferCheck/);
+    assert.match(panel, /describeDraftDifferenceCheck/);
+    assert.match(seoPage, /what makes you different|what makes this business different/);
     assert.doesNotMatch(helper, /requestCompetitorSearch|geoLookupEnabled|cmsPublishEnabled/);
   });
 
@@ -208,5 +216,68 @@ describe("workspace drafts from saved briefs", () => {
       JSON.stringify(named),
       /oceansailing|morsealpha|stripe-osa/i,
     );
+  });
+
+  it("checks a competitor-topic draft against what makes the business different", () => {
+    const briefs = [
+      { id: BRIEF_A, source: CONTENT_BRIEF_SOURCE_COMPETITOR_GAP },
+    ];
+    const named = planDraftDifferenceChecks({
+      drafts: [
+        {
+          id: "dddddddd-dddd-dddd-dddd-ddddddddddd4",
+          briefId: BRIEF_A,
+          title: "Weekend beginner class",
+          body: writeDraftFromBrief({
+            organizationId: ORG_A,
+            briefId: BRIEF_A,
+            title: "Weekend beginner class",
+            briefSource: CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
+            ourDifference: ["Smaller groups"],
+          }),
+        },
+      ],
+      briefs,
+      differences: ["  Smaller groups  "],
+    });
+    assert.equal(named[0]?.status, DRAFT_DIFFERENCE_CHECK_NAMES);
+    assert.deepEqual(named[0]?.namedDifferences, ["Smaller groups"]);
+    assert.match(describeDraftDifferenceCheck(named[0]!), /Smaller groups/);
+
+    const missing = planDraftDifferenceChecks({
+      drafts: [
+        {
+          id: "dddddddd-dddd-dddd-dddd-ddddddddddd5",
+          briefId: BRIEF_A,
+          title: "Weekend beginner class",
+          body: "Cover what a competitor site showed.",
+        },
+      ],
+      briefs,
+      differences: ["Smaller groups"],
+    });
+    assert.equal(missing[0]?.status, DRAFT_DIFFERENCE_CHECK_MISSING);
+    assert.match(describeDraftDifferenceCheck(missing[0]!), /does not name what makes/);
+
+    const none = planDraftDifferenceChecks({
+      drafts: [
+        {
+          id: "dddddddd-dddd-dddd-dddd-ddddddddddd6",
+          briefId: BRIEF_A,
+          title: "Weekend beginner class",
+          body: "A workspace draft.",
+        },
+      ],
+      briefs,
+      differences: [],
+    });
+    assert.equal(none[0]?.status, DRAFT_DIFFERENCE_CHECK_NO);
+    assert.match(describeDraftDifferenceCheck(none[0]!), /Save that on Business/);
+    assert.deepEqual(countDraftDifferenceChecks(named), {
+      checked: 1,
+      namesADifference: 1,
+      missingDifference: 0,
+      noDifferenceToCheck: 0,
+    });
   });
 });
