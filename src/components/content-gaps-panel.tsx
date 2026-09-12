@@ -69,6 +69,7 @@ export function ContentGapsPanel({
                     >
                       <input type="hidden" name="query" value={gap.query} />
                       <input type="hidden" name="title" value={gap.query} />
+                      <input type="hidden" name="source" value="content_gap" />
                       <input
                         type="hidden"
                         name="outline"
