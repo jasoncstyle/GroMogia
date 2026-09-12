@@ -5,7 +5,10 @@ import { join } from "node:path";
 
 import {
   competitorHost,
+  competitorPageGapsNeedingBrief,
+  competitorPageGapsWithBrief,
   describeCompetitorPageGapsHeading,
+  shouldGroupCompetitorPageGaps,
   sortCompetitorPageGapsForPanel,
   lookFromHtml,
   lookFromPublicContent,
@@ -382,6 +385,29 @@ describe("competitor looks from owner-saved URLs", () => {
     );
     assert.match(panel, /briefedPageGapCount/);
     assert.match(panel, /sortCompetitorPageGapsForPanel/);
+    assert.match(panel, /Still need a brief/);
+    assert.match(panel, /Already have a brief/);
+    assert.equal(
+      shouldGroupCompetitorPageGaps(
+        [{ label: "Private coaching" }, { label: "Weekend beginner class" }],
+        (label) => label === "Private coaching",
+      ),
+      true,
+    );
+    assert.deepEqual(
+      competitorPageGapsNeedingBrief(
+        [{ label: "Private coaching" }, { label: "Weekend beginner class" }],
+        (label) => label === "Private coaching",
+      ).map((row) => row.label),
+      ["Weekend beginner class"],
+    );
+    assert.deepEqual(
+      competitorPageGapsWithBrief(
+        [{ label: "Private coaching" }, { label: "Weekend beginner class" }],
+        (label) => label === "Private coaching",
+      ).map((row) => row.label),
+      ["Private coaching"],
+    );
     assert.deepEqual(
       sortCompetitorPageGapsForPanel(
         [{ label: "Private coaching" }, { label: "Weekend beginner class" }],

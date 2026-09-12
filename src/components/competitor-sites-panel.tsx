@@ -26,7 +26,10 @@ import {
   type CompeteMoveView,
 } from "@/lib/growth/compete-moves";
 import {
+  competitorPageGapsNeedingBrief,
+  competitorPageGapsWithBrief,
   describeCompetitorPageGapsHeading,
+  shouldGroupCompetitorPageGaps,
   sortCompetitorPageGapsForPanel,
   type CompetitorCompareView,
   type CompetitorPageGapView,
@@ -65,11 +68,14 @@ export function CompetitorSitesPanel({
   pagesRead?: boolean
   canManage?: boolean
 }) {
+  const isBriefSaved = (label: string) =>
+    hasSavedContentBriefForTopic(briefs, label);
   const briefedPageGapCount = pageGaps.filter((gap) =>
-    hasSavedContentBriefForTopic(briefs, gap.label),
+    isBriefSaved(gap.label),
   ).length;
-  const pageGapsToShow = sortCompetitorPageGapsForPanel(pageGaps, (label) =>
-    hasSavedContentBriefForTopic(briefs, label),
+  const pageGapsToShow = sortCompetitorPageGapsForPanel(
+    pageGaps,
+    isBriefSaved,
   );
   return (
     <Card>
@@ -187,7 +193,32 @@ export function CompetitorSitesPanel({
                 those competitor sites named. It did not create a page.
               </p>
             ) : (
-              pageGapsToShow.map((gap) => {
+              (shouldGroupCompetitorPageGaps(pageGapsToShow, isBriefSaved)
+                ? [
+                    {
+                      label: "Still need a brief",
+                      rows: competitorPageGapsNeedingBrief(
+                        pageGapsToShow,
+                        isBriefSaved,
+                      ),
+                    },
+                    {
+                      label: "Already have a brief",
+                      rows: competitorPageGapsWithBrief(
+                        pageGapsToShow,
+                        isBriefSaved,
+                      ),
+                    },
+                  ]
+                : [{ label: "", rows: pageGapsToShow }]
+              ).map((group) => (
+                <div key={group.label || "page-gaps"} className="space-y-2">
+                  {group.label ? (
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {group.label}
+                    </p>
+                  ) : null}
+                  {group.rows.map((gap) => {
                 const fieldKey = gap.label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
                 const fromGap = suggestCompeteMoveFromGap(gap.label);
                 return (
@@ -260,7 +291,9 @@ export function CompetitorSitesPanel({
                   ) : null}
                 </div>
                 );
-              })
+              })}
+                </div>
+              ))
             )}
           </div>
         ) : null}
