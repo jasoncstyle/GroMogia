@@ -779,7 +779,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Write a workspace draft from a brief",
-      body: "On SEO, write a workspace draft from a saved brief. If the brief is from a competitor topic, write it in this business’s words. GroovGro will not publish it, copy a competitor, or change the live website.",
+      body: "On SEO, write a workspace draft from a saved brief. Briefs that still need a draft are listed first. If the brief is from a competitor topic, write it in this business’s words. GroovGro will not publish it, copy a competitor, or change the live website.",
       evidence: ["content_drafts missing"],
       href: "/app/seo",
     });
