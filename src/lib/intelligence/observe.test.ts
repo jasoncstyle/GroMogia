@@ -506,6 +506,22 @@ describe("intelligence observe", () => {
       ),
       false,
     );
+    const reviewQueries = saved.recommendations.find(
+      (item) => item.title === "Review questions saved for later AI visibility",
+    );
+    assert.ok(reviewQueries);
+    assert.equal(reviewQueries.href, "/app/seo");
+    assert.match(reviewQueries.body, /2 questions are listed/);
+    assert.match(
+      reviewQueries.body,
+      /Questions that still need a why are listed first/,
+    );
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Review questions saved for later AI visibility",
+      ),
+      false,
+    );
 
     const missing = buildIntelligenceBrief(
       facts({
