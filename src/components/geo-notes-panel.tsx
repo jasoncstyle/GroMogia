@@ -1,5 +1,11 @@
 import { createGeoNote } from "@/lib/actions/geo-notes";
-import { describeGeoNote, type GeoNoteView } from "@/lib/geo/notes";
+import {
+  describeGeoNote,
+  describeGeoNotesHeading,
+  geoNotesNamingAQuestion,
+  sortGeoNotesForPanel,
+  type GeoNoteView,
+} from "@/lib/geo/notes";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,20 +27,24 @@ export function GeoNotesPanel({
   querySuggestions: string[]
   canManage?: boolean
 }) {
+  const listed = sortGeoNotesForPanel(notes);
+  const namedQueryCount = geoNotesNamingAQuestion(notes).length;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>What you already hear from AI</CardTitle>
+        <CardTitle>
+          {describeGeoNotesHeading(notes.length, namedQueryCount)}
+        </CardTitle>
         <CardDescription>
           Save what you already heard when you asked an AI system about this
-          business. GroovGro will not ask AI systems, scrape answers, or treat
+          business. Notes that name a question are listed first. GroovGro will not ask AI systems, scrape answers, or treat
           one answer as truth.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {notes.length > 0 ? (
+        {listed.length > 0 ? (
           <div className="space-y-2">
-            {notes.map((note) => (
+            {listed.map((note) => (
               <div key={note.id} className="space-y-1">
                 <p className="text-sm font-medium">{describeGeoNote(note)}</p>
                 {note.note ? (

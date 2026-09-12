@@ -25,6 +25,7 @@ import { GeoNotesPanel } from "@/components/geo-notes-panel";
 import { GeoAuditsPanel } from "@/components/geo-audits-panel";
 import { GeoHistoryPanel } from "@/components/geo-history-panel";
 import { GeoQueriesPanel } from "@/components/geo-queries-panel";
+import { plannerQuerySuggestions } from "@/lib/growth/content-briefs";
 import { CompetitorSitesPanel } from "@/components/competitor-sites-panel";
 import { SerpNotesPanel } from "@/components/serp-notes-panel";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -108,23 +109,24 @@ export default async function SeoPage({
           Check the connected website and every GroovGro page. Approve drafts,
           then apply title, description, or heading changes onto that GroovGro
           page. Search Console is read-only. Queries from those snapshots are
-          stored as a history and given a conservative estimate rank. You can
+          stored as a history and given a conservative estimate rank. Queries worth a look are listed first. Looks that moved down are listed first. Names that still need a note are listed first. You can
           save a competitor website and read that homepage plus a few public pages
           on the same site. You can open a suggested search yourself and save a
           website you found. GroovGro can compare those looks to what you sell.
           It can name topics those sites show that GroovGro has not read on
-          your site.           You can save a brief for one of those topics. You can save
-          what you will do, including from one of those topics. Worth-a-look queries are compared
-          to pages GroovGro already read. You can save a brief to the planner
-          and write a workspace draft from it. A draft from a competitor topic
-          uses this business’s words.           GroovGro can check whether that draft
-          names a saved offer or what makes this business different. You can save that draft for later review from
-          the planner. Pages GroovGro already read
-          can show link suggestions and estimated schema types. You can save
-          what you already heard from an AI system. You can save questions to
-          remember for later AI visibility. You can save another snapshot of
-          what you already heard. Latest saved snapshots can show citation
-          gaps. GroovGro will not invent topics,
+          your site. You can save a brief for one of those topics. You can save
+          what you will do, including from one of those topics. How we might compete names saved sites and planned moves. Planned compete moves are listed first. Channels worth a look are listed first. Worth-a-look
+          queries are compared to pages GroovGro already read. You can save a
+          brief for one of those queries, or on the planner, then write a
+          workspace draft from it. Queries and topics that still need a brief
+          are listed first. A draft from a competitor topic uses this
+          business’s words. GroovGro can check whether that draft names a saved offer or what makes this business different. You can save that
+          draft for later review from the planner. Drafts that still need later review are listed first. Pages GroovGro already read
+          can show link suggestions and estimated schema types. Suggested links are listed first. Estimated schema types that are not the default are listed first. You can save
+          what you already heard from an AI system. Notes that name a question are listed first. You can save questions to
+          remember for later AI visibility. Questions that still need a why are listed first. You can save another snapshot of
+          what you already heard. Questions that still need a snapshot are listed first. Latest saved snapshots can show citation
+          gaps. Citation gaps are listed first. GroovGro will not invent topics,
           publish a page, add links or schema to the live website, ask AI
           systems, scrape answers, scrape Google, buy keyword or SERP data,
           buy ads, or change Stripe checkout. It may read a competitor
@@ -283,7 +285,9 @@ export default async function SeoPage({
 
           <ContentGapsPanel
             gaps={data.contentGaps}
+            briefs={data.contentBriefs}
             pagesRead={data.pagesRead}
+            canManage={session.permissions.includes("manage_seo")}
           />
 
           <ContentBriefsPanel
@@ -293,11 +297,14 @@ export default async function SeoPage({
               title: request.title,
               note: request.note,
             }))}
-            querySuggestions={[
-              ...data.contentGaps.map((gap) => gap.query),
-              ...data.competitorPageGaps.map((gap) => gap.label),
-              ...data.keywords.map((keyword) => keyword.query),
-            ].filter((query, index, rows) => rows.indexOf(query) === index)}
+            querySuggestions={plannerQuerySuggestions(
+              [
+                ...data.contentGaps.map((gap) => gap.query),
+                ...data.competitorPageGaps.map((gap) => gap.label),
+                ...data.keywords.map((keyword) => keyword.query),
+              ],
+              data.contentBriefs,
+            )}
             canManage={session.permissions.includes("manage_seo")}
           />
 

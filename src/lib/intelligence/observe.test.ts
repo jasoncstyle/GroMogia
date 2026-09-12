@@ -304,6 +304,8 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not change the live website/);
+    assert.match(recommended.body, /1 is listed/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(facts({ recordedKeywordCount: 3 })).recommendations.some(
         (item) => item.title === "Review the ranked search queries",
@@ -333,8 +335,20 @@ describe("intelligence observe", () => {
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /1 competitor note/);
     assert.match(observed.body, /did not look these businesses up/);
+    const remaining = saved.recommendations.find(
+      (item) => item.title === "Save a competitor you already see",
+    );
+    assert.ok(remaining);
+    assert.match(remaining.body, /1 still needs a note/);
+    assert.match(remaining.body, /listed first/);
     assert.equal(
-      saved.recommendations.some(
+      buildIntelligenceBrief(
+        facts({
+          recordedKeywordCount: 3,
+          knownCompetitorCount: 2,
+          serpNoteCount: 2,
+        }),
+      ).recommendations.some(
         (item) => item.title === "Save a competitor you already see",
       ),
       false,
@@ -353,6 +367,8 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not look anyone up/);
+    assert.match(recommended.body, /listed first/);
+    assert.match(recommended.body, /2 still need a note/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save a competitor you already see",
@@ -415,6 +431,19 @@ describe("intelligence observe", () => {
       ),
       false,
     );
+    const reviewNotes = saved.recommendations.find(
+      (item) => item.title === "Review AI visibility notes you already saved",
+    );
+    assert.ok(reviewNotes);
+    assert.equal(reviewNotes.href, "/app/seo");
+    assert.match(reviewNotes.body, /1 note is listed/);
+    assert.match(reviewNotes.body, /Notes that name a question are listed first/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Review AI visibility notes you already saved",
+      ),
+      false,
+    );
 
     const missing = buildIntelligenceBrief(
       facts({
@@ -474,6 +503,22 @@ describe("intelligence observe", () => {
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Save a question to remember for later AI visibility",
+      ),
+      false,
+    );
+    const reviewQueries = saved.recommendations.find(
+      (item) => item.title === "Review questions saved for later AI visibility",
+    );
+    assert.ok(reviewQueries);
+    assert.equal(reviewQueries.href, "/app/seo");
+    assert.match(reviewQueries.body, /2 questions are listed/);
+    assert.match(
+      reviewQueries.body,
+      /Questions that still need a why are listed first/,
+    );
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Review questions saved for later AI visibility",
       ),
       false,
     );
@@ -551,6 +596,7 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not ask an AI system/);
     assert.match(recommended.body, /treat one answer as truth/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save visibility history from what you already heard",
@@ -603,6 +649,8 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not ask an AI system/);
     assert.match(recommended.body, /treat one answer as truth/);
+    assert.match(recommended.body, /1 gap is listed/);
+    assert.match(recommended.body, /Citation gaps are listed first/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Review citation gaps from saved history",
@@ -658,6 +706,8 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/intelligence");
     assert.match(recommended.body, /will not change today's Next step/);
+    assert.match(recommended.body, /3 channels are listed/);
+    assert.match(recommended.body, /listed first/);
     assert.match(recommended.body, /buy ads, or run work/);
     assert.equal(
       buildIntelligenceBrief(facts()).observations.some(
@@ -773,6 +823,8 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/next-step");
     assert.match(recommended.body, /not an experiment GroovGro ran/);
     assert.match(recommended.body, /will not buy ads/);
+    assert.match(recommended.body, /2 looks are listed/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(facts()).observations.some(
         (item) => item.title === "What a stored before and after shows",
@@ -813,6 +865,8 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/next-step");
     assert.match(recommended.body, /will not run it/);
     assert.match(recommended.body, /will not run it, buy ads/);
+    assert.match(recommended.body, /2 are waiting/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(facts()).observations.some(
         (item) => item.title === "Approved work saved for later",
@@ -917,6 +971,7 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not scrape Google/);
+    assert.match(recommended.body, /How we might compete/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save a competitor website you already know",
@@ -952,18 +1007,46 @@ describe("intelligence observe", () => {
     assert.equal(gapObserved.href, "/app/seo");
     assert.match(gapObserved.body, /2 topics/);
     assert.match(gapObserved.body, /not a reason to copy their words or create a page/);
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          competitorPageGapCount: 2,
+          competitorGapBriefCount: 1,
+        }),
+      ).observations.find(
+        (item) =>
+          item.title ===
+          "Competitor page topics GroovGro has not read on your site",
+      )?.body ?? "",
+      /1 still has no brief on the planner/,
+    );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          competitorPageGapCount: 2,
+          competitorGapBriefCount: 2,
+        }),
+      ).observations.find(
+        (item) =>
+          item.title ===
+          "Competitor page topics GroovGro has not read on your site",
+      )?.body ?? "",
+      /All of those already have a brief on the planner/,
+    );
     const reviewGaps = pageGaps.recommendations.find(
       (item) => item.title === "Review pages competitors show that GroovGro has not read",
     );
     assert.ok(reviewGaps);
     assert.equal(reviewGaps.href, "/app/seo");
     assert.match(reviewGaps.body, /will not copy their words/);
+    assert.match(reviewGaps.body, /listed first/);
     const saveBrief = pageGaps.recommendations.find(
       (item) => item.title === "Save a brief for a competitor page topic",
     );
     assert.ok(saveBrief);
     assert.equal(saveBrief.href, "/app/seo");
     assert.match(saveBrief.body, /will not write the page/);
+    assert.match(saveBrief.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(
         facts({
@@ -985,6 +1068,40 @@ describe("intelligence observe", () => {
         (item) => item.title === "Save a brief for a competitor page topic",
       ),
       false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          competitorPageGapCount: 2,
+          competitorGapBriefCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a brief for a competitor page topic",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          competitorPageGapCount: 2,
+          competitorGapBriefCount: 2,
+        }),
+      ).recommendations.some(
+        (item) =>
+          item.title ===
+          "Review pages competitors show that GroovGro has not read",
+      ),
+      false,
+    );
+    assert.ok(
+      buildIntelligenceBrief(
+        facts({
+          competitorPageGapCount: 2,
+          competitorGapBriefCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a brief for a competitor page topic",
+      ),
     );
 
     const findMore = buildIntelligenceBrief(
@@ -1095,6 +1212,35 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not do that work/);
+    const fromCompare = buildIntelligenceBrief(
+      facts({
+        competitorLookCount: 2,
+        competeMoveCount: 0,
+      }),
+    );
+    const compareRec = fromCompare.recommendations.find(
+      (item) => item.title === "Save what you will do from that compare",
+    );
+    assert.ok(compareRec);
+    assert.equal(compareRec.href, "/app/seo");
+    assert.match(compareRec.body, /will not do that work/);
+    assert.equal(
+      fromCompare.recommendations.some(
+        (item) => item.title === "Save what you will do to compete",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          competitorLookCount: 2,
+          competeMoveCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save what you will do from that compare",
+      ),
+      false,
+    );
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save what you will do to compete",
@@ -1125,6 +1271,7 @@ describe("intelligence observe", () => {
     assert.ok(markDone);
     assert.equal(markDone.href, "/app/seo");
     assert.match(markDone.body, /will not do that work/);
+    assert.match(markDone.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(
         facts({
@@ -1164,12 +1311,40 @@ describe("intelligence observe", () => {
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /2 worth-a-look queries/);
     assert.match(observed.body, /did not invent topics/);
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentGapCount: 2,
+          contentGapBriefCount: 1,
+        }),
+      ).observations.find(
+        (item) =>
+          item.title ===
+          "Search queries with no matching page GroovGro has read",
+      )?.body ?? "",
+      /1 still has no brief on the planner/,
+    );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentGapCount: 2,
+          contentGapBriefCount: 2,
+        }),
+      ).observations.find(
+        (item) =>
+          item.title ===
+          "Search queries with no matching page GroovGro has read",
+      )?.body ?? "",
+      /All of those already have a brief on the planner/,
+    );
     const recommended = brief.recommendations.find(
       (item) => item.title === "Review queries with no matching page",
     );
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not create a page/);
+    assert.match(recommended.body, /save a brief from that list/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Review queries with no matching page",
@@ -1179,6 +1354,17 @@ describe("intelligence observe", () => {
     assert.equal(
       buildIntelligenceBrief(
         facts({ websiteConnected: false, contentGapCount: 2 }),
+      ).recommendations.some(
+        (item) => item.title === "Review queries with no matching page",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          contentGapCount: 2,
+          contentGapBriefCount: 2,
+        }),
       ).recommendations.some(
         (item) => item.title === "Review queries with no matching page",
       ),
@@ -1214,8 +1400,66 @@ describe("intelligence observe", () => {
       factsSummary(facts({ competitorGapBriefCount: 1 })),
       /competitor_gap_briefs=1/,
     );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentBriefCount: 2,
+          contentGapBriefCount: 1,
+        }),
+      ).observations.find((item) => item.title === "Content briefs on the planner")
+        ?.body ?? "",
+      /1 is from a missing-page query/,
+    );
+    assert.match(
+      factsSummary(facts({ contentGapBriefCount: 1 })),
+      /content_gap_briefs=1/,
+    );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentBriefCount: 2,
+          contentDraftCount: 1,
+        }),
+      ).observations.find((item) => item.title === "Content briefs on the planner")
+        ?.body ?? "",
+      /1 still needs a workspace draft/,
+    );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentBriefCount: 2,
+          contentDraftCount: 2,
+        }),
+      ).observations.find((item) => item.title === "Content briefs on the planner")
+        ?.body ?? "",
+      /All of those already have a workspace draft/,
+    );
     assert.equal(
       saved.recommendations.some(
+        (item) => item.title === "Save a content brief to the planner",
+      ),
+      true,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          contentGapCount: 1,
+          contentBriefCount: 1,
+          competitorGapBriefCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a content brief to the planner",
+      ),
+      true,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          contentGapCount: 1,
+          contentBriefCount: 1,
+          contentGapBriefCount: 1,
+        }),
+      ).recommendations.some(
         (item) => item.title === "Save a content brief to the planner",
       ),
       false,
@@ -1233,6 +1477,8 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not publish a page/);
+    assert.match(recommended.body, /from that list or the planner/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save a content brief to the planner",
@@ -1266,6 +1512,26 @@ describe("intelligence observe", () => {
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /2 workspace drafts/);
     assert.match(observed.body, /did not publish/);
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentDraftCount: 2,
+          cmsPublishRequestCount: 1,
+        }),
+      ).observations.find((item) => item.title === "Workspace content drafts")
+        ?.body ?? "",
+      /1 is still not saved for later review/,
+    );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentDraftCount: 2,
+          cmsPublishRequestCount: 2,
+        }),
+      ).observations.find((item) => item.title === "Workspace content drafts")
+        ?.body ?? "",
+      /All of those are already saved for later review/,
+    );
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Write a workspace draft from a brief",
@@ -1286,6 +1552,17 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not publish/);
     assert.match(recommended.body, /copy a competitor/);
+    assert.match(recommended.body, /listed first/);
+    assert.ok(
+      buildIntelligenceBrief(
+        facts({
+          contentBriefCount: 2,
+          contentDraftCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Write a workspace draft from a brief",
+      ),
+    );
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Write a workspace draft from a brief",
@@ -1319,11 +1596,30 @@ describe("intelligence observe", () => {
     assert.equal(observed.href, "/app/seo");
     assert.match(observed.body, /2 drafts/);
     assert.match(observed.body, /did not publish/);
+    const reviewQueued = saved.recommendations.find(
+      (item) => item.title === "Review a draft you saved for later",
+    );
+    assert.ok(reviewQueued);
+    assert.equal(reviewQueued.href, "/app/seo");
+    assert.match(reviewQueued.body, /will not publish/);
+    assert.match(reviewQueued.body, /Later review/);
+    assert.match(reviewQueued.body, /2 are waiting/);
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Save a draft for later CMS review",
       ),
       false,
+    );
+    const stillOpen = buildIntelligenceBrief(
+      facts({
+        contentDraftCount: 2,
+        cmsPublishRequestCount: 1,
+      }),
+    );
+    assert.ok(
+      stillOpen.recommendations.some(
+        (item) => item.title === "Save a draft for later CMS review",
+      ),
     );
 
     const missing = buildIntelligenceBrief(
@@ -1339,9 +1635,31 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not publish/);
     assert.match(recommended.body, /Content planner/);
+    assert.match(recommended.body, /listed first/);
+    assert.match(recommended.body, /1 still needs later review/);
+    assert.match(stillOpen.recommendations.find(
+      (item) => item.title === "Save a draft for later CMS review",
+    )?.body ?? "", /1 still needs later review/);
+    assert.equal(
+      missing.recommendations.some(
+        (item) => item.title === "Review a draft you saved for later",
+      ),
+      false,
+    );
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Save a draft for later CMS review",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          cmsPublishRequestCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Review a draft you saved for later",
       ),
       false,
     );
@@ -1530,6 +1848,14 @@ describe("intelligence observe", () => {
     assert.ok(recommended);
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not add links or schema/);
+    assert.match(recommended.body, /2 suggested links/);
+    assert.match(recommended.body, /3 schema facts/);
+    assert.match(recommended.body, /1 is not the default/);
+    assert.match(recommended.body, /listed first/);
+    assert.match(
+      recommended.body,
+      /Estimated schema types that are not the default are listed first/,
+    );
     assert.equal(
       withLinks.recommendations.some((item) => /add schema/i.test(item.title)),
       false,

@@ -5,6 +5,9 @@ import { join } from "node:path";
 
 import {
   describeSerpNote,
+  describeSerpNotesHeading,
+  knownCompetitorsNeedingNote,
+  sortKnownCompetitorsForNotes,
   planSerpNote,
   SERP_NOTE_SOURCE_OWNER,
 } from "./serp-notes";
@@ -90,6 +93,30 @@ describe("owner-entered SERP notes", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /did not look anyone up/);
     assert.match(panel, /will\s+not look these businesses up/);
+    assert.match(panel, /describeSerpNotesHeading/);
+    assert.equal(describeSerpNotesHeading(0), "Who else you already see");
+    assert.equal(describeSerpNotesHeading(2), "Who else you already see · 2");
+    assert.equal(
+      describeSerpNotesHeading(2, 1),
+      "Who else you already see · 2 · 1 still needs a note",
+    );
+    assert.match(panel, /knownCompetitorsNeedingNote/);
+    assert.match(panel, /sortKnownCompetitorsForNotes/);
+    assert.match(panel, /listed first/);
+    assert.deepEqual(
+      sortKnownCompetitorsForNotes(
+        ["Harbor Tours", "Private coaching"],
+        [{ competitorName: "Harbor Tours" }],
+      ),
+      ["Private coaching", "Harbor Tours"],
+    );
+    assert.deepEqual(
+      knownCompetitorsNeedingNote(
+        ["Harbor Tours", "Private coaching"],
+        [{ competitorName: "Harbor Tours" }],
+      ),
+      ["Private coaching"],
+    );
     assert.match(panel, /scrape search results/);
     assert.match(panel, /buy a SERP\s+vendor/);
     assert.match(provider, /does not scrape search results/);

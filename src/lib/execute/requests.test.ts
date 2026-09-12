@@ -13,6 +13,10 @@ import {
   EXECUTION_SOURCE_OWNER,
   EXECUTION_STATUS_REVIEW,
   actionsToQueue,
+  actionsWaitingToQueue,
+  describeExecutionCopy,
+  describeExecutionEmpty,
+  describeExecutionHeading,
   describeExecutionRequest,
   executionActionTitle,
   isAllowedExecutionAction,
@@ -165,8 +169,29 @@ describe("later-run queue and disabled execute adapter", () => {
       /eq\(growthActions\.organizationId, session\.organizationId\)/,
     );
     assert.match(actionFile, /did not run it/);
-    assert.match(panel, /will not run it/);
-    assert.match(panel, /adapter stays off/);
+    assert.match(describeExecutionCopy(0), /will not run it/);
+    assert.match(describeExecutionCopy(0), /adapter stays off/);
+    assert.match(describeExecutionCopy(1), /listed first/);
+    assert.match(panel, /describeExecutionCopy/);
+    assert.match(panel, /describeExecutionEmpty/);
+    assert.match(describeExecutionEmpty(0), /No approved work is waiting/);
+    assert.match(describeExecutionEmpty(2), /listed first/);
+    assert.match(panel, /describeExecutionHeading/);
+    assert.match(panel, /actionsWaitingToQueue/);
+    assert.match(panel, /openActions.length/);
+    assert.match(panel, /All approved work is already saved for later/);
+    assert.equal(describeExecutionHeading(0), "What is waiting to run later");
+    assert.equal(
+      describeExecutionHeading(2, 1),
+      "What is waiting to run later · 2 waiting · 1 still needs a later-run save",
+    );
+    assert.deepEqual(
+      actionsWaitingToQueue(
+        [{ id: "open" }, { id: "queued" }],
+        [{ actionId: "queued" }],
+      ).map((action) => action.id),
+      ["open"],
+    );
     assert.match(adapter, /never fetches/);
     assert.match(queries, /eq\(executionRequests\.organizationId, organizationId\)/);
 
@@ -200,7 +225,9 @@ describe("later-run queue and disabled execute adapter", () => {
     );
     assert.match(nextStepPage, /ExecutionPanel/);
     assert.match(workPage, /ExecutionPanel/);
+    assert.match(workPage, /Remaining later-run work is listed first/);
     assert.match(intelligence, /ExecutionPanel/);
+    assert.match(intelligence, /Remaining later-run work is listed first/);
     assert.match(bootstrap, /growth_director/);
     assert.match(
       bootstrap,

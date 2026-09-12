@@ -62,3 +62,30 @@ export function describeGeoNote(
   }
   return `The owner already heard: ${note.heard}`;
 }
+
+export function geoNotesNamingAQuestion<T extends { query?: string | null }>(
+  rows: T[],
+): T[] {
+  return rows.filter((row) => Boolean((row.query ?? "").trim()));
+}
+
+export function describeGeoNotesHeading(noteCount = 0, namedQueryCount = 0): string {
+  if (noteCount <= 0 && namedQueryCount <= 0) {
+    return "What you already hear from AI";
+  }
+  const notes = noteCount <= 0 ? "" : ` · ${noteCount}`;
+  const named =
+    namedQueryCount <= 0 ? "" : ` · ${namedQueryCount} name a question`;
+  return `What you already hear from AI${notes}${named}`;
+}
+
+export function sortGeoNotesForPanel<T extends { query?: string | null }>(
+  rows: T[],
+): T[] {
+  return [...rows].sort((left, right) => {
+    const leftQuery = (left.query ?? "").trim() ? 0 : 1;
+    const rightQuery = (right.query ?? "").trim() ? 0 : 1;
+    if (leftQuery !== rightQuery) return leftQuery - rightQuery;
+    return 0;
+  });
+}

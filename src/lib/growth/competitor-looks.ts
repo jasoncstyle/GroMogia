@@ -658,6 +658,69 @@ export function planCompetitorPageGaps(input: {
     }));
 }
 
+export function describeCompetitorPageGapsHeading(
+  gapCount: number,
+  pagesRead = true,
+  briefedCount = 0,
+): string {
+  if (!pagesRead || gapCount <= 0) {
+    return "Pages they show that GroovGro has not read";
+  }
+  if (briefedCount <= 0) {
+    return `Pages they show that GroovGro has not read · ${gapCount}`;
+  }
+  if (briefedCount >= gapCount) {
+    return `Pages they show that GroovGro has not read · ${gapCount} · all have a brief`;
+  }
+  const verb = briefedCount === 1 ? "has" : "have";
+  return `Pages they show that GroovGro has not read · ${gapCount} · ${briefedCount} already ${verb} a brief`;
+}
+
+export function sortCompetitorPageGapsForPanel<T extends { label: string }>(
+  gaps: T[],
+  isSaved: (label: string) => boolean,
+): T[] {
+  return [...gaps].sort((left, right) => {
+    const leftSaved = isSaved(left.label) ? 1 : 0;
+    const rightSaved = isSaved(right.label) ? 1 : 0;
+    return leftSaved - rightSaved;
+  });
+}
+
+export function competitorPageGapsNeedingBrief<T extends { label: string }>(
+  gaps: T[],
+  isSaved: (label: string) => boolean,
+): T[] {
+  return gaps.filter((gap) => !isSaved(gap.label));
+}
+
+export function competitorPageGapsWithBrief<T extends { label: string }>(
+  gaps: T[],
+  isSaved: (label: string) => boolean,
+): T[] {
+  return gaps.filter((gap) => isSaved(gap.label));
+}
+
+export function shouldGroupCompetitorPageGaps<T extends { label: string }>(
+  gaps: T[],
+  isSaved: (label: string) => boolean,
+): boolean {
+  return (
+    competitorPageGapsNeedingBrief(gaps, isSaved).length > 0 &&
+    competitorPageGapsWithBrief(gaps, isSaved).length > 0
+  );
+}
+
+export function describeCompetitorPageGapGroupHeading(
+  kind: "need" | "have",
+  count: number,
+): string {
+  if (kind === "need") {
+    return `Still need a brief · ${count}`;
+  }
+  return `Already have a brief · ${count}`;
+}
+
 export function competitorSitesToShow(
   rows: CompetitorSiteView[],
 ): CompetitorSiteView[] {

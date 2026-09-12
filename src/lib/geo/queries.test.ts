@@ -6,10 +6,13 @@ import { join } from "node:path";
 import { requestGeoLookup } from "./adapter";
 import { GEO_EVIDENCE_OWNER } from "./architecture";
 import {
+  describeGeoQueriesHeading,
   describeGeoQuery,
   GEO_QUERY_SOURCE_OWNER,
   GEO_QUERY_STATUS_PLANNED,
+  geoQueriesNeedingWhy,
   planGeoQuery,
+  sortGeoQueriesForPanel,
 } from "./queries";
 import { configuredGeoProvider, geoLookupEnabled } from "./provider";
 
@@ -93,6 +96,42 @@ describe("GEO query library and disabled adapter", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /did not ask an AI system/);
     assert.match(panel, /will not ask an AI/);
+    assert.match(panel, /Questions that still need a why are listed first/);
+    assert.match(panel, /describeGeoQueriesHeading/);
+    assert.match(panel, /sortGeoQueriesForPanel/);
+    assert.match(panel, /geoQueriesNeedingWhy/);
+    assert.equal(
+      geoQueriesNeedingWhy([
+        { why: "I already ask this." },
+        { why: "" },
+        { why: "  " },
+      ]).length,
+      2,
+    );
+    assert.deepEqual(
+      sortGeoQueriesForPanel([
+        { query: "Who to hire for harbor day trips", why: "I already ask this." },
+        { query: "Weekend beginner class nearby", why: "" },
+        { query: "Private coaching", why: "  " },
+      ]).map((row) => row.query),
+      [
+        "Weekend beginner class nearby",
+        "Private coaching",
+        "Who to hire for harbor day trips",
+      ],
+    );
+    assert.equal(
+      describeGeoQueriesHeading(0),
+      "Questions to remember for later AI visibility",
+    );
+    assert.equal(
+      describeGeoQueriesHeading(2),
+      "Questions to remember for later AI visibility · 2",
+    );
+    assert.equal(
+      describeGeoQueriesHeading(3, 1),
+      "Questions to remember for later AI visibility · 3 · 1 still need a why",
+    );
     assert.match(panel, /scrape answers/);
     assert.match(adapter, /never fetches/);
     assert.match(queries, /eq\(geoQueries\.organizationId, organizationId\)/);
@@ -107,6 +146,7 @@ describe("GEO query library and disabled adapter", () => {
       "utf8",
     );
     assert.match(seoPage, /GeoQueriesPanel/);
+    assert.match(seoPage, /Questions that still need a why are listed first/);
     const catalog = readFileSync(
       join(process.cwd(), "src/lib/modules/catalog.ts"),
       "utf8",

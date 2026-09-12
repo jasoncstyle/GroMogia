@@ -87,6 +87,43 @@ export function describeGeoHistory(
   return `For “${row.query}”, the owner already heard mentioned: ${row.mentioned}, cited: ${row.cited}.`;
 }
 
+export function sortQueriesForHistory<T extends { id: string }>(
+  queries: T[],
+  history: Array<{ queryId: string }>,
+): T[] {
+  const needing = new Set(
+    queriesNeedingHistory(queries, history).map((query) => query.id),
+  );
+  return [...queries].sort((left, right) => {
+    const leftNeed = needing.has(left.id) ? 0 : 1;
+    const rightNeed = needing.has(right.id) ? 0 : 1;
+    return leftNeed - rightNeed;
+  });
+}
+
+export function queriesNeedingHistory<T extends { id: string }>(
+  queries: T[],
+  history: Array<{ queryId: string }>,
+): T[] {
+  const saved = new Set(history.map((row) => row.queryId));
+  return queries.filter((query) => !saved.has(query.id));
+}
+
+export function describeGeoHistoryHeading(
+  historyCount = 0,
+  needingCount = 0,
+): string {
+  if (historyCount <= 0 && needingCount <= 0) {
+    return "What you already measured";
+  }
+  const history = historyCount <= 0 ? "" : ` · ${historyCount}`;
+  const remaining =
+    needingCount <= 0
+      ? ""
+      : ` · ${needingCount} still ${needingCount === 1 ? "needs" : "need"} a snapshot`;
+  return `What you already measured${history}${remaining}`;
+}
+
 export function historyToShow(rows: GeoHistoryView[]): GeoHistoryView[] {
   return rows.slice(0, GEO_HISTORY_MAX_SHOWN);
 }

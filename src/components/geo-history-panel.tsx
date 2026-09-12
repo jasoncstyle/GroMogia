@@ -1,6 +1,9 @@
 import { createGeoHistory } from "@/lib/actions/geo-history";
 import {
   describeGeoHistory,
+  describeGeoHistoryHeading,
+  queriesNeedingHistory,
+  sortQueriesForHistory,
   GEO_ANSWER_NO,
   GEO_ANSWER_UNSURE,
   GEO_ANSWER_YES,
@@ -30,14 +33,18 @@ export function GeoHistoryPanel({
   queries: GeoQueryView[]
   canManage?: boolean
 }) {
+  const needingCount = queriesNeedingHistory(queries, history).length;
+  const queriesToShow = sortQueriesForHistory(queries, history);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>What you already measured</CardTitle>
+        <CardTitle>
+          {describeGeoHistoryHeading(history.length, needingCount)}
+        </CardTitle>
         <CardDescription>
           Save another snapshot of what you already heard for a library
-          question. GroovGro will not ask an AI system, scrape answers, or
-          treat one answer as truth.
+          question. Questions that still need a snapshot are listed first.
+          GroovGro will not ask an AI system, scrape answers, or treat one answer as truth.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -86,7 +93,7 @@ export function GeoHistoryPanel({
                 <option value="" disabled>
                   Pick a saved question
                 </option>
-                {queries.map((query) => (
+                {queriesToShow.map((query) => (
                   <option key={query.id} value={query.id}>
                     {query.query}
                   </option>

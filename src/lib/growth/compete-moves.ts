@@ -78,8 +78,79 @@ export function planCompeteMoveDone(input: {
   };
 }
 
+export function sortCompeteMovesForList(
+  rows: CompeteMoveView[],
+): CompeteMoveView[] {
+  const planned = rows.filter((row) => row.status !== COMPETE_MOVE_STATUS_DONE);
+  const done = rows.filter((row) => row.status === COMPETE_MOVE_STATUS_DONE);
+  return [...planned, ...done];
+}
+
 export function competeMovesToShow(rows: CompeteMoveView[]): CompeteMoveView[] {
-  return rows.slice(0, COMPETE_MOVE_MAX_SHOWN);
+  return sortCompeteMovesForList(rows).slice(0, COMPETE_MOVE_MAX_SHOWN);
+}
+
+export function plannedCompeteMoves<T extends Pick<CompeteMoveView, "status">>(
+  moves: T[],
+): T[] {
+  return moves.filter((move) => move.status !== COMPETE_MOVE_STATUS_DONE);
+}
+
+export function doneCompeteMoves<T extends Pick<CompeteMoveView, "status">>(
+  moves: T[],
+): T[] {
+  return moves.filter((move) => move.status === COMPETE_MOVE_STATUS_DONE);
+}
+
+export function countPlannedCompeteMoves(
+  moves: Pick<CompeteMoveView, "status">[],
+): number {
+  return plannedCompeteMoves(moves).length;
+}
+
+export function shouldGroupCompeteMoves(
+  moves: Pick<CompeteMoveView, "status">[],
+): boolean {
+  return plannedCompeteMoves(moves).length > 0 && doneCompeteMoves(moves).length > 0;
+}
+
+export function describeCompeteMoveGroupHeading(
+  kind: "planned" | "done",
+  count: number,
+): string {
+  if (kind === "planned") {
+    return `Still planned · ${count}`;
+  }
+  return `Marked done · ${count}`;
+}
+
+export function describeCompeteCardHeading(
+  siteCount = 0,
+  plannedCount = 0,
+): string {
+  if (siteCount <= 0 && plannedCount <= 0) {
+    return "How we might compete";
+  }
+  const sites =
+    siteCount <= 0
+      ? ""
+      : ` · ${siteCount} ${siteCount === 1 ? "site" : "sites"}`;
+  const planned =
+    plannedCount <= 0 ? "" : ` · ${plannedCount} still planned`;
+  return `How we might compete${sites}${planned}`;
+}
+
+export function describeCompeteMoveListHeading(
+  plannedCount: number,
+  totalCount: number,
+): string {
+  if (totalCount <= 0) {
+    return "What I will do";
+  }
+  if (plannedCount > 0) {
+    return `What I will do · ${plannedCount} still planned`;
+  }
+  return "What I will do · all marked done";
 }
 
 export function normalizeCompeteMoveTitle(title?: string | null): string {
@@ -95,6 +166,15 @@ export function hasSavedCompeteMoveTitle(
     return false;
   }
   return moves.some((move) => normalizeCompeteMoveTitle(move.title) === needle);
+}
+
+export function refuseDuplicateCompeteMoveTitle(
+  moves: Pick<CompeteMoveView, "title">[],
+  title?: string | null,
+): void {
+  if (hasSavedCompeteMoveTitle(moves, title)) {
+    throw new Error("That compete move is already saved.");
+  }
 }
 
 export function suggestCompeteMoveFromCompare(input?: {

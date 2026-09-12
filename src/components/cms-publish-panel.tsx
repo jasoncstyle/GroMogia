@@ -1,6 +1,10 @@
 import { createCmsPublishRequest } from "@/lib/actions/cms-publish";
 import {
   describeCmsPublishRequest,
+  describePublishQueueCopy,
+  describePublishQueueEmpty,
+  describePublishQueueHeading,
+  draftsWaitingToQueue,
   type CmsPublishView,
 } from "@/lib/cms/requests";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -26,13 +30,15 @@ export function CmsPublishPanel({
   drafts: Array<{ id: string; title: string }>
   canManage?: boolean
 }) {
+  const openDrafts = draftsWaitingToQueue(drafts, requests);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Drafts ready to publish later</CardTitle>
+        <CardTitle>
+          {describePublishQueueHeading(requests.length, openDrafts.length)}
+        </CardTitle>
         <CardDescription>
-          Save a workspace draft for later review. GroovGro will not publish,
-          write a CMS, or change the live website. The adapter stays off.
+          {describePublishQueueCopy(openDrafts.length)}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -43,8 +49,7 @@ export function CmsPublishPanel({
           </p>
         ) : requests.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No drafts are waiting for later review. A later allowed adapter
-            can publish after you approve. Not in this slice.
+            {describePublishQueueEmpty(openDrafts.length)}
           </p>
         ) : (
           <div className="space-y-2">
@@ -61,7 +66,7 @@ export function CmsPublishPanel({
           </div>
         )}
 
-        {canManage && drafts.length > 0 ? (
+        {canManage && openDrafts.length > 0 ? (
           <SaveForm
             action={createCmsPublishRequest}
             successMessage="Publish request saved. GroovGro did not publish or change the live website."
@@ -80,7 +85,7 @@ export function CmsPublishPanel({
                 <option value="" disabled>
                   Pick a workspace draft
                 </option>
-                {drafts.map((draft) => (
+                {openDrafts.map((draft) => (
                   <option key={draft.id} value={draft.id}>
                     {draft.title}
                   </option>
@@ -100,6 +105,11 @@ export function CmsPublishPanel({
             </div>
             <SaveButton type="submit">Save for later review</SaveButton>
           </SaveForm>
+        ) : canManage && drafts.length > 0 ? (
+          <p className="text-sm text-muted-foreground">
+            All workspace drafts are already saved for later review. GroovGro
+            did not publish or change the live website.
+          </p>
         ) : canManage ? null : (
           <p className="text-sm text-muted-foreground">
             An owner or admin can save a draft for later review. GroovGro will

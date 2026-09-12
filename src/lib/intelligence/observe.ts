@@ -68,6 +68,7 @@ export type IntelligenceFacts = {
   competeMoveDoneCount?: number
   competeMovePlannedCount?: number
   competitorGapBriefCount?: number
+  contentGapBriefCount?: number
   draftOfferCheckCount?: number
   draftMissingOfferCount?: number
   draftNoOfferToCheckCount?: number
@@ -223,6 +224,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     facts.competeMovePlannedCount ??
     Math.max(0, competeMoveCount - competeMoveDoneCount);
   const competitorGapBriefCount = facts.competitorGapBriefCount ?? 0;
+  const contentGapBriefCount = facts.contentGapBriefCount ?? 0;
   const draftOfferCheckCount = facts.draftOfferCheckCount ?? 0;
   const draftMissingOfferCount = facts.draftMissingOfferCount ?? 0;
   const draftNoOfferToCheckCount = facts.draftNoOfferToCheckCount ?? 0;
@@ -280,40 +282,77 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   }
 
   if (competitorPageGapCount > 0) {
+    const remainingCompetitorGapBriefs = Math.max(
+      0,
+      competitorPageGapCount - competitorGapBriefCount,
+    );
+    const remainingNote =
+      competitorGapBriefCount <= 0
+        ? ""
+        : remainingCompetitorGapBriefs <= 0
+          ? " All of those already have a brief on the planner."
+          : ` ${remainingCompetitorGapBriefs} still ${remainingCompetitorGapBriefs === 1 ? "has" : "have"} no brief on the planner.`;
     observations.push({
       kind: "observation",
       title: "Competitor page topics GroovGro has not read on your site",
-      body: `${competitorPageGapCount} topic${competitorPageGapCount === 1 ? "" : "s"} on competitor websites you named ${competitorPageGapCount === 1 ? "has" : "have"} no matching page among the pages GroovGro already read. This is not a reason to copy their words or create a page.`,
+      body: `${competitorPageGapCount} topic${competitorPageGapCount === 1 ? "" : "s"} on competitor websites you named ${competitorPageGapCount === 1 ? "has" : "have"} no matching page among the pages GroovGro already read.${remainingNote} This is not a reason to copy their words or create a page.`,
       evidence: ["competitor_sites.page_gaps"],
       href: "/app/seo",
     });
   }
 
   if (contentGapCount > 0) {
+    const remainingContentGapBriefs = Math.max(
+      0,
+      contentGapCount - contentGapBriefCount,
+    );
+    const remainingNote =
+      contentGapBriefCount <= 0
+        ? ""
+        : remainingContentGapBriefs <= 0
+          ? " All of those already have a brief on the planner."
+          : ` ${remainingContentGapBriefs} still ${remainingContentGapBriefs === 1 ? "has" : "have"} no brief on the planner.`;
     observations.push({
       kind: "observation",
       title: "Search queries with no matching page GroovGro has read",
-      body: `${contentGapCount} worth-a-look ${contentGapCount === 1 ? "query has" : "queries have"} no matching page among the pages GroovGro already read. GroovGro did not invent topics or create a page.`,
+      body: `${contentGapCount} worth-a-look ${contentGapCount === 1 ? "query has" : "queries have"} no matching page among the pages GroovGro already read.${remainingNote} GroovGro did not invent topics or create a page.`,
       evidence: ["content_gaps.status=gap"],
       href: "/app/seo",
     });
   }
 
   if (contentBriefCount > 0) {
+    const remainingDrafts = Math.max(0, contentBriefCount - contentDraftCount);
+    const remainingDraftNote =
+      contentDraftCount <= 0
+        ? ""
+        : remainingDrafts <= 0
+          ? " All of those already have a workspace draft."
+          : ` ${remainingDrafts} still ${remainingDrafts === 1 ? "needs" : "need"} a workspace draft.`;
     observations.push({
       kind: "observation",
       title: "Content briefs on the planner",
-      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner.${competitorGapBriefCount > 0 ? ` ${competitorGapBriefCount} ${competitorGapBriefCount === 1 ? "is" : "are"} from a competitor page topic.` : ""} GroovGro did not publish a page or copy a competitor.`,
+      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner.${competitorGapBriefCount > 0 ? ` ${competitorGapBriefCount} ${competitorGapBriefCount === 1 ? "is" : "are"} from a competitor page topic.` : ""}${contentGapBriefCount > 0 ? ` ${contentGapBriefCount} ${contentGapBriefCount === 1 ? "is" : "are"} from a missing-page query.` : ""}${remainingDraftNote} GroovGro did not publish a page or copy a competitor.`,
       evidence: ["content_briefs"],
       href: "/app/seo",
     });
   }
 
   if (contentDraftCount > 0) {
+    const remainingReviews = Math.max(
+      0,
+      contentDraftCount - cmsPublishRequestCount,
+    );
+    const remainingReviewNote =
+      cmsPublishRequestCount <= 0
+        ? ""
+        : remainingReviews <= 0
+          ? " All of those are already saved for later review."
+          : ` ${remainingReviews} ${remainingReviews === 1 ? "is" : "are"} still not saved for later review.`;
     observations.push({
       kind: "observation",
       title: "Workspace content drafts",
-      body: `${contentDraftCount} workspace ${contentDraftCount === 1 ? "draft is" : "drafts are"} saved from a brief. GroovGro did not publish them or change the live website.`,
+      body: `${contentDraftCount} workspace ${contentDraftCount === 1 ? "draft is" : "drafts are"} saved from a brief.${remainingReviewNote} GroovGro did not publish them or change the live website.`,
       evidence: ["content_drafts.status=draft"],
       href: "/app/seo",
     });
@@ -540,7 +579,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Read the stored before and after",
-      body: "Open Next step to read the first stored Goal number next to the latest stored Goal number. This is not an experiment GroovGro ran. GroovGro will not buy ads or change the plan.",
+      body: `Open Next step to read the first stored Goal number next to the latest stored Goal number. ${beforeAfterLookCount} ${beforeAfterLookCount === 1 ? "look is" : "looks are"} listed. Looks that moved down are listed first. This is not an experiment GroovGro ran. GroovGro will not buy ads or change the plan.`,
       evidence: ["before_after_looks.source=stored_goal"],
       href: "/app/next-step",
     });
@@ -550,7 +589,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Read the later-run queue",
-      body: "Open Next step to read approved work saved for later. GroovGro will not run it, buy ads, or change the live website.",
+      body: `Open Next step to read approved work saved for later. ${executionRequestCount} ${executionRequestCount === 1 ? "is" : "are"} waiting. Remaining work that still needs a later-run save is listed first. GroovGro will not run it, buy ads, or change the live website.`,
       evidence: ["execution_requests.status=review"],
       href: "/app/next-step",
     });
@@ -570,7 +609,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Review the ranked search queries",
-      body: "Open SEO to read which stored Search Console queries GroovGro marked worth a look. This is an estimate from stored numbers. GroovGro will not change the live website or buy keyword data.",
+      body: `Open SEO to read which stored Search Console queries GroovGro marked worth a look. ${keywordReviewCount} ${keywordReviewCount === 1 ? "is" : "are"} listed. Queries worth a look are listed first. This is an estimate from stored numbers. GroovGro will not change the live website or buy keyword data.`,
       evidence: ["keywords.opportunity_label=review"],
       href: "/app/seo",
     });
@@ -612,7 +651,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Save a competitor website you already know",
-      body: "On SEO, save a competitor website you already know. GroovGro can read that public page. It will not scrape Google or invent who you compete with.",
+      body: "On SEO, save a competitor website you already know. Saved sites are listed on How we might compete. GroovGro can read that public page. It will not scrape Google or invent who you compete with.",
       evidence: ["competitor_sites missing"],
       href: "/app/seo",
     });
@@ -623,37 +662,50 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     (competitorLookCount > 0 || competitorPageGapCount > 0) &&
     competeMoveCount === 0
   ) {
-    recommendations.push({
-      kind: "recommendation",
-      title: "Save what you will do to compete",
-      body: "On SEO, save what you will do after looking at a competitor site. GroovGro will not do that work or change the live website.",
-      evidence: ["compete_moves missing"],
-      href: "/app/seo",
-    });
+    if (competitorLookCount >= 2) {
+      recommendations.push({
+        kind: "recommendation",
+        title: "Save what you will do from that compare",
+        body: "On SEO, save what you will do from how saved competitor websites compare to what you sell. GroovGro will not do that work, copy their words, or change the live website.",
+        evidence: ["compete_moves.compare missing"],
+        href: "/app/seo",
+      });
+    } else {
+      recommendations.push({
+        kind: "recommendation",
+        title: "Save what you will do to compete",
+        body: "On SEO, save what you will do after looking at a competitor site. GroovGro will not do that work or change the live website.",
+        evidence: ["compete_moves missing"],
+        href: "/app/seo",
+      });
+    }
   }
 
   if (facts.websiteConnected && competeMovePlannedCount > 0) {
     recommendations.push({
       kind: "recommendation",
       title: "Mark a compete move done when you finish it",
-      body: "On SEO, mark a saved compete move as done after you do it. GroovGro will not do that work or change the live website.",
+      body: "On SEO, mark a saved compete move as done after you do it. Moves still planned are listed first. GroovGro will not do that work or change the live website.",
       evidence: ["compete_moves.planned"],
       href: "/app/seo",
     });
   }
 
-  if (facts.websiteConnected && competitorPageGapCount > 0) {
+  if (
+    facts.websiteConnected &&
+    competitorPageGapCount > competitorGapBriefCount
+  ) {
     recommendations.push({
       kind: "recommendation",
       title: "Review pages competitors show that GroovGro has not read",
-      body: "On SEO, read the topics competitor websites show that GroovGro has not read on your site. It will not copy their words, create a page, or search Google.",
+      body: "On SEO, read the topics competitor websites show that GroovGro has not read on your site. Topics that still need a brief are listed first. It will not copy their words, create a page, or search Google.",
       evidence: ["competitor_sites.page_gaps"],
       href: "/app/seo",
     });
     recommendations.push({
       kind: "recommendation",
       title: "Save a brief for a competitor page topic",
-      body: "On SEO, save a planner brief for a topic a competitor site shows. GroovGro will not write the page, copy their words, or search Google.",
+      body: "On SEO, save a planner brief for a topic a competitor site shows. Topics that still need a brief are listed first. GroovGro will not write the page, copy their words, or search Google.",
       evidence: ["content_briefs.competitor_gap"],
       href: "/app/seo",
     });
@@ -689,37 +741,33 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   if (
     facts.websiteConnected &&
     keywordCount > 0 &&
-    knownCompetitorCount > 0 &&
-    serpNoteCount === 0
+    knownCompetitorCount > serpNoteCount
   ) {
+    const remainingNotes = knownCompetitorCount - serpNoteCount;
     recommendations.push({
       kind: "recommendation",
       title: "Save a competitor you already see",
-      body: "On SEO, save a note about a competitor you already see for a recorded query. GroovGro will not look anyone up or scrape search results.",
+      body: `On SEO, save a note about a competitor you already see for a recorded query. ${remainingNotes} still ${remainingNotes === 1 ? "needs" : "need"} a note. Names that still need a note are listed first. GroovGro will not look anyone up or scrape search results.`,
       evidence: ["serp_notes missing"],
       href: "/app/seo",
     });
   }
 
-  if (facts.websiteConnected && contentGapCount > 0) {
+  if (facts.websiteConnected && contentGapCount > contentGapBriefCount) {
     recommendations.push({
       kind: "recommendation",
       title: "Review queries with no matching page",
-      body: "Open SEO to read which worth-a-look queries GroovGro could not find on pages it already read. GroovGro will not create a page.",
+      body: "Open SEO to read which worth-a-look queries GroovGro could not find on pages it already read. You can save a brief from that list. Queries that still need a brief are listed first. GroovGro will not create a page.",
       evidence: ["content_gaps.status=gap"],
       href: "/app/seo",
     });
   }
 
-  if (
-    facts.websiteConnected &&
-    contentGapCount > 0 &&
-    contentBriefCount === 0
-  ) {
+  if (facts.websiteConnected && contentGapCount > contentGapBriefCount) {
     recommendations.push({
       kind: "recommendation",
       title: "Save a content brief to the planner",
-      body: "On SEO, save a brief for a missing-page query. GroovGro will not publish a page.",
+      body: "On SEO, save a brief for a missing-page query from that list or the planner. Queries that still need a brief are listed first. GroovGro will not publish a page.",
       evidence: ["content_briefs missing"],
       href: "/app/seo",
     });
@@ -727,13 +775,12 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
 
   if (
     facts.websiteConnected &&
-    contentBriefCount > 0 &&
-    contentDraftCount === 0
+    contentBriefCount > contentDraftCount
   ) {
     recommendations.push({
       kind: "recommendation",
       title: "Write a workspace draft from a brief",
-      body: "On SEO, write a workspace draft from a saved brief. If the brief is from a competitor topic, write it in this business’s words. GroovGro will not publish it, copy a competitor, or change the live website.",
+      body: "On SEO, write a workspace draft from a saved brief. Briefs that still need a draft are listed first. If the brief is from a competitor topic, write it in this business’s words. GroovGro will not publish it, copy a competitor, or change the live website.",
       evidence: ["content_drafts missing"],
       href: "/app/seo",
     });
@@ -781,14 +828,24 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
 
   if (
     facts.websiteConnected &&
-    contentDraftCount > 0 &&
-    cmsPublishRequestCount === 0
+    contentDraftCount > cmsPublishRequestCount
   ) {
+    const remainingReviews = contentDraftCount - cmsPublishRequestCount;
     recommendations.push({
       kind: "recommendation",
       title: "Save a draft for later CMS review",
-      body: "On SEO, save a workspace draft for later review from the Content planner. GroovGro will not publish or change the live website.",
+      body: `On SEO, save a workspace draft for later review from the Content planner. ${remainingReviews} still ${remainingReviews === 1 ? "needs" : "need"} later review. Drafts that still need later review are listed first. GroovGro will not publish or change the live website.`,
       evidence: ["cms_publish_requests missing"],
+      href: "/app/seo",
+    });
+  }
+
+  if (facts.websiteConnected && cmsPublishRequestCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review a draft you saved for later",
+      body: `On SEO, read a workspace draft you saved for later review. ${cmsPublishRequestCount} ${cmsPublishRequestCount === 1 ? "is" : "are"} waiting on Later review. GroovGro will not publish or change the live website.`,
+      evidence: ["cms_publish_requests.status=review"],
       href: "/app/seo",
     });
   }
@@ -800,7 +857,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Review link and schema facts from pages already read",
-      body: "Open SEO to read link suggestions and estimated schema types from pages GroovGro already read. GroovGro will not add links or schema to the live website.",
+      body: `Open SEO to read link suggestions and estimated schema types from pages GroovGro already read. ${internalLinkCount} suggested ${internalLinkCount === 1 ? "link" : "links"} and ${schemaFactCount} schema ${schemaFactCount === 1 ? "fact" : "facts"} are listed.${schemaReviewCount > 0 ? ` ${schemaReviewCount} ${schemaReviewCount === 1 ? "is" : "are"} not the default.` : ""} Suggested links are listed first. Estimated schema types that are not the default are listed first. GroovGro will not add links or schema to the live website.`,
       evidence: ["internal_link_suggestions", "page_schema_facts"],
       href: "/app/seo",
     });
@@ -812,6 +869,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Save what you already hear from AI",
       body: "On SEO, save what you already heard when you asked an AI system about this business. GroovGro will not ask an AI system or scrape answers.",
       evidence: ["geo_notes missing"],
+      href: "/app/seo",
+    });
+  }
+
+  if (facts.websiteConnected && geoNoteCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review AI visibility notes you already saved",
+      body: `Open SEO to read what you already heard from an AI system. ${geoNoteCount} ${geoNoteCount === 1 ? "note is" : "notes are"} listed. Notes that name a question are listed first. GroovGro will not ask an AI system or scrape answers.`,
+      evidence: ["geo_notes.source=owner"],
       href: "/app/seo",
     });
   }
@@ -830,6 +897,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && geoQueryCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Review questions saved for later AI visibility",
+      body: `Open SEO to read questions you already care about. ${geoQueryCount} ${geoQueryCount === 1 ? "question is" : "questions are"} listed. Questions that still need a why are listed first. GroovGro will not ask an AI system or scrape answers.`,
+      evidence: ["geo_queries.source=owner"],
+      href: "/app/seo",
+    });
+  }
+
   if (
     facts.websiteConnected &&
     geoQueryCount > 0 &&
@@ -838,7 +915,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Save visibility history from what you already heard",
-      body: "On SEO, save another snapshot of what you already heard for a library question. GroovGro will not ask an AI system, scrape answers, or treat one answer as truth.",
+      body: "On SEO, save another snapshot of what you already heard for a library question. Questions that still need a snapshot are listed first. GroovGro will not ask an AI system, scrape answers, or treat one answer as truth.",
       evidence: ["geo_history missing"],
       href: "/app/seo",
     });
@@ -852,7 +929,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Review citation gaps from saved history",
-      body: "Open SEO to read which library questions the latest saved snapshot marked as not mentioned or not cited. GroovGro will not ask an AI system, scrape answers, or treat one answer as truth.",
+      body: `Open SEO to read which library questions the latest saved snapshot marked as not mentioned or not cited. ${geoAuditGapCount} ${geoAuditGapCount === 1 ? "gap is" : "gaps are"} listed. Citation gaps are listed first. GroovGro will not ask an AI system, scrape answers, or treat one answer as truth.`,
       evidence: ["geo_audits.status=citation_gap"],
       href: "/app/seo",
     });
@@ -862,7 +939,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Compare stored people, pages, content, and AI visibility",
-      body: "Read the comparison of stored channels on Intelligence. GroovGro will not change today's Next step from this estimate, buy ads, or run work.",
+      body: `Read the comparison of stored channels on Intelligence. ${comparable.length} ${comparable.length === 1 ? "channel is" : "channels are"} listed. Channels worth a look are listed first. GroovGro will not change today's Next step from this estimate, buy ads, or run work.`,
       evidence: ["channel_scores.source=stored_workspace"],
       href: "/app/intelligence",
     });
@@ -987,6 +1064,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
       Math.max(0, (facts.competeMoveCount ?? 0) - (facts.competeMoveDoneCount ?? 0))
     }`,
     `competitor_gap_briefs=${facts.competitorGapBriefCount ?? 0}`,
+    `content_gap_briefs=${facts.contentGapBriefCount ?? 0}`,
     `draft_offer_checks=${facts.draftOfferCheckCount ?? 0}`,
     `draft_missing_offers=${facts.draftMissingOfferCount ?? 0}`,
     `draft_no_offer_checks=${facts.draftNoOfferToCheckCount ?? 0}`,

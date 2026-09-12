@@ -5,6 +5,7 @@ import { normalizeQueryKey } from "@/lib/growth/seo-actions";
  */
 export const CONTENT_BRIEF_SOURCE_OWNER = "owner";
 export const CONTENT_BRIEF_SOURCE_COMPETITOR_GAP = "competitor_gap";
+export const CONTENT_BRIEF_SOURCE_CONTENT_GAP = "content_gap";
 export const CONTENT_BRIEF_STATUS_PLANNED = "planned";
 
 export type ContentBriefDraft = {
@@ -15,7 +16,10 @@ export type ContentBriefDraft = {
   audience: string
   outline: string
   status: typeof CONTENT_BRIEF_STATUS_PLANNED
-  source: typeof CONTENT_BRIEF_SOURCE_OWNER | typeof CONTENT_BRIEF_SOURCE_COMPETITOR_GAP
+  source:
+    | typeof CONTENT_BRIEF_SOURCE_OWNER
+    | typeof CONTENT_BRIEF_SOURCE_COMPETITOR_GAP
+    | typeof CONTENT_BRIEF_SOURCE_CONTENT_GAP
 };
 
 export type ContentBriefView = {
@@ -74,10 +78,15 @@ export function planContentBrief(input: {
   if (!title) {
     throw new Error("Add a working title for this brief.");
   }
-  const fromGap = input.source === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP;
+  const fromCompetitor = input.source === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP;
+  const fromContentGap = input.source === CONTENT_BRIEF_SOURCE_CONTENT_GAP;
   const outline =
     (input.outline ?? "").trim() ||
-    (fromGap ? suggestBriefOutlineFromCompetitorGap(query || title, input.fromNames) : "");
+    (fromCompetitor
+      ? suggestBriefOutlineFromCompetitorGap(query || title, input.fromNames)
+      : fromContentGap
+        ? suggestBriefOutline(query || title)
+        : "");
   return {
     organizationId: input.organizationId,
     query,
@@ -86,7 +95,11 @@ export function planContentBrief(input: {
     audience: (input.audience ?? "").trim(),
     outline,
     status: CONTENT_BRIEF_STATUS_PLANNED,
-    source: fromGap ? CONTENT_BRIEF_SOURCE_COMPETITOR_GAP : CONTENT_BRIEF_SOURCE_OWNER,
+    source: fromCompetitor
+      ? CONTENT_BRIEF_SOURCE_COMPETITOR_GAP
+      : fromContentGap
+        ? CONTENT_BRIEF_SOURCE_CONTENT_GAP
+        : CONTENT_BRIEF_SOURCE_OWNER,
   };
 }
 
@@ -105,12 +118,81 @@ export function hasSavedContentBriefForTopic(
   });
 }
 
+export function refuseDuplicateContentBrief(
+  briefs: Pick<ContentBriefView, "query" | "title">[],
+  topic?: string | null,
+): void {
+  if (hasSavedContentBriefForTopic(briefs, topic)) {
+    throw new Error("That brief is already on the planner.");
+  }
+}
+
+export function plannerQuerySuggestions(
+  suggestions: string[],
+  briefs: Pick<ContentBriefView, "query" | "title">[],
+): string[] {
+  return suggestions.filter((query, index, rows) => {
+    const title = suggestBriefTitle(query);
+    if (!title) {
+      return false;
+    }
+    return (
+      rows.findIndex((row) => suggestBriefTitle(row) === title) === index &&
+      !hasSavedContentBriefForTopic(briefs, title)
+    );
+  });
+}
+
+export function sortContentBriefsForPlanner<T extends { draft?: unknown }>(
+  briefs: T[],
+): T[] {
+  return [...briefs].sort((left, right) => {
+    const leftDraft = left.draft ? 1 : 0;
+    const rightDraft = right.draft ? 1 : 0;
+    return leftDraft - rightDraft;
+  });
+}
+
+export function briefsNeedingDraft<T extends { draft?: unknown }>(
+  briefs: T[],
+): T[] {
+  return briefs.filter((brief) => !brief.draft);
+}
+
+export function briefsWithDraft<T extends { draft?: unknown }>(
+  briefs: T[],
+): T[] {
+  return briefs.filter((brief) => Boolean(brief.draft));
+}
+
+export function shouldGroupPlannerBriefs<T extends { draft?: unknown }>(
+  briefs: T[],
+): boolean {
+  return (
+    briefsNeedingDraft(briefs).length > 0 && briefsWithDraft(briefs).length > 0
+  );
+}
+
+export function describePlannerGroupHeading(
+  kind: "need" | "have",
+  count: number,
+): string {
+  if (kind === "need") {
+    return `Still need a workspace draft · ${count}`;
+  }
+  return `Already has a workspace draft · ${count}`;
+}
+
 export function describeContentBrief(
   brief: Pick<ContentBriefView, "query" | "title" | "source">,
 ): string {
   const fromGap = brief.source === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP;
+  const fromContentGap = brief.source === CONTENT_BRIEF_SOURCE_CONTENT_GAP;
   if (brief.query && fromGap) {
     return `Planned from a competitor topic: “${brief.title}” for “${brief.query}”.`;
+  }
+  if (brief.query && fromContentGap) {
+    return `Planned from a missing-page query: “${brief.title}” for “${brief.query}”.`;
   }
   if (brief.query) {
     return `Planned: “${brief.title}” for “${brief.query}”.`;

@@ -138,6 +138,28 @@ export function planKeywordHistory(input: {
   };
 }
 
+export function sortKeywordsForPanel<T extends { opportunityLabel?: string }>(
+  keywords: T[],
+): T[] {
+  return [...keywords].sort((left, right) => {
+    const leftReview = left.opportunityLabel === "review" ? 0 : 1;
+    const rightReview = right.opportunityLabel === "review" ? 0 : 1;
+    return leftReview - rightReview;
+  });
+}
+
+export function describeKeywordHistoryHeading(
+  keywordCount = 0,
+  reviewCount = 0,
+): string {
+  if (keywordCount <= 0 && reviewCount <= 0) {
+    return "Queries GroovGro has recorded";
+  }
+  const recorded = keywordCount <= 0 ? "" : ` · ${keywordCount}`;
+  const review = reviewCount <= 0 ? "" : ` · ${reviewCount} worth a look`;
+  return `Queries GroovGro has recorded${recorded}${review}`;
+}
+
 export function describeKeywordHistory(points: KeywordHistoryPoint[]): string {
   const ordered = [...points].sort((a, b) => a.endDate.localeCompare(b.endDate));
   if (ordered.length === 0) {

@@ -8,10 +8,19 @@ import {
   COMPETE_MOVE_STATUS_DONE,
   COMPETE_MOVE_STATUS_PLANNED,
   competeMovesToShow,
+  countPlannedCompeteMoves,
   describeCompeteMove,
+  describeCompeteMoveGroupHeading,
+  describeCompeteCardHeading,
+  describeCompeteMoveListHeading,
+  doneCompeteMoves,
   hasSavedCompeteMoveTitle,
+  plannedCompeteMoves,
+  shouldGroupCompeteMoves,
+  sortCompeteMovesForList,
   planCompeteMove,
   planCompeteMoveDone,
+  refuseDuplicateCompeteMoveTitle,
   suggestCompeteMoveFromCompare,
   suggestCompeteMoveFromGap,
 } from "./compete-moves";
@@ -158,5 +167,114 @@ describe("owner-saved compete moves", () => {
       false,
     );
     assert.match(panel, /Already saved as what you will do/);
+    assert.throws(
+      () =>
+        refuseDuplicateCompeteMoveTitle(
+          [{ title: "Cover “Weekend beginner class” on our site" }],
+          "cover “Weekend beginner class” on our site",
+        ),
+      /already saved/,
+    );
+    refuseDuplicateCompeteMoveTitle(
+      [{ title: "Cover “Weekend beginner class” on our site" }],
+      "Cover “Private coaching” on our site",
+    );
+    assert.match(action, /refuseDuplicateCompeteMoveTitle/);
+    assert.match(action, /eq\(competeMoves\.organizationId, session\.organizationId\)/);
+    assert.equal(
+      countPlannedCompeteMoves([
+        { status: COMPETE_MOVE_STATUS_PLANNED },
+        { status: COMPETE_MOVE_STATUS_DONE },
+      ]),
+      1,
+    );
+    assert.equal(
+      describeCompeteMoveListHeading(1, 2),
+      "What I will do · 1 still planned",
+    );
+    assert.equal(
+      describeCompeteMoveListHeading(0, 2),
+      "What I will do · all marked done",
+    );
+    assert.match(panel, /describeCompeteMoveListHeading/);
+    assert.match(panel, /describeCompeteCardHeading/);
+    assert.equal(describeCompeteCardHeading(0, 0), "How we might compete");
+    assert.equal(
+      describeCompeteCardHeading(2, 1),
+      "How we might compete · 2 sites · 1 still planned",
+    );
+    const sorted = sortCompeteMovesForList([
+      {
+        id: "done-first",
+        title: "Done move",
+        note: "",
+        status: COMPETE_MOVE_STATUS_DONE,
+        createdAt: new Date(0),
+      },
+      {
+        id: "planned-next",
+        title: "Planned move",
+        note: "",
+        status: COMPETE_MOVE_STATUS_PLANNED,
+        createdAt: new Date(0),
+      },
+    ]);
+    assert.deepEqual(
+      sorted.map((row) => row.id),
+      ["planned-next", "done-first"],
+    );
+    assert.equal(
+      competeMovesToShow([
+        ...new Array(12).fill(null).map((_, index) => ({
+          id: `done-${index}`,
+          title: "Done move",
+          note: "",
+          status: COMPETE_MOVE_STATUS_DONE,
+          createdAt: new Date(0),
+        })),
+        {
+          id: "planned-keep",
+          title: "Planned move",
+          note: "",
+          status: COMPETE_MOVE_STATUS_PLANNED,
+          createdAt: new Date(0),
+        },
+      ])[0]?.id,
+      "planned-keep",
+    );
+    assert.equal(
+      shouldGroupCompeteMoves([
+        { status: COMPETE_MOVE_STATUS_PLANNED },
+        { status: COMPETE_MOVE_STATUS_DONE },
+      ]),
+      true,
+    );
+    assert.equal(
+      shouldGroupCompeteMoves([{ status: COMPETE_MOVE_STATUS_PLANNED }]),
+      false,
+    );
+    assert.equal(
+      plannedCompeteMoves([
+        { id: "a", status: COMPETE_MOVE_STATUS_DONE },
+        { id: "b", status: COMPETE_MOVE_STATUS_PLANNED },
+      ]).map((row) => row.id)[0],
+      "b",
+    );
+    assert.equal(
+      doneCompeteMoves([
+        { id: "a", status: COMPETE_MOVE_STATUS_DONE },
+        { id: "b", status: COMPETE_MOVE_STATUS_PLANNED },
+      ]).map((row) => row.id)[0],
+      "a",
+    );
+    assert.match(panel, /describeCompeteMoveGroupHeading/);
+    assert.equal(
+      describeCompeteMoveGroupHeading("planned", 2),
+      "Still planned · 2",
+    );
+    assert.equal(
+      describeCompeteMoveGroupHeading("done", 1),
+      "Marked done · 1",
+    );
   });
 });

@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { requestGeoLookup } from "./adapter";
 import {
   auditsToShow,
+  describeCitationGapsHeading,
   describeGeoAudit,
   GEO_AUDIT_SOURCE_STORED_HISTORY,
   GEO_AUDIT_STATUS_COVERED,
@@ -210,6 +211,16 @@ describe("GEO audits from saved history", () => {
     assert.match(persist, /eq\(geoAudits\.organizationId, organizationId\)/);
     assert.match(panel, /will not ask an AI system/);
     assert.match(panel, /treat one answer as truth/);
+    assert.match(panel, /Citation gaps are listed first/);
+    assert.match(panel, /describeCitationGapsHeading/);
+    assert.equal(
+      describeCitationGapsHeading(0),
+      "Citation gaps from what you already measured",
+    );
+    assert.equal(
+      describeCitationGapsHeading(2),
+      "Citation gaps from what you already measured · 2",
+    );
     assert.match(queries, /persistGeoAudits/);
 
     const nextStep = readFileSync(
@@ -222,6 +233,7 @@ describe("GEO audits from saved history", () => {
       "utf8",
     );
     assert.match(seoPage, /GeoAuditsPanel/);
+    assert.match(seoPage, /Citation gaps are listed first/);
     const seoPersist = readFileSync(
       join(process.cwd(), "src/lib/growth/persist-seo-actions.ts"),
       "utf8",

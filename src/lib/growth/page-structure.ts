@@ -77,6 +77,47 @@ export function isDefaultSchemaType(schemaType: string): boolean {
   return schemaType === DEFAULT_SCHEMA_TYPE;
 }
 
+export function describePageStructureHeading(
+  linkCount = 0,
+  schemaCount = 0,
+  schemaReviewCount = 0,
+): string {
+  const base = "Links and schema facts from pages GroovGro already read";
+  if (linkCount <= 0 && schemaCount <= 0 && schemaReviewCount <= 0) {
+    return base;
+  }
+  const links =
+    linkCount <= 0
+      ? ""
+      : ` · ${linkCount} suggested ${linkCount === 1 ? "link" : "links"}`;
+  const schema =
+    schemaCount <= 0
+      ? ""
+      : ` · ${schemaCount} schema ${schemaCount === 1 ? "fact" : "facts"}`;
+  const review =
+    schemaReviewCount <= 0
+      ? ""
+      : ` · ${schemaReviewCount} not the default`;
+  return `${base}${links}${schema}${review}`;
+}
+
+export function describePageStructureGroupHeading(
+  group: "links" | "schema",
+  count: number,
+  reviewCount = 0,
+): string {
+  if (group === "links") {
+    return count <= 0
+      ? "Suggested links"
+      : `Suggested links · ${count}`;
+  }
+  const review =
+    reviewCount <= 0 ? "" : ` · ${reviewCount} not the default`;
+  return count <= 0
+    ? `Estimated schema types${review}`
+    : `Estimated schema types · ${count}${review}`;
+}
+
 export function pageDisplayTitle(page: StructurePage): string {
   return (page.title ?? "").trim() || (page.label ?? "").trim() || page.url;
 }
@@ -142,8 +183,19 @@ export function linksToShow(rows: InternalLinkDraft[]): InternalLinkView[] {
   }));
 }
 
+export function sortSchemaFactsForPanel<
+  T extends { schemaType: string; pageUrl?: string },
+>(rows: T[]): T[] {
+  return [...rows].sort((left, right) => {
+    const leftDefault = isDefaultSchemaType(left.schemaType) ? 1 : 0;
+    const rightDefault = isDefaultSchemaType(right.schemaType) ? 1 : 0;
+    if (leftDefault !== rightDefault) return leftDefault - rightDefault;
+    return (left.pageUrl ?? "").localeCompare(right.pageUrl ?? "");
+  });
+}
+
 export function schemaFactsToShow(rows: SchemaFactDraft[]): SchemaFactView[] {
-  return rows.map((row) => ({
+  return sortSchemaFactsForPanel(rows).map((row) => ({
     pageId: row.pageId,
     pageUrl: row.pageUrl,
     pageTitle: row.pageTitle,

@@ -5,6 +5,12 @@ import { join } from "node:path";
 
 import {
   competitorHost,
+  competitorPageGapsNeedingBrief,
+  competitorPageGapsWithBrief,
+  describeCompetitorPageGapGroupHeading,
+  describeCompetitorPageGapsHeading,
+  shouldGroupCompetitorPageGaps,
+  sortCompetitorPageGapsForPanel,
   lookFromHtml,
   lookFromPublicContent,
   normalizeCompetitorUrl,
@@ -360,8 +366,66 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(panel, /You\s+run the search/);
     assert.match(panel, /ownerSearchHref/);
     assert.match(panel, /How these sites compare/);
-    assert.match(panel, /Pages they show that GroovGro has not read/);
+    assert.match(panel, /describeCompetitorPageGapsHeading/);
+    assert.match(helper, /Pages they show that GroovGro has not read/);
+    assert.equal(
+      describeCompetitorPageGapsHeading(0),
+      "Pages they show that GroovGro has not read",
+    );
+    assert.equal(
+      describeCompetitorPageGapsHeading(2, true),
+      "Pages they show that GroovGro has not read · 2",
+    );
+    assert.equal(
+      describeCompetitorPageGapsHeading(2, true, 1),
+      "Pages they show that GroovGro has not read · 2 · 1 already has a brief",
+    );
+    assert.equal(
+      describeCompetitorPageGapsHeading(2, true, 2),
+      "Pages they show that GroovGro has not read · 2 · all have a brief",
+    );
+    assert.match(panel, /briefedPageGapCount/);
+    assert.match(panel, /sortCompetitorPageGapsForPanel/);
+    assert.match(panel, /describeCompetitorPageGapGroupHeading/);
+    assert.equal(
+      describeCompetitorPageGapGroupHeading("need", 2),
+      "Still need a brief · 2",
+    );
+    assert.equal(
+      describeCompetitorPageGapGroupHeading("have", 1),
+      "Already have a brief · 1",
+    );
+    assert.equal(
+      shouldGroupCompetitorPageGaps(
+        [{ label: "Private coaching" }, { label: "Weekend beginner class" }],
+        (label) => label === "Private coaching",
+      ),
+      true,
+    );
+    assert.deepEqual(
+      competitorPageGapsNeedingBrief(
+        [{ label: "Private coaching" }, { label: "Weekend beginner class" }],
+        (label) => label === "Private coaching",
+      ).map((row) => row.label),
+      ["Weekend beginner class"],
+    );
+    assert.deepEqual(
+      competitorPageGapsWithBrief(
+        [{ label: "Private coaching" }, { label: "Weekend beginner class" }],
+        (label) => label === "Private coaching",
+      ).map((row) => row.label),
+      ["Private coaching"],
+    );
+    assert.deepEqual(
+      sortCompetitorPageGapsForPanel(
+        [{ label: "Private coaching" }, { label: "Weekend beginner class" }],
+        (label) => label === "Private coaching",
+      ).map((row) => row.label),
+      ["Weekend beginner class", "Private coaching"],
+    );
     assert.match(panel, /Save a brief for this topic/);
+    assert.match(panel, /listed first/);
+    assert.match(panel, /Moves still planned/);
     assert.match(helper, /planCompetitorCompare/);
     assert.match(helper, /planCompetitorPageGaps/);
     assert.match(helper, /stored_looks/);
@@ -396,6 +460,8 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(seoPage, /compare those looks to what you sell/);
     assert.match(seoPage, /topics those sites show/);
     assert.match(seoPage, /save a brief for one of those topics/);
+    assert.match(seoPage, /How we might compete names saved sites/);
+    assert.match(seoPage, /Planned compete moves are listed first/);
     const observe = readFileSync(
       join(process.cwd(), "src/lib/intelligence/observe.ts"),
       "utf8",

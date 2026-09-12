@@ -6,6 +6,12 @@ import { join } from "node:path";
 import {
   CONTENT_GAP_STATUS_COVERED,
   CONTENT_GAP_STATUS_GAP,
+  contentGapsNeedingBrief,
+  contentGapsWithBrief,
+  describeContentGapGroupHeading,
+  describeContentGapsHeading,
+  shouldGroupContentGaps,
+  sortContentGapsForPanel,
   gapsToShow,
   pageCoversQuery,
   planContentGaps,
@@ -151,6 +157,10 @@ describe("content gap detection from stored pages", () => {
       join(process.cwd(), "src/components/content-gaps-panel.tsx"),
       "utf8",
     );
+    const seoPage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
+      "utf8",
+    );
     const nextStep = readFileSync(
       join(process.cwd(), "src/lib/growth/next-step.ts"),
       "utf8",
@@ -162,8 +172,69 @@ describe("content gap detection from stored pages", () => {
     assert.match(persist, /eq\(websiteDiscoveredPages\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(contentGaps\.organizationId, organizationId\)/);
     assert.match(panel, /did not invent topics/);
-    assert.match(panel, /Save a brief on the planner/);
-    assert.doesNotMatch(nextStep, /contentGap|content_gap|Write a brief/);
+    assert.match(panel, /listed first/);
+    assert.match(panel, /Save a brief for this query/);
+    assert.match(panel, /createContentBrief/);
+    assert.match(panel, /content_gap/);
+    assert.match(panel, /Already saved on the planner/);
+    assert.match(seoPage, /briefs=\{data\.contentBriefs\}/);
+    assert.match(panel, /describeContentGapsHeading/);
+    assert.equal(
+      describeContentGapsHeading(0),
+      "Queries with no matching page GroovGro has read",
+    );
+    assert.equal(
+      describeContentGapsHeading(3),
+      "Queries with no matching page GroovGro has read · 3",
+    );
+    assert.equal(
+      describeContentGapsHeading(3, 1),
+      "Queries with no matching page GroovGro has read · 3 · 1 already has a brief",
+    );
+    assert.equal(
+      describeContentGapsHeading(3, 3),
+      "Queries with no matching page GroovGro has read · 3 · all have a brief",
+    );
+    assert.match(panel, /describeContentGapsHeading\(gaps.length, briefedCount\)/);
+    assert.match(panel, /sortContentGapsForPanel/);
+    assert.match(panel, /describeContentGapGroupHeading/);
+    assert.equal(
+      describeContentGapGroupHeading("need", 2),
+      "Still need a brief · 2",
+    );
+    assert.equal(
+      describeContentGapGroupHeading("have", 1),
+      "Already have a brief · 1",
+    );
+    assert.equal(
+      shouldGroupContentGaps(
+        [{ query: "Private coaching" }, { query: "Weekend beginner class" }],
+        (query) => query === "Private coaching",
+      ),
+      true,
+    );
+    assert.deepEqual(
+      contentGapsNeedingBrief(
+        [{ query: "Private coaching" }, { query: "Weekend beginner class" }],
+        (query) => query === "Private coaching",
+      ).map((row) => row.query),
+      ["Weekend beginner class"],
+    );
+    assert.deepEqual(
+      contentGapsWithBrief(
+        [{ query: "Private coaching" }, { query: "Weekend beginner class" }],
+        (query) => query === "Private coaching",
+      ).map((row) => row.query),
+      ["Private coaching"],
+    );
+    assert.deepEqual(
+      sortContentGapsForPanel(
+        [{ query: "Private coaching" }, { query: "Weekend beginner class" }],
+        (query) => query === "Private coaching",
+      ).map((row) => row.query),
+      ["Weekend beginner class", "Private coaching"],
+    );
+    assert.doesNotMatch(nextStep, /contentGap|content_gap|Write a brief|Save a brief for this query/);
     const seoPersist = readFileSync(
       join(process.cwd(), "src/lib/growth/persist-seo-actions.ts"),
       "utf8",

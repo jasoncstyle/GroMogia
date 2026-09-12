@@ -4,7 +4,14 @@ import { describe, it } from "node:test";
 import { join } from "node:path";
 
 import { GEO_EVIDENCE_OWNER, isOwnerGeoEvidence } from "./architecture";
-import { describeGeoNote, planGeoNote, GEO_NOTE_SOURCE_OWNER } from "./notes";
+import {
+  describeGeoNote,
+  describeGeoNotesHeading,
+  geoNotesNamingAQuestion,
+  planGeoNote,
+  sortGeoNotesForPanel,
+  GEO_NOTE_SOURCE_OWNER,
+} from "./notes";
 import { configuredGeoProvider, geoLookupEnabled } from "./provider";
 
 const ORG_A = "11111111-1111-1111-1111-111111111111";
@@ -104,6 +111,32 @@ describe("owner-entered GEO notes", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /did not ask an AI system/);
     assert.match(panel, /will not ask AI systems/);
+    assert.match(panel, /Notes that name a question are listed first/);
+    assert.match(panel, /describeGeoNotesHeading/);
+    assert.match(panel, /sortGeoNotesForPanel/);
+    assert.match(panel, /geoNotesNamingAQuestion/);
+    assert.equal(
+      geoNotesNamingAQuestion([
+        { query: "Who to hire for harbor day trips" },
+        { query: "" },
+        { query: "  " },
+      ]).length,
+      1,
+    );
+    assert.deepEqual(
+      sortGeoNotesForPanel([
+        { query: "", heard: "They named someone else." },
+        { query: "Who to hire for harbor day trips", heard: "They named us." },
+        { query: "  ", heard: "Unsure." },
+      ]).map((row) => row.query),
+      ["Who to hire for harbor day trips", "", "  "],
+    );
+    assert.equal(describeGeoNotesHeading(0), "What you already hear from AI");
+    assert.equal(describeGeoNotesHeading(2), "What you already hear from AI · 2");
+    assert.equal(
+      describeGeoNotesHeading(3, 1),
+      "What you already hear from AI · 3 · 1 name a question",
+    );
     assert.match(panel, /scrape answers/);
     assert.match(panel, /treat\s+one answer as truth/);
     assert.match(provider, /does not scrape AI answers/);
@@ -120,6 +153,7 @@ describe("owner-entered GEO notes", () => {
       "utf8",
     );
     assert.match(seoPage, /GeoNotesPanel/);
+    assert.match(seoPage, /Notes that name a question are listed first/);
     const catalog = readFileSync(
       join(process.cwd(), "src/lib/modules/catalog.ts"),
       "utf8",

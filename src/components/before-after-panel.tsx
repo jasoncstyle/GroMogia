@@ -1,4 +1,7 @@
-import { type BeforeAfterView } from "@/lib/growth/before-after";
+import {
+  describeBeforeAfterHeading,
+  type BeforeAfterView,
+} from "@/lib/growth/before-after";
 import {
   Card,
   CardContent,
@@ -15,10 +18,15 @@ export function BeforeAfterPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>What a stored before and after shows</CardTitle>
+        <CardTitle>
+          {describeBeforeAfterHeading(
+            looks.length,
+            looks.filter((row) => row.status === "declined").length,
+          )}
+        </CardTitle>
         <CardDescription>
           These looks compare the first stored Goal number to the latest
-          stored Goal number. This is not an experiment GroovGro ran.
+          stored Goal number. Looks that moved down are listed first. This is not an experiment GroovGro ran.
           GroovGro will not buy ads, change the plan, or treat one move as
           proof.
         </CardDescription>

@@ -170,6 +170,13 @@ export function describeGeoAudit(
   return `For “${row.query}”, the latest saved snapshot said mentioned: ${row.mentioned}, cited: ${row.cited}.`;
 }
 
+export function describeCitationGapsHeading(gapCount = 0): string {
+  if (gapCount <= 0) {
+    return "Citation gaps from what you already measured";
+  }
+  return `Citation gaps from what you already measured · ${gapCount}`;
+}
+
 export function auditsToShow(rows: GeoAuditDraft[]): GeoAuditView[] {
   return rows
     .filter((row) => row.status === GEO_AUDIT_STATUS_GAP)

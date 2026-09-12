@@ -10,6 +10,11 @@ import {
   CMS_PUBLISH_SOURCE_OWNER,
   CMS_PUBLISH_STATUS_REVIEW,
   describeCmsPublishRequest,
+  describePlannerHeading,
+  describePublishQueueCopy,
+  describePublishQueueEmpty,
+  describePublishQueueHeading,
+  draftsWaitingToQueue,
   planCmsPublishRequest,
   publishRequestsToShow,
 } from "./requests";
@@ -116,8 +121,9 @@ describe("CMS publish review queue and disabled adapter", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /eq\(contentDrafts\.organizationId, session\.organizationId\)/);
     assert.match(action, /did not publish/);
-    assert.match(panel, /will not publish/);
-    assert.match(panel, /adapter stays off/);
+    assert.match(panel, /describePublishQueueCopy/);
+    assert.match(describePublishQueueCopy(0), /will not publish/);
+    assert.match(describePublishQueueCopy(0), /adapter stays off/);
     const briefsPanel = readFileSync(
       join(process.cwd(), "src/components/content-briefs-panel.tsx"),
       "utf8",
@@ -125,6 +131,79 @@ describe("CMS publish review queue and disabled adapter", () => {
     assert.match(briefsPanel, /Save for later review/);
     assert.match(briefsPanel, /createCmsPublishRequest/);
     assert.match(briefsPanel, /Where you already publish/);
+    assert.match(briefsPanel, /describePlannerHeading/);
+    assert.equal(describePlannerHeading(0), "Content planner");
+    assert.equal(
+      describePlannerHeading(2),
+      "Content planner · 2 saved for later review",
+    );
+    assert.equal(
+      describePlannerHeading(0, 3),
+      "Content planner · 3 briefs",
+    );
+    assert.equal(
+      describePlannerHeading(2, 3),
+      "Content planner · 3 briefs · 2 saved for later review",
+    );
+    assert.equal(
+      describePlannerHeading(0, 3, 1),
+      "Content planner · 3 briefs · 1 still needs a draft",
+    );
+    assert.equal(
+      describePlannerHeading(2, 3, 1),
+      "Content planner · 3 briefs · 1 still needs a draft · 2 saved for later review",
+    );
+    assert.equal(
+      describePlannerHeading(0, 3, 3),
+      "Content planner · 3 briefs · all still need a draft",
+    );
+    assert.equal(
+      describePlannerHeading(2, 3, 1, 1),
+      "Content planner · 3 briefs · 1 still needs a draft · 1 still needs later review · 2 saved for later review",
+    );
+    assert.equal(
+      describePlannerHeading(0, 3, 0, 2),
+      "Content planner · 3 briefs · 2 still need later review",
+    );
+    assert.match(
+      briefsPanel,
+      /describePlannerHeading\(/,
+    );
+    assert.match(briefsPanel, /needingDraftCount/);
+    assert.match(briefsPanel, /needingReviewCount/);
+    assert.match(briefsPanel, /draftsWaitingToQueue/);
+    assert.match(briefsPanel, /still need later review are listed first/);
+    assert.match(panel, /describePublishQueueHeading/);
+    assert.equal(describePublishQueueHeading(0), "Drafts ready to publish later");
+    assert.equal(
+      describePublishQueueHeading(2),
+      "Drafts ready to publish later · 2 waiting",
+    );
+    assert.equal(
+      describePublishQueueHeading(2, 1),
+      "Drafts ready to publish later · 2 waiting · 1 still needs later review",
+    );
+    assert.match(panel, /openDrafts.length/);
+    assert.equal(
+      describePublishQueueCopy(0),
+      "Save a workspace draft for later review. GroovGro will not publish, write a CMS, or change the live website. The adapter stays off.",
+    );
+    assert.match(describePublishQueueCopy(1), /listed first/);
+    assert.match(panel, /describePublishQueueCopy/);
+    assert.match(panel, /describePublishQueueEmpty/);
+    assert.match(describePublishQueueEmpty(0), /No drafts are waiting/);
+    assert.match(describePublishQueueEmpty(2), /listed first/);
+    assert.deepEqual(
+      draftsWaitingToQueue(
+        [
+          { id: "draft-open", title: "Open draft" },
+          { id: "draft-queued", title: "Queued draft" },
+        ],
+        [{ draftId: "draft-queued" }],
+      ).map((draft) => draft.id),
+      ["draft-open"],
+    );
+    assert.match(panel, /All workspace drafts are already saved for later review/);
     assert.doesNotMatch(briefsPanel, /requestCmsPublish|cmsPublishEnabled\(\)/);
     assert.match(adapter, /never fetches/);
     assert.match(queries, /eq\(cmsPublishRequests\.organizationId, organizationId\)/);

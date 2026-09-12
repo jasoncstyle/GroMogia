@@ -120,3 +120,41 @@ export function describeExecutionRequest(
 export function executionRequestsToShow(rows: ExecutionView[]): ExecutionView[] {
   return rows.slice(0, EXECUTION_MAX_SHOWN);
 }
+
+export function actionsWaitingToQueue<T extends { id: string }>(
+  actions: T[],
+  requests: Array<{ actionId: string }>,
+): T[] {
+  const queued = new Set(requests.map((row) => row.actionId));
+  return actions.filter((action) => !queued.has(action.id));
+}
+
+export function describeExecutionEmpty(waitingCount = 0): string {
+  if (waitingCount <= 0) {
+    return "No approved work is waiting to run later. GroovGro will not run it, buy ads, or change the live website.";
+  }
+  return `${waitingCount} still ${waitingCount === 1 ? "needs" : "need"} a later-run save. Remaining work is listed first in the form. GroovGro will not run it, buy ads, or change the live website.`;
+}
+
+export function describeExecutionCopy(waitingCount = 0): string {
+  const remaining =
+    waitingCount <= 0
+      ? ""
+      : " Approved work that still needs a later-run save is listed first.";
+  return `Save approved work for later.${remaining} GroovGro will not run it, buy ads, send email, or change the live website. The adapter stays off.`;
+}
+
+export function describeExecutionHeading(
+  queuedCount = 0,
+  waitingCount = 0,
+): string {
+  if (queuedCount <= 0 && waitingCount <= 0) {
+    return "What is waiting to run later";
+  }
+  const queued = queuedCount <= 0 ? "" : ` · ${queuedCount} waiting`;
+  const remaining =
+    waitingCount <= 0
+      ? ""
+      : ` · ${waitingCount} still ${waitingCount === 1 ? "needs" : "need"} a later-run save`;
+  return `What is waiting to run later${queued}${remaining}`;
+}

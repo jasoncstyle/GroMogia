@@ -5,11 +5,19 @@ import { join } from "node:path";
 
 import {
   CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
+  CONTENT_BRIEF_SOURCE_CONTENT_GAP,
   CONTENT_BRIEF_SOURCE_OWNER,
   CONTENT_BRIEF_STATUS_PLANNED,
   describeContentBrief,
   hasSavedContentBriefForTopic,
   planContentBrief,
+  briefsNeedingDraft,
+  briefsWithDraft,
+  plannerQuerySuggestions,
+  refuseDuplicateContentBrief,
+  describePlannerGroupHeading,
+  shouldGroupPlannerBriefs,
+  sortContentBriefsForPlanner,
   suggestBriefOutline,
   suggestBriefOutlineFromCompetitorGap,
   suggestBriefTitle,
@@ -72,6 +80,20 @@ describe("owner-entered content briefs", () => {
       suggestBriefOutlineFromCompetitorGap("Weekend beginner class", ["Harbor Skills"]),
       /will not generate or publish that page/,
     );
+    const fromQuery = planContentBrief({
+      organizationId: ORG_A,
+      query: "Weekend beginner class",
+      source: CONTENT_BRIEF_SOURCE_CONTENT_GAP,
+    });
+    assert.equal(fromQuery.source, CONTENT_BRIEF_SOURCE_CONTENT_GAP);
+    assert.equal(
+      describeContentBrief({
+        query: fromQuery.query,
+        title: fromQuery.title,
+        source: CONTENT_BRIEF_SOURCE_CONTENT_GAP,
+      }),
+      "Planned from a missing-page query: “Weekend beginner class” for “Weekend beginner class”.",
+    );
   });
 
   it("requires an organization and a title or query", () => {
@@ -110,6 +132,8 @@ describe("owner-entered content briefs", () => {
     assert.match(action, /did not write a page/);
     assert.match(action, /fromNames/);
     assert.match(panel, /will not publish/);
+    assert.match(panel, /missing-page query/);
+    assert.match(panel, /listed first/);
     assert.doesNotMatch(nextStep, /contentBrief|content_brief|Save brief to planner|Save a brief for this topic/);
     const competitorPanel = readFileSync(
       join(process.cwd(), "src/components/competitor-sites-panel.tsx"),
@@ -139,5 +163,71 @@ describe("owner-entered content briefs", () => {
       false,
     );
     assert.equal(hasSavedContentBriefForTopic([], "Weekend beginner class"), false);
+    assert.throws(
+      () =>
+        refuseDuplicateContentBrief(
+          [{ query: "Weekend beginner class", title: "Weekend beginner class" }],
+          "weekend beginner class",
+        ),
+      /already on the planner/,
+    );
+    refuseDuplicateContentBrief(
+      [{ query: "Private coaching", title: "Private coaching" }],
+      "Weekend beginner class",
+    );
+    assert.match(action, /refuseDuplicateContentBrief/);
+    assert.match(action, /eq\(contentBriefs\.organizationId, session\.organizationId\)/);
+    assert.deepEqual(
+      plannerQuerySuggestions(
+        [
+          "Weekend beginner class",
+          "  weekend beginner class  ",
+          "Private coaching",
+        ],
+        [{ query: "Weekend beginner class", title: "Weekend beginner class" }],
+      ),
+      ["Private coaching"],
+    );
+    assert.match(seoPage, /plannerQuerySuggestions/);
+    assert.match(panel, /sortContentBriefsForPlanner/);
+    assert.deepEqual(
+      sortContentBriefsForPlanner([
+        { id: "with-draft", draft: { id: "d1" } },
+        { id: "needs-draft" },
+        { id: "also-draft", draft: { id: "d2" } },
+      ]).map((row) => row.id),
+      ["needs-draft", "with-draft", "also-draft"],
+    );
+    assert.equal(
+      shouldGroupPlannerBriefs([
+        { id: "with-draft", draft: { id: "d1" } },
+        { id: "needs-draft" },
+      ]),
+      true,
+    );
+    assert.equal(shouldGroupPlannerBriefs([{ id: "needs-draft" }]), false);
+    assert.deepEqual(
+      briefsNeedingDraft([
+        { id: "with-draft", draft: { id: "d1" } },
+        { id: "needs-draft" },
+      ]).map((row) => row.id),
+      ["needs-draft"],
+    );
+    assert.deepEqual(
+      briefsWithDraft([
+        { id: "with-draft", draft: { id: "d1" } },
+        { id: "needs-draft" },
+      ]).map((row) => row.id),
+      ["with-draft"],
+    );
+    assert.match(panel, /describePlannerGroupHeading/);
+    assert.equal(
+      describePlannerGroupHeading("need", 2),
+      "Still need a workspace draft · 2",
+    );
+    assert.equal(
+      describePlannerGroupHeading("have", 1),
+      "Already has a workspace draft · 1",
+    );
   });
 });

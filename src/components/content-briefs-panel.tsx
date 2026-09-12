@@ -1,9 +1,18 @@
 import { createContentBrief } from "@/lib/actions/content-briefs";
 import { createCmsPublishRequest } from "@/lib/actions/cms-publish";
 import { createContentDraft } from "@/lib/actions/content-drafts";
-import { describeCmsPublishRequest } from "@/lib/cms/requests";
 import {
+  describeCmsPublishRequest,
+  describePlannerHeading,
+  draftsWaitingToQueue,
+} from "@/lib/cms/requests";
+import {
+  briefsNeedingDraft,
+  briefsWithDraft,
   describeContentBrief,
+  describePlannerGroupHeading,
+  shouldGroupPlannerBriefs,
+  sortContentBriefsForPlanner,
   suggestBriefOutline,
   type ContentBriefView,
 } from "@/lib/growth/content-briefs";
@@ -44,21 +53,56 @@ export function ContentBriefsPanel({
   querySuggestions: string[]
   canManage?: boolean
 }) {
+  const briefsToShow = sortContentBriefsForPlanner(briefs);
+  const needingDraftCount = briefsNeedingDraft(briefs).length;
+  const needingReviewCount = draftsWaitingToQueue(
+    briefs.flatMap((brief) => (brief.draft ? [brief.draft] : [])),
+    queuedReviews,
+  ).length;
+  const needBriefs = briefsNeedingDraft(briefsToShow);
+  const haveBriefs = briefsWithDraft(briefsToShow);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Content planner</CardTitle>
+        <CardTitle>
+          {describePlannerHeading(
+            queuedReviews.length,
+            briefs.length,
+            needingDraftCount,
+            needingReviewCount,
+          )}
+        </CardTitle>
         <CardDescription>
-          Save a brief, then write a workspace draft from it. GroovGro can
-          check a competitor-topic draft against what you sell. You can save
-          that draft for later review. It will not publish or change the live
-          website.
+          Save a brief, including from a missing-page query, then write a
+          workspace draft from it. Briefs that still need a draft are listed first.
+          GroovGro can check a competitor-topic draft against what you sell. You
+          can save that draft for later review. Drafts that still need later review are listed first.
+          It will not publish or change the live website.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {briefs.length > 0 ? (
           <div className="space-y-3">
-            {briefs.map((brief) => (
+            {(shouldGroupPlannerBriefs(briefsToShow)
+              ? [
+                  {
+                    label: describePlannerGroupHeading("need", needBriefs.length),
+                    rows: needBriefs,
+                  },
+                  {
+                    label: describePlannerGroupHeading("have", haveBriefs.length),
+                    rows: haveBriefs,
+                  },
+                ]
+              : [{ label: "", rows: briefsToShow }]
+            ).map((group) => (
+              <div key={group.label || "briefs"} className="space-y-3">
+                {group.label ? (
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {group.label}
+                  </p>
+                ) : null}
+                {group.rows.map((brief) => (
               <div key={brief.id} className="space-y-2">
                 <p className="text-sm font-medium">{describeContentBrief(brief)}</p>
                 {brief.audience ? (
@@ -143,6 +187,8 @@ export function ContentBriefsPanel({
                     </SaveButton>
                   </SaveForm>
                 ) : null}
+              </div>
+                ))}
               </div>
             ))}
           </div>

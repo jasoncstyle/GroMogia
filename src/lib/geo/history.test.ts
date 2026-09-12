@@ -7,6 +7,9 @@ import { requestGeoLookup } from "./adapter";
 import { GEO_EVIDENCE_OWNER } from "./architecture";
 import {
   describeGeoHistory,
+  describeGeoHistoryHeading,
+  queriesNeedingHistory,
+  sortQueriesForHistory,
   GEO_ANSWER_NO,
   GEO_ANSWER_UNSURE,
   GEO_ANSWER_YES,
@@ -132,6 +135,30 @@ describe("owner-entered GEO history", () => {
     assert.match(action, /eq\(geoQueries\.organizationId, session\.organizationId\)/);
     assert.match(action, /did not ask an AI system/);
     assert.match(panel, /will not ask an AI system/);
+    assert.match(panel, /describeGeoHistoryHeading/);
+    assert.match(panel, /queriesNeedingHistory/);
+    assert.match(panel, /sortQueriesForHistory/);
+    assert.match(panel, /listed first/);
+    assert.deepEqual(
+      sortQueriesForHistory(
+        [{ id: "q-saved" }, { id: "q-open" }],
+        [{ queryId: "q-saved" }],
+      ).map((query) => query.id),
+      ["q-open", "q-saved"],
+    );
+    assert.equal(describeGeoHistoryHeading(0), "What you already measured");
+    assert.equal(describeGeoHistoryHeading(2), "What you already measured · 2");
+    assert.equal(
+      describeGeoHistoryHeading(2, 1),
+      "What you already measured · 2 · 1 still needs a snapshot",
+    );
+    assert.deepEqual(
+      queriesNeedingHistory(
+        [{ id: "q-open" }, { id: "q-saved" }],
+        [{ queryId: "q-saved" }],
+      ).map((query) => query.id),
+      ["q-open"],
+    );
     assert.match(panel, /treat one answer as truth/);
     assert.match(queries, /eq\(geoHistory\.organizationId, organizationId\)/);
 
@@ -145,6 +172,7 @@ describe("owner-entered GEO history", () => {
       "utf8",
     );
     assert.match(seoPage, /GeoHistoryPanel/);
+    assert.match(seoPage, /Questions that still need a snapshot are listed first/);
     const catalog = readFileSync(
       join(process.cwd(), "src/lib/modules/catalog.ts"),
       "utf8",

@@ -1,5 +1,9 @@
 import { createExecutionRequest } from "@/lib/actions/execution";
 import {
+  actionsWaitingToQueue,
+  describeExecutionCopy,
+  describeExecutionEmpty,
+  describeExecutionHeading,
   describeExecutionRequest,
   executionActionTitle,
   type ExecutionAction,
@@ -28,13 +32,15 @@ export function ExecutionPanel({
   actions: ExecutionAction[]
   canManage?: boolean
 }) {
+  const openActions = actionsWaitingToQueue(actions, requests);
   return (
     <Card>
       <CardHeader>
-        <CardTitle>What is waiting to run later</CardTitle>
+        <CardTitle>
+          {describeExecutionHeading(requests.length, openActions.length)}
+        </CardTitle>
         <CardDescription>
-          Save approved work for later. GroovGro will not run it, buy ads,
-          send email, or change the live website. The adapter stays off.
+          {describeExecutionCopy(openActions.length)}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -44,8 +50,7 @@ export function ExecutionPanel({
           </p>
         ) : requests.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No approved work is waiting to run later. GroovGro will not run
-            it, buy ads, or change the live website.
+            {describeExecutionEmpty(openActions.length)}
           </p>
         ) : (
           <div className="space-y-2">
@@ -62,8 +67,8 @@ export function ExecutionPanel({
           </div>
         )}
 
-        {canManage && actions.length > 0 ? (
-          <SaveForm
+        {canManage && openActions.length > 0 ? (
+          <SaveForm>
             action={createExecutionRequest}
             successMessage="Later-run request saved. GroovGro did not run it, buy ads, or change the live website."
             className="grid gap-3"
@@ -81,7 +86,7 @@ export function ExecutionPanel({
                 <option value="" disabled>
                   Pick approved work
                 </option>
-                {actions.map((action) => (
+                {openActions.map((action) => (
                   <option key={action.id} value={action.id}>
                     {executionActionTitle(action)}
                   </option>
@@ -101,6 +106,11 @@ export function ExecutionPanel({
             </div>
             <SaveButton type="submit">Save for later</SaveButton>
           </SaveForm>
+        ) : canManage && actions.length > 0 ? (
+          <p className="text-sm text-muted-foreground">
+            All approved work is already saved for later. GroovGro did not
+            run it, buy ads, or change the live website.
+          </p>
         ) : canManage ? null : (
           <p className="text-sm text-muted-foreground">
             An owner or admin can save approved work for later. GroovGro will

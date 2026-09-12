@@ -1,5 +1,6 @@
 import {
   channelScoreLabelTitle,
+  describeChannelScoreHeading,
   type ChannelScoreView,
 } from "@/lib/growth/channel-score";
 import {
@@ -18,10 +19,15 @@ export function ChannelScorePanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>What stored evidence says to compare</CardTitle>
+        <CardTitle>
+          {describeChannelScoreHeading(
+            scores.length,
+            scores.filter((row) => row.label === "review").length,
+          )}
+        </CardTitle>
         <CardDescription>
-          These ranks are estimates from stored workspace facts. GroovGro
-          will not change today&apos;s Next step from this estimate, buy
+          These ranks are estimates from stored workspace facts. Channels worth a look are listed first.
+          GroovGro will not change today&apos;s Next step from this estimate, buy
           ads, or run work.
         </CardDescription>
       </CardHeader>

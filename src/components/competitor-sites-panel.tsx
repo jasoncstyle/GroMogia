@@ -14,13 +14,26 @@ import {
 } from "@/lib/growth/content-briefs";
 import {
   COMPETE_MOVE_STATUS_DONE,
+  countPlannedCompeteMoves,
+  describeCompeteCardHeading,
   describeCompeteMove,
+  describeCompeteMoveGroupHeading,
+  describeCompeteMoveListHeading,
+  doneCompeteMoves,
   hasSavedCompeteMoveTitle,
+  plannedCompeteMoves,
+  shouldGroupCompeteMoves,
   suggestCompeteMoveFromCompare,
   suggestCompeteMoveFromGap,
   type CompeteMoveView,
 } from "@/lib/growth/compete-moves";
 import {
+  competitorPageGapsNeedingBrief,
+  competitorPageGapsWithBrief,
+  describeCompetitorPageGapGroupHeading,
+  describeCompetitorPageGapsHeading,
+  shouldGroupCompetitorPageGaps,
+  sortCompetitorPageGapsForPanel,
   type CompetitorCompareView,
   type CompetitorPageGapView,
   type CompetitorSearchHint,
@@ -58,20 +71,44 @@ export function CompetitorSitesPanel({
   pagesRead?: boolean
   canManage?: boolean
 }) {
+  const isBriefSaved = (label: string) =>
+    hasSavedContentBriefForTopic(briefs, label);
+  const briefedPageGapCount = pageGaps.filter((gap) =>
+    isBriefSaved(gap.label),
+  ).length;
+  const pageGapsToShow = sortCompetitorPageGapsForPanel(
+    pageGaps,
+    isBriefSaved,
+  );
+  const needPageGaps = competitorPageGapsNeedingBrief(
+    pageGapsToShow,
+    isBriefSaved,
+  );
+  const havePageGaps = competitorPageGapsWithBrief(
+    pageGapsToShow,
+    isBriefSaved,
+  );
   return (
     <Card>
       <CardHeader>
-        <CardTitle>How we might compete</CardTitle>
+        <CardTitle>
+          {describeCompeteCardHeading(
+            sites.length,
+            countPlannedCompeteMoves(moves),
+          )}
+        </CardTitle>
         <CardDescription>
           Save a competitor website you already know, or open a suggested
           search and save a site you found. GroovGro can read that homepage
           and a few public pages on the same site, then compare those looks
           to what you sell. It can name topics those sites show that GroovGro
           has not read on your site. You can save a brief for one of those
-          topics. You can save what you will do, including from a compare or
-          one of those topics. If the site blocks the automated read,
-          paste what you see. It will not scrape Google, copy their words
-          onto your site, create a page, or buy ads.
+          topics. Topics that still need a brief are listed first. You can
+          save what you will do, including from a compare or
+          one of those topics. Moves still planned are listed first. If the
+          site blocks the automated read, paste what you see. It will not
+          scrape Google, copy their words onto your site, create a page, or
+          buy ads.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -112,24 +149,56 @@ export function CompetitorSitesPanel({
         ) : null}
         {moves.length > 0 ? (
           <div className="space-y-2 rounded-lg border p-3">
-            <p className="text-sm font-medium">What I will do</p>
-            {moves.map((move) => (
-              <div key={move.id} className="space-y-2">
-                <p className="text-sm font-medium">{describeCompeteMove(move)}</p>
-                <p className="text-xs text-muted-foreground">
-                  {move.createdAt.toLocaleString()}
-                </p>
-                {canManage && move.status !== COMPETE_MOVE_STATUS_DONE ? (
-                  <SaveForm
-                    action={completeCompeteMove}
-                    successMessage="Marked as done. GroovGro did not do this or change the live website."
-                  >
-                    <input type="hidden" name="moveId" value={move.id} />
-                    <SaveButton type="submit" size="sm" variant="outline">
-                      I did this
-                    </SaveButton>
-                  </SaveForm>
+            <p className="text-sm font-medium">
+              {describeCompeteMoveListHeading(
+                countPlannedCompeteMoves(moves),
+                moves.length,
+              )}
+            </p>
+            {(shouldGroupCompeteMoves(moves)
+              ? [
+                  {
+                    label: describeCompeteMoveGroupHeading(
+                      "planned",
+                      plannedCompeteMoves(moves).length,
+                    ),
+                    rows: plannedCompeteMoves(moves),
+                  },
+                  {
+                    label: describeCompeteMoveGroupHeading(
+                      "done",
+                      doneCompeteMoves(moves).length,
+                    ),
+                    rows: doneCompeteMoves(moves),
+                  },
+                ]
+              : [{ label: "", rows: moves }]
+            ).map((group) => (
+              <div key={group.label || "moves"} className="space-y-2">
+                {group.label ? (
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {group.label}
+                  </p>
                 ) : null}
+                {group.rows.map((move) => (
+                  <div key={move.id} className="space-y-2">
+                    <p className="text-sm font-medium">{describeCompeteMove(move)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {move.createdAt.toLocaleString()}
+                    </p>
+                    {canManage && move.status !== COMPETE_MOVE_STATUS_DONE ? (
+                      <SaveForm
+                        action={completeCompeteMove}
+                        successMessage="Marked as done. GroovGro did not do this or change the live website."
+                      >
+                        <input type="hidden" name="moveId" value={move.id} />
+                        <SaveButton type="submit" size="sm" variant="outline">
+                          I did this
+                        </SaveButton>
+                      </SaveForm>
+                    ) : null}
+                  </div>
+                ))}
               </div>
             ))}
           </div>
@@ -137,7 +206,11 @@ export function CompetitorSitesPanel({
         {sites.some((site) => site.competeNote || site.modelGuess) ? (
           <div className="space-y-2 rounded-lg border p-3">
             <p className="text-sm font-medium">
-              Pages they show that GroovGro has not read
+              {describeCompetitorPageGapsHeading(
+                pageGaps.length,
+                pagesRead,
+                briefedPageGapCount,
+              )}
             </p>
             {!pagesRead ? (
               <p className="text-sm text-muted-foreground">
@@ -150,7 +223,32 @@ export function CompetitorSitesPanel({
                 those competitor sites named. It did not create a page.
               </p>
             ) : (
-              pageGaps.map((gap) => {
+              (shouldGroupCompetitorPageGaps(pageGapsToShow, isBriefSaved)
+                ? [
+                    {
+                      label: describeCompetitorPageGapGroupHeading(
+                        "need",
+                        needPageGaps.length,
+                      ),
+                      rows: needPageGaps,
+                    },
+                    {
+                      label: describeCompetitorPageGapGroupHeading(
+                        "have",
+                        havePageGaps.length,
+                      ),
+                      rows: havePageGaps,
+                    },
+                  ]
+                : [{ label: "", rows: pageGapsToShow }]
+              ).map((group) => (
+                <div key={group.label || "page-gaps"} className="space-y-2">
+                  {group.label ? (
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {group.label}
+                    </p>
+                  ) : null}
+                  {group.rows.map((gap) => {
                 const fieldKey = gap.label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
                 const fromGap = suggestCompeteMoveFromGap(gap.label);
                 return (
@@ -223,7 +321,9 @@ export function CompetitorSitesPanel({
                   ) : null}
                 </div>
                 );
-              })
+              })}
+                </div>
+              ))
             )}
           </div>
         ) : null}

@@ -5,10 +5,15 @@ import { join } from "node:path";
 
 import {
   DEFAULT_SCHEMA_TYPE,
+  SCHEMA_FACT_SOURCE_PAGE_GROUP,
+  describePageStructureGroupHeading,
+  describePageStructureHeading,
   isDefaultSchemaType,
   linksToShow,
   planPageStructure,
+  schemaFactsToShow,
   schemaTypeForPage,
+  sortSchemaFactsForPanel,
 } from "./page-structure";
 
 const ORG_A = "11111111-1111-1111-1111-111111111111";
@@ -248,6 +253,64 @@ describe("page structure from stored pages", () => {
     assert.match(persist, /eq\(internalLinkSuggestions\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(pageSchemaFacts\.organizationId, organizationId\)/);
     assert.match(panel, /will not add links or schema/);
+    assert.match(panel, /listed first/);
+    assert.match(panel, /Estimated schema types that are not the default are listed first/);
+    assert.match(helper, /sortSchemaFactsForPanel/);
+    assert.deepEqual(
+      sortSchemaFactsForPanel([
+        { schemaType: DEFAULT_SCHEMA_TYPE, pageUrl: "https://example.com/a" },
+        { schemaType: "Event", pageUrl: "https://example.com/z" },
+        { schemaType: DEFAULT_SCHEMA_TYPE, pageUrl: "https://example.com/b" },
+      ]).map((row) => row.schemaType),
+      ["Event", DEFAULT_SCHEMA_TYPE, DEFAULT_SCHEMA_TYPE],
+    );
+    assert.equal(
+      schemaFactsToShow([
+        {
+          organizationId: ORG_A,
+          pageId: "a",
+          pageUrl: "https://example.com/a",
+          pageTitle: "Harbor day trips",
+          schemaType: DEFAULT_SCHEMA_TYPE,
+          why: "Estimated from the stored page group.",
+          source: SCHEMA_FACT_SOURCE_PAGE_GROUP,
+        },
+        {
+          organizationId: ORG_A,
+          pageId: "z",
+          pageUrl: "https://example.com/z",
+          pageTitle: "Weekend beginner class",
+          schemaType: "Event",
+          why: "Estimated from the stored page group.",
+          source: SCHEMA_FACT_SOURCE_PAGE_GROUP,
+        },
+      ])[0]?.schemaType,
+      "Event",
+    );
+    assert.match(panel, /describePageStructureHeading/);
+    assert.match(panel, /describePageStructureGroupHeading/);
+    assert.equal(describePageStructureGroupHeading("links", 2), "Suggested links · 2");
+    assert.equal(
+      describePageStructureGroupHeading("schema", 1),
+      "Estimated schema types · 1",
+    );
+    assert.equal(
+      describePageStructureGroupHeading("schema", 3, 1),
+      "Estimated schema types · 3 · 1 not the default",
+    );
+    assert.equal(
+      describePageStructureHeading(0, 0),
+      "Links and schema facts from pages GroovGro already read",
+    );
+    assert.equal(
+      describePageStructureHeading(2, 1),
+      "Links and schema facts from pages GroovGro already read · 2 suggested links · 1 schema fact",
+    );
+    assert.equal(
+      describePageStructureHeading(2, 3, 1),
+      "Links and schema facts from pages GroovGro already read · 2 suggested links · 3 schema facts · 1 not the default",
+    );
+    assert.match(panel, /isDefaultSchemaType/);
     assert.doesNotMatch(nextStep, /internalLink|page_schema|Add schema|internal link/);
     const seoPersist = readFileSync(
       join(process.cwd(), "src/lib/growth/persist-seo-actions.ts"),

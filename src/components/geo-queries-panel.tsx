@@ -1,5 +1,11 @@
 import { createGeoQuery } from "@/lib/actions/geo-queries";
-import { describeGeoQuery, type GeoQueryView } from "@/lib/geo/queries";
+import {
+  describeGeoQuery,
+  describeGeoQueriesHeading,
+  geoQueriesNeedingWhy,
+  sortGeoQueriesForPanel,
+  type GeoQueryView,
+} from "@/lib/geo/queries";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,19 +27,23 @@ export function GeoQueriesPanel({
   querySuggestions: string[]
   canManage?: boolean
 }) {
+  const listed = sortGeoQueriesForPanel(queries);
+  const needingWhyCount = geoQueriesNeedingWhy(queries).length;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Questions to remember for later AI visibility</CardTitle>
+        <CardTitle>
+          {describeGeoQueriesHeading(queries.length, needingWhyCount)}
+        </CardTitle>
         <CardDescription>
-          Save questions you already care about. GroovGro will not ask an AI
+          Save questions you already care about. Questions that still need a why are listed first. GroovGro will not ask an AI
           system, scrape answers, or treat one answer as truth.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {queries.length > 0 ? (
+        {listed.length > 0 ? (
           <div className="space-y-2">
-            {queries.map((row) => (
+            {listed.map((row) => (
               <div key={row.id} className="space-y-1">
                 <p className="text-sm font-medium">{describeGeoQuery(row)}</p>
               </div>

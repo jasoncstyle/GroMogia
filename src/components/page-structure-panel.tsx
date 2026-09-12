@@ -1,4 +1,10 @@
-import type { InternalLinkView, SchemaFactView } from "@/lib/growth/page-structure";
+import {
+  describePageStructureGroupHeading,
+  describePageStructureHeading,
+  isDefaultSchemaType,
+  type InternalLinkView,
+  type SchemaFactView,
+} from "@/lib/growth/page-structure";
 import {
   Card,
   CardContent,
@@ -16,14 +22,23 @@ export function PageStructurePanel({
   schemaFacts: SchemaFactView[]
   pagesRead: boolean
 }) {
+  const schemaReviewCount = schemaFacts.filter(
+    (fact) => !isDefaultSchemaType(fact.schemaType),
+  ).length;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Links and schema facts from pages GroovGro already read</CardTitle>
+        <CardTitle>
+          {describePageStructureHeading(
+            links.length,
+            schemaFacts.length,
+            schemaReviewCount,
+          )}
+        </CardTitle>
         <CardDescription>
           GroovGro compared pages it already read. If one page&apos;s stored
-          text mentions another page&apos;s title, it suggests a link. Schema
-          types are estimates from the page group. GroovGro will not add links or schema
+          text mentions another page&apos;s title, it suggests a link. Suggested links are listed first. Schema
+          types are estimates from the page group. Estimated schema types that are not the default are listed first. GroovGro will not add links or schema
           to the live website.
         </CardDescription>
       </CardHeader>
@@ -36,7 +51,9 @@ export function PageStructurePanel({
         ) : (
           <>
             <div className="space-y-3">
-              <p className="text-sm font-medium">Suggested links</p>
+              <p className="text-sm font-medium">
+                {describePageStructureGroupHeading("links", links.length)}
+              </p>
               {links.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                   No stored page mentions another page&apos;s title strongly
@@ -60,7 +77,13 @@ export function PageStructurePanel({
               )}
             </div>
             <div className="space-y-3">
-              <p className="text-sm font-medium">Estimated schema types</p>
+              <p className="text-sm font-medium">
+                {describePageStructureGroupHeading(
+                  "schema",
+                  schemaFacts.length,
+                  schemaReviewCount,
+                )}
+              </p>
               {schemaFacts.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
                   GroovGro has not stored schema estimates from the pages it

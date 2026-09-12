@@ -51,6 +51,21 @@ export type BeforeAfterView = BeforeAfterLook & {
 const LEAVE_ALONE =
   "This is a stored before and after, not an experiment GroovGro ran, and not a reason to buy ads or change the plan.";
 
+export function describeBeforeAfterHeading(
+  lookCount = 0,
+  declinedCount = 0,
+): string {
+  if (lookCount <= 0 && declinedCount <= 0) {
+    return "What a stored before and after shows";
+  }
+  const looks = lookCount <= 0 ? "" : ` · ${lookCount}`;
+  const declined =
+    declinedCount <= 0
+      ? ""
+      : ` · ${declinedCount} moved down`;
+  return `What a stored before and after shows${looks}${declined}`;
+}
+
 export function beforeAfterStatusTitle(status: BeforeAfterStatus): string {
   if (status === "improved") return "Moved up";
   if (status === "declined") return "Moved down";
