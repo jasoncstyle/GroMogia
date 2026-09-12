@@ -741,13 +741,13 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   if (
     facts.websiteConnected &&
     keywordCount > 0 &&
-    knownCompetitorCount > 0 &&
-    serpNoteCount === 0
+    knownCompetitorCount > serpNoteCount
   ) {
+    const remainingNotes = knownCompetitorCount - serpNoteCount;
     recommendations.push({
       kind: "recommendation",
       title: "Save a competitor you already see",
-      body: "On SEO, save a note about a competitor you already see for a recorded query. Names that still need a note are listed first. GroovGro will not look anyone up or scrape search results.",
+      body: `On SEO, save a note about a competitor you already see for a recorded query. ${remainingNotes} still ${remainingNotes === 1 ? "needs" : "need"} a note. Names that still need a note are listed first. GroovGro will not look anyone up or scrape search results.`,
       evidence: ["serp_notes missing"],
       href: "/app/seo",
     });
