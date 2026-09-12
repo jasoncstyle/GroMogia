@@ -86,11 +86,20 @@ export function describePlannerHeading(
   return `Content planner · ${briefs}${remaining} · ${queuedCount} saved for later review`;
 }
 
-export function describePublishQueueHeading(queuedCount: number): string {
-  if (queuedCount <= 0) {
+export function describePublishQueueHeading(
+  queuedCount: number,
+  waitingCount = 0,
+): string {
+  if (queuedCount <= 0 && waitingCount <= 0) {
     return "Drafts ready to publish later";
   }
-  return `Drafts ready to publish later · ${queuedCount} waiting`;
+  if (queuedCount <= 0) {
+    return `Drafts ready to publish later · ${waitingCount} still ${waitingCount === 1 ? "needs" : "need"} later review`;
+  }
+  if (waitingCount <= 0) {
+    return `Drafts ready to publish later · ${queuedCount} waiting`;
+  }
+  return `Drafts ready to publish later · ${queuedCount} waiting · ${waitingCount} still ${waitingCount === 1 ? "needs" : "need"} later review`;
 }
 
 export function draftsWaitingToQueue<T extends { id: string }>(
