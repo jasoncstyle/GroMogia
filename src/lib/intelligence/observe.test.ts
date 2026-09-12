@@ -1290,6 +1290,17 @@ describe("intelligence observe", () => {
       ),
       false,
     );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          contentGapCount: 2,
+          contentGapBriefCount: 2,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Review queries with no matching page",
+      ),
+      false,
+    );
   });
 
   it("observes saved content briefs and does not write a page", () => {
