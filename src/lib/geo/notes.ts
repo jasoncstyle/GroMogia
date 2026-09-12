@@ -62,3 +62,10 @@ export function describeGeoNote(
   }
   return `The owner already heard: ${note.heard}`;
 }
+
+export function describeGeoNotesHeading(noteCount = 0): string {
+  if (noteCount <= 0) {
+    return "What you already hear from AI";
+  }
+  return `What you already hear from AI · ${noteCount}`;
+}

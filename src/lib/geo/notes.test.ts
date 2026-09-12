@@ -4,7 +4,12 @@ import { describe, it } from "node:test";
 import { join } from "node:path";
 
 import { GEO_EVIDENCE_OWNER, isOwnerGeoEvidence } from "./architecture";
-import { describeGeoNote, planGeoNote, GEO_NOTE_SOURCE_OWNER } from "./notes";
+import {
+  describeGeoNote,
+  describeGeoNotesHeading,
+  planGeoNote,
+  GEO_NOTE_SOURCE_OWNER,
+} from "./notes";
 import { configuredGeoProvider, geoLookupEnabled } from "./provider";
 
 const ORG_A = "11111111-1111-1111-1111-111111111111";
@@ -104,6 +109,9 @@ describe("owner-entered GEO notes", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /did not ask an AI system/);
     assert.match(panel, /will not ask AI systems/);
+    assert.match(panel, /describeGeoNotesHeading/);
+    assert.equal(describeGeoNotesHeading(0), "What you already hear from AI");
+    assert.equal(describeGeoNotesHeading(2), "What you already hear from AI · 2");
     assert.match(panel, /scrape answers/);
     assert.match(panel, /treat\s+one answer as truth/);
     assert.match(provider, /does not scrape AI answers/);
