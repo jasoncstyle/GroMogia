@@ -2060,6 +2060,10 @@ Organization
 254. **Intelligence names planned compete moves listed first** — **IMPLEMENTED** this slice. Intelligence can say planned compete moves are listed first. GroovGro does not do the work, publish, or add a Next step loop.
 255. **Compete card copy names planned moves listed first** — **IMPLEMENTED** this slice. The compete card says still-planned moves are listed first. GroovGro does not do the work, publish, or add a Next step loop.
 256. **Status text names planned compete moves listed first** — **IMPLEMENTED** this slice. Architecture and status summaries name Intelligence and compete-card copy that planned moves are listed first. GroovGro does not publish or add a Next step loop.
+257. **Later-review heading shows remaining drafts** — **IMPLEMENTED** this slice. The later-review queue heading says how many workspace drafts still need later review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+258. **Later-review copy names remaining drafts listed first** — **IMPLEMENTED** this slice. The later-review queue says drafts that still need later review are listed first. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+259. **Intelligence names remaining later-review drafts listed first** — **IMPLEMENTED** this slice. Intelligence can say remaining workspace drafts that still need later review are listed first. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
+260. **Status text names remaining later-review drafts** — **IMPLEMENTED** this slice. Architecture and status summaries name the later-review heading, page copy, and Intelligence that remaining drafts are listed first. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
