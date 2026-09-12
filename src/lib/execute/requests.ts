@@ -129,6 +129,13 @@ export function actionsWaitingToQueue<T extends { id: string }>(
   return actions.filter((action) => !queued.has(action.id));
 }
 
+export function describeExecutionEmpty(waitingCount = 0): string {
+  if (waitingCount <= 0) {
+    return "No approved work is waiting to run later. GroovGro will not run it, buy ads, or change the live website.";
+  }
+  return `${waitingCount} still ${waitingCount === 1 ? "needs" : "need"} a later-run save. Remaining work is listed first in the form. GroovGro will not run it, buy ads, or change the live website.`;
+}
+
 export function describeExecutionCopy(waitingCount = 0): string {
   const remaining =
     waitingCount <= 0
