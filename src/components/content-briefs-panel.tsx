@@ -4,6 +4,7 @@ import { createContentDraft } from "@/lib/actions/content-drafts";
 import {
   describeCmsPublishRequest,
   describePlannerHeading,
+  draftsWaitingToQueue,
 } from "@/lib/cms/requests";
 import {
   briefsNeedingDraft,
@@ -54,6 +55,10 @@ export function ContentBriefsPanel({
 }) {
   const briefsToShow = sortContentBriefsForPlanner(briefs);
   const needingDraftCount = briefsNeedingDraft(briefs).length;
+  const needingReviewCount = draftsWaitingToQueue(
+    briefs.flatMap((brief) => (brief.draft ? [brief.draft] : [])),
+    queuedReviews,
+  ).length;
   const needBriefs = briefsNeedingDraft(briefsToShow);
   const haveBriefs = briefsWithDraft(briefsToShow);
   return (
@@ -64,6 +69,7 @@ export function ContentBriefsPanel({
             queuedReviews.length,
             briefs.length,
             needingDraftCount,
+            needingReviewCount,
           )}
         </CardTitle>
         <CardDescription>

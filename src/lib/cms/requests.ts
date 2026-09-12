@@ -66,24 +66,28 @@ export function describePlannerHeading(
   queuedCount: number,
   briefCount = 0,
   needingDraftCount = 0,
+  needingReviewCount = 0,
 ): string {
-  if (briefCount <= 0 && queuedCount <= 0) {
+  if (briefCount <= 0 && queuedCount <= 0 && needingReviewCount <= 0) {
     return "Content planner";
   }
-  if (briefCount <= 0) {
-    return `Content planner · ${queuedCount} saved for later review`;
-  }
-  const briefs = `${briefCount} ${briefCount === 1 ? "brief" : "briefs"}`;
-  const remaining =
+  const remainingDraft =
     needingDraftCount <= 0
       ? ""
-      : needingDraftCount >= briefCount
+      : briefCount > 0 && needingDraftCount >= briefCount
         ? " · all still need a draft"
         : ` · ${needingDraftCount} still ${needingDraftCount === 1 ? "needs" : "need"} a draft`;
-  if (queuedCount <= 0) {
-    return `Content planner · ${briefs}${remaining}`;
+  const remainingReview =
+    needingReviewCount <= 0
+      ? ""
+      : ` · ${needingReviewCount} still ${needingReviewCount === 1 ? "needs" : "need"} later review`;
+  const queued =
+    queuedCount <= 0 ? "" : ` · ${queuedCount} saved for later review`;
+  if (briefCount <= 0) {
+    return `Content planner${remainingReview}${queued}`;
   }
-  return `Content planner · ${briefs}${remaining} · ${queuedCount} saved for later review`;
+  const briefs = `${briefCount} ${briefCount === 1 ? "brief" : "briefs"}`;
+  return `Content planner · ${briefs}${remainingDraft}${remainingReview}${queued}`;
 }
 
 export function describePublishQueueHeading(
