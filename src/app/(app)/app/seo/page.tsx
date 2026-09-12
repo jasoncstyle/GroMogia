@@ -10,6 +10,7 @@ import {
 import { applySeoDraftToBuilder } from "@/lib/actions/website-builder";
 import { getAppSession } from "@/lib/auth/session";
 import { getSeoPageData } from "@/lib/phase6/queries";
+import { getSearchLoopView } from "@/lib/growth/search-loop-query";
 import { explainSeoCheck } from "@/lib/seo/explain";
 import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
 import { isBuilderApplyableFinding } from "@/lib/website-builder/apply-seo";
@@ -18,6 +19,7 @@ import { FoldableSample } from "@/components/foldable-sample";
 import { CmsPublishPanel } from "@/components/cms-publish-panel";
 import { ContentBriefsPanel } from "@/components/content-briefs-panel";
 import { ContentGapsPanel } from "@/components/content-gaps-panel";
+import { SearchLoopPanel } from "@/components/search-loop-panel";
 import { PageStructurePanel } from "@/components/page-structure-panel";
 import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
@@ -50,6 +52,9 @@ export default async function SeoPage({
   const session = await getAppSession();
   const data = session.organizationId
     ? await getSeoPageData(session.organizationId)
+    : null;
+  const searchLoop = session.organizationId
+    ? await getSearchLoopView(session.organizationId)
     : null;
   const view = params.view ?? "";
   const selectedPage =
@@ -106,7 +111,10 @@ export default async function SeoPage({
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">SEO</h1>
         <p className="text-muted-foreground">
-          Check the connected website and every GroovGro page. Approve drafts,
+          Finish one search-to-page loop first: one worth-a-look query, a brief,
+          a draft in this business’s words, then paste it on your existing site
+          and check stored Search Console numbers and the Goal. GroovGro does
+          not publish. Check the connected website and every GroovGro page. Approve drafts,
           then apply title, description, or heading changes onto that GroovGro
           page. Search Console is read-only. Queries from those snapshots are
           stored as a history and given a conservative estimate rank. Queries worth a look are listed first. Looks that moved down are listed first. Names that still need a note are listed first. You can
@@ -280,6 +288,13 @@ export default async function SeoPage({
             searchConsole={data.searchConsole}
             notice={searchConsoleNotice(params.gsc, params.error)}
           />
+
+          {searchLoop ? (
+            <SearchLoopPanel
+              loop={searchLoop}
+              canManage={session.permissions.includes("manage_seo")}
+            />
+          ) : null}
 
           <KeywordHistoryPanel keywords={data.keywords} />
 

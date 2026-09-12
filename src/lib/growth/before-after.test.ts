@@ -256,7 +256,7 @@ describe("stored before-and-after looks", () => {
     assert.doesNotMatch(nextStep, /beforeAfter|before_after|What a stored before/);
     assert.match(
       nextStep,
-      /drafts \?\? ownerWork \?\? checkChanged \?\? reviewSite \?\? activate \?\? draftPlan \?\? approvePlan \?\? proposeActions \?\? waitingApprove \?\? learning/,
+      /drafts \?\? ownerWork \?\? checkChanged \?\? reviewSite \?\? activate \?\? draftPlan \?\? approvePlan \?\? proposeActions \?\? waitingApprove \?\? searchLoop \?\? learning/,
     );
   });
 });

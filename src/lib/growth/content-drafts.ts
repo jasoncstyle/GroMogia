@@ -3,7 +3,10 @@
  * publish, change the live website, copy competitor words, or invent
  * prices, reviews, or names.
  */
-import { CONTENT_BRIEF_SOURCE_COMPETITOR_GAP } from "@/lib/growth/content-briefs";
+import {
+  CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
+  CONTENT_BRIEF_SOURCE_CONTENT_GAP,
+} from "@/lib/growth/content-briefs";
 
 export const CONTENT_DRAFT_SOURCE_STORED_BRIEF = "stored_brief";
 export const CONTENT_DRAFT_STATUS_DRAFT = "draft";
@@ -130,19 +133,33 @@ export function writeDraftFromBrief(input: ContentDraftBrief): string {
       "The brief did not say what to cover yet. Add that on the planner, then write another draft.",
     );
   }
-  if (input.briefSource === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP) {
+  if (
+    input.briefSource === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP ||
+    input.briefSource === CONTENT_BRIEF_SOURCE_CONTENT_GAP
+  ) {
     const offer = (input.ourOffers ?? [])
       .map((row) => row.replace(/\s+/g, " ").trim())
       .filter(Boolean)[0];
     const difference = (input.ourDifference ?? [])
       .map((row) => row.replace(/\s+/g, " ").trim())
       .filter(Boolean)[0];
-    lines.push(
-      "",
-      "Write this in this business’s words. Do not copy a competitor.",
-    );
+    if (input.briefSource === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP) {
+      lines.push(
+        "",
+        "Write this in this business’s words. Do not copy a competitor.",
+      );
+    } else {
+      lines.push(
+        "",
+        "Copy this onto your existing website in this business’s words. GroovGro has not published it.",
+      );
+    }
     if (offer) {
-      lines.push(`Lead with “${offer}”, not with their words.`);
+      lines.push(
+        input.briefSource === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP
+          ? `Lead with “${offer}”, not with their words.`
+          : `Lead with “${offer}”.`,
+      );
     }
     if (difference) {
       lines.push(`What makes this business different: ${difference}.`);

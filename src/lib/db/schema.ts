@@ -1650,6 +1650,8 @@ export type GrowthActionEvidence = {
   labels?: string[]
   why?: string
   recommend?: string
+  briefId?: string
+  draftId?: string
 };
 
 export const growthActions = pgTable(

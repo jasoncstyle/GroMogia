@@ -14,7 +14,14 @@ import {
   isFinishedOwnerWork,
   isOpenOwnerWork,
 } from "@/lib/growth/owner-work";
+import { getKeywordHistory } from "@/lib/growth/persist-keywords";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
+import {
+  SEARCH_LOOP_KIND,
+  composeSearchLoopCheck,
+  learnFromSearchQuery,
+  parseSearchBaseline,
+} from "@/lib/growth/search-loop";
 import {
   daysBetween,
   encodeWorkBaseline,
@@ -227,6 +234,7 @@ export async function checkWhatChanged(
       ? snapshot?.goals.find((row) => row.id === action.goalId)
       : null;
     const stored = parseWorkBaseline(action.result);
+    const daysSinceDone = daysBetween(action.updatedAt, new Date());
     const learning = learnFromOwnerWork({
       goalTitle: goal?.title ?? "",
       hasGoal: Boolean(goal),
@@ -234,13 +242,39 @@ export async function checkWhatChanged(
       currentValue: goal ? goal.liveCurrentValue : null,
       targetValue: goal?.targetValue ?? stored?.targetValue ?? null,
       unit: goal?.unit || stored?.unit || "",
-      daysSinceDone: daysBetween(action.updatedAt, new Date()),
+      daysSinceDone,
       shareNote: goal?.shareNote,
       shareRows: goal?.shareRows,
     });
+    const searchStored = parseSearchBaseline(action.result);
+    const searchQuery =
+      action.evidence?.query?.trim() || searchStored?.query || "";
+    let outcome = learning.outcome;
+    if (action.evidence?.kind === SEARCH_LOOP_KIND || searchStored) {
+      const keywords = await getKeywordHistory(db, session.organizationId);
+      const keyword = keywords.find(
+        (row) =>
+          row.query.trim().toLowerCase() === searchQuery.toLowerCase(),
+      );
+      const latest = keyword?.points[keyword.points.length - 1];
+      const search = learnFromSearchQuery({
+        query: searchQuery,
+        baseline: searchStored,
+        current: latest
+          ? {
+              impressions: latest.impressions,
+              clicks: latest.clicks,
+              position: latest.position,
+              ctr: latest.ctr,
+            }
+          : null,
+        daysSinceDone,
+      });
+      outcome = composeSearchLoopCheck(learning.outcome, search.outcome);
+    }
 
     const nextResult = stored
-      ? `${action.result.split("\nWhat changed:")[0].trim()}\n\nWhat changed: ${learning.outcome}`
+      ? `${action.result.split("\nWhat changed:")[0].trim()}\n\nWhat changed: ${outcome}`
       : goal
         ? [
             action.result.split("\nWhat changed:")[0].trim() ||
@@ -250,9 +284,9 @@ export async function checkWhatChanged(
               targetValue: goal.targetValue,
               unit: goal.unit ?? "",
             }),
-            `What changed: ${learning.outcome}`,
+            `What changed: ${outcome}`,
           ].join("\n")
-        : `${action.result.split("\nWhat changed:")[0].trim()}\n\nWhat changed: ${learning.outcome}`;
+        : `${action.result.split("\nWhat changed:")[0].trim()}\n\nWhat changed: ${outcome}`;
 
     await db
       .update(growthActions)
@@ -276,7 +310,7 @@ export async function checkWhatChanged(
       await db
         .update(decisionRecords)
         .set({
-          outcome: learning.outcome,
+          outcome,
           supportingEvidence: stored
             ? decision.supportingEvidence || encodeWorkBaseline(stored)
             : goal
@@ -304,6 +338,6 @@ export async function checkWhatChanged(
       metadata: { kind: learning.kind, changeCourse: false, executed: false },
     });
     revalidateWork();
-    return learning.outcome;
+    return outcome;
   });
 }

@@ -2,6 +2,7 @@ import type { GrowthActionEvidence } from "@/lib/db/schema";
 import type { WorkLearningKind } from "@/lib/growth/work-learning";
 import type { SpecialistId, SpecialistReport } from "@/lib/growth/specialists";
 import { ACTIVATE_GOAL_STEP_TITLE, ADD_BRAND_VOICE_EXAMPLE_STEP_TITLE, ADD_GOAL_STEP_TITLE, ADD_OFFER_STEP_TITLE, APPROVE_ACTIONS_STEP_TITLE, APPROVE_PLAN_STEP_TITLE, CHECK_CHANGED_STEP_TITLE, CONFIRM_DRAFTS_STEP_TITLE, CONNECT_STRIPE_STEP_TITLE, DRAFT_BRAND_VOICE_STEP_TITLE, DRAFT_PLAN_STEP_TITLE, FIX_SEO_STEP_TITLE, GOAL_REACHED_STEP_TITLE, IMPROVE_SEO_STEP_TITLE, isSearchConsoleNextStep, OWNER_WORK_STEP_TITLE, PASTE_SNIPPET_STEP_TITLE, PROPOSE_ACTIONS_STEP_TITLE, READ_GOAL_STEP_TITLE, REVIEW_SCHEDULE_STEP_TITLE, REVIEW_SITE_STEP_TITLE, RUN_SEO_STEP_TITLE, SAVE_BRAND_STEP_TITLE, SAVE_BRAND_VOICE_STEP_TITLE, SAVE_BUSINESS_STEP_TITLE, SAVE_REVIEW_SCHEDULE_STEP_TITLE, SHARE_LEAD_FORM_STEP_TITLE, SYNC_STRIPE_STEP_TITLE } from "@/lib/growth/plan-draft";
+import { searchLoopNextStep, type SearchLoopView } from "@/lib/growth/search-loop";
 
 const DISCONNECTED_CHANNELS = new Set<SpecialistId>(["advertising", "email", "social"]);
 
@@ -147,6 +148,7 @@ export type NextStepInput = {
   readableDecisions?: ReadableDecision[]
   finishedWorkCount?: number
   latestLearning?: string
+  searchLoop?: SearchLoopView | null
 };
 
 export type ReadableGrowthPlan = {
@@ -237,6 +239,7 @@ export type CoordinatedNextStep = {
   needsSeoDraft: boolean
   needsSearchConsole: boolean
   needsReviewSchedule: boolean
+  searchLoop: SearchLoopView | null
   executeAllowed: false
 };
 
@@ -275,6 +278,23 @@ function reviewSiteCandidate(
     source: "website",
     specialistId: null,
     goalId: null,
+  };
+}
+
+function searchLoopCandidate(
+  loop: SearchLoopView | null | undefined,
+): NextStepCandidate | null {
+  const next = loop ? searchLoopNextStep(loop) : null;
+  if (!next) return null;
+  return {
+    kind: "recommend",
+    classification: "optimization",
+    title: next.title,
+    body: next.body,
+    href: next.href,
+    source: "specialist",
+    specialistId: "seo",
+    goalId: loop?.goalId ?? null,
   };
 }
 
@@ -520,6 +540,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     input.uncheckedWorkCount ?? uncheckedWork.length,
   );
   const reviewSite = reviewSiteCandidate(input.websiteConnected, input.websiteRead);
+  const searchLoop = searchLoopCandidate(input.searchLoop);
   const activate = activateGoalCandidate(input.activateGoalId, input.activateGoalTitle);
   const draftPlan = draftPlanCandidate(input.planGoalId, input.planGoalTitle);
   const approvePlan = approvePlanCandidate(input);
@@ -537,7 +558,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
   ].sort((a, b) => score(b) - score(a));
 
   return {
-    primary: drafts ?? ownerWork ?? checkChanged ?? reviewSite ?? activate ?? draftPlan ?? approvePlan ?? proposeActions ?? waitingApprove ?? learning ?? ranked[0] ?? nothingYet(),
+    primary: drafts ?? ownerWork ?? checkChanged ?? reviewSite ?? activate ?? draftPlan ?? approvePlan ?? proposeActions ?? waitingApprove ?? searchLoop ?? learning ?? ranked[0] ?? nothingYet(),
     leftAlone,
     waitingActions,
     openWork,
@@ -613,6 +634,7 @@ export function coordinateNextStep(input: NextStepInput): CoordinatedNextStep {
     needsReviewSchedule: input.reports.some(
       (report) => report.recommend.title === REVIEW_SCHEDULE_STEP_TITLE,
     ),
+    searchLoop: input.searchLoop ?? null,
     executeAllowed: false,
   };
 }

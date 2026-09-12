@@ -45,6 +45,7 @@ import {
   type SpecialistFacts,
 } from "@/lib/growth/specialists";
 import { persistSeoGrowthActions } from "@/lib/growth/persist-seo-actions";
+import { getSearchLoopView } from "@/lib/growth/search-loop-query";
 import { goalProgressPercent } from "@/lib/growth/types";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
 
@@ -648,12 +649,13 @@ export async function getSpecialistReports(organizationId: string) {
 }
 
 export async function getCoordinatedNextStep(organizationId: string) {
-  const [snapshot, reports, dashboard, openSeoDrafts, pipeline] = await Promise.all([
+  const [snapshot, reports, dashboard, openSeoDrafts, pipeline, searchLoop] = await Promise.all([
     getGrowthSnapshot(organizationId),
     getSpecialistReports(organizationId),
     getDashboardSnapshot(organizationId),
     getOpenSeoDrafts(organizationId),
     getOpenLeadsAndStages(organizationId),
+    getSearchLoopView(organizationId),
   ]);
   if (!snapshot) return null;
 
@@ -811,6 +813,7 @@ export async function getCoordinatedNextStep(organizationId: string) {
       isFinishedOwnerWork(action.status),
     ).length,
     latestLearning: learned?.outcome ?? "",
+    searchLoop,
   });
 }
 

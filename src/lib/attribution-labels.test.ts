@@ -114,7 +114,7 @@ describe("stored attribution join labels", () => {
     assert.doesNotMatch(nextStep, /attributionLabel|attribution_label|How sure/);
     assert.match(
       nextStep,
-      /drafts \?\? ownerWork \?\? checkChanged \?\? reviewSite \?\? activate \?\? draftPlan \?\? approvePlan \?\? proposeActions \?\? waitingApprove \?\? learning/,
+      /drafts \?\? ownerWork \?\? checkChanged \?\? reviewSite \?\? activate \?\? draftPlan \?\? approvePlan \?\? proposeActions \?\? waitingApprove \?\? searchLoop \?\? learning/,
     );
   });
 });

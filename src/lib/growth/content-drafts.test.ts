@@ -69,6 +69,17 @@ describe("workspace drafts from saved briefs", () => {
     assert.match(fromGap, /Private coaching/);
     assert.match(fromGap, /Smaller groups/);
     assert.doesNotMatch(fromGap, /\$\d|5-star|Jane Doe/i);
+    const fromSearch = writeDraftFromBrief({
+      organizationId: ORG_A,
+      briefId: BRIEF_A,
+      title: "Harbor sailing lessons",
+      query: "harbor sailing lessons",
+      briefSource: "content_gap",
+      ourOffers: ["Harbor sailing lessons"],
+    });
+    assert.match(fromSearch, /Copy this onto your existing website/);
+    assert.match(fromSearch, /Harbor sailing lessons/);
+    assert.doesNotMatch(fromSearch, /\$\d|5-star|Jane Doe/i);
   });
 
   it("requires an organization, brief, and title", () => {
@@ -138,6 +149,8 @@ describe("workspace drafts from saved briefs", () => {
       join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
       "utf8",
     );
+    assert.match(seoPage, /SearchLoopPanel/);
+    assert.match(seoPage, /search-to-page loop/);
     assert.match(seoPage, /draft from a competitor topic/);
     assert.match(seoPage, /names a saved offer/);
     assert.match(seoPage, /listed first/);

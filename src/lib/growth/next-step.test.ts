@@ -3049,6 +3049,55 @@ describe("coordinated next step", () => {
     assert.match(source, /revalidatePath\("\/app\/marketing"\)/);
   });
 
+  it("asks for the search-to-page loop after setup work, not before drafts", () => {
+    const loop = {
+      step: "save_brief" as const,
+      query: "harbor sailing lessons",
+      queryKey: "harbor sailing lessons",
+      why: "Worth a look.",
+      offerName: "Harbor sailing lessons",
+      goalId: "goal-1",
+      goalTitle: "More bookings",
+      page: null,
+      brief: null,
+      pasteActionId: null,
+      impressions: 400,
+      clicks: 12,
+      position: 14,
+      ctr: 0.03,
+      heading: "Search to page · next: harbor sailing lessons",
+      nextStepTitle: "Save a brief for this search",
+      nextStepBody:
+        "Save one brief for “harbor sailing lessons” on SEO. That starts the search-to-page loop. GroovGro will not write or publish the page.",
+    };
+    const blocked = coordinateNextStep({
+      inferredDraftCount: 1,
+      reports: buildSpecialistReports(facts({ inferredDraftCount: 1 })),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+      searchLoop: loop,
+    });
+    assert.equal(blocked.primary.title, "Confirm or reject what GroovGro drafted");
+    const step = coordinateNextStep({
+      inferredDraftCount: 0,
+      reports: buildSpecialistReports(facts()),
+      waitingActions: [],
+      websiteConnected: true,
+      websiteRead: true,
+      searchLoop: loop,
+    });
+    assert.equal(step.primary.title, "Save a brief for this search");
+    assert.equal(step.primary.href, "/app/seo");
+    assert.match(step.primary.body, /will not write or publish/);
+    const page = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/next-step/page.tsx"),
+      "utf8",
+    );
+    assert.match(page, /SearchLoopPanel/);
+    assert.match(page, /isSearchLoopNextStep/);
+  });
+
   it("refreshes Next step after GroovGro records a new Stripe payment copy", () => {
     const source = readFileSync(
       join(process.cwd(), "src/app/api/stripe/webhook/route.ts"),
