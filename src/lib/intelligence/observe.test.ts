@@ -1821,6 +1821,7 @@ describe("intelligence observe", () => {
     assert.match(recommended.body, /will not add links or schema/);
     assert.match(recommended.body, /2 suggested links/);
     assert.match(recommended.body, /3 schema facts/);
+    assert.match(recommended.body, /1 is not the default/);
     assert.match(recommended.body, /listed first/);
     assert.match(
       recommended.body,
