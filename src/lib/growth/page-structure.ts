@@ -175,8 +175,19 @@ export function linksToShow(rows: InternalLinkDraft[]): InternalLinkView[] {
   }));
 }
 
+export function sortSchemaFactsForPanel<
+  T extends { schemaType: string; pageUrl?: string },
+>(rows: T[]): T[] {
+  return [...rows].sort((left, right) => {
+    const leftDefault = isDefaultSchemaType(left.schemaType) ? 1 : 0;
+    const rightDefault = isDefaultSchemaType(right.schemaType) ? 1 : 0;
+    if (leftDefault !== rightDefault) return leftDefault - rightDefault;
+    return (left.pageUrl ?? "").localeCompare(right.pageUrl ?? "");
+  });
+}
+
 export function schemaFactsToShow(rows: SchemaFactDraft[]): SchemaFactView[] {
-  return rows.map((row) => ({
+  return sortSchemaFactsForPanel(rows).map((row) => ({
     pageId: row.pageId,
     pageUrl: row.pageUrl,
     pageTitle: row.pageTitle,
