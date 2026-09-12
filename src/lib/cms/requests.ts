@@ -68,3 +68,10 @@ export function describePlannerHeading(queuedCount: number): string {
   }
   return `Content planner · ${queuedCount} saved for later review`;
 }
+
+export function describePublishQueueHeading(queuedCount: number): string {
+  if (queuedCount <= 0) {
+    return "Drafts ready to publish later";
+  }
+  return `Drafts ready to publish later · ${queuedCount} waiting`;
+}
