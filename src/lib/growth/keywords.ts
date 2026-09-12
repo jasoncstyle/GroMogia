@@ -138,6 +138,16 @@ export function planKeywordHistory(input: {
   };
 }
 
+export function sortKeywordsForPanel<T extends { opportunityLabel?: string }>(
+  keywords: T[],
+): T[] {
+  return [...keywords].sort((left, right) => {
+    const leftReview = left.opportunityLabel === "review" ? 0 : 1;
+    const rightReview = right.opportunityLabel === "review" ? 0 : 1;
+    return leftReview - rightReview;
+  });
+}
+
 export function describeKeywordHistoryHeading(
   keywordCount = 0,
   reviewCount = 0,
