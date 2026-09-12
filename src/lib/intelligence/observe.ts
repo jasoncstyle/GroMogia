@@ -69,6 +69,9 @@ export type IntelligenceFacts = {
   draftOfferCheckCount?: number
   draftMissingOfferCount?: number
   draftNoOfferToCheckCount?: number
+  draftDifferenceCheckCount?: number
+  draftMissingDifferenceCount?: number
+  draftNoDifferenceToCheckCount?: number
 };
 
 export type InsightItem = {
@@ -217,6 +220,9 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const draftOfferCheckCount = facts.draftOfferCheckCount ?? 0;
   const draftMissingOfferCount = facts.draftMissingOfferCount ?? 0;
   const draftNoOfferToCheckCount = facts.draftNoOfferToCheckCount ?? 0;
+  const draftDifferenceCheckCount = facts.draftDifferenceCheckCount ?? 0;
+  const draftMissingDifferenceCount = facts.draftMissingDifferenceCount ?? 0;
+  const draftNoDifferenceToCheckCount = facts.draftNoDifferenceToCheckCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -315,6 +321,20 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "Competitor-topic drafts checked against what you sell",
       body: `GroovGro checked ${draftOfferCheckCount} competitor-topic ${draftOfferCheckCount === 1 ? "draft" : "drafts"} against saved offers.${namedCount > 0 ? ` ${namedCount} name a saved offer.` : ""}${draftMissingOfferCount > 0 ? ` ${draftMissingOfferCount} ${draftMissingOfferCount === 1 ? "does" : "do"} not name a saved offer yet.` : ""}${draftNoOfferToCheckCount > 0 ? ` ${draftNoOfferToCheckCount} cannot be checked until you save what you sell.` : ""} GroovGro did not publish or change the live website.`,
       evidence: ["content_drafts.offer_check"],
+      href: "/app/seo",
+    });
+  }
+
+  if (draftDifferenceCheckCount > 0) {
+    const namedCount =
+      draftDifferenceCheckCount -
+      draftMissingDifferenceCount -
+      draftNoDifferenceToCheckCount;
+    observations.push({
+      kind: "observation",
+      title: "Competitor-topic drafts checked against what makes you different",
+      body: `GroovGro checked ${draftDifferenceCheckCount} competitor-topic ${draftDifferenceCheckCount === 1 ? "draft" : "drafts"} against what makes this business different.${namedCount > 0 ? ` ${namedCount} name that difference.` : ""}${draftMissingDifferenceCount > 0 ? ` ${draftMissingDifferenceCount} ${draftMissingDifferenceCount === 1 ? "does" : "do"} not name it yet.` : ""}${draftNoDifferenceToCheckCount > 0 ? ` ${draftNoDifferenceToCheckCount} cannot be checked until you save what makes the business different.` : ""} GroovGro did not publish or change the live website.`,
+      evidence: ["content_drafts.difference_check"],
       href: "/app/seo",
     });
   }
@@ -713,6 +733,26 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && draftNoDifferenceToCheckCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Save what makes the business different so GroovGro can check that draft",
+      body: "On Business, save what makes this business different. GroovGro can then check a competitor-topic draft against that. It will not publish or change the live website.",
+      evidence: ["content_drafts.no_difference_to_check"],
+      href: "/app/business",
+    });
+  }
+
+  if (facts.websiteConnected && draftMissingDifferenceCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Write a competitor-topic draft so it names what makes you different",
+      body: "On SEO, write that workspace draft again after you save what makes this business different. GroovGro will not publish or change the live website.",
+      evidence: ["content_drafts.missing_difference"],
+      href: "/app/seo",
+    });
+  }
+
   if (facts.websiteConnected && draftMissingOfferCount > 0) {
     recommendations.push({
       kind: "recommendation",
@@ -929,6 +969,9 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `draft_offer_checks=${facts.draftOfferCheckCount ?? 0}`,
     `draft_missing_offers=${facts.draftMissingOfferCount ?? 0}`,
     `draft_no_offer_checks=${facts.draftNoOfferToCheckCount ?? 0}`,
+    `draft_difference_checks=${facts.draftDifferenceCheckCount ?? 0}`,
+    `draft_missing_differences=${facts.draftMissingDifferenceCount ?? 0}`,
+    `draft_no_difference_checks=${facts.draftNoDifferenceToCheckCount ?? 0}`,
   ].join(" ");
 }
 

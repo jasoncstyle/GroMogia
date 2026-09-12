@@ -1379,6 +1379,59 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("observes competitor-topic draft difference checks and does not publish", () => {
+    const named = buildIntelligenceBrief(
+      facts({
+        draftDifferenceCheckCount: 2,
+        draftMissingDifferenceCount: 0,
+        draftNoDifferenceToCheckCount: 0,
+      }),
+    );
+    const observed = named.observations.find(
+      (item) =>
+        item.title ===
+        "Competitor-topic drafts checked against what makes you different",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /2 competitor-topic drafts/);
+    assert.match(observed.body, /2 name that difference/);
+    assert.match(observed.body, /did not publish/);
+
+    const missing = buildIntelligenceBrief(
+      facts({
+        draftDifferenceCheckCount: 1,
+        draftMissingDifferenceCount: 1,
+      }),
+    );
+    const rewrite = missing.recommendations.find(
+      (item) =>
+        item.title ===
+        "Write a competitor-topic draft so it names what makes you different",
+    );
+    assert.ok(rewrite);
+    assert.equal(rewrite.href, "/app/seo");
+    assert.match(rewrite.body, /will not publish/);
+
+    const none = buildIntelligenceBrief(
+      facts({
+        draftDifferenceCheckCount: 1,
+        draftNoDifferenceToCheckCount: 1,
+      }),
+    );
+    const saveDiff = none.recommendations.find(
+      (item) =>
+        item.title ===
+        "Save what makes the business different so GroovGro can check that draft",
+    );
+    assert.ok(saveDiff);
+    assert.equal(saveDiff.href, "/app/business");
+    assert.match(
+      factsSummary(facts({ draftDifferenceCheckCount: 2, draftMissingDifferenceCount: 1 })),
+      /draft_difference_checks=2 draft_missing_differences=1/,
+    );
+  });
+
   it("observes link and schema facts and does not write the live site", () => {
     const withLinks = buildIntelligenceBrief(
       facts({

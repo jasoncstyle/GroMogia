@@ -7,8 +7,10 @@ import {
   type ContentBriefView,
 } from "@/lib/growth/content-briefs";
 import {
+  describeDraftDifferenceCheck,
   describeDraftOfferCheck,
   type ContentDraftView,
+  type DraftDifferenceCheckView,
   type DraftOfferCheckView,
 } from "@/lib/growth/content-drafts";
 import { FoldableSample } from "@/components/foldable-sample";
@@ -34,6 +36,7 @@ export function ContentBriefsPanel({
     ContentBriefView & {
       draft?: ContentDraftView | null
       offerCheck?: DraftOfferCheckView | null
+      differenceCheck?: DraftDifferenceCheckView | null
     }
   >
   queuedDraftIds?: string[]
@@ -82,6 +85,11 @@ export function ContentBriefsPanel({
                 {brief.offerCheck ? (
                   <p className="text-sm text-muted-foreground">
                     {describeDraftOfferCheck(brief.offerCheck)}
+                  </p>
+                ) : null}
+                {brief.differenceCheck ? (
+                  <p className="text-sm text-muted-foreground">
+                    {describeDraftDifferenceCheck(brief.differenceCheck)}
                   </p>
                 ) : null}
                 {canManage ? (
