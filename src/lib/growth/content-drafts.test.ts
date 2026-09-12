@@ -140,6 +140,7 @@ describe("workspace drafts from saved briefs", () => {
     );
     assert.match(seoPage, /draft from a competitor topic/);
     assert.match(seoPage, /names a saved offer/);
+    assert.match(seoPage, /listed first/);
     assert.match(seoPage, /queuedReviews/);
     assert.match(panel, /describeCmsPublishRequest/);
     assert.match(seoPage, /later review from[\s\S]*the planner/);
