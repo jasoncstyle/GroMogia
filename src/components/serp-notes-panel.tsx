@@ -5,6 +5,7 @@ import {
   describeSerpNote,
   describeSerpNotesHeading,
   knownCompetitorsNeedingNote,
+  sortKnownCompetitorsForNotes,
   type SerpNoteView,
 } from "@/lib/growth/serp-notes";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -31,6 +32,7 @@ export function SerpNotesPanel({
   canManage?: boolean
 }) {
   const remainingKnown = knownCompetitorsNeedingNote(knownCompetitors, notes);
+  const knownToShow = sortKnownCompetitorsForNotes(knownCompetitors, notes);
   return (
     <Card>
       <CardHeader>
@@ -38,15 +40,15 @@ export function SerpNotesPanel({
           {describeSerpNotesHeading(notes.length, remainingKnown.length)}
         </CardTitle>
         <CardDescription>
-          Save competitors you already know for a search query. GroovGro will
-          not look these businesses up, scrape search results, or buy a SERP
-          vendor.
+          Save competitors you already know for a search query. Names that still need a note are listed first.
+          GroovGro will not look these businesses up, scrape search results, or
+          buy a SERP vendor.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {knownCompetitors.length > 0 ? (
           <p className="text-sm text-muted-foreground">
-            From Business: {knownCompetitors.join(", ")}.{" "}
+            From Business: {knownToShow.join(", ")}.{" "}
             <Link href="/app/business" className="underline underline-offset-2">
               Edit on Business
             </Link>
