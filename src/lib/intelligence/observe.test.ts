@@ -305,6 +305,7 @@ describe("intelligence observe", () => {
     assert.equal(recommended.href, "/app/seo");
     assert.match(recommended.body, /will not change the live website/);
     assert.match(recommended.body, /1 is listed/);
+    assert.match(recommended.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(facts({ recordedKeywordCount: 3 })).recommendations.some(
         (item) => item.title === "Review the ranked search queries",
