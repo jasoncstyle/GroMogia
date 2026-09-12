@@ -186,6 +186,7 @@ describe("cross-channel opportunity scoring", () => {
     assert.match(panel, /Next step from this estimate/);
     assert.match(panel, /buy\s+ads, or run work/);
     assert.match(intelligence, /ChannelScorePanel/);
+    assert.match(intelligence, /Channels worth a look are listed first/);
     assert.match(nextStepPage, /ChannelScorePanel/);
     assert.doesNotMatch(nextStep, /channelScore|channel_score|scoreGrowthChannels/);
     assert.match(
