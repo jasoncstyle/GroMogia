@@ -154,7 +154,7 @@ Ocean Sailing Adventures **live** bunk/passage checkout still uses **stripe-osa 
 
 ## What is already working
 
-- Competitor looks (this branch): the owner can save a known competitor website on SEO. GroovGro can read that public page and write a compete look. Intelligence can notice it. GroovGro does not scrape Google, copy their words, buy ads, or search for more businesses yet. The search adapter stays off.
+- Competitor looks (this branch): the owner can save a known competitor website on SEO. GroovGro can read that public page and write a compete look. Intelligence can notice it. The How we might compete heading names saved sites and planned moves. GroovGro does not scrape Google, copy their words, buy ads, or search for more businesses yet. The search adapter stays off.
 - Phase P CMS publish review: the owner can save a workspace draft for later CMS review. SEO and Intelligence can show that queue, including remaining drafts that still need later review listed first. GroovGro does not publish or change the live website. The adapter stays off.
 - Phase O citation gaps: GroovGro can estimate citation gaps from the latest saved visibility snapshot. SEO and Intelligence can show those gaps, including a heading and recommendation count. GroovGro does not ask AI systems, scrape answers, or treat one answer as truth. The adapter stays off.
 - Phase N visibility history: the owner can save another snapshot of what they already heard for a saved library question. SEO and Intelligence can show that history, including remaining questions without a snapshot listed first. GroovGro does not ask AI systems, scrape answers, or treat one answer as truth. The adapter stays off.
