@@ -1,7 +1,14 @@
+import { createContentBrief } from "@/lib/actions/content-briefs";
+import {
+  hasSavedContentBriefForTopic,
+  suggestBriefOutline,
+  type ContentBriefView,
+} from "@/lib/growth/content-briefs";
 import {
   describeContentGapsHeading,
   type ContentGapView,
 } from "@/lib/growth/content-gaps";
+import { SaveButton, SaveForm } from "@/components/save-form";
 import {
   Card,
   CardContent,
@@ -12,10 +19,14 @@ import {
 
 export function ContentGapsPanel({
   gaps,
+  briefs = [],
   pagesRead,
+  canManage = true,
 }: {
   gaps: ContentGapView[]
+  briefs?: Pick<ContentBriefView, "query" | "title">[]
   pagesRead: boolean
+  canManage?: boolean
 }) {
   return (
     <Card>
@@ -24,8 +35,8 @@ export function ContentGapsPanel({
         <CardDescription>
           GroovGro compared stored Search Console queries marked worth a look
           to pages it already read. It did not invent topics, scrape
-          competitors, or create a page. Save a brief on the planner if you
-          want to plan one.
+          competitors, or create a page. You can save a brief here. GroovGro
+          will not write that page.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -40,12 +51,43 @@ export function ContentGapsPanel({
             already read. Tiny Search Console rows stay out of this list.
           </p>
         ) : (
-          gaps.map((gap) => (
-            <div key={gap.queryKey} className="space-y-1">
-              <p className="text-sm font-medium">{gap.query}</p>
-              <p className="text-sm text-muted-foreground">{gap.why}</p>
-            </div>
-          ))
+          gaps.map((gap) => {
+            const fieldKey = gap.queryKey.replace(/[^a-z0-9]+/g, "-");
+            return (
+              <div key={gap.queryKey} className="space-y-2">
+                <p className="text-sm font-medium">{gap.query}</p>
+                <p className="text-sm text-muted-foreground">{gap.why}</p>
+                {canManage ? (
+                  hasSavedContentBriefForTopic(briefs, gap.query) ? (
+                    <p className="text-sm text-muted-foreground">
+                      Already saved on the planner.
+                    </p>
+                  ) : (
+                    <SaveForm
+                      action={createContentBrief}
+                      successMessage="Content brief saved to the planner. GroovGro did not write a page."
+                    >
+                      <input type="hidden" name="query" value={gap.query} />
+                      <input type="hidden" name="title" value={gap.query} />
+                      <input
+                        type="hidden"
+                        name="outline"
+                        value={suggestBriefOutline(gap.query)}
+                      />
+                      <SaveButton
+                        type="submit"
+                        size="sm"
+                        variant="outline"
+                        id={`save-gap-brief-${fieldKey}`}
+                      >
+                        Save a brief for this query
+                      </SaveButton>
+                    </SaveForm>
+                  )
+                ) : null}
+              </div>
+            );
+          })
         )}
       </CardContent>
     </Card>

@@ -284,7 +284,9 @@ export default async function SeoPage({
 
           <ContentGapsPanel
             gaps={data.contentGaps}
+            briefs={data.contentBriefs}
             pagesRead={data.pagesRead}
+            canManage={session.permissions.includes("manage_seo")}
           />
 
           <ContentBriefsPanel
