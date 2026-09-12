@@ -4,6 +4,7 @@
  */
 export const COMPETE_MOVE_SOURCE_OWNER = "owner";
 export const COMPETE_MOVE_STATUS_PLANNED = "planned";
+export const COMPETE_MOVE_STATUS_DONE = "owner_done";
 export const COMPETE_MOVE_MAX_SHOWN = 12;
 
 export type CompeteMoveDraft = {
@@ -18,6 +19,7 @@ export type CompeteMoveView = {
   id: string
   title: string
   note: string
+  status?: string
   createdAt: Date
 };
 
@@ -43,12 +45,37 @@ export function planCompeteMove(input: {
 }
 
 export function describeCompeteMove(
-  row: Pick<CompeteMoveView, "title" | "note">,
+  row: Pick<CompeteMoveView, "title" | "note" | "status">,
 ): string {
+  if (row.status === COMPETE_MOVE_STATUS_DONE) {
+    return `You did: “${row.title}”. GroovGro did not do this or change the live website.`;
+  }
   if (row.note) {
     return `You will: “${row.title}”. ${row.note}`;
   }
   return `You will: “${row.title}”. GroovGro has not done this or changed the live website.`;
+}
+
+export function planCompeteMoveDone(input: {
+  organizationId: string
+  moveId?: string | null
+}): {
+  organizationId: string
+  moveId: string
+  status: typeof COMPETE_MOVE_STATUS_DONE
+} {
+  if (!input.organizationId) {
+    throw new Error("Missing organization.");
+  }
+  const moveId = (input.moveId ?? "").trim();
+  if (!moveId) {
+    throw new Error("Pick a saved move first.");
+  }
+  return {
+    organizationId: input.organizationId,
+    moveId,
+    status: COMPETE_MOVE_STATUS_DONE,
+  };
 }
 
 export function competeMovesToShow(rows: CompeteMoveView[]): CompeteMoveView[] {

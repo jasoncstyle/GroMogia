@@ -1,11 +1,15 @@
 import { createContentBrief } from "@/lib/actions/content-briefs";
-import { createCompeteMove } from "@/lib/actions/compete-moves";
+import {
+  completeCompeteMove,
+  createCompeteMove,
+} from "@/lib/actions/compete-moves";
 import {
   createCompetitorSite,
   lookAtCompetitorSite,
 } from "@/lib/actions/competitor-sites";
 import { suggestBriefOutlineFromCompetitorGap } from "@/lib/growth/content-briefs";
 import {
+  COMPETE_MOVE_STATUS_DONE,
   describeCompeteMove,
   suggestCompeteMoveFromGap,
   type CompeteMoveView,
@@ -73,11 +77,22 @@ export function CompetitorSitesPanel({
           <div className="space-y-2 rounded-lg border p-3">
             <p className="text-sm font-medium">What I will do</p>
             {moves.map((move) => (
-              <div key={move.id} className="space-y-1">
+              <div key={move.id} className="space-y-2">
                 <p className="text-sm font-medium">{describeCompeteMove(move)}</p>
                 <p className="text-xs text-muted-foreground">
                   {move.createdAt.toLocaleString()}
                 </p>
+                {canManage && move.status !== COMPETE_MOVE_STATUS_DONE ? (
+                  <SaveForm
+                    action={completeCompeteMove}
+                    successMessage="Marked as done. GroovGro did not do this or change the live website."
+                  >
+                    <input type="hidden" name="moveId" value={move.id} />
+                    <SaveButton type="submit" size="sm" variant="outline">
+                      I did this
+                    </SaveButton>
+                  </SaveForm>
+                ) : null}
               </div>
             ))}
           </div>
