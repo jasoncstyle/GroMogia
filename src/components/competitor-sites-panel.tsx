@@ -1,9 +1,14 @@
 import { createContentBrief } from "@/lib/actions/content-briefs";
+import { createCompeteMove } from "@/lib/actions/compete-moves";
 import {
   createCompetitorSite,
   lookAtCompetitorSite,
 } from "@/lib/actions/competitor-sites";
 import { suggestBriefOutlineFromCompetitorGap } from "@/lib/growth/content-briefs";
+import {
+  describeCompeteMove,
+  type CompeteMoveView,
+} from "@/lib/growth/compete-moves";
 import {
   type CompetitorCompareView,
   type CompetitorPageGapView,
@@ -28,6 +33,7 @@ export function CompetitorSitesPanel({
   searches,
   compare,
   pageGaps = [],
+  moves = [],
   pagesRead = false,
   canManage = true,
 }: {
@@ -35,6 +41,7 @@ export function CompetitorSitesPanel({
   searches: CompetitorSearchHint[]
   compare?: CompetitorCompareView | null
   pageGaps?: CompetitorPageGapView[]
+  moves?: CompeteMoveView[]
   pagesRead?: boolean
   canManage?: boolean
 }) {
@@ -48,7 +55,7 @@ export function CompetitorSitesPanel({
           and a few public pages on the same site, then compare those looks
           to what you sell. It can name topics those sites show that GroovGro
           has not read on your site. You can save a brief for one of those
-          topics. If the site blocks the automated read,
+          topics. You can save what you will do. If the site blocks the automated read,
           paste what you see. It will not scrape Google, copy their words
           onto your site, create a page, or buy ads.
         </CardDescription>
@@ -58,6 +65,19 @@ export function CompetitorSitesPanel({
           <div className="space-y-1 rounded-lg border p-3">
             <p className="text-sm font-medium">How these sites compare</p>
             <p className="text-sm text-muted-foreground">{compare.note}</p>
+          </div>
+        ) : null}
+        {moves.length > 0 ? (
+          <div className="space-y-2 rounded-lg border p-3">
+            <p className="text-sm font-medium">What I will do</p>
+            {moves.map((move) => (
+              <div key={move.id} className="space-y-1">
+                <p className="text-sm font-medium">{describeCompeteMove(move)}</p>
+                <p className="text-xs text-muted-foreground">
+                  {move.createdAt.toLocaleString()}
+                </p>
+              </div>
+            ))}
           </div>
         ) : null}
         {sites.some((site) => site.competeNote || site.modelGuess) ? (
@@ -249,6 +269,35 @@ export function CompetitorSitesPanel({
               );
             })}
           </div>
+        ) : null}
+
+        {canManage ? (
+          <SaveForm
+            action={createCompeteMove}
+            successMessage="Compete move saved. GroovGro did not do this or change the live website."
+            className="grid gap-3"
+            resetOnSuccess
+          >
+            <div className="space-y-2">
+              <Label htmlFor="competeMoveTitle">What I will do</Label>
+              <Input
+                id="competeMoveTitle"
+                name="title"
+                required
+                placeholder="Required. GroovGro will not do this for you."
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="competeMoveNote">How you will do it, if you want</Label>
+              <Textarea
+                id="competeMoveNote"
+                name="note"
+                rows={3}
+                placeholder="Optional. GroovGro will not publish or change the live website."
+              />
+            </div>
+            <SaveButton type="submit">Save what I will do</SaveButton>
+          </SaveForm>
         ) : null}
 
         {canManage ? (

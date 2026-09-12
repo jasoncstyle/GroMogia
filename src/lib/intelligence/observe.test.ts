@@ -1029,6 +1029,58 @@ describe("intelligence observe", () => {
     );
   });
 
+  it("observes owner-saved compete moves and does not do the work", () => {
+    const saved = buildIntelligenceBrief(
+      facts({
+        competeMoveCount: 2,
+      }),
+    );
+    const observed = saved.observations.find(
+      (item) => item.title === "Compete moves you said you will do",
+    );
+    assert.ok(observed);
+    assert.equal(observed.href, "/app/seo");
+    assert.match(observed.body, /2 moves/);
+    assert.match(observed.body, /did not do that work/);
+    assert.equal(
+      saved.recommendations.some(
+        (item) => item.title === "Save what you will do to compete",
+      ),
+      false,
+    );
+
+    const missing = buildIntelligenceBrief(
+      facts({
+        competitorLookCount: 1,
+        competeMoveCount: 0,
+      }),
+    );
+    const recommended = missing.recommendations.find(
+      (item) => item.title === "Save what you will do to compete",
+    );
+    assert.ok(recommended);
+    assert.equal(recommended.href, "/app/seo");
+    assert.match(recommended.body, /will not do that work/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Save what you will do to compete",
+      ),
+      false,
+    );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          websiteConnected: false,
+          competitorLookCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save what you will do to compete",
+      ),
+      false,
+    );
+    assert.match(factsSummary(facts({ competeMoveCount: 3 })), /compete_moves=3/);
+  });
+
   it("observes stored content gaps and does not write a page", () => {
     const brief = buildIntelligenceBrief(
       facts({

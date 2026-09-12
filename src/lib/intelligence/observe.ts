@@ -64,6 +64,7 @@ export type IntelligenceFacts = {
   competitorSiteCount?: number
   competitorLookCount?: number
   competitorPageGapCount?: number
+  competeMoveCount?: number
   competitorGapBriefCount?: number
   draftOfferCheckCount?: number
   draftMissingOfferCount?: number
@@ -211,6 +212,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const competitorSiteCount = facts.competitorSiteCount ?? 0;
   const competitorLookCount = facts.competitorLookCount ?? 0;
   const competitorPageGapCount = facts.competitorPageGapCount ?? 0;
+  const competeMoveCount = facts.competeMoveCount ?? 0;
   const competitorGapBriefCount = facts.competitorGapBriefCount ?? 0;
   const draftOfferCheckCount = facts.draftOfferCheckCount ?? 0;
   const draftMissingOfferCount = facts.draftMissingOfferCount ?? 0;
@@ -251,6 +253,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
       title: "How saved competitor websites compare",
       body: `GroovGro compared ${competitorLookCount} competitor websites you named to what you sell. This is from sites you asked it to read, not a Google scrape, and not a reason to copy their words or buy ads.`,
       evidence: ["competitor_sites.looked_at"],
+      href: "/app/seo",
+    });
+  }
+
+  if (competeMoveCount > 0) {
+    observations.push({
+      kind: "observation",
+      title: "Compete moves you said you will do",
+      body: `The owner saved ${competeMoveCount} ${competeMoveCount === 1 ? "move" : "moves"} they will do. GroovGro did not do that work or change the live website.`,
+      evidence: ["compete_moves.source=owner"],
       href: "/app/seo",
     });
   }
@@ -580,6 +592,20 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (
+    facts.websiteConnected &&
+    (competitorLookCount > 0 || competitorPageGapCount > 0) &&
+    competeMoveCount === 0
+  ) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Save what you will do to compete",
+      body: "On SEO, save what you will do after looking at a competitor site. GroovGro will not do that work or change the live website.",
+      evidence: ["compete_moves missing"],
+      href: "/app/seo",
+    });
+  }
+
   if (facts.websiteConnected && competitorPageGapCount > 0) {
     recommendations.push({
       kind: "recommendation",
@@ -898,6 +924,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `competitor_sites=${facts.competitorSiteCount ?? 0}`,
     `competitor_looks=${facts.competitorLookCount ?? 0}`,
     `competitor_page_gaps=${facts.competitorPageGapCount ?? 0}`,
+    `compete_moves=${facts.competeMoveCount ?? 0}`,
     `competitor_gap_briefs=${facts.competitorGapBriefCount ?? 0}`,
     `draft_offer_checks=${facts.draftOfferCheckCount ?? 0}`,
     `draft_missing_offers=${facts.draftMissingOfferCount ?? 0}`,
