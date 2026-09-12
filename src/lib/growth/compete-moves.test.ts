@@ -8,7 +8,9 @@ import {
   COMPETE_MOVE_STATUS_DONE,
   COMPETE_MOVE_STATUS_PLANNED,
   competeMovesToShow,
+  countPlannedCompeteMoves,
   describeCompeteMove,
+  describeCompeteMoveListHeading,
   hasSavedCompeteMoveTitle,
   planCompeteMove,
   planCompeteMoveDone,
@@ -158,5 +160,21 @@ describe("owner-saved compete moves", () => {
       false,
     );
     assert.match(panel, /Already saved as what you will do/);
+    assert.equal(
+      countPlannedCompeteMoves([
+        { status: COMPETE_MOVE_STATUS_PLANNED },
+        { status: COMPETE_MOVE_STATUS_DONE },
+      ]),
+      1,
+    );
+    assert.equal(
+      describeCompeteMoveListHeading(1, 2),
+      "What I will do · 1 still planned",
+    );
+    assert.equal(
+      describeCompeteMoveListHeading(0, 2),
+      "What I will do · all marked done",
+    );
+    assert.match(panel, /describeCompeteMoveListHeading/);
   });
 });
