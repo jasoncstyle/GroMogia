@@ -658,6 +658,16 @@ export function planCompetitorPageGaps(input: {
     }));
 }
 
+export function describeCompetitorPageGapsHeading(
+  gapCount: number,
+  pagesRead = true,
+): string {
+  if (!pagesRead || gapCount <= 0) {
+    return "Pages they show that GroovGro has not read";
+  }
+  return `Pages they show that GroovGro has not read · ${gapCount}`;
+}
+
 export function competitorSitesToShow(
   rows: CompetitorSiteView[],
 ): CompetitorSiteView[] {
