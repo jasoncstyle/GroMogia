@@ -24,7 +24,7 @@ export function GeoAuditsPanel({
         <CardTitle>{describeCitationGapsHeading(audits.length)}</CardTitle>
         <CardDescription>
           GroovGro compared the latest saved visibility snapshot for each
-          library question. It will not ask an AI system, scrape answers, or
+          library question. Citation gaps are listed first. It will not ask an AI system, scrape answers, or
           treat one answer as truth.
         </CardDescription>
       </CardHeader>
