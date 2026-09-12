@@ -2,6 +2,7 @@ import { createExecutionRequest } from "@/lib/actions/execution";
 import {
   actionsWaitingToQueue,
   describeExecutionCopy,
+  describeExecutionEmpty,
   describeExecutionHeading,
   describeExecutionRequest,
   executionActionTitle,
@@ -49,8 +50,7 @@ export function ExecutionPanel({
           </p>
         ) : requests.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No approved work is waiting to run later. GroovGro will not run
-            it, buy ads, or change the live website.
+            {describeExecutionEmpty(openActions.length)}
           </p>
         ) : (
           <div className="space-y-2">
