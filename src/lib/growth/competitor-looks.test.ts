@@ -5,6 +5,7 @@ import { join } from "node:path";
 
 import {
   competitorHost,
+  describeCompetitorPageGapsHeading,
   lookFromHtml,
   lookFromPublicContent,
   normalizeCompetitorUrl,
@@ -360,7 +361,16 @@ describe("competitor looks from owner-saved URLs", () => {
     assert.match(panel, /You\s+run the search/);
     assert.match(panel, /ownerSearchHref/);
     assert.match(panel, /How these sites compare/);
-    assert.match(panel, /Pages they show that GroovGro has not read/);
+    assert.match(panel, /describeCompetitorPageGapsHeading/);
+    assert.match(helper, /Pages they show that GroovGro has not read/);
+    assert.equal(
+      describeCompetitorPageGapsHeading(0),
+      "Pages they show that GroovGro has not read",
+    );
+    assert.equal(
+      describeCompetitorPageGapsHeading(2, true),
+      "Pages they show that GroovGro has not read · 2",
+    );
     assert.match(panel, /Save a brief for this topic/);
     assert.match(helper, /planCompetitorCompare/);
     assert.match(helper, /planCompetitorPageGaps/);

@@ -26,6 +26,7 @@ import {
   type CompeteMoveView,
 } from "@/lib/growth/compete-moves";
 import {
+  describeCompetitorPageGapsHeading,
   type CompetitorCompareView,
   type CompetitorPageGapView,
   type CompetitorSearchHint,
@@ -162,7 +163,7 @@ export function CompetitorSitesPanel({
         {sites.some((site) => site.competeNote || site.modelGuess) ? (
           <div className="space-y-2 rounded-lg border p-3">
             <p className="text-sm font-medium">
-              Pages they show that GroovGro has not read
+              {describeCompetitorPageGapsHeading(pageGaps.length, pagesRead)}
             </p>
             {!pagesRead ? (
               <p className="text-sm text-muted-foreground">

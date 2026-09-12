@@ -2008,6 +2008,7 @@ Organization
 202. **Intelligence still recommends later-review when another draft is open** — **IMPLEMENTED** this slice. Intelligence keeps recommending later CMS review when a workspace draft is not in that queue yet. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 203. **Intelligence still recommends a workspace draft when another brief is open** — **IMPLEMENTED** this slice. Intelligence keeps recommending a workspace draft when a saved brief does not have one yet. GroovGro does not publish or add a Next step loop.
 204. **Content-gap heading shows how many queries are missing** — **IMPLEMENTED** this slice. The missing-page query list on SEO says how many worth-a-look queries have no matching page GroovGro has read. GroovGro does not write a page, publish, or add a Next step loop.
+205. **Competitor page-topic heading shows how many topics are missing** — **IMPLEMENTED** this slice. The competitor page-topic list on SEO says how many topics GroovGro has not read on this business’s pages. GroovGro does not create a page, publish, or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
