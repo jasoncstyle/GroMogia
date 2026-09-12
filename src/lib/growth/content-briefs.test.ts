@@ -13,6 +13,7 @@ import {
   planContentBrief,
   plannerQuerySuggestions,
   refuseDuplicateContentBrief,
+  sortContentBriefsForPlanner,
   suggestBriefOutline,
   suggestBriefOutlineFromCompetitorGap,
   suggestBriefTitle,
@@ -183,5 +184,14 @@ describe("owner-entered content briefs", () => {
       ["Private coaching"],
     );
     assert.match(seoPage, /plannerQuerySuggestions/);
+    assert.match(panel, /sortContentBriefsForPlanner/);
+    assert.deepEqual(
+      sortContentBriefsForPlanner([
+        { id: "with-draft", draft: { id: "d1" } },
+        { id: "needs-draft" },
+        { id: "also-draft", draft: { id: "d2" } },
+      ]).map((row) => row.id),
+      ["needs-draft", "with-draft", "also-draft"],
+    );
   });
 });
