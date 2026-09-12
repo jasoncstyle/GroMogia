@@ -919,7 +919,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Compare stored people, pages, content, and AI visibility",
-      body: "Read the comparison of stored channels on Intelligence. GroovGro will not change today's Next step from this estimate, buy ads, or run work.",
+      body: `Read the comparison of stored channels on Intelligence. ${comparable.length} ${comparable.length === 1 ? "channel is" : "channels are"} listed. GroovGro will not change today's Next step from this estimate, buy ads, or run work.`,
       evidence: ["channel_scores.source=stored_workspace"],
       href: "/app/intelligence",
     });
