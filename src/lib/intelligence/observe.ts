@@ -685,7 +685,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Mark a compete move done when you finish it",
-      body: "On SEO, mark a saved compete move as done after you do it. GroovGro will not do that work or change the live website.",
+      body: "On SEO, mark a saved compete move as done after you do it. Moves still planned are listed first. GroovGro will not do that work or change the live website.",
       evidence: ["compete_moves.planned"],
       href: "/app/seo",
     });

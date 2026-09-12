@@ -1216,6 +1216,7 @@ describe("intelligence observe", () => {
     assert.ok(markDone);
     assert.equal(markDone.href, "/app/seo");
     assert.match(markDone.body, /will not do that work/);
+    assert.match(markDone.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(
         facts({
