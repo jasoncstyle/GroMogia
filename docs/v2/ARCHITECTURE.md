@@ -1995,6 +1995,7 @@ Organization
 189. **Hide a compete-move button that is already saved** — **IMPLEMENTED** this slice. SEO hides “I will cover this” or “I will do this compare” when that exact title is already saved. GroovGro does not do the work, publish, or add a Next step loop.
 190. **Intelligence shows compete moves still planned** — **IMPLEMENTED** this slice. Intelligence can say how many owner-saved compete moves are still planned. GroovGro does not do the work, publish, or add a Next step loop.
 191. **Intelligence recommends marking a planned compete move done** — **IMPLEMENTED** this slice. Intelligence can recommend marking a still-planned compete move done after the owner finishes it. GroovGro does not do the work, publish, or add a Next step loop.
+192. **Hide a competitor-topic brief button that is already saved** — **IMPLEMENTED** this slice. SEO hides “Save a brief for this topic” when that topic is already on the planner. GroovGro does not write the page, publish, or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 

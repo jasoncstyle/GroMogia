@@ -8,6 +8,7 @@ import {
   CONTENT_BRIEF_SOURCE_OWNER,
   CONTENT_BRIEF_STATUS_PLANNED,
   describeContentBrief,
+  hasSavedContentBriefForTopic,
   planContentBrief,
   suggestBriefOutline,
   suggestBriefOutlineFromCompetitorGap,
@@ -121,5 +122,22 @@ describe("owner-entered content briefs", () => {
       "utf8",
     );
     assert.match(seoPage, /ContentBriefsPanel/);
+    assert.match(seoPage, /briefs=\{data\.contentBriefs\}/);
+    assert.match(competitorPanel, /Already saved on the planner/);
+    assert.equal(
+      hasSavedContentBriefForTopic(
+        [{ query: "Weekend beginner class", title: "Weekend beginner class" }],
+        "  weekend beginner class  ",
+      ),
+      true,
+    );
+    assert.equal(
+      hasSavedContentBriefForTopic(
+        [{ query: "Private coaching", title: "Private coaching" }],
+        "Weekend beginner class",
+      ),
+      false,
+    );
+    assert.equal(hasSavedContentBriefForTopic([], "Weekend beginner class"), false);
   });
 });
