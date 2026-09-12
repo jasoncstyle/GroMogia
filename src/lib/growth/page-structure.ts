@@ -80,9 +80,10 @@ export function isDefaultSchemaType(schemaType: string): boolean {
 export function describePageStructureHeading(
   linkCount = 0,
   schemaCount = 0,
+  schemaReviewCount = 0,
 ): string {
   const base = "Links and schema facts from pages GroovGro already read";
-  if (linkCount <= 0 && schemaCount <= 0) {
+  if (linkCount <= 0 && schemaCount <= 0 && schemaReviewCount <= 0) {
     return base;
   }
   const links =
@@ -93,21 +94,28 @@ export function describePageStructureHeading(
     schemaCount <= 0
       ? ""
       : ` · ${schemaCount} schema ${schemaCount === 1 ? "fact" : "facts"}`;
-  return `${base}${links}${schema}`;
+  const review =
+    schemaReviewCount <= 0
+      ? ""
+      : ` · ${schemaReviewCount} not the default`;
+  return `${base}${links}${schema}${review}`;
 }
 
 export function describePageStructureGroupHeading(
   group: "links" | "schema",
   count: number,
+  reviewCount = 0,
 ): string {
   if (group === "links") {
     return count <= 0
       ? "Suggested links"
       : `Suggested links · ${count}`;
   }
+  const review =
+    reviewCount <= 0 ? "" : ` · ${reviewCount} not the default`;
   return count <= 0
-    ? "Estimated schema types"
-    : `Estimated schema types · ${count}`;
+    ? `Estimated schema types${review}`
+    : `Estimated schema types · ${count}${review}`;
 }
 
 export function pageDisplayTitle(page: StructurePage): string {
