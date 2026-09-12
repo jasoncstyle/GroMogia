@@ -5,6 +5,7 @@ import { join } from "node:path";
 
 import {
   DEFAULT_SCHEMA_TYPE,
+  describePageStructureHeading,
   isDefaultSchemaType,
   linksToShow,
   planPageStructure,
@@ -248,6 +249,15 @@ describe("page structure from stored pages", () => {
     assert.match(persist, /eq\(internalLinkSuggestions\.organizationId, organizationId\)/);
     assert.match(persist, /eq\(pageSchemaFacts\.organizationId, organizationId\)/);
     assert.match(panel, /will not add links or schema/);
+    assert.match(panel, /describePageStructureHeading/);
+    assert.equal(
+      describePageStructureHeading(0, 0),
+      "Links and schema facts from pages GroovGro already read",
+    );
+    assert.equal(
+      describePageStructureHeading(2, 1),
+      "Links and schema facts from pages GroovGro already read · 2 suggested links · 1 schema fact",
+    );
     assert.doesNotMatch(nextStep, /internalLink|page_schema|Add schema|internal link/);
     const seoPersist = readFileSync(
       join(process.cwd(), "src/lib/growth/persist-seo-actions.ts"),
