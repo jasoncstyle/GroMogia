@@ -68,7 +68,7 @@ export function ExecutionPanel({
         )}
 
         {canManage && openActions.length > 0 ? (
-          <SaveForm>
+          <SaveForm
             action={createExecutionRequest}
             successMessage="Later-run request saved. GroovGro did not run it, buy ads, or change the live website."
             className="grid gap-3"
