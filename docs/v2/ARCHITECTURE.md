@@ -2128,6 +2128,7 @@ Organization
 322. **Intelligence names suggested links listed first** — **IMPLEMENTED** this slice. Intelligence can say suggested links are listed first on SEO. GroovGro does not add links or schema to the live website or add a Next step loop.
 323. **Links-and-schema copy names suggested links listed first** — **IMPLEMENTED** this slice. The links-and-schema card says suggested links are listed first. GroovGro does not add links or schema to the live website or add a Next step loop.
 324. **Status text names suggested-link listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name Intelligence and page copy that suggested links are listed first. GroovGro does not publish or add a Next step loop.
+325. **SEO intro names suggested links listed first** — **IMPLEMENTED** this slice. The SEO page says suggested links are listed first. GroovGro does not add links or schema to the live website or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
