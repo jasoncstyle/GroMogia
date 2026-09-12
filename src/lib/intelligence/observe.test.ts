@@ -990,6 +990,7 @@ describe("intelligence observe", () => {
     assert.ok(saveBrief);
     assert.equal(saveBrief.href, "/app/seo");
     assert.match(saveBrief.body, /will not write the page/);
+    assert.match(saveBrief.body, /listed first/);
     assert.equal(
       buildIntelligenceBrief(
         facts({
