@@ -6,7 +6,10 @@ import {
   describePlannerHeading,
 } from "@/lib/cms/requests";
 import {
+  briefsNeedingDraft,
+  briefsWithDraft,
   describeContentBrief,
+  shouldGroupPlannerBriefs,
   sortContentBriefsForPlanner,
   suggestBriefOutline,
   type ContentBriefView,
@@ -65,7 +68,26 @@ export function ContentBriefsPanel({
       <CardContent className="space-y-4">
         {briefs.length > 0 ? (
           <div className="space-y-3">
-            {briefsToShow.map((brief) => (
+            {(shouldGroupPlannerBriefs(briefsToShow)
+              ? [
+                  {
+                    label: "Still need a workspace draft",
+                    rows: briefsNeedingDraft(briefsToShow),
+                  },
+                  {
+                    label: "Already has a workspace draft",
+                    rows: briefsWithDraft(briefsToShow),
+                  },
+                ]
+              : [{ label: "", rows: briefsToShow }]
+            ).map((group) => (
+              <div key={group.label || "briefs"} className="space-y-3">
+                {group.label ? (
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {group.label}
+                  </p>
+                ) : null}
+                {group.rows.map((brief) => (
               <div key={brief.id} className="space-y-2">
                 <p className="text-sm font-medium">{describeContentBrief(brief)}</p>
                 {brief.audience ? (
@@ -150,6 +172,8 @@ export function ContentBriefsPanel({
                     </SaveButton>
                   </SaveForm>
                 ) : null}
+              </div>
+                ))}
               </div>
             ))}
           </div>

@@ -153,6 +153,26 @@ export function sortContentBriefsForPlanner<T extends { draft?: unknown }>(
   });
 }
 
+export function briefsNeedingDraft<T extends { draft?: unknown }>(
+  briefs: T[],
+): T[] {
+  return briefs.filter((brief) => !brief.draft);
+}
+
+export function briefsWithDraft<T extends { draft?: unknown }>(
+  briefs: T[],
+): T[] {
+  return briefs.filter((brief) => Boolean(brief.draft));
+}
+
+export function shouldGroupPlannerBriefs<T extends { draft?: unknown }>(
+  briefs: T[],
+): boolean {
+  return (
+    briefsNeedingDraft(briefs).length > 0 && briefsWithDraft(briefs).length > 0
+  );
+}
+
 export function describeContentBrief(
   brief: Pick<ContentBriefView, "query" | "title" | "source">,
 ): string {
