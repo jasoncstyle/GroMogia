@@ -2124,6 +2124,7 @@ Organization
 318. **Competitor-notes list shows remaining known names first** — **IMPLEMENTED** this slice. The competitor-notes card lists Business-known names that still need a note first. GroovGro does not scrape search results or add a Next step loop.
 319. **Intelligence names remaining known competitor names listed first** — **IMPLEMENTED** this slice. Intelligence can say Business-known competitor names that still need a note are listed first. GroovGro does not scrape search results or add a Next step loop.
 320. **Status text names remaining competitor-note heading and listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the competitor-notes heading, list order, and Intelligence copy for remaining known names. GroovGro does not publish or add a Next step loop.
+321. **SEO intro names remaining known competitor names listed first** — **IMPLEMENTED** this slice. The SEO page says Business-known competitor names that still need a note are listed first. GroovGro does not scrape search results or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
