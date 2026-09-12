@@ -431,6 +431,19 @@ describe("intelligence observe", () => {
       ),
       false,
     );
+    const reviewNotes = saved.recommendations.find(
+      (item) => item.title === "Review AI visibility notes you already saved",
+    );
+    assert.ok(reviewNotes);
+    assert.equal(reviewNotes.href, "/app/seo");
+    assert.match(reviewNotes.body, /1 note is listed/);
+    assert.match(reviewNotes.body, /Notes that name a question are listed first/);
+    assert.equal(
+      buildIntelligenceBrief(facts()).recommendations.some(
+        (item) => item.title === "Review AI visibility notes you already saved",
+      ),
+      false,
+    );
 
     const missing = buildIntelligenceBrief(
       facts({
