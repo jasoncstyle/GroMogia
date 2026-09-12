@@ -2,6 +2,7 @@ import { createGeoNote } from "@/lib/actions/geo-notes";
 import {
   describeGeoNote,
   describeGeoNotesHeading,
+  sortGeoNotesForPanel,
   type GeoNoteView,
 } from "@/lib/geo/notes";
 import { SaveButton, SaveForm } from "@/components/save-form";
@@ -25,6 +26,7 @@ export function GeoNotesPanel({
   querySuggestions: string[]
   canManage?: boolean
 }) {
+  const listed = sortGeoNotesForPanel(notes);
   return (
     <Card>
       <CardHeader>
@@ -36,9 +38,9 @@ export function GeoNotesPanel({
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        {notes.length > 0 ? (
+        {listed.length > 0 ? (
           <div className="space-y-2">
-            {notes.map((note) => (
+            {listed.map((note) => (
               <div key={note.id} className="space-y-1">
                 <p className="text-sm font-medium">{describeGeoNote(note)}</p>
                 {note.note ? (
