@@ -120,3 +120,26 @@ export function describeExecutionRequest(
 export function executionRequestsToShow(rows: ExecutionView[]): ExecutionView[] {
   return rows.slice(0, EXECUTION_MAX_SHOWN);
 }
+
+export function actionsWaitingToQueue<T extends { id: string }>(
+  actions: T[],
+  requests: Array<{ actionId: string }>,
+): T[] {
+  const queued = new Set(requests.map((row) => row.actionId));
+  return actions.filter((action) => !queued.has(action.id));
+}
+
+export function describeExecutionHeading(
+  queuedCount = 0,
+  waitingCount = 0,
+): string {
+  if (queuedCount <= 0 && waitingCount <= 0) {
+    return "What is waiting to run later";
+  }
+  const queued = queuedCount <= 0 ? "" : ` · ${queuedCount} waiting`;
+  const remaining =
+    waitingCount <= 0
+      ? ""
+      : ` · ${waitingCount} still ${waitingCount === 1 ? "needs" : "need"} a later-run save`;
+  return `What is waiting to run later${queued}${remaining}`;
+}
