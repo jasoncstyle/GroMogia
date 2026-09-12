@@ -5,7 +5,11 @@ import {
   suggestBriefOutline,
   type ContentBriefView,
 } from "@/lib/growth/content-briefs";
-import type { ContentDraftView } from "@/lib/growth/content-drafts";
+import {
+  describeDraftOfferCheck,
+  type ContentDraftView,
+  type DraftOfferCheckView,
+} from "@/lib/growth/content-drafts";
 import { FoldableSample } from "@/components/foldable-sample";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Input } from "@/components/ui/input";
@@ -24,7 +28,12 @@ export function ContentBriefsPanel({
   querySuggestions,
   canManage = true,
 }: {
-  briefs: Array<ContentBriefView & { draft?: ContentDraftView | null }>
+  briefs: Array<
+    ContentBriefView & {
+      draft?: ContentDraftView | null
+      offerCheck?: DraftOfferCheckView | null
+    }
+  >
   querySuggestions: string[]
   canManage?: boolean
 }) {
@@ -33,8 +42,9 @@ export function ContentBriefsPanel({
       <CardHeader>
         <CardTitle>Content planner</CardTitle>
         <CardDescription>
-          Save a brief, then write a workspace draft from it. GroovGro will
-          not publish or change the live website.
+          Save a brief, then write a workspace draft from it. GroovGro can
+          check a competitor-topic draft against what you sell. It will not
+          publish or change the live website.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -64,6 +74,11 @@ export function ContentBriefsPanel({
                       {brief.draft.body}
                     </p>
                   </FoldableSample>
+                ) : null}
+                {brief.offerCheck ? (
+                  <p className="text-sm text-muted-foreground">
+                    {describeDraftOfferCheck(brief.offerCheck)}
+                  </p>
                 ) : null}
                 {canManage ? (
                   <SaveForm
