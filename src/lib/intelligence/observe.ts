@@ -756,7 +756,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Review queries with no matching page",
-      body: "Open SEO to read which worth-a-look queries GroovGro could not find on pages it already read. You can save a brief from that list. GroovGro will not create a page.",
+      body: "Open SEO to read which worth-a-look queries GroovGro could not find on pages it already read. You can save a brief from that list. Queries that still need a brief are listed first. GroovGro will not create a page.",
       evidence: ["content_gaps.status=gap"],
       href: "/app/seo",
     });
