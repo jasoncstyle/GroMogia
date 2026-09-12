@@ -7,6 +7,7 @@ import {
 import { suggestBriefOutlineFromCompetitorGap } from "@/lib/growth/content-briefs";
 import {
   describeCompeteMove,
+  suggestCompeteMoveFromGap,
   type CompeteMoveView,
 } from "@/lib/growth/compete-moves";
 import {
@@ -55,7 +56,8 @@ export function CompetitorSitesPanel({
           and a few public pages on the same site, then compare those looks
           to what you sell. It can name topics those sites show that GroovGro
           has not read on your site. You can save a brief for one of those
-          topics. You can save what you will do. If the site blocks the automated read,
+          topics. You can save what you will do, including from one of those
+          topics. If the site blocks the automated read,
           paste what you see. It will not scrape Google, copy their words
           onto your site, create a page, or buy ads.
         </CardDescription>
@@ -98,6 +100,7 @@ export function CompetitorSitesPanel({
             ) : (
               pageGaps.map((gap) => {
                 const fieldKey = gap.label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                const fromGap = suggestCompeteMoveFromGap(gap.label);
                 return (
                 <div key={gap.label} className="space-y-2">
                   <p className="text-sm font-medium">{gap.label}</p>
@@ -134,6 +137,23 @@ export function CompetitorSitesPanel({
                         id={`save-brief-${fieldKey}`}
                       >
                         Save a brief for this topic
+                      </SaveButton>
+                    </SaveForm>
+                  ) : null}
+                  {canManage ? (
+                    <SaveForm
+                      action={createCompeteMove}
+                      successMessage="Compete move saved. GroovGro did not do this or change the live website."
+                    >
+                      <input type="hidden" name="title" value={fromGap.title} />
+                      <input type="hidden" name="note" value={fromGap.note} />
+                      <SaveButton
+                        type="submit"
+                        size="sm"
+                        variant="outline"
+                        id={`save-move-${fieldKey}`}
+                      >
+                        I will cover this
                       </SaveButton>
                     </SaveForm>
                   ) : null}
