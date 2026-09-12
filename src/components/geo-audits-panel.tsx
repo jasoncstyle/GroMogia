@@ -1,4 +1,5 @@
 import {
+  describeCitationGapsHeading,
   describeGeoAudit,
   type GeoAuditView,
 } from "@/lib/geo/audits";
@@ -20,7 +21,7 @@ export function GeoAuditsPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Citation gaps from what you already measured</CardTitle>
+        <CardTitle>{describeCitationGapsHeading(audits.length)}</CardTitle>
         <CardDescription>
           GroovGro compared the latest saved visibility snapshot for each
           library question. It will not ask an AI system, scrape answers, or
