@@ -109,7 +109,7 @@ export default async function SeoPage({
           Check the connected website and every GroovGro page. Approve drafts,
           then apply title, description, or heading changes onto that GroovGro
           page. Search Console is read-only. Queries from those snapshots are
-          stored as a history and given a conservative estimate rank. Queries worth a look are listed first. You can
+          stored as a history and given a conservative estimate rank. Queries worth a look are listed first. Looks that moved down are listed first. You can
           save a competitor website and read that homepage plus a few public pages
           on the same site. You can open a suggested search yourself and save a
           website you found. GroovGro can compare those looks to what you sell.
