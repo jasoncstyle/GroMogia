@@ -1548,6 +1548,7 @@ describe("intelligence observe", () => {
     assert.equal(reviewQueued.href, "/app/seo");
     assert.match(reviewQueued.body, /will not publish/);
     assert.match(reviewQueued.body, /Later review/);
+    assert.match(reviewQueued.body, /2 are waiting/);
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Save a draft for later CMS review",
