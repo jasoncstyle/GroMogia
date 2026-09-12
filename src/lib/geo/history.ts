@@ -87,6 +87,13 @@ export function describeGeoHistory(
   return `For “${row.query}”, the owner already heard mentioned: ${row.mentioned}, cited: ${row.cited}.`;
 }
 
+export function describeGeoHistoryHeading(historyCount = 0): string {
+  if (historyCount <= 0) {
+    return "What you already measured";
+  }
+  return `What you already measured · ${historyCount}`;
+}
+
 export function historyToShow(rows: GeoHistoryView[]): GeoHistoryView[] {
   return rows.slice(0, GEO_HISTORY_MAX_SHOWN);
 }
