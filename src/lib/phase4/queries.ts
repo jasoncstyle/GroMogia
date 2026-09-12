@@ -44,7 +44,10 @@ import {
 } from "@/lib/growth/brain-context";
 import { GEO_AUDIT_STATUS_GAP } from "@/lib/geo/audits";
 import { COMPETE_MOVE_STATUS_DONE } from "@/lib/growth/compete-moves";
-import { CONTENT_BRIEF_SOURCE_COMPETITOR_GAP } from "@/lib/growth/content-briefs";
+import {
+  CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
+  CONTENT_BRIEF_SOURCE_CONTENT_GAP,
+} from "@/lib/growth/content-briefs";
 import {
   countDraftDifferenceChecks,
   countDraftOfferChecks,
@@ -84,6 +87,7 @@ export async function getIntelligenceFacts(
     contentGapCount,
     contentBriefCount,
     competitorGapBriefCount,
+    contentGapBriefCount,
     contentDraftCount,
     draftOfferCheckCounts,
     draftDifferenceCheckCounts,
@@ -103,6 +107,7 @@ export async function getIntelligenceFacts(
     countContentGaps(organizationId),
     countContentBriefs(organizationId),
     countCompetitorGapBriefs(organizationId),
+    countContentGapBriefs(organizationId),
     countContentDrafts(organizationId),
     countDraftOfferCheckFacts(organizationId),
     countDraftDifferenceCheckFacts(
@@ -205,6 +210,7 @@ export async function getIntelligenceFacts(
     competeMoveDoneCount,
     competeMovePlannedCount: Math.max(0, competeMoveCount - competeMoveDoneCount),
     competitorGapBriefCount,
+    contentGapBriefCount,
     draftOfferCheckCount: draftOfferCheckCounts.checked,
     draftMissingOfferCount: draftOfferCheckCounts.missingOffer,
     draftNoOfferToCheckCount: draftOfferCheckCounts.noOfferToCheck,
@@ -409,6 +415,21 @@ async function countCompetitorGapBriefs(organizationId: string): Promise<number>
       and(
         eq(contentBriefs.organizationId, organizationId),
         eq(contentBriefs.source, CONTENT_BRIEF_SOURCE_COMPETITOR_GAP),
+      ),
+    );
+  return Number(row?.value ?? 0);
+}
+
+async function countContentGapBriefs(organizationId: string): Promise<number> {
+  const db = getDb();
+  if (!db) return 0;
+  const [row] = await db
+    .select({ value: sql<number>`count(*)::int` })
+    .from(contentBriefs)
+    .where(
+      and(
+        eq(contentBriefs.organizationId, organizationId),
+        eq(contentBriefs.source, CONTENT_BRIEF_SOURCE_CONTENT_GAP),
       ),
     );
   return Number(row?.value ?? 0);
