@@ -10,6 +10,7 @@ import {
   describeGeoQuery,
   GEO_QUERY_SOURCE_OWNER,
   GEO_QUERY_STATUS_PLANNED,
+  geoQueriesNeedingWhy,
   planGeoQuery,
   sortGeoQueriesForPanel,
 } from "./queries";
@@ -98,6 +99,15 @@ describe("GEO query library and disabled adapter", () => {
     assert.match(panel, /Questions that still need a why are listed first/);
     assert.match(panel, /describeGeoQueriesHeading/);
     assert.match(panel, /sortGeoQueriesForPanel/);
+    assert.match(panel, /geoQueriesNeedingWhy/);
+    assert.equal(
+      geoQueriesNeedingWhy([
+        { why: "I already ask this." },
+        { why: "" },
+        { why: "  " },
+      ]).length,
+      2,
+    );
     assert.deepEqual(
       sortGeoQueriesForPanel([
         { query: "Who to hire for harbor day trips", why: "I already ask this." },
@@ -117,6 +127,10 @@ describe("GEO query library and disabled adapter", () => {
     assert.equal(
       describeGeoQueriesHeading(2),
       "Questions to remember for later AI visibility · 2",
+    );
+    assert.equal(
+      describeGeoQueriesHeading(3, 1),
+      "Questions to remember for later AI visibility · 3 · 1 still need a why",
     );
     assert.match(panel, /scrape answers/);
     assert.match(adapter, /never fetches/);
