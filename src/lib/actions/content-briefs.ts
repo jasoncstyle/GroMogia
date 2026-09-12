@@ -16,6 +16,8 @@ const briefSchema = z.object({
   title: z.string().trim().max(200).optional().default(""),
   audience: z.string().trim().max(200).optional().default(""),
   outline: z.string().trim().max(2000).optional().default(""),
+  source: z.string().trim().max(40).optional().default(""),
+  fromNames: z.string().trim().max(400).optional().default(""),
 });
 
 function revalidateContentBriefs() {
@@ -36,6 +38,8 @@ export async function createContentBrief(formData: FormData): Promise<ActionResu
       title: formData.get("title") ?? "",
       audience: formData.get("audience") ?? "",
       outline: formData.get("outline") ?? "",
+      source: formData.get("source") ?? "",
+      fromNames: formData.get("fromNames") ?? "",
     });
     const draft = planContentBrief({
       organizationId: session.organizationId,
@@ -43,6 +47,11 @@ export async function createContentBrief(formData: FormData): Promise<ActionResu
       title: parsed.title,
       audience: parsed.audience,
       outline: parsed.outline,
+      source: parsed.source,
+      fromNames: parsed.fromNames
+        .split(",")
+        .map((name) => name.trim())
+        .filter(Boolean),
     });
     const db = getDb();
     if (!db) throw new Error("Database is not configured");

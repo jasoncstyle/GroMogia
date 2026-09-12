@@ -1980,6 +1980,7 @@ Organization
 174. **Owner-run competitor search from stored terms** — **IMPLEMENTED** this slice. SEO shows the best stored search terms. The owner opens that search and can save a website they found (`source=owner_search`). `requestCompetitorSearch` stays off. GroovGro does not scrape Google or invent competitors. Do not add a Next step loop.
 175. **Compare saved competitor looks to this business** — **IMPLEMENTED** this slice. SEO compares looked competitor websites to saved offers or differences and writes how those sites stack up. Intelligence can show that. Search discovery stays off. Do not scrape Google. Do not copy their words onto a live site. Do not add a Next step loop.
 176. **Competitor page topics missing from pages already read** — **IMPLEMENTED** this slice. SEO names topics looked competitor sites show that GroovGro has not read on this business’s own pages. Intelligence can show that. GroovGro does not invent topics, create a page, scrape Google, or add a Next step loop.
+177. **Content brief from a competitor page-topic gap** — **IMPLEMENTED** this slice. Owner can save a planner brief from a competitor page topic GroovGro has not read on this business’s pages. Workspace drafts stay available. GroovGro does not publish, copy their words, scrape Google, or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
