@@ -1025,6 +1025,19 @@ describe("intelligence observe", () => {
       ),
       false,
     );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          competitorPageGapCount: 2,
+          competitorGapBriefCount: 2,
+        }),
+      ).recommendations.some(
+        (item) =>
+          item.title ===
+          "Review pages competitors show that GroovGro has not read",
+      ),
+      false,
+    );
     assert.ok(
       buildIntelligenceBrief(
         facts({
