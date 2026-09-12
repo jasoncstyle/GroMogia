@@ -909,7 +909,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Review citation gaps from saved history",
-      body: "Open SEO to read which library questions the latest saved snapshot marked as not mentioned or not cited. GroovGro will not ask an AI system, scrape answers, or treat one answer as truth.",
+      body: `Open SEO to read which library questions the latest saved snapshot marked as not mentioned or not cited. ${geoAuditGapCount} ${geoAuditGapCount === 1 ? "gap is" : "gaps are"} listed. GroovGro will not ask an AI system, scrape answers, or treat one answer as truth.`,
       evidence: ["geo_audits.status=citation_gap"],
       href: "/app/seo",
     });
