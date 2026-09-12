@@ -1,5 +1,9 @@
 import { createGeoQuery } from "@/lib/actions/geo-queries";
-import { describeGeoQuery, type GeoQueryView } from "@/lib/geo/queries";
+import {
+  describeGeoQuery,
+  describeGeoQueriesHeading,
+  type GeoQueryView,
+} from "@/lib/geo/queries";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,7 +28,7 @@ export function GeoQueriesPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Questions to remember for later AI visibility</CardTitle>
+        <CardTitle>{describeGeoQueriesHeading(queries.length)}</CardTitle>
         <CardDescription>
           Save questions you already care about. GroovGro will not ask an AI
           system, scrape answers, or treat one answer as truth.
