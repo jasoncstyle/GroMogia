@@ -30,7 +30,7 @@ export function PageStructurePanel({
         <CardDescription>
           GroovGro compared pages it already read. If one page&apos;s stored
           text mentions another page&apos;s title, it suggests a link. Suggested links are listed first. Schema
-          types are estimates from the page group. GroovGro will not add links or schema
+          types are estimates from the page group. Estimated schema types that are not the default are listed first. GroovGro will not add links or schema
           to the live website.
         </CardDescription>
       </CardHeader>
