@@ -134,6 +134,18 @@ describe("CMS publish review queue and disabled adapter", () => {
       describePlannerHeading(2),
       "Content planner · 2 saved for later review",
     );
+    assert.equal(
+      describePlannerHeading(0, 3),
+      "Content planner · 3 briefs",
+    );
+    assert.equal(
+      describePlannerHeading(2, 3),
+      "Content planner · 3 briefs · 2 saved for later review",
+    );
+    assert.match(
+      briefsPanel,
+      /describePlannerHeading\(queuedReviews.length, briefs.length\)/,
+    );
     assert.match(panel, /describePublishQueueHeading/);
     assert.equal(describePublishQueueHeading(0), "Drafts ready to publish later");
     assert.equal(

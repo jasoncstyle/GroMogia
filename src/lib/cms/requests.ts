@@ -62,11 +62,21 @@ export function publishRequestsToShow(rows: CmsPublishView[]): CmsPublishView[] 
   return rows.slice(0, CMS_PUBLISH_MAX_SHOWN);
 }
 
-export function describePlannerHeading(queuedCount: number): string {
-  if (queuedCount <= 0) {
+export function describePlannerHeading(
+  queuedCount: number,
+  briefCount = 0,
+): string {
+  if (briefCount <= 0 && queuedCount <= 0) {
     return "Content planner";
   }
-  return `Content planner · ${queuedCount} saved for later review`;
+  if (briefCount <= 0) {
+    return `Content planner · ${queuedCount} saved for later review`;
+  }
+  const briefs = `${briefCount} ${briefCount === 1 ? "brief" : "briefs"}`;
+  if (queuedCount <= 0) {
+    return `Content planner · ${briefs}`;
+  }
+  return `Content planner · ${briefs} · ${queuedCount} saved for later review`;
 }
 
 export function describePublishQueueHeading(queuedCount: number): string {
