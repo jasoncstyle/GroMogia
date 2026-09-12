@@ -2129,6 +2129,10 @@ Organization
 323. **Links-and-schema copy names suggested links listed first** — **IMPLEMENTED** this slice. The links-and-schema card says suggested links are listed first. GroovGro does not add links or schema to the live website or add a Next step loop.
 324. **Status text names suggested-link listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name Intelligence and page copy that suggested links are listed first. GroovGro does not publish or add a Next step loop.
 325. **SEO intro names suggested links listed first** — **IMPLEMENTED** this slice. The SEO page says suggested links are listed first. GroovGro does not add links or schema to the live website or add a Next step loop.
+326. **Citation-gaps copy names citation gaps listed first** — **IMPLEMENTED** this slice. The citation-gaps card says citation gaps are listed first. GroovGro does not ask an AI system or add a Next step loop.
+327. **Intelligence names citation gaps listed first** — **IMPLEMENTED** this slice. Intelligence can say citation gaps are listed first on SEO. GroovGro does not ask an AI system or add a Next step loop.
+328. **SEO intro names citation gaps listed first** — **IMPLEMENTED** this slice. The SEO page says citation gaps are listed first. GroovGro does not ask an AI system or add a Next step loop.
+329. **Status text names citation-gap listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name Intelligence and page copy that citation gaps are listed first. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
