@@ -2046,6 +2046,11 @@ Organization
 240. **Intelligence hides the missing-page review after those queries have briefs** — **IMPLEMENTED** this slice. Intelligence stops recommending a missing-page review after every missing-page query already has a brief. GroovGro does not write the page, publish, or add a Next step loop.
 241. **Intelligence hides the competitor topic review after those topics have briefs** — **IMPLEMENTED** this slice. Intelligence stops recommending a competitor topic review after every competitor page topic already has a brief. GroovGro does not write the page, publish, or add a Next step loop.
 242. **Status text names listed-first and hidden review suggestions** — **IMPLEMENTED** this slice. Architecture and status summaries name Intelligence pointing at remaining groups and hiding a review after every item already has a brief. GroovGro does not publish or add a Next step loop.
+243. **SEO intro names remaining queries and topics listed first** — **IMPLEMENTED** this slice. The SEO page says queries and topics that still need a brief are listed first. GroovGro does not write the page, publish, or add a Next step loop.
+244. **Planner copy names remaining briefs listed first** — **IMPLEMENTED** this slice. The Content planner says briefs that still need a workspace draft are listed first. GroovGro does not publish or add a Next step loop.
+245. **Missing-page list copy names remaining queries listed first** — **IMPLEMENTED** this slice. The missing-page query list says queries that still need a brief are listed first. GroovGro does not write the page, publish, or add a Next step loop.
+246. **Compete card copy names remaining topics listed first** — **IMPLEMENTED** this slice. The compete card says topics that still need a brief are listed first. GroovGro does not write the page, publish, or add a Next step loop.
+247. **Status text names listed-first page copy** — **IMPLEMENTED** this slice. Architecture and status summaries name SEO, planner, missing-page, and compete-card copy that remaining work is listed first. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
