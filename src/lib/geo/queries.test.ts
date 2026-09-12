@@ -95,6 +95,7 @@ describe("GEO query library and disabled adapter", () => {
     assert.match(action, /session\.organizationId/);
     assert.match(action, /did not ask an AI system/);
     assert.match(panel, /will not ask an AI/);
+    assert.match(panel, /Questions that still need a why are listed first/);
     assert.match(panel, /describeGeoQueriesHeading/);
     assert.match(panel, /sortGeoQueriesForPanel/);
     assert.deepEqual(

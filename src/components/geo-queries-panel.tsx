@@ -32,7 +32,7 @@ export function GeoQueriesPanel({
       <CardHeader>
         <CardTitle>{describeGeoQueriesHeading(queries.length)}</CardTitle>
         <CardDescription>
-          Save questions you already care about. GroovGro will not ask an AI
+          Save questions you already care about. Questions that still need a why are listed first. GroovGro will not ask an AI
           system, scrape answers, or treat one answer as truth.
         </CardDescription>
       </CardHeader>
