@@ -2073,6 +2073,12 @@ Organization
 267. **Intelligence names how many drafts still need later review** — **IMPLEMENTED** this slice. Intelligence can say how many workspace drafts still need later review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 268. **Intelligence names how many drafts are waiting on Later review** — **IMPLEMENTED** this slice. Intelligence can say how many drafts are waiting on Later review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 269. **Status text names remaining later-review counts** — **IMPLEMENTED** this slice. Architecture and status summaries name the empty-queue remaining copy and Intelligence remaining and waiting counts. GroovGro does not publish or add a Next step loop.
+270. **Citation-gaps heading shows how many gaps sit there** — **IMPLEMENTED** this slice. The citation-gaps heading on SEO says how many gaps GroovGro estimated from saved history. GroovGro does not ask an AI system or add a Next step loop.
+271. **Links-and-schema heading shows suggested-link and schema-fact counts** — **IMPLEMENTED** this slice. The links-and-schema heading on SEO says how many suggested links and schema facts sit there. GroovGro does not add links or schema to the live website or add a Next step loop.
+272. **Links-and-schema group headings show counts** — **IMPLEMENTED** this slice. Suggested links and Estimated schema types group headings include a count. GroovGro does not add links or schema to the live website or add a Next step loop.
+273. **Intelligence names how many citation gaps are listed** — **IMPLEMENTED** this slice. Intelligence can say how many citation gaps are listed on SEO. GroovGro does not ask an AI system or add a Next step loop.
+274. **Intelligence names how many link and schema facts are listed** — **IMPLEMENTED** this slice. Intelligence can say how many suggested links and schema facts are listed on SEO. GroovGro does not add links or schema to the live website or add a Next step loop.
+275. **Status text names citation and page-structure counts** — **IMPLEMENTED** this slice. Architecture and status summaries name citation-gap and links-and-schema heading, group, and Intelligence counts. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
