@@ -1,5 +1,9 @@
 import { createGeoNote } from "@/lib/actions/geo-notes";
-import { describeGeoNote, type GeoNoteView } from "@/lib/geo/notes";
+import {
+  describeGeoNote,
+  describeGeoNotesHeading,
+  type GeoNoteView,
+} from "@/lib/geo/notes";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,7 +28,7 @@ export function GeoNotesPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>What you already hear from AI</CardTitle>
+        <CardTitle>{describeGeoNotesHeading(notes.length)}</CardTitle>
         <CardDescription>
           Save what you already heard when you asked an AI system about this
           business. GroovGro will not ask AI systems, scrape answers, or treat
