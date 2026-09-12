@@ -2163,6 +2163,8 @@ Organization
 357. **Intelligence intro names looks that moved down listed first** — **IMPLEMENTED** this slice. The Intelligence page says stored before-and-after looks that moved down are listed first. GroovGro does not change the plan or add a Next step loop.
 358. **Intelligence intro names remaining later-run work listed first** — **IMPLEMENTED** this slice. The Intelligence page says remaining later-run work is listed first. GroovGro does not run that work or mention later-run on Next step.
 359. **Status text names Intelligence intro listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name Intelligence page copy that channels worth a look, looks that moved down, and remaining later-run work are listed first. GroovGro does not publish or add a Next step loop.
+360. **Your work intro names remaining later-run work listed first** — **IMPLEMENTED** this slice. The Your work page says remaining later-run work is listed first. GroovGro does not run that work or mention later-run on Next step.
+361. **Status text names Your work intro listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name Your work page copy that remaining later-run work is listed first. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
