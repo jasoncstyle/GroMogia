@@ -221,6 +221,7 @@ describe("stored before-and-after looks", () => {
     );
     assert.match(persist, /eq\(beforeAfterLooks\.organizationId, organizationId\)/);
     assert.match(panel, /not an experiment GroovGro ran/);
+    assert.match(panel, /listed first/);
     assert.match(panel, /describeBeforeAfterHeading/);
     assert.equal(
       describeBeforeAfterHeading(0),
