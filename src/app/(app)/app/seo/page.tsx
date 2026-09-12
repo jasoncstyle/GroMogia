@@ -118,7 +118,8 @@ export default async function SeoPage({
           what you will do, including from one of those topics. Worth-a-look
           queries are compared to pages GroovGro already read. You can save a
           brief for one of those queries, or on the planner, then write a
-          workspace draft from it. A draft from a competitor topic uses this
+          workspace draft from it. Queries and topics that still need a brief
+          are listed first. A draft from a competitor topic uses this
           business’s words. GroovGro can check whether that draft names a saved offer or what makes this business different. You can save that
           draft for later review from the planner. Pages GroovGro already read
           can show link suggestions and estimated schema types. You can save
