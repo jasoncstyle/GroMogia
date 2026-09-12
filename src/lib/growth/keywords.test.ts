@@ -5,6 +5,7 @@ import { join } from "node:path";
 
 import {
   describeKeywordHistory,
+  describeKeywordHistoryHeading,
   planKeywordHistory,
   type KeywordSnapshotInput,
 } from "./keywords";
@@ -175,6 +176,9 @@ describe("keyword history from Search Console", () => {
       "utf8",
     );
     assert.match(panel, /not search volume or a traffic forecast/);
+    assert.match(panel, /describeKeywordHistoryHeading/);
+    assert.equal(describeKeywordHistoryHeading(0), "Queries GroovGro has recorded");
+    assert.equal(describeKeywordHistoryHeading(3), "Queries GroovGro has recorded · 3");
     assert.doesNotMatch(panel, /search volume forecast/i);
   });
 });
