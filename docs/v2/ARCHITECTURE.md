@@ -2155,6 +2155,8 @@ Organization
 349. **Status text names library-question listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the library-questions heading, list order, Intelligence recommendation, and SEO intro copy for questions that still need a why. GroovGro does not publish or add a Next step loop.
 350. **SEO intro names questions that still need a snapshot listed first** — **IMPLEMENTED** this slice. The SEO page says library questions that still need a snapshot are listed first. GroovGro does not ask an AI system or add a Next step loop.
 351. **Status text names visibility-history SEO intro listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the SEO intro copy that questions that still need a snapshot are listed first. GroovGro does not publish or add a Next step loop.
+352. **SEO intro names channels worth a look listed first** — **IMPLEMENTED** this slice. The SEO page says stored channel compares that are worth a look are listed first. GroovGro does not change Next step or add a Next step loop.
+353. **Status text names channel-compare SEO intro listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the SEO intro copy that channels worth a look are listed first. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
