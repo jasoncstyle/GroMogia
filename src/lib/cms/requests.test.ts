@@ -12,6 +12,7 @@ import {
   describeCmsPublishRequest,
   describePlannerHeading,
   describePublishQueueCopy,
+  describePublishQueueEmpty,
   describePublishQueueHeading,
   draftsWaitingToQueue,
   planCmsPublishRequest,
@@ -189,6 +190,9 @@ describe("CMS publish review queue and disabled adapter", () => {
     );
     assert.match(describePublishQueueCopy(1), /listed first/);
     assert.match(panel, /describePublishQueueCopy/);
+    assert.match(panel, /describePublishQueueEmpty/);
+    assert.match(describePublishQueueEmpty(0), /No drafts are waiting/);
+    assert.match(describePublishQueueEmpty(2), /listed first/);
     assert.deepEqual(
       draftsWaitingToQueue(
         [
