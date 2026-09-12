@@ -608,6 +608,7 @@ describe("intelligence observe", () => {
     assert.match(recommended.body, /will not ask an AI system/);
     assert.match(recommended.body, /treat one answer as truth/);
     assert.match(recommended.body, /1 gap is listed/);
+    assert.match(recommended.body, /Citation gaps are listed first/);
     assert.equal(
       buildIntelligenceBrief(facts()).recommendations.some(
         (item) => item.title === "Review citation gaps from saved history",
