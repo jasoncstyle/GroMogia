@@ -2095,6 +2095,11 @@ Organization
 289. **Intelligence names how many stored channel compares are listed** — **IMPLEMENTED** this slice. Intelligence can say how many stored channel compares are listed. GroovGro does not change Next step or add a Next step loop.
 290. **Intelligence names how many stored before-and-after looks are listed** — **IMPLEMENTED** this slice. Intelligence can say how many stored before-and-after looks are listed. GroovGro does not change the plan or add a Next step loop.
 291. **Status text names Intelligence listed counts for queries, channels, and before-and-after looks** — **IMPLEMENTED** this slice. Architecture and status summaries name those Intelligence listed counts. GroovGro does not publish or add a Next step loop.
+292. **Later-run heading shows remaining approved work** — **IMPLEMENTED** this slice. The later-run queue heading says how many approved work items still need a later-run save. `requestExecute` stays off. GroovGro does not run work or add a Next step loop.
+293. **Hide later-run items that are already saved** — **IMPLEMENTED** this slice. The later-run form hides approved work already saved for later. `requestExecute` stays off. GroovGro does not run work or add a Next step loop.
+294. **Later-run copy names remaining work listed first** — **IMPLEMENTED** this slice. The later-run queue says remaining approved work that still needs a later-run save is listed first. `requestExecute` stays off. GroovGro does not run work or add a Next step loop.
+295. **Intelligence names how many later-run items are waiting** — **IMPLEMENTED** this slice. Intelligence can say how many later-run items are waiting. `requestExecute` stays off. GroovGro does not run work or add a Next step loop.
+296. **Status text names later-run remaining counts** — **IMPLEMENTED** this slice. Architecture and status summaries name the later-run heading, hidden queued items, listed-first copy, and Intelligence waiting count. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
