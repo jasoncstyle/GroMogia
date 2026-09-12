@@ -2105,6 +2105,7 @@ Organization
 299. **Compete card heading shows saved sites and planned moves** — **IMPLEMENTED** this slice. The How we might compete heading on SEO says how many competitor sites are saved and how many compete moves are still planned. GroovGro does not scrape Google or add a Next step loop.
 300. **Status text names the compete card heading counts** — **IMPLEMENTED** this slice. Architecture and status summaries name the How we might compete heading counts for saved sites and planned moves. GroovGro does not publish or add a Next step loop.
 301. **Intelligence names How we might compete for saved sites** — **IMPLEMENTED** this slice. Intelligence can say saved competitor sites are listed on How we might compete. GroovGro does not scrape Google or add a Next step loop.
+302. **SEO intro names How we might compete heading counts** — **IMPLEMENTED** this slice. The SEO page says How we might compete names saved sites and planned moves. GroovGro does not scrape Google or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
