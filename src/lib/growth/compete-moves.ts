@@ -82,6 +82,27 @@ export function competeMovesToShow(rows: CompeteMoveView[]): CompeteMoveView[] {
   return rows.slice(0, COMPETE_MOVE_MAX_SHOWN);
 }
 
+export function suggestCompeteMoveFromCompare(input?: {
+  ourLead?: string | null
+  theirLead?: string | null
+} | null): { title: string; note: string } {
+  const ours = (input?.ourLead ?? "").replace(/\s+/g, " ").trim();
+  const theirs = (input?.theirLead ?? "").replace(/\s+/g, " ").trim();
+  if (ours && theirs) {
+    return {
+      title: `Make “${ours}” easier to see than “${theirs}”`,
+      note: "This is from competitor websites you asked GroovGro to read. GroovGro will not do this, copy their words, or change the live website.",
+    };
+  }
+  if (ours) {
+    return {
+      title: `Make “${ours}” easier to see`,
+      note: "This is from competitor websites you asked GroovGro to read. GroovGro will not do this, copy their words, or change the live website.",
+    };
+  }
+  return { title: "", note: "" };
+}
+
 export function suggestCompeteMoveFromGap(label?: string | null): {
   title: string
   note: string

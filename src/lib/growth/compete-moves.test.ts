@@ -11,6 +11,7 @@ import {
   describeCompeteMove,
   planCompeteMove,
   planCompeteMoveDone,
+  suggestCompeteMoveFromCompare,
   suggestCompeteMoveFromGap,
 } from "./compete-moves";
 
@@ -127,5 +128,14 @@ describe("owner-saved compete moves", () => {
     assert.match(fromGap.note, /will not do this/);
     assert.equal(suggestCompeteMoveFromGap("").title, "");
     assert.match(panel, /I will cover this/);
+    assert.match(panel, /I will do this compare/);
+    const fromCompare = suggestCompeteMoveFromCompare({
+      ourLead: "Private coaching",
+      theirLead: "Weekend beginner class",
+    });
+    assert.match(fromCompare.title, /Private coaching/);
+    assert.match(fromCompare.title, /Weekend beginner class/);
+    assert.match(fromCompare.note, /will not do this/);
+    assert.equal(suggestCompeteMoveFromCompare(null).title, "");
   });
 });
