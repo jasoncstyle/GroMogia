@@ -687,6 +687,30 @@ export function sortCompetitorPageGapsForPanel<T extends { label: string }>(
   });
 }
 
+export function competitorPageGapsNeedingBrief<T extends { label: string }>(
+  gaps: T[],
+  isSaved: (label: string) => boolean,
+): T[] {
+  return gaps.filter((gap) => !isSaved(gap.label));
+}
+
+export function competitorPageGapsWithBrief<T extends { label: string }>(
+  gaps: T[],
+  isSaved: (label: string) => boolean,
+): T[] {
+  return gaps.filter((gap) => isSaved(gap.label));
+}
+
+export function shouldGroupCompetitorPageGaps<T extends { label: string }>(
+  gaps: T[],
+  isSaved: (label: string) => boolean,
+): boolean {
+  return (
+    competitorPageGapsNeedingBrief(gaps, isSaved).length > 0 &&
+    competitorPageGapsWithBrief(gaps, isSaved).length > 0
+  );
+}
+
 export function competitorSitesToShow(
   rows: CompetitorSiteView[],
 ): CompetitorSiteView[] {
