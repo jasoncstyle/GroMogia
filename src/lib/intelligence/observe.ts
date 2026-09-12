@@ -752,7 +752,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
-  if (facts.websiteConnected && contentGapCount > 0) {
+  if (facts.websiteConnected && contentGapCount > contentGapBriefCount) {
     recommendations.push({
       kind: "recommendation",
       title: "Review queries with no matching page",
