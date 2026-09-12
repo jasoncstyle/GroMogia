@@ -747,7 +747,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Save a competitor you already see",
-      body: "On SEO, save a note about a competitor you already see for a recorded query. GroovGro will not look anyone up or scrape search results.",
+      body: "On SEO, save a note about a competitor you already see for a recorded query. Names that still need a note are listed first. GroovGro will not look anyone up or scrape search results.",
       evidence: ["serp_notes missing"],
       href: "/app/seo",
     });
