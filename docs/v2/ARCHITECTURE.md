@@ -2020,6 +2020,7 @@ Organization
 214. **Planner copy names a brief from a missing-page query** — **IMPLEMENTED** this slice. The Content planner says a brief can come from a missing-page query. GroovGro does not write the page, publish, or add a Next step loop.
 215. **Status text names compete-move and planner polish** — **IMPLEMENTED** this slice. Architecture and status summaries name planned/done compete moves, refused duplicates, and a brief from a missing-page query. GroovGro does not publish or add a Next step loop.
 216. **Missing-page briefs keep a content-gap source** — **IMPLEMENTED** this slice. A planner brief saved from a missing-page query is stored as `content_gap`. GroovGro does not write the page, publish, or add a Next step loop.
+217. **Intelligence shows briefs from a missing-page query** — **IMPLEMENTED** this slice. Intelligence can say how many planner briefs came from a missing-page query. GroovGro does not write the page, publish, or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 

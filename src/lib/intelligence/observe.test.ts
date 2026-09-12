@@ -1265,6 +1265,20 @@ describe("intelligence observe", () => {
       factsSummary(facts({ competitorGapBriefCount: 1 })),
       /competitor_gap_briefs=1/,
     );
+    assert.match(
+      buildIntelligenceBrief(
+        facts({
+          contentBriefCount: 2,
+          contentGapBriefCount: 1,
+        }),
+      ).observations.find((item) => item.title === "Content briefs on the planner")
+        ?.body ?? "",
+      /1 is from a missing-page query/,
+    );
+    assert.match(
+      factsSummary(facts({ contentGapBriefCount: 1 })),
+      /content_gap_briefs=1/,
+    );
     assert.equal(
       saved.recommendations.some(
         (item) => item.title === "Save a content brief to the planner",
