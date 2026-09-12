@@ -52,10 +52,10 @@ export function ContentBriefsPanel({
       <CardHeader>
         <CardTitle>{describePlannerHeading(queuedReviews.length)}</CardTitle>
         <CardDescription>
-          Save a brief, then write a workspace draft from it. GroovGro can
-          check a competitor-topic draft against what you sell. You can save
-          that draft for later review. It will not publish or change the live
-          website.
+          Save a brief, including from a missing-page query, then write a
+          workspace draft from it. GroovGro can check a competitor-topic draft
+          against what you sell. You can save that draft for later review. It
+          will not publish or change the live website.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
