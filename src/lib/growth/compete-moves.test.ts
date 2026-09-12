@@ -9,6 +9,7 @@ import {
   COMPETE_MOVE_STATUS_PLANNED,
   competeMovesToShow,
   countPlannedCompeteMoves,
+  sortCompeteMovesForList,
   describeCompeteMove,
   describeCompeteMoveListHeading,
   hasSavedCompeteMoveTitle,
@@ -176,5 +177,44 @@ describe("owner-saved compete moves", () => {
       "What I will do · all marked done",
     );
     assert.match(panel, /describeCompeteMoveListHeading/);
+    const sorted = sortCompeteMovesForList([
+      {
+        id: "done-first",
+        title: "Done move",
+        note: "",
+        status: COMPETE_MOVE_STATUS_DONE,
+        createdAt: new Date(0),
+      },
+      {
+        id: "planned-next",
+        title: "Planned move",
+        note: "",
+        status: COMPETE_MOVE_STATUS_PLANNED,
+        createdAt: new Date(0),
+      },
+    ]);
+    assert.deepEqual(
+      sorted.map((row) => row.id),
+      ["planned-next", "done-first"],
+    );
+    assert.equal(
+      competeMovesToShow([
+        ...new Array(12).fill(null).map((_, index) => ({
+          id: `done-${index}`,
+          title: "Done move",
+          note: "",
+          status: COMPETE_MOVE_STATUS_DONE,
+          createdAt: new Date(0),
+        })),
+        {
+          id: "planned-keep",
+          title: "Planned move",
+          note: "",
+          status: COMPETE_MOVE_STATUS_PLANNED,
+          createdAt: new Date(0),
+        },
+      ])[0]?.id,
+      "planned-keep",
+    );
   });
 });

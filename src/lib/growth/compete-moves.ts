@@ -78,8 +78,16 @@ export function planCompeteMoveDone(input: {
   };
 }
 
+export function sortCompeteMovesForList(
+  rows: CompeteMoveView[],
+): CompeteMoveView[] {
+  const planned = rows.filter((row) => row.status !== COMPETE_MOVE_STATUS_DONE);
+  const done = rows.filter((row) => row.status === COMPETE_MOVE_STATUS_DONE);
+  return [...planned, ...done];
+}
+
 export function competeMovesToShow(rows: CompeteMoveView[]): CompeteMoveView[] {
-  return rows.slice(0, COMPETE_MOVE_MAX_SHOWN);
+  return sortCompeteMovesForList(rows).slice(0, COMPETE_MOVE_MAX_SHOWN);
 }
 
 export function countPlannedCompeteMoves(
