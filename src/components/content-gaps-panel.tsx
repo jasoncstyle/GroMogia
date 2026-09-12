@@ -5,7 +5,10 @@ import {
   type ContentBriefView,
 } from "@/lib/growth/content-briefs";
 import {
+  contentGapsNeedingBrief,
+  contentGapsWithBrief,
   describeContentGapsHeading,
+  shouldGroupContentGaps,
   sortContentGapsForPanel,
   type ContentGapView,
 } from "@/lib/growth/content-gaps";
@@ -29,12 +32,10 @@ export function ContentGapsPanel({
   pagesRead: boolean
   canManage?: boolean
 }) {
-  const briefedCount = gaps.filter((gap) =>
-    hasSavedContentBriefForTopic(briefs, gap.query),
-  ).length;
-  const gapsToShow = sortContentGapsForPanel(gaps, (query) =>
-    hasSavedContentBriefForTopic(briefs, query),
-  );
+  const isSaved = (query: string) =>
+    hasSavedContentBriefForTopic(briefs, query);
+  const briefedCount = gaps.filter((gap) => isSaved(gap.query)).length;
+  const gapsToShow = sortContentGapsForPanel(gaps, isSaved);
   return (
     <Card>
       <CardHeader>
@@ -58,7 +59,26 @@ export function ContentGapsPanel({
             already read. Tiny Search Console rows stay out of this list.
           </p>
         ) : (
-          gapsToShow.map((gap) => {
+          (shouldGroupContentGaps(gapsToShow, isSaved)
+            ? [
+                {
+                  label: "Still need a brief",
+                  rows: contentGapsNeedingBrief(gapsToShow, isSaved),
+                },
+                {
+                  label: "Already have a brief",
+                  rows: contentGapsWithBrief(gapsToShow, isSaved),
+                },
+              ]
+            : [{ label: "", rows: gapsToShow }]
+          ).map((group) => (
+            <div key={group.label || "gaps"} className="space-y-3">
+              {group.label ? (
+                <p className="text-xs font-medium text-muted-foreground">
+                  {group.label}
+                </p>
+              ) : null}
+              {group.rows.map((gap) => {
             const fieldKey = gap.queryKey.replace(/[^a-z0-9]+/g, "-");
             return (
               <div key={gap.queryKey} className="space-y-2">
@@ -95,7 +115,9 @@ export function ContentGapsPanel({
                 ) : null}
               </div>
             );
-          })
+          })}
+            </div>
+          ))
         )}
       </CardContent>
     </Card>

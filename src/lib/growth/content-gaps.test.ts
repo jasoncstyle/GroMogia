@@ -6,7 +6,10 @@ import { join } from "node:path";
 import {
   CONTENT_GAP_STATUS_COVERED,
   CONTENT_GAP_STATUS_GAP,
+  contentGapsNeedingBrief,
+  contentGapsWithBrief,
   describeContentGapsHeading,
+  shouldGroupContentGaps,
   sortContentGapsForPanel,
   gapsToShow,
   pageCoversQuery,
@@ -192,6 +195,29 @@ describe("content gap detection from stored pages", () => {
     );
     assert.match(panel, /describeContentGapsHeading\(gaps.length, briefedCount\)/);
     assert.match(panel, /sortContentGapsForPanel/);
+    assert.match(panel, /Still need a brief/);
+    assert.match(panel, /Already have a brief/);
+    assert.equal(
+      shouldGroupContentGaps(
+        [{ query: "Private coaching" }, { query: "Weekend beginner class" }],
+        (query) => query === "Private coaching",
+      ),
+      true,
+    );
+    assert.deepEqual(
+      contentGapsNeedingBrief(
+        [{ query: "Private coaching" }, { query: "Weekend beginner class" }],
+        (query) => query === "Private coaching",
+      ).map((row) => row.query),
+      ["Weekend beginner class"],
+    );
+    assert.deepEqual(
+      contentGapsWithBrief(
+        [{ query: "Private coaching" }, { query: "Weekend beginner class" }],
+        (query) => query === "Private coaching",
+      ).map((row) => row.query),
+      ["Private coaching"],
+    );
     assert.deepEqual(
       sortContentGapsForPanel(
         [{ query: "Private coaching" }, { query: "Weekend beginner class" }],
