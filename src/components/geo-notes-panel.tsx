@@ -2,6 +2,7 @@ import { createGeoNote } from "@/lib/actions/geo-notes";
 import {
   describeGeoNote,
   describeGeoNotesHeading,
+  geoNotesNamingAQuestion,
   sortGeoNotesForPanel,
   type GeoNoteView,
 } from "@/lib/geo/notes";
@@ -27,10 +28,13 @@ export function GeoNotesPanel({
   canManage?: boolean
 }) {
   const listed = sortGeoNotesForPanel(notes);
+  const namedQueryCount = geoNotesNamingAQuestion(notes).length;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{describeGeoNotesHeading(notes.length)}</CardTitle>
+        <CardTitle>
+          {describeGeoNotesHeading(notes.length, namedQueryCount)}
+        </CardTitle>
         <CardDescription>
           Save what you already heard when you asked an AI system about this
           business. Notes that name a question are listed first. GroovGro will not ask AI systems, scrape answers, or treat
