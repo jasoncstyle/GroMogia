@@ -2110,6 +2110,10 @@ Organization
 304. **Recorded-queries list shows worth-a-look queries first** — **IMPLEMENTED** this slice. The recorded-queries list on SEO shows worth-a-look queries first. GroovGro does not buy keyword data or add a Next step loop.
 305. **Intelligence names worth-a-look queries listed first** — **IMPLEMENTED** this slice. Intelligence can say recorded queries that are worth a look are listed first. GroovGro does not buy keyword data or add a Next step loop.
 306. **Status text names worth-a-look query heading and listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the recorded-queries heading, list order, and Intelligence copy for worth-a-look queries. GroovGro does not publish or add a Next step loop.
+307. **Channel-compare heading shows how many are worth a look** — **IMPLEMENTED** this slice. The stored-evidence compare heading on SEO says how many channel compares are worth a look. GroovGro does not change Next step or add a Next step loop.
+308. **Channel-compare copy names worth-a-look channels listed first** — **IMPLEMENTED** this slice. The stored-evidence compare card says channels worth a look are listed first. GroovGro does not change Next step or add a Next step loop.
+309. **Intelligence names worth-a-look channels listed first** — **IMPLEMENTED** this slice. Intelligence can say stored channel compares that are worth a look are listed first. GroovGro does not change Next step or add a Next step loop.
+310. **Status text names worth-a-look channel heading and listed-first copy** — **IMPLEMENTED** this slice. Architecture and status summaries name the channel-compare heading, page copy, and Intelligence copy for worth-a-look channels. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
