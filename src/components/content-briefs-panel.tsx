@@ -50,7 +50,9 @@ export function ContentBriefsPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{describePlannerHeading(queuedReviews.length)}</CardTitle>
+        <CardTitle>
+          {describePlannerHeading(queuedReviews.length, briefs.length)}
+        </CardTitle>
         <CardDescription>
           Save a brief, including from a missing-page query, then write a
           workspace draft from it. GroovGro can check a competitor-topic draft
