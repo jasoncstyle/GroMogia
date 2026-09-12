@@ -54,7 +54,11 @@ export function ContentBriefsPanel({
                 {brief.draft ? (
                   <FoldableSample
                     title="Workspace draft"
-                    subtitle="Not published. GroovGro did not change the live website."
+                    subtitle={
+                      brief.source === "competitor_gap"
+                        ? "Not published. Written in this business’s words. GroovGro did not copy a competitor or change the live website."
+                        : "Not published. GroovGro did not change the live website."
+                    }
                   >
                     <p className="whitespace-pre-wrap text-sm text-muted-foreground">
                       {brief.draft.body}

@@ -40,6 +40,14 @@ describe("owner-entered content briefs", () => {
       }),
       "Planned: “Weekend beginner class” for “Weekend beginner class”.",
     );
+    assert.equal(
+      describeContentBrief({
+        query: draft.query,
+        title: draft.title,
+        source: CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
+      }),
+      "Planned from a competitor topic: “Weekend beginner class” for “Weekend beginner class”.",
+    );
   });
 
   it("uses the query as the working title when the title is empty", () => {

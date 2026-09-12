@@ -7,7 +7,12 @@ import { z } from "zod";
 import { recordAudit } from "@/lib/audit";
 import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
-import { contentBriefs, contentDrafts } from "@/lib/db/schema";
+import {
+  businessBrains,
+  contentBriefs,
+  contentDrafts,
+  offers,
+} from "@/lib/db/schema";
 import { planContentDraft } from "@/lib/growth/content-drafts";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
@@ -41,6 +46,7 @@ export async function createContentDraft(formData: FormData): Promise<ActionResu
         query: contentBriefs.query,
         audience: contentBriefs.audience,
         outline: contentBriefs.outline,
+        source: contentBriefs.source,
       })
       .from(contentBriefs)
       .where(
@@ -53,6 +59,15 @@ export async function createContentDraft(formData: FormData): Promise<ActionResu
     if (!brief) {
       throw new Error("That brief is not in this workspace.");
     }
+    const [brain] = await db
+      .select({ differentiators: businessBrains.differentiators })
+      .from(businessBrains)
+      .where(eq(businessBrains.organizationId, session.organizationId))
+      .limit(1);
+    const offerRows = await db
+      .select({ name: offers.name })
+      .from(offers)
+      .where(eq(offers.organizationId, session.organizationId));
     const draft = planContentDraft({
       organizationId: session.organizationId,
       briefId: brief.id,
@@ -60,6 +75,9 @@ export async function createContentDraft(formData: FormData): Promise<ActionResu
       query: brief.query,
       audience: brief.audience,
       outline: brief.outline,
+      briefSource: brief.source,
+      ourOffers: offerRows.map((row) => row.name),
+      ourDifference: brain?.differentiators ?? [],
     });
     const now = new Date();
     const [row] = await db

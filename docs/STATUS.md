@@ -21,7 +21,7 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Execute stays off until that authorization exists and the adapter is turned on.
 
-**Content brief from a competitor page-topic gap (this branch):** The owner can save a planner brief from a topic a looked competitor site shows that GroovGro has not read on this business’s pages. GroovGro does not publish, copy their words, create a page, scrape Google, buy ads, or change checkout.
+**Workspace draft from a competitor-gap brief (this branch):** A workspace draft from a competitor-topic brief leads with this business’s saved offers or differences. GroovGro does not copy competitor words, publish, scrape Google, buy ads, or change checkout.
 
 Phase T first slice is in #113. Phases A–T first slices are on `main`. Growth Director and guarded automation stay off. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
 

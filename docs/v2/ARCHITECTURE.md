@@ -1981,6 +1981,7 @@ Organization
 175. **Compare saved competitor looks to this business** — **IMPLEMENTED** this slice. SEO compares looked competitor websites to saved offers or differences and writes how those sites stack up. Intelligence can show that. Search discovery stays off. Do not scrape Google. Do not copy their words onto a live site. Do not add a Next step loop.
 176. **Competitor page topics missing from pages already read** — **IMPLEMENTED** this slice. SEO names topics looked competitor sites show that GroovGro has not read on this business’s own pages. Intelligence can show that. GroovGro does not invent topics, create a page, scrape Google, or add a Next step loop.
 177. **Content brief from a competitor page-topic gap** — **IMPLEMENTED** this slice. Owner can save a planner brief from a competitor page topic GroovGro has not read on this business’s pages. Workspace drafts stay available. GroovGro does not publish, copy their words, scrape Google, or add a Next step loop.
+178. **Workspace draft from a competitor-gap brief uses this business’s words** — **IMPLEMENTED** this slice. A workspace draft from a competitor-topic brief leads with saved offers or differences. GroovGro does not copy competitor words, publish, scrape Google, or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 

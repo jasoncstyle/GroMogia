@@ -64,6 +64,7 @@ export type IntelligenceFacts = {
   competitorSiteCount?: number
   competitorLookCount?: number
   competitorPageGapCount?: number
+  competitorGapBriefCount?: number
 };
 
 export type InsightItem = {
@@ -207,6 +208,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
   const competitorSiteCount = facts.competitorSiteCount ?? 0;
   const competitorLookCount = facts.competitorLookCount ?? 0;
   const competitorPageGapCount = facts.competitorPageGapCount ?? 0;
+  const competitorGapBriefCount = facts.competitorGapBriefCount ?? 0;
   if (keywordCount > 0) {
     observations.push({
       kind: "observation",
@@ -271,8 +273,8 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     observations.push({
       kind: "observation",
       title: "Content briefs on the planner",
-      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner. GroovGro did not publish a page.`,
-      evidence: ["content_briefs.source=owner"],
+      body: `The owner saved ${contentBriefCount} content ${contentBriefCount === 1 ? "brief" : "briefs"} on the planner.${competitorGapBriefCount > 0 ? ` ${competitorGapBriefCount} ${competitorGapBriefCount === 1 ? "is" : "are"} from a competitor page topic.` : ""} GroovGro did not publish a page or copy a competitor.`,
+      evidence: ["content_briefs"],
       href: "/app/seo",
     });
   }
@@ -651,7 +653,7 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     recommendations.push({
       kind: "recommendation",
       title: "Write a workspace draft from a brief",
-      body: "On SEO, write a workspace draft from a saved brief. GroovGro will not publish it or change the live website.",
+      body: "On SEO, write a workspace draft from a saved brief. If the brief is from a competitor topic, write it in this business’s words. GroovGro will not publish it, copy a competitor, or change the live website.",
       evidence: ["content_drafts missing"],
       href: "/app/seo",
     });
@@ -858,6 +860,7 @@ export function factsSummary(facts: IntelligenceFacts): string {
     `competitor_sites=${facts.competitorSiteCount ?? 0}`,
     `competitor_looks=${facts.competitorLookCount ?? 0}`,
     `competitor_page_gaps=${facts.competitorPageGapCount ?? 0}`,
+    `competitor_gap_briefs=${facts.competitorGapBriefCount ?? 0}`,
   ].join(" ");
 }
 

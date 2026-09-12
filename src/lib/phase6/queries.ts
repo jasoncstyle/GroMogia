@@ -281,6 +281,7 @@ export async function getSeoPageData(organizationId: string) {
         title: contentBriefs.title,
         audience: contentBriefs.audience,
         outline: contentBriefs.outline,
+        source: contentBriefs.source,
         createdAt: contentBriefs.createdAt,
         organizationId: contentBriefs.organizationId,
       })
@@ -526,6 +527,7 @@ export async function getSeoPageData(organizationId: string) {
           title: row.title,
           audience: row.audience,
           outline: row.outline,
+          source: row.source,
           createdAt: row.createdAt,
           draft: draft
             ? {
