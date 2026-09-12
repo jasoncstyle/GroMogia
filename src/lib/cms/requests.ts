@@ -61,3 +61,10 @@ export function describeCmsPublishRequest(
 export function publishRequestsToShow(rows: CmsPublishView[]): CmsPublishView[] {
   return rows.slice(0, CMS_PUBLISH_MAX_SHOWN);
 }
+
+export function describePlannerHeading(queuedCount: number): string {
+  if (queuedCount <= 0) {
+    return "Content planner";
+  }
+  return `Content planner · ${queuedCount} saved for later review`;
+}

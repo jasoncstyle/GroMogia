@@ -2002,6 +2002,7 @@ Organization
 196. **SEO lists planned compete moves first** — **IMPLEMENTED** this slice. The saved compete-move list on SEO shows still-planned moves before moves marked done. GroovGro does not do the work, publish, or add a Next step loop.
 197. **SEO groups planned and done compete moves** — **IMPLEMENTED** this slice. When some compete moves are still planned and some are marked done, SEO labels those groups. GroovGro does not do the work, publish, or add a Next step loop.
 198. **Intelligence recommends a compete move from a stored compare** — **IMPLEMENTED** this slice. When GroovGro has compared saved competitor websites and the owner has not saved a compete move, Intelligence can recommend saving one from that compare. GroovGro does not do the work, copy their words, publish, or add a Next step loop.
+199. **Planner heading shows later-review count** — **IMPLEMENTED** this slice. The Content planner heading says how many workspace drafts are saved for later CMS review. `requestCmsPublish` stays off. GroovGro does not publish or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
