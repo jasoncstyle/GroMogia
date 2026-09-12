@@ -15,6 +15,7 @@ import {
 import {
   COMPETE_MOVE_STATUS_DONE,
   countPlannedCompeteMoves,
+  describeCompeteCardHeading,
   describeCompeteMove,
   describeCompeteMoveGroupHeading,
   describeCompeteMoveListHeading,
@@ -90,7 +91,12 @@ export function CompetitorSitesPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>How we might compete</CardTitle>
+        <CardTitle>
+          {describeCompeteCardHeading(
+            sites.length,
+            countPlannedCompeteMoves(moves),
+          )}
+        </CardTitle>
         <CardDescription>
           Save a competitor website you already know, or open a suggested
           search and save a site you found. GroovGro can read that homepage
