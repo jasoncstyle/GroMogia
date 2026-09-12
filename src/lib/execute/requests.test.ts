@@ -171,6 +171,8 @@ describe("later-run queue and disabled execute adapter", () => {
     assert.match(panel, /adapter stays off/);
     assert.match(panel, /describeExecutionHeading/);
     assert.match(panel, /actionsWaitingToQueue/);
+    assert.match(panel, /openActions.length/);
+    assert.match(panel, /All approved work is already saved for later/);
     assert.equal(describeExecutionHeading(0), "What is waiting to run later");
     assert.equal(
       describeExecutionHeading(2, 1),
