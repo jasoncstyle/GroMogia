@@ -102,6 +102,14 @@ export function describePublishQueueHeading(
   return `Drafts ready to publish later · ${queuedCount} waiting · ${waitingCount} still ${waitingCount === 1 ? "needs" : "need"} later review`;
 }
 
+export function describePublishQueueCopy(waitingCount = 0): string {
+  const remaining =
+    waitingCount <= 0
+      ? ""
+      : " Drafts that still need later review are listed first.";
+  return `Save a workspace draft for later review.${remaining} GroovGro will not publish, write a CMS, or change the live website. The adapter stays off.`;
+}
+
 export function draftsWaitingToQueue<T extends { id: string }>(
   drafts: T[],
   requests: Array<{ draftId: string }>,

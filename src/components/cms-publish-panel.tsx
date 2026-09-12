@@ -1,6 +1,7 @@
 import { createCmsPublishRequest } from "@/lib/actions/cms-publish";
 import {
   describeCmsPublishRequest,
+  describePublishQueueCopy,
   describePublishQueueHeading,
   draftsWaitingToQueue,
   type CmsPublishView,
@@ -36,8 +37,7 @@ export function CmsPublishPanel({
           {describePublishQueueHeading(requests.length, openDrafts.length)}
         </CardTitle>
         <CardDescription>
-          Save a workspace draft for later review. GroovGro will not publish,
-          write a CMS, or change the live website. The adapter stays off.
+          {describePublishQueueCopy(openDrafts.length)}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
