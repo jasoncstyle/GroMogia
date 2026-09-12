@@ -138,6 +138,13 @@ export function planKeywordHistory(input: {
   };
 }
 
+export function describeKeywordHistoryHeading(keywordCount = 0): string {
+  if (keywordCount <= 0) {
+    return "Queries GroovGro has recorded";
+  }
+  return `Queries GroovGro has recorded · ${keywordCount}`;
+}
+
 export function describeKeywordHistory(points: KeywordHistoryPoint[]): string {
   const ordered = [...points].sort((a, b) => a.endDate.localeCompare(b.endDate));
   if (ordered.length === 0) {
