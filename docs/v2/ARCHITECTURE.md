@@ -2101,6 +2101,7 @@ Organization
 295. **Intelligence names how many later-run items are waiting** — **IMPLEMENTED** this slice. Intelligence can say how many later-run items are waiting. `requestExecute` stays off. GroovGro does not run work or add a Next step loop.
 296. **Status text names later-run remaining counts** — **IMPLEMENTED** this slice. Architecture and status summaries name the later-run heading, hidden queued items, listed-first copy, and Intelligence waiting count. GroovGro does not publish or add a Next step loop.
 297. **Empty later-run queue names remaining approved work** — **IMPLEMENTED** this slice. When no later-run items are saved yet, the queue names remaining approved work and says it is listed first in the form. `requestExecute` stays off. GroovGro does not run work or add a Next step loop.
+298. **Intelligence names remaining later-run work listed first** — **IMPLEMENTED** this slice. Intelligence can say remaining approved work that still needs a later-run save is listed first. `requestExecute` stays off. GroovGro does not run work or add a Next step loop.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
