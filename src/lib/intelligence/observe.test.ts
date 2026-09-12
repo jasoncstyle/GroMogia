@@ -986,6 +986,17 @@ describe("intelligence observe", () => {
       ),
       false,
     );
+    assert.equal(
+      buildIntelligenceBrief(
+        facts({
+          competitorPageGapCount: 2,
+          competitorGapBriefCount: 1,
+        }),
+      ).recommendations.some(
+        (item) => item.title === "Save a brief for a competitor page topic",
+      ),
+      false,
+    );
 
     const findMore = buildIntelligenceBrief(
       facts({
