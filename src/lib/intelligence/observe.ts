@@ -632,6 +632,16 @@ export function buildIntelligenceBrief(facts: IntelligenceFacts): IntelligenceBr
     });
   }
 
+  if (facts.websiteConnected && competeMovePlannedCount > 0) {
+    recommendations.push({
+      kind: "recommendation",
+      title: "Mark a compete move done when you finish it",
+      body: "On SEO, mark a saved compete move as done after you do it. GroovGro will not do that work or change the live website.",
+      evidence: ["compete_moves.planned"],
+      href: "/app/seo",
+    });
+  }
+
   if (facts.websiteConnected && competitorPageGapCount > 0) {
     recommendations.push({
       kind: "recommendation",
