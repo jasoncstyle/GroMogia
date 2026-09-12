@@ -8,7 +8,11 @@ import { recordAudit } from "@/lib/audit";
 import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import { competeMoves } from "@/lib/db/schema";
-import { planCompeteMove, planCompeteMoveDone } from "@/lib/growth/compete-moves";
+import {
+  planCompeteMove,
+  planCompeteMoveDone,
+  refuseDuplicateCompeteMoveTitle,
+} from "@/lib/growth/compete-moves";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
@@ -43,6 +47,11 @@ export async function createCompeteMove(
     });
     const db = getDb();
     if (!db) throw new Error("Database is not configured");
+    const existing = await db
+      .select({ title: competeMoves.title })
+      .from(competeMoves)
+      .where(eq(competeMoves.organizationId, session.organizationId));
+    refuseDuplicateCompeteMoveTitle(existing, draft.title);
     const [row] = await db
       .insert(competeMoves)
       .values({
