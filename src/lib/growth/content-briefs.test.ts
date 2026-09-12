@@ -15,6 +15,7 @@ import {
   briefsWithDraft,
   plannerQuerySuggestions,
   refuseDuplicateContentBrief,
+  describePlannerGroupHeading,
   shouldGroupPlannerBriefs,
   sortContentBriefsForPlanner,
   suggestBriefOutline,
@@ -219,7 +220,14 @@ describe("owner-entered content briefs", () => {
       ]).map((row) => row.id),
       ["with-draft"],
     );
-    assert.match(panel, /Still need a workspace draft/);
-    assert.match(panel, /Already has a workspace draft/);
+    assert.match(panel, /describePlannerGroupHeading/);
+    assert.equal(
+      describePlannerGroupHeading("need", 2),
+      "Still need a workspace draft · 2",
+    );
+    assert.equal(
+      describePlannerGroupHeading("have", 1),
+      "Already has a workspace draft · 1",
+    );
   });
 });
