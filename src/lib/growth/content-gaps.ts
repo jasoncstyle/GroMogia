@@ -248,6 +248,16 @@ export function shouldGroupContentGaps<T extends { query: string }>(
   );
 }
 
+export function describeContentGapGroupHeading(
+  kind: "need" | "have",
+  count: number,
+): string {
+  if (kind === "need") {
+    return `Still need a brief · ${count}`;
+  }
+  return `Already have a brief · ${count}`;
+}
+
 export function gapsToShow(rows: ContentGapDraft[]): ContentGapView[] {
   return rows
     .filter((row) => row.status === CONTENT_GAP_STATUS_GAP)
