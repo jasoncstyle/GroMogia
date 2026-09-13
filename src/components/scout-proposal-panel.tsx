@@ -3,6 +3,7 @@ import {
   SCOUT_STATUS_APPROVED,
   SCOUT_STATUS_PROPOSED,
   type ScoutGscExport,
+  type ScoutPublicPage,
 } from "@/lib/growth/scout-proposals";
 import type { ScoutProposalRow } from "@/lib/growth/scout-proposal-query";
 import { CopyText } from "@/components/copy-text";
@@ -19,16 +20,21 @@ export function ScoutProposalPanel({
   heading,
   items,
   gscExport,
+  publicPages = [],
   handoffUrl,
   canManage = false,
 }: {
   heading: string
   items: ScoutProposalRow[]
   gscExport: ScoutGscExport | null
+  publicPages?: ScoutPublicPage[]
   handoffUrl: string
   canManage?: boolean
 }) {
-  const exportText = gscExport ? JSON.stringify(gscExport, null, 2) : "";
+  const exportText =
+    gscExport || publicPages.length > 0
+      ? JSON.stringify({ gsc: gscExport, publicPages }, null, 2)
+      : "";
   const open = items.filter(
     (item) =>
       item.status === SCOUT_STATUS_PROPOSED || item.status === SCOUT_STATUS_APPROVED,
@@ -40,9 +46,9 @@ export function ScoutProposalPanel({
         <CardTitle>{heading}</CardTitle>
         <CardDescription>
           Monday review: approve or reject what SEOgro wrote into GroovGro.
-          SEOgro reads stored Search Console and posts the pack here. You are
-          the reviewer, not the courier. SEOgro does not log into Google.
-          GroovGro does not publish.
+          GroovGro talks to SEOgro. You mark what ships. You are not the
+          courier. SEOgro does not log into Google or apply. GroovGro is the
+          applicator. Live site write stays off until that door is opened.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -52,8 +58,8 @@ export function ScoutProposalPanel({
         </div>
         <p className="text-sm text-muted-foreground">
           SEOgro uses the desk token: GET this URL to read stored Search
-          Console, then POST the proposal pack back. Do not give SEOgro a
-          Google login.
+          Console and public URL inventory, then POST the proposal pack back.
+          One property per pack. Do not give SEOgro a Google login.
         </p>
         {exportText ? (
           <details className="text-sm">

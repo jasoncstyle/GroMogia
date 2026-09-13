@@ -8,8 +8,11 @@ import {
   SCOUT_STATUS_PROPOSED,
   SCOUT_STATUS_SHIPPED,
   buildScoutGscExport,
+  buildScoutPublicPages,
+  describeBotTeam,
   describeScoutInboxHeading,
   nextScoutStatus,
+  normalizeScoutSource,
   parseScoutProposalPack,
 } from "./scout-proposals";
 
@@ -63,6 +66,9 @@ describe("SEOgro proposal packs", () => {
     assert.ok(empty.gaps.some((gap) => /No query rows/.test(gap)));
     assert.match(empty.walls.join(" "), /Do not log into Google/);
     assert.match(empty.walls.join(" "), /POST the proposal pack back/);
+    assert.match(empty.walls.join(" "), /DRAFTgro/);
+    assert.match(empty.walls.join(" "), /BOOKSgro/);
+    assert.match(empty.walls.join(" "), /Do not mix brands/);
     const full = buildScoutGscExport({
       propertyUrl: "https://example.com/",
       startDate: "2026-09-01",
@@ -100,9 +106,52 @@ describe("SEOgro proposal packs", () => {
     assert.doesNotMatch(action, /requestCmsPublish|requestExecute|googleapis/i);
     assert.match(handoff, /recordScoutProposalPack/);
     assert.match(handoff, /via: \"handoff\"/);
+    assert.match(handoff, /getScoutDeskPayload/);
+    assert.match(handoff, /publicPages/);
+    assert.match(handoff, /describeBotTeam/);
     assert.doesNotMatch(handoff, /googleapis|requestCmsPublish/i);
     assert.match(page, /ScoutProposalPanel/);
+    assert.match(page, /getScoutDeskPayload/);
+    assert.match(page, /publicPages/);
     assert.match(page, /api\/bots\/scout/);
     assert.match(page, /Search desk/);
+    assert.match(page, /DRAFTgro and BOOKSgro/);
+    assert.doesNotMatch(page, /SEO Scout|Draft Locker/);
+    const panel = readFileSync(
+      join(process.cwd(), "src/components/scout-proposal-panel.tsx"),
+      "utf8",
+    );
+    assert.match(panel, /publicPages/);
+    assert.match(panel, /gsc: gscExport, publicPages/);
+  });
+
+  it("accepts a public_pages pack and lists stored public URLs", () => {
+    assert.equal(normalizeScoutSource("public_pages"), "public_pages");
+    assert.equal(normalizeScoutSource("gsc + public_pages"), "gsc+public_pages");
+    const pack = parseScoutProposalPack(`{
+      "property": "harbor-lessons",
+      "source": "public_pages",
+      "items": [
+        {
+          "id": "h1-home",
+          "type": "on_page_draft",
+          "priority": "medium",
+          "evidence": "Public homepage H1 does not name the offer.",
+          "draft": "Weekday harbor lessons"
+        }
+      ]
+    }`);
+    assert.equal(pack.source, "public_pages");
+    assert.deepEqual(
+      buildScoutPublicPages([
+        { url: "https://example.com/", title: "Home", label: "home" },
+        { url: "", title: "skip" },
+      ]),
+      [{ url: "https://example.com/", title: "Home", label: "home" }],
+    );
+    const team = describeBotTeam();
+    assert.equal(team.seogro.status, "live");
+    assert.equal(team.draftgro.status, "later");
+    assert.equal(team.booksgro.status, "later");
   });
 });

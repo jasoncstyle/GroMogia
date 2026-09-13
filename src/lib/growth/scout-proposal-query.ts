@@ -5,12 +5,15 @@ import {
   searchConsoleSnapshots,
   seoProposalItems,
   seoProposalPacks,
+  websiteDiscoveredPages,
 } from "@/lib/db/schema";
 import {
   SCOUT_STATUS_APPROVED,
   SCOUT_STATUS_PROPOSED,
   buildScoutGscExport,
+  buildScoutPublicPages,
   describeScoutInboxHeading,
+  type ScoutDeskPayload,
   type ScoutGscExport,
   type ScoutItemStatus,
   type ScoutItemType,
@@ -94,4 +97,30 @@ export async function getScoutGscExport(
     queries: latest.topQueries,
     pages: latest.topPages,
   });
+}
+
+export async function getScoutDeskPayload(
+  organizationId: string,
+): Promise<ScoutDeskPayload> {
+  const db = getDb();
+  if (!db || !organizationId) {
+    return { gsc: null, publicPages: [] };
+  }
+  const [gsc, pageRows] = await Promise.all([
+    getScoutGscExport(organizationId),
+    db
+      .select({
+        url: websiteDiscoveredPages.url,
+        title: websiteDiscoveredPages.title,
+        label: websiteDiscoveredPages.label,
+      })
+      .from(websiteDiscoveredPages)
+      .where(eq(websiteDiscoveredPages.organizationId, organizationId))
+      .orderBy(desc(websiteDiscoveredPages.lastSeenAt))
+      .limit(80),
+  ]);
+  return {
+    gsc,
+    publicPages: buildScoutPublicPages(pageRows),
+  };
 }

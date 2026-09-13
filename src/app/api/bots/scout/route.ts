@@ -1,10 +1,12 @@
 import { recordScoutProposalPack } from "@/lib/growth/record-scout-pack";
 import { requireBotOrganization } from "@/lib/growth/require-bot-org";
 import {
-  getScoutGscExport,
+  getScoutDeskPayload,
   getScoutProposalInbox,
 } from "@/lib/growth/scout-proposal-query";
 import {
+  SCOUT_WALLS,
+  describeBotTeam,
   describeScoutHandoff,
   parseScoutProposalPack,
 } from "@/lib/growth/scout-proposals";
@@ -14,13 +16,15 @@ export async function GET(request: Request) {
   if (!access.ok) {
     return Response.json({ error: access.error }, { status: access.status });
   }
-  const [gsc, inbox] = await Promise.all([
-    getScoutGscExport(access.organizationId),
+  const [desk, inbox] = await Promise.all([
+    getScoutDeskPayload(access.organizationId),
     getScoutProposalInbox(access.organizationId),
   ]);
   return Response.json({
+    team: describeBotTeam(),
     handoff: describeScoutHandoff(),
-    gsc,
+    gsc: desk.gsc,
+    publicPages: desk.publicPages,
     inbox: {
       heading: inbox.heading,
       proposed: inbox.items
@@ -32,10 +36,7 @@ export async function GET(request: Request) {
           status: item.status,
         })),
     },
-    walls: gsc?.walls ?? [
-      "Do not log into Google, Search Console, Analytics, or Ads.",
-      "POST the proposal pack back to GroovGro. Do not ask Jason to carry the file.",
-    ],
+    walls: desk.gsc?.walls ?? [...SCOUT_WALLS],
   });
 }
 
