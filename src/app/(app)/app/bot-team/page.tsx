@@ -3,7 +3,6 @@ import { appUrl } from "@/lib/env";
 import { hasPermission } from "@/lib/permissions";
 import {
   BOT_PATH_BY_SEAT,
-  BOT_SEAT_BOOKS,
   BOT_SEAT_DRAFT,
   BOT_SEAT_WRITE,
   describeBotInboxHeading,
@@ -17,7 +16,7 @@ export default async function BotTeamPage() {
     hasPermission(session.permissions, "manage_integrations") ||
     hasPermission(session.permissions, "manage_seo");
   const orgId = session.organizationId ?? "";
-  const seats = [BOT_SEAT_DRAFT, BOT_SEAT_WRITE, BOT_SEAT_BOOKS] as const;
+  const seats = [BOT_SEAT_DRAFT, BOT_SEAT_WRITE] as const;
   const desks = orgId
     ? await Promise.all(
         seats.map(async (seat) => {
@@ -39,10 +38,11 @@ export default async function BotTeamPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Bot team</h1>
         <p className="text-muted-foreground">
-          GroovGro talks to SEOgro, DRAFTgro, WRITEgro, and BOOKSgro. You review
-          on Monday. You are not the courier. None of them send, publish, or
-          move money. Point each bot at its handoff with the same desk token
-          from Integrations.
+          GroovGro talks to SEOgro, DRAFTgro, and WRITEgro. You review on
+          Monday. You are not the courier. None of them send or publish.
+          BOOKSgro waits — that seat is money work, and GroovGro is not close
+          enough to send books facts yet. Point each live bot at its handoff
+          with the same desk token from Integrations.
         </p>
       </div>
       {!session.organizationId ? (

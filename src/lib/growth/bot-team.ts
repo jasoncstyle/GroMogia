@@ -1,8 +1,9 @@
 /**
- * GroovGro bot team besides SEOgro. DRAFTgro, BOOKSgro, and WRITEgro
- * read stored GroovGro facts and write packs as proposed. Jason reviews
- * on Monday. Only GroovGro sets shipped after the owner acts. None of
- * them send, publish, move money, or log into Google.
+ * GroovGro bot team besides SEOgro. DRAFTgro and WRITEgro read stored
+ * GroovGro facts and write packs as proposed. BOOKSgro waits — money
+ * work is later. Jason reviews on Monday. Only GroovGro sets shipped
+ * after the owner acts. None of them send, publish, move money, or
+ * log into Google.
  */
 
 export const BOT_STATUS_PROPOSED = "proposed";
@@ -90,8 +91,8 @@ export function describeBotTeam() {
     },
     booksgro: {
       seat: "BOOKSgro",
-      status: "live",
-      role: "QuickBooks questions and simple reports from stored payment copies. Do not move money.",
+      status: "later",
+      role: "QuickBooks questions later. GroovGro will not send money facts or take a pack yet.",
       path: "books",
     },
     eggbot: {
@@ -112,6 +113,23 @@ export function describeBotSeat(seat: BotSeat): {
   const name =
     seat === BOT_SEAT_DRAFT ? "DRAFTgro" : seat === BOT_SEAT_BOOKS ? "BOOKSgro" : "WRITEgro";
   const role = describeBotTeam()[seat].role;
+  if (!isBotSeatLive(seat)) {
+    return {
+      name,
+      role,
+      walls: [
+        "This seat is later. GroovGro will not send money facts or take a pack yet.",
+        "Do not invent balances, invoices, or books of record.",
+        "Do not file taxes, send invoices, take payments, or move money.",
+        "Do not do SEO or marketing.",
+      ],
+      handoff: {
+        read: `${name} is later. GroovGro will not send money facts on this URL yet.`,
+        write: `${name} is later. GroovGro will not take a pack for this seat yet.`,
+        reviewer: "Jason reviews live seats on Monday. BOOKSgro waits.",
+      },
+    };
+  }
   return {
     name,
     role,
@@ -136,13 +154,12 @@ export const BOT_WALLS: Record<BotSeat, readonly string[]> = {
     "That is not BOOKSgro or SEOgro work.",
   ],
   booksgro: [
-    "Do not file taxes, send invoices, take payments, or move money.",
+    "This seat is later. GroovGro will not send money facts or take a pack yet.",
     "Do not invent balances, bank totals, or QuickBooks numbers.",
-    "Use only the stored payment copies in this payload. GroovGro is not the books of record.",
+    "Do not file taxes, send invoices, take payments, or move money.",
     "Do not log into QuickBooks, Google, or Stripe.",
     "Do not do SEO or marketing.",
-    "Return a proposal pack only. Never set status to shipped.",
-    "One property per pack. Do not mix brands.",
+    "Do not mix brands.",
   ],
   writegro: [
     "Do not publish, patch a live page, or overwrite a connected site.",
@@ -154,6 +171,15 @@ export const BOT_WALLS: Record<BotSeat, readonly string[]> = {
     "That is not SEOgro analysis and not DRAFTgro social.",
   ],
 };
+
+export function isBotSeatLive(seat: BotSeat): boolean {
+  return describeBotTeam()[seat].status === "live";
+}
+
+export function parkedBotSeatMessage(seat: BotSeat): string {
+  const name = describeBotSeat(seat).name;
+  return `${name} is later. GroovGro will not send money facts or take a pack for that seat yet.`;
+}
 
 export function parseBotSeatPath(value: unknown): BotSeat | null {
   const key = String(value ?? "").trim().toLowerCase();
@@ -189,6 +215,9 @@ export function nextBotStatus(
 }
 
 export function parseBotProposalPack(raw: string, seat: BotSeat): BotProposalPack {
+  if (!isBotSeatLive(seat)) {
+    throw new Error(parkedBotSeatMessage(seat));
+  }
   const meta = describeBotSeat(seat);
   const text = raw.trim();
   if (!text) throw new Error(`Paste the proposal pack from ${meta.name}.`);

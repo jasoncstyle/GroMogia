@@ -12,7 +12,9 @@ import {
   BOT_STATUS_SHIPPED,
   describeBotInboxHeading,
   describeBotTeam,
+  isBotSeatLive,
   nextBotStatus,
+  parkedBotSeatMessage,
   parseBotProposalPack,
   parseBotSeatPath,
 } from "./bot-team";
@@ -46,7 +48,7 @@ describe("bot team packs", () => {
     );
     assert.throws(
       () => parseBotProposalPack(DRAFT_PACK, BOT_SEAT_BOOKS),
-      /needs type categorize/,
+      /will not send money facts/,
     );
   });
 
@@ -56,31 +58,45 @@ describe("bot team packs", () => {
     assert.throws(() => nextBotStatus(BOT_STATUS_PROPOSED, "ship"), /approved item/);
   });
 
-  it("names the four live seats and keeps eggbot out of the data loop", () => {
+  it("names the live seats, parks BOOKSgro, and keeps eggbot out of the data loop", () => {
     const team = describeBotTeam();
     assert.equal(team.seogro.status, "live");
     assert.equal(team.draftgro.status, "live");
     assert.equal(team.writegro.status, "live");
-    assert.equal(team.booksgro.status, "live");
+    assert.equal(team.booksgro.status, "later");
     assert.equal(team.eggbot.status, "out");
+    assert.equal(isBotSeatLive(BOT_SEAT_DRAFT), true);
+    assert.equal(isBotSeatLive(BOT_SEAT_WRITE), true);
+    assert.equal(isBotSeatLive(BOT_SEAT_BOOKS), false);
+    assert.match(parkedBotSeatMessage(BOT_SEAT_BOOKS), /will not send money facts/);
     assert.match(describeBotInboxHeading(BOT_SEAT_WRITE, { proposed: 1, approved: 0 }), /WRITEgro/);
   });
 
-  it("connects DRAFTgro BOOKSgro and WRITEgro without sending or moving money", () => {
+  it("connects DRAFTgro and WRITEgro without sending and parks BOOKSgro", () => {
     const action = readFileSync(join(process.cwd(), "src/lib/actions/bot-team.ts"), "utf8");
     const route = readFileSync(join(process.cwd(), "src/app/api/bots/[seat]/route.ts"), "utf8");
     const page = readFileSync(join(process.cwd(), "src/app/(app)/app/bot-team/page.tsx"), "utf8");
     const panel = readFileSync(join(process.cwd(), "src/components/bot-access-panel.tsx"), "utf8");
     const schema = readFileSync(join(process.cwd(), "src/lib/db/ensure-schema.ts"), "utf8");
+    const query = readFileSync(join(process.cwd(), "src/lib/growth/bot-team-query.ts"), "utf8");
     assert.match(action, /parseBotProposalPack/);
+    assert.match(action, /isBotSeatLive/);
     assert.doesNotMatch(action, /requestCmsPublish|requestExecute|googleapis/i);
     assert.match(route, /recordBotProposalPack/);
     assert.match(route, /getBotTeamPayload/);
+    assert.match(route, /isBotSeatLive/);
+    assert.match(route, /status: 403/);
     assert.doesNotMatch(route, /googleapis|requestCmsPublish/i);
-    assert.match(page, /DRAFTgro, WRITEgro, and BOOKSgro/);
+    assert.match(page, /DRAFTgro, and WRITEgro/);
+    assert.match(page, /BOOKSgro waits/);
+    assert.doesNotMatch(page, /BOT_SEAT_BOOKS/);
     assert.match(page, /api\/bots\//);
     assert.match(panel, /WRITEgro handoff/);
-    assert.match(panel, /BOOKSgro handoff/);
+    assert.match(panel, /BOOKSgro waits/);
+    assert.doesNotMatch(panel, /BOOKSgro handoff/);
+    assert.doesNotMatch(panel, /booksUrl/);
+    assert.doesNotMatch(query, /from\(payments\)/);
+    assert.match(query, /parkedPayload/);
     assert.match(schema, /0044_bot_proposal_packs/);
   });
 });

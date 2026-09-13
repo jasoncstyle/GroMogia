@@ -3,7 +3,11 @@ import { revalidatePath } from "next/cache";
 import { recordAudit } from "@/lib/audit";
 import { getDb } from "@/lib/db";
 import { botProposalItems, botProposalPacks } from "@/lib/db/schema";
-import type { BotProposalPack } from "@/lib/growth/bot-team";
+import {
+  isBotSeatLive,
+  parkedBotSeatMessage,
+  type BotProposalPack,
+} from "@/lib/growth/bot-team";
 
 export async function recordBotProposalPack(input: {
   organizationId: string
@@ -11,6 +15,9 @@ export async function recordBotProposalPack(input: {
   actorUserId?: string | null
   via: "handoff" | "paste"
 }): Promise<{ packId: string; count: number }> {
+  if (!isBotSeatLive(input.pack.seat)) {
+    throw new Error(parkedBotSeatMessage(input.pack.seat));
+  }
   const db = getDb();
   if (!db) throw new Error("Database is not configured");
   const [saved] = await db

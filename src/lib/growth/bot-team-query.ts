@@ -8,7 +8,6 @@ import {
   brandVoiceProfiles,
   contentBriefs,
   offers,
-  payments,
   websiteDiscoveredPages,
 } from "@/lib/db/schema";
 import {
@@ -16,6 +15,8 @@ import {
   BOT_STATUS_PROPOSED,
   describeBotInboxHeading,
   describeBotSeat,
+  isBotSeatLive,
+  parkedBotSeatMessage,
   type BotItemStatus,
   type BotSeat,
 } from "@/lib/growth/bot-team";
@@ -85,6 +86,9 @@ export async function getBotProposalInbox(
 }
 
 export async function getBotTeamPayload(organizationId: string, seat: BotSeat) {
+  if (!isBotSeatLive(seat)) {
+    return parkedPayload(seat);
+  }
   const db = getDb();
   const meta = describeBotSeat(seat);
   if (!db || !organizationId) {
@@ -176,47 +180,23 @@ export async function getBotTeamPayload(organizationId: string, seat: BotSeat) {
     };
   }
 
-  const paymentRows = await db
-    .select({
-      amountCents: payments.amountCents,
-      currency: payments.currency,
-      kind: payments.kind,
-      status: payments.status,
-      providerObjectId: payments.providerObjectId,
-      createdAt: payments.createdAt,
-    })
-    .from(payments)
-    .where(eq(payments.organizationId, organizationId))
-    .orderBy(desc(payments.createdAt))
-    .limit(25);
+  return parkedPayload(seat);
+}
 
+function parkedPayload(seat: BotSeat) {
   return {
     seat,
-    notice:
-      "These are payment copies GroovGro already stored. They are not QuickBooks balances.",
-    payments: paymentRows.map((row) => ({
-      amountCents: row.amountCents,
-      currency: row.currency,
-      kind: row.kind,
-      status: row.status,
-      providerObjectId: row.providerObjectId,
-      createdAt: row.createdAt.toISOString(),
-    })),
-    walls: meta.walls,
+    later: true,
+    laterNote: parkedBotSeatMessage(seat),
+    walls: describeBotSeat(seat).walls,
   };
 }
 
 function emptyPayload(seat: BotSeat) {
-  const meta = describeBotSeat(seat);
-  if (seat === "booksgro") {
-    return {
-      seat,
-      notice:
-        "These are payment copies GroovGro already stored. They are not QuickBooks balances.",
-      payments: [],
-      walls: meta.walls,
-    };
+  if (!isBotSeatLive(seat)) {
+    return parkedPayload(seat);
   }
+  const meta = describeBotSeat(seat);
   if (seat === "writegro") {
     return {
       seat,

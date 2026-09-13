@@ -4,6 +4,8 @@ import { getBotProposalInbox, getBotTeamPayload } from "@/lib/growth/bot-team-qu
 import {
   describeBotSeat,
   describeBotTeam,
+  isBotSeatLive,
+  parkedBotSeatMessage,
   parseBotProposalPack,
   parseBotSeatPath,
 } from "@/lib/growth/bot-team";
@@ -18,6 +20,12 @@ export async function GET(request: Request, context: RouteContext) {
   const access = await requireBotOrganization(request);
   if (!access.ok) {
     return Response.json({ error: access.error }, { status: access.status });
+  }
+  if (!isBotSeatLive(seat)) {
+    return Response.json(
+      { ok: false, error: parkedBotSeatMessage(seat) },
+      { status: 403 },
+    );
   }
   const meta = describeBotSeat(seat);
   const [payload, inbox] = await Promise.all([
@@ -50,6 +58,12 @@ export async function POST(request: Request, context: RouteContext) {
   const access = await requireBotOrganization(request);
   if (!access.ok) {
     return Response.json({ error: access.error }, { status: access.status });
+  }
+  if (!isBotSeatLive(seat)) {
+    return Response.json(
+      { ok: false, error: parkedBotSeatMessage(seat) },
+      { status: 403 },
+    );
   }
   let raw = "";
   try {

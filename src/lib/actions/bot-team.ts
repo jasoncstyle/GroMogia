@@ -13,7 +13,9 @@ import {
   BOT_SEATS,
   BOT_STATUS_SHIPPED,
   describeBotSeat,
+  isBotSeatLive,
   nextBotStatus,
+  parkedBotSeatMessage,
   parseBotProposalPack,
   type BotItemStatus,
   type BotSeat,
@@ -54,6 +56,9 @@ export async function saveBotProposalPack(formData: FormData): Promise<ActionRes
       seat: formData.get("seat") ?? "",
       pack: formData.get("pack") ?? "",
     });
+    if (!isBotSeatLive(parsed.seat as BotSeat)) {
+      throw new Error(parkedBotSeatMessage(parsed.seat as BotSeat));
+    }
     const pack = parseBotProposalPack(parsed.pack, parsed.seat as BotSeat);
     const saved = await recordBotProposalPack({
       organizationId: session.organizationId,
