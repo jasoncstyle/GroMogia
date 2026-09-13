@@ -50,7 +50,7 @@ export function DeskRing({
   const dash = (shown / 100) * circumference;
 
   return (
-    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-card p-5 shadow-sm ring-1 ring-foreground/8">
+    <div className="flex flex-col items-center justify-center gap-3 rounded-2xl bg-card p-5 shadow-sm ring-1 ring-foreground/10">
       <p className="self-start text-xs font-medium tracking-wide text-muted-foreground uppercase">
         {label}
       </p>

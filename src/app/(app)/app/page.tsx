@@ -184,7 +184,7 @@ export default async function DashboardPage() {
         )}
 
         {snapshot ? (
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <DeskKpi
               label="Open leads"
               value={String(snapshot.openLeadCount)}
@@ -212,7 +212,7 @@ export default async function DashboardPage() {
           </div>
         ) : null}
 
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.8fr)]">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(16rem,0.8fr)]">
           <div className="rounded-2xl bg-card p-5 shadow-sm ring-1 ring-foreground/10">
             <div className="flex items-start justify-between gap-3">
               <div>
@@ -296,7 +296,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
           <div className="rounded-2xl bg-card p-5 shadow-sm ring-1 ring-foreground/10">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
@@ -382,7 +382,7 @@ export default async function DashboardPage() {
         </div>
 
         {snapshot ? (
-          <div className="grid gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
             <div className="overflow-hidden rounded-2xl bg-card shadow-sm ring-1 ring-foreground/10">
               <div className="border-b px-5 py-4">
                 <h2 className="text-base font-semibold">Recent leads</h2>
