@@ -49,7 +49,7 @@ export function BotAccessPanel({
       <CardHeader>
         <CardTitle>Search partner and Goal checker</CardTitle>
         <CardDescription>
-          GroovGro pulls Search Console and stores it. SEO Scout reads that
+          GroovGro pulls Search Console and stores it. SEOgro reads that
           store and writes proposal packs back with this token. Search partner
           and Goal checker can still read the desk. They do not log into
           Google. They do not publish.
@@ -61,8 +61,8 @@ export function BotAccessPanel({
           <CopyText text={deskUrl} label="Copy desk URL" />
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <p className="text-sm text-muted-foreground">Scout handoff: {scoutUrl}</p>
-          <CopyText text={scoutUrl} label="Copy Scout handoff URL" />
+          <p className="text-sm text-muted-foreground">SEOgro handoff: {scoutUrl}</p>
+          <CopyText text={scoutUrl} label="Copy SEOgro handoff URL" />
         </div>
         {tokenCount > 0 ? (
           <p className="text-sm text-muted-foreground">
@@ -102,7 +102,7 @@ export function BotAccessPanel({
           </div>
         ) : null}
         <p className="text-sm text-muted-foreground">
-          SEO Scout: GET the handoff URL, then POST the proposal pack, with
+          SEOgro: GET the handoff URL, then POST the proposal pack, with
           Authorization: Bearer and the token. Search partner and Goal checker:
           GET the desk URL. Do not log into Google. Do not invent prices. Do
           not publish. Do not set shipped.

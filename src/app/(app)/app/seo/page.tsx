@@ -62,7 +62,7 @@ export default async function SeoPage({
     : null;
   const scoutInbox = session.organizationId
     ? await getScoutProposalInbox(session.organizationId)
-    : { heading: "SEO Scout proposals", items: [] };
+    : { heading: "SEOgro proposals", items: [] };
   const view = params.view ?? "";
   const selectedPage =
     data?.builderPages.find((page) => page.id === view) ?? null;
@@ -119,7 +119,7 @@ export default async function SeoPage({
         <h1 className="text-2xl font-semibold tracking-tight">Search desk</h1>
         <p className="text-muted-foreground">
           GroovGro stores Search Console here. Your Search partner and Goal
-          checker read this store — they do not log into Google. SEO Scout
+          checker read this store — they do not log into Google. SEOgro
           reads that store and writes proposal packs back. You review on
           Monday. GroovGro does not publish, invent prices, or scrape Google.
         </p>

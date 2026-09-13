@@ -8,6 +8,7 @@ import {
   SCOUT_STATUS_PROPOSED,
   SCOUT_STATUS_SHIPPED,
   buildScoutGscExport,
+  describeScoutInboxHeading,
   nextScoutStatus,
   parseScoutProposalPack,
 } from "./scout-proposals";
@@ -28,7 +29,7 @@ const PACK = `{
   ]
 }`;
 
-describe("SEO Scout proposal packs", () => {
+describe("SEOgro proposal packs", () => {
   it("parses a pack as proposals and ignores a shipped status from Scout", () => {
     const pack = parseScoutProposalPack(PACK);
     assert.equal(pack.property, "harbor-lessons");
@@ -74,7 +75,15 @@ describe("SEO Scout proposal packs", () => {
     assert.equal(full.gaps.length, 0);
   });
 
-  it("keeps Scout as proposals and does not publish or call Google", () => {
+  it("names the inbox SEOgro and does not publish or call Google", () => {
+    assert.equal(
+      describeScoutInboxHeading({ proposed: 0, approved: 0 }),
+      "SEOgro proposals",
+    );
+    assert.match(
+      describeScoutInboxHeading({ proposed: 2, approved: 1 }),
+      /SEOgro proposals · 2 to review, 1 approved/,
+    );
     const helper = readFileSync(join(process.cwd(), "src/lib/growth/scout-proposals.ts"), "utf8");
     const action = readFileSync(
       join(process.cwd(), "src/lib/actions/scout-proposals.ts"),
