@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export type ActionResult =
-  | { ok: true; message?: string }
+  | { ok: true; message?: string; token?: string }
   | { ok: false; error: string };
 
 export function ok(message?: string): ActionResult {

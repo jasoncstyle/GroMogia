@@ -6,6 +6,7 @@ import { join } from "node:path";
 import {
   PASTE_SEARCH_LOOP_STEP_TITLE,
   SAVE_SEARCH_LOOP_BRIEF_STEP_TITLE,
+  SEARCH_LOOP_STEP_CHECK,
   SEARCH_LOOP_STEP_DONE,
   SEARCH_LOOP_STEP_PASTE,
   SEARCH_LOOP_STEP_SAVE_BRIEF,
@@ -13,8 +14,10 @@ import {
   SEARCH_LOOP_STEP_WRITE_DRAFT,
   WRITE_SEARCH_LOOP_DRAFT_STEP_TITLE,
   composeSearchLoopCheck,
+  buildSearchDeskForBots,
   describeSearchLoopHeading,
   describeSearchLoopOwnerSteps,
+  describeSearchLoopTrail,
   describeSearchLoopWait,
   encodeSearchBaseline,
   learnFromSearchQuery,
@@ -277,6 +280,43 @@ describe("search-to-page loop", () => {
     assert.match(combined, /harbor sailing lessons/);
   });
 
+  it("shows a trail the owner can see fill in", () => {
+    const waiting = describeSearchLoopTrail(SEARCH_LOOP_STEP_WAIT);
+    assert.equal(waiting.filter((item) => item.done).length, 0);
+    const pasted = describeSearchLoopTrail(SEARCH_LOOP_STEP_CHECK);
+    assert.equal(pasted.filter((item) => item.done).length, 4);
+    assert.equal(pasted.at(-1)?.done, false);
+    const done = describeSearchLoopTrail(SEARCH_LOOP_STEP_DONE);
+    assert.ok(done.every((item) => item.done));
+  });
+
+  it("hands bots stored Search Console only, with walls", () => {
+    const view = planSearchLoop({
+      keywords: [KEYWORD],
+      goal: { id: "goal-1", title: "More lesson bookings" },
+      voice: { businessName: "Harbor School", doSay: "lessons on the water" },
+    });
+    const desk = buildSearchDeskForBots({
+      view,
+      queries: [
+        {
+          query: KEYWORD.query,
+          impressions: 400,
+          clicks: 12,
+          position: 14,
+          label: "review",
+        },
+      ],
+    });
+    assert.equal(desk.query, KEYWORD.query);
+    assert.equal(desk.goal.title, "More lesson bookings");
+    assert.match(desk.searchPartner.doNow, /brief/);
+    assert.match(desk.goalChecker.doNow, /Wait/);
+    assert.match(desk.walls.join(" "), /Do not log into Google/);
+    assert.match(desk.pasteWords, /Harbor School/);
+    assert.doesNotMatch(desk.pasteWords, /\$|€|£/);
+  });
+
   it("keeps the loop on SEO and Next step without publishing or scraping", () => {
     const helper = readFileSync(join(process.cwd(), "src/lib/growth/search-loop.ts"), "utf8");
     const panel = readFileSync(
@@ -308,7 +348,7 @@ describe("search-to-page loop", () => {
     assert.match(panel, /no box to type a Google search/);
     assert.match(panel, /Refresh Search Console/);
     assert.match(panel, /Read the website/);
-    assert.match(panel, /describeSearchLoopOwnerSteps/);
+    assert.match(panel, /SearchLoopTrail/);
     assert.match(panel, /another stored search/);
     assert.match(panel, /Use “/);
     assert.match(panel, /SEARCH_LOOP_STEP_SAVE_BRIEF/);
@@ -322,6 +362,14 @@ describe("search-to-page loop", () => {
     assert.match(action, /did not publish/);
     assert.doesNotMatch(action, /requestCmsPublish|requestExecute|requestCompetitorSearch/);
     assert.match(seoPage, /SearchLoopPanel/);
+    assert.match(seoPage, /Search desk/);
+    assert.match(seoPage, /More SEO tools/);
+    const deskCopy = seoPage.slice(
+      seoPage.indexOf("Search desk"),
+      seoPage.indexOf("More SEO tools"),
+    );
+    assert.doesNotMatch(deskCopy, /Citation gaps are listed first/);
+    assert.doesNotMatch(deskCopy, /GeoNotesPanel/);
     assert.match(nextStep, /searchLoopNextStep/);
     assert.match(query, /brandVoiceProfiles/);
     assert.match(query, /more_like_this/);
