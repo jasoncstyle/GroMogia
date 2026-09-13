@@ -21,6 +21,7 @@ import {
   matchOfferToQuery,
   parseSearchBaseline,
   pickPastePage,
+  listSearchLoopCandidates,
   pickSearchLoopTopic,
   planSearchLoop,
   searchLoopNextStep,
@@ -125,22 +126,57 @@ describe("search-to-page loop", () => {
     assert.equal(searchLoopNextStep(afterDraft)?.href, "/app/seo");
   });
 
-  it("waits when there is no worth-a-look query", () => {
+  it("waits only when no stored query exists", () => {
     const empty = planSearchLoop({});
     assert.equal(empty.step, SEARCH_LOOP_STEP_WAIT);
     assert.match(empty.why, /no box to type a Google search/);
     assert.match(empty.why, /Refresh Search Console/);
-    const loop = planSearchLoop({
-      keywords: [{ ...KEYWORD, opportunityLabel: "watch" }],
-    });
-    assert.equal(loop.step, SEARCH_LOOP_STEP_WAIT);
-    assert.match(loop.why, /already has stored queries/);
-    assert.match(loop.why, /will not invent a topic/);
-    assert.equal(searchLoopNextStep(loop), null);
+    assert.equal(searchLoopNextStep(empty), null);
     const steps = describeSearchLoopOwnerSteps(SEARCH_LOOP_STEP_WAIT);
     assert.equal(steps[0]?.current, true);
     assert.match(steps[0]?.title ?? "", /Refresh Search Console/);
     assert.match(describeSearchLoopWait({}), /no box to type/);
+  });
+
+  it("starts the loop from a stored watch query when none are worth a look", () => {
+    const watching = { ...KEYWORD, opportunityLabel: "watch" as const, opportunityScore: 20 };
+    const loop = planSearchLoop({ keywords: [watching] });
+    assert.equal(loop.step, SEARCH_LOOP_STEP_SAVE_BRIEF);
+    assert.equal(loop.query, KEYWORD.query);
+    assert.match(loop.why, /watching/);
+    assert.equal(searchLoopNextStep(loop)?.title, SAVE_SEARCH_LOOP_BRIEF_STEP_TITLE);
+  });
+
+  it("prefers an unfinished stored brief over a higher-scoring unused query", () => {
+    const topic = pickSearchLoopTopic({
+      keywords: [
+        {
+          ...KEYWORD,
+          query: "weekend beginner class",
+          queryKey: "weekend beginner class",
+          opportunityScore: 90,
+          impressions: 800,
+        },
+        { ...KEYWORD, opportunityLabel: "watch", opportunityScore: 20 },
+      ],
+      briefs: [{ id: "brief-1", query: KEYWORD.query, title: KEYWORD.query }],
+    });
+    assert.equal(topic?.query, KEYWORD.query);
+    const candidates = listSearchLoopCandidates(
+      {
+        keywords: [
+          KEYWORD,
+          {
+            ...KEYWORD,
+            query: "weekend beginner class",
+            queryKey: "weekend beginner class",
+            impressions: 80,
+          },
+        ],
+      },
+      KEYWORD.query,
+    );
+    assert.equal(candidates[0]?.query, "weekend beginner class");
   });
 
   it("matches an offer only when the search shares a word", () => {
@@ -273,6 +309,9 @@ describe("search-to-page loop", () => {
     assert.match(panel, /Refresh Search Console/);
     assert.match(panel, /Read the website/);
     assert.match(panel, /describeSearchLoopOwnerSteps/);
+    assert.match(panel, /another stored search/);
+    assert.match(panel, /Use “/);
+    assert.match(panel, /SEARCH_LOOP_STEP_SAVE_BRIEF/);
     const consolePanel = readFileSync(
       join(process.cwd(), "src/components/search-console-panel.tsx"),
       "utf8",
@@ -286,6 +325,7 @@ describe("search-to-page loop", () => {
     assert.match(nextStep, /searchLoopNextStep/);
     assert.match(query, /brandVoiceProfiles/);
     assert.match(query, /more_like_this/);
+    assert.match(query, /persistKeywordHistory/);
     assert.doesNotMatch(helper, /fetch\(/);
     assert.doesNotMatch(helper, /generateText|openai|anthropic/i);
   });

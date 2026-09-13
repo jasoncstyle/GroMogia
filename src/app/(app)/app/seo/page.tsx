@@ -296,7 +296,11 @@ export default async function SeoPage({
             />
           ) : null}
 
-          <KeywordHistoryPanel keywords={data.keywords} />
+          <KeywordHistoryPanel
+            keywords={data.keywords}
+            briefs={data.contentBriefs}
+            canManage={session.permissions.includes("manage_seo")}
+          />
 
           <ContentGapsPanel
             gaps={data.contentGaps}

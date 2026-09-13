@@ -3079,6 +3079,7 @@ describe("coordinated next step", () => {
         exampleTitle: "",
         exampleBody: "",
       },
+      candidates: [],
     };
     const blocked = coordinateNextStep({
       inferredDraftCount: 1,
