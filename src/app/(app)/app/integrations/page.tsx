@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { count, eq } from "drizzle-orm";
 
+import { disconnectGa4 } from "@/lib/actions/ga4";
 import { disconnectSearchConsole } from "@/lib/actions/search-console";
 import { connectStripe, disconnectStripe } from "@/lib/actions/stripe";
 import { getAppSession } from "@/lib/auth/session";
@@ -77,7 +78,9 @@ export default async function IntegrationsPage() {
                   {provider.key === "stripe"
                     ? " Phase 2 uses Stripe for bookings and payments. Card numbers never enter GroovGro."
                     : provider.key === "google"
-                      ? " Phase 6 uses Google only for Search Console (read-only). Ads stay off."
+                      ? " Search Console only (read-only). Ads stay off."
+                      : provider.key === "google_analytics"
+                        ? " GA4 only (read-only). GroovGro stores sessions, landing pages, and sources. Ads stay off."
                       : " Connect in a later phase using OAuth or official APIs. Tokens stay in Vercel, never in git."}
                 </CardDescription>
               </CardHeader>
@@ -119,6 +122,31 @@ export default async function IntegrationsPage() {
                   ) : (
                     <Button asChild>
                       <Link href="/api/google/start">Connect Search Console</Link>
+                    </Button>
+                  )}
+                </CardFooter>
+              ) : null}
+              {provider.key === "google_analytics" ? (
+                <CardFooter className="gap-2">
+                  {!googleReady ? (
+                    <p className="text-sm text-muted-foreground">
+                      Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel,
+                      then redeploy. Steps: docs/phase-6/USER_SETUP.md.
+                    </p>
+                  ) : connected ? (
+                    <SaveForm
+                      action={disconnectGa4}
+                      successMessage="Google Analytics disconnected."
+                    >
+                      <SaveButton type="submit" variant="outline">
+                        Disconnect Google Analytics
+                      </SaveButton>
+                    </SaveForm>
+                  ) : (
+                    <Button asChild>
+                      <Link href="/api/google-analytics/start">
+                        Connect Google Analytics
+                      </Link>
                     </Button>
                   )}
                 </CardFooter>

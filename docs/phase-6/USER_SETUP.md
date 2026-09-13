@@ -46,7 +46,7 @@ Google’s menu may say **OAuth consent screen** or **Google Auth Platform**. Us
 5. Developer contact email: your email.
 6. Save.
 7. Open **Scopes** / **Data access**.
-8. Add the scope that ends with `webmasters.readonly`. Do **not** add Ads, Analytics, or `webmasters` (the write version).
+8. Add the scope that ends with `webmasters.readonly`. For GA4, also add `analytics.readonly`. Do **not** add Ads or `webmasters` (the write version).
 9. Save.
 10. Open **Test users** / **Audience**.
 11. Add the Google email that owns Search Console for this website.
@@ -62,10 +62,13 @@ Google’s menu may say **OAuth consent screen** or **Google Auth Platform**. Us
    - `https://www.groovgro.com`
    - `https://groovgro.com`
    - `https://gro-mogia.vercel.app`
-6. **Authorized redirect URIs** — add all three, one per line:
+6. **Authorized redirect URIs** — add all of these, one per line:
    - `https://www.groovgro.com/api/google/callback`
    - `https://groovgro.com/api/google/callback`
    - `https://gro-mogia.vercel.app/api/google/callback`
+   - `https://www.groovgro.com/api/google-analytics/callback`
+   - `https://groovgro.com/api/google-analytics/callback`
+   - `https://gro-mogia.vercel.app/api/google-analytics/callback`
 7. Click **Create**.
 8. A popup shows **Client ID** and **Client secret**. Leave it open. Do not paste them into Cursor chat.
 
@@ -111,4 +114,20 @@ Search Console stays read-only. If you also have a GroovGro website:
 4. That updates that GroovGro page only. The connected existing website does not change.
 
 Keyword history is stored from Search Console. AI Visibility owner notes and a query library can be saved on SEO. Lookup adapters stay **off** (master brief §16). This setup does not turn those on. GroovGro still only **reads** Search Console.
+
+## G. Connect Google Analytics (GA4)
+
+Same Google Cloud app. Separate connect. Read-only. Ads stay off.
+
+1. In Google Cloud **Library**, enable **Google Analytics Admin API** and **Google Analytics Data API**.
+2. On the OAuth consent screen, add the scope that ends with `analytics.readonly`. Do not add Ads.
+3. Add the `/api/google-analytics/callback` redirect URIs above if they are not there yet.
+4. The Google account you pick must already see the GA4 property for this website.
+5. In GroovGro, open **Analytics** or **Integrations** → Google Analytics → **Connect Google Analytics**.
+6. Allow the read-only permission. Pick the property if GroovGro asks.
+7. You should see sessions, landing pages, and sources for the last 28 days. That is a copy. GroovGro does not change the website.
+
+Disconnect is on the same card. It does not change Google Analytics itself.
+
+SEOgro does not read this GA4 snapshot yet. Search Console stays the keyword source.
 

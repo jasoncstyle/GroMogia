@@ -44,12 +44,16 @@ export function isGoogleOAuthConfigured(): boolean {
   return Boolean(googleOAuthConfig());
 }
 
-export function googleAuthorizeUrl(state: string, config: GoogleOAuthConfig): string {
+export function googleAuthorizeUrl(
+  state: string,
+  config: GoogleOAuthConfig,
+  scope = SEARCH_CONSOLE_SCOPE,
+): string {
   const params = new URLSearchParams({
     client_id: config.clientId,
     redirect_uri: config.redirectUri,
     response_type: "code",
-    scope: SEARCH_CONSOLE_SCOPE,
+    scope,
     access_type: "offline",
     prompt: "consent",
     include_granted_scopes: "false",

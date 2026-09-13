@@ -10,6 +10,7 @@ import {
 import { applySeoDraftToBuilder } from "@/lib/actions/website-builder";
 import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
+import { getGa4PageData, ga4Notice } from "@/lib/ga4/query";
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { getSearchLoopView } from "@/lib/growth/search-loop-query";
 import {
@@ -28,6 +29,7 @@ import { SearchLoopPanel } from "@/components/search-loop-panel";
 import { ScoutProposalPanel } from "@/components/scout-proposal-panel";
 import { PageStructurePanel } from "@/components/page-structure-panel";
 import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
+import { Ga4Panel } from "@/components/ga4-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
 import { GeoNotesPanel } from "@/components/geo-notes-panel";
 import { GeoAuditsPanel } from "@/components/geo-audits-panel";
@@ -52,7 +54,7 @@ import { cn } from "@/lib/utils";
 export default async function SeoPage({
   searchParams,
 }: {
-  searchParams: Promise<{ gsc?: string; error?: string; view?: string }>
+  searchParams: Promise<{ gsc?: string; ga4?: string; error?: string; view?: string }>
 }) {
   const params = await searchParams;
   const session = await getAppSession();
@@ -61,6 +63,9 @@ export default async function SeoPage({
     : null;
   const searchLoop = session.organizationId
     ? await getSearchLoopView(session.organizationId)
+    : null;
+  const ga4 = session.organizationId
+    ? await getGa4PageData(session.organizationId)
     : null;
   const [scoutInbox, scoutDesk] = session.organizationId
     ? await Promise.all([
@@ -126,8 +131,9 @@ export default async function SeoPage({
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Search desk</h1>
         <p className="text-muted-foreground">
-          GroovGro stores Search Console and public URL inventory here, then
-          talks to SEOgro. You review on Monday. You are not the courier.
+          GroovGro stores Search Console, a read-only GA4 snapshot, and public
+          URL inventory here, then talks to SEOgro. You review on Monday. You
+          are not the courier.
           DRAFTgro and WRITEgro review on Bot team. BOOKSgro waits. GroovGro does
           not publish, invent prices, or scrape Google. SEOgro does not log
           into Google.
@@ -169,8 +175,19 @@ export default async function SeoPage({
 
           <SearchConsolePanel
             searchConsole={data.searchConsole}
-            notice={searchConsoleNotice(params.gsc, params.error)}
+            notice={searchConsoleNotice(params.gsc, params.gsc ? params.error : undefined)}
           />
+
+          {ga4 ? (
+            <Ga4Panel
+              analytics={ga4}
+              notice={ga4Notice(params.ga4, params.ga4 ? params.error : undefined)}
+              canManage={
+                session.permissions.includes("manage_seo") ||
+                session.permissions.includes("manage_integrations")
+              }
+            />
+          ) : null}
 
           <ScoutProposalPanel
             heading={scoutInbox.heading}

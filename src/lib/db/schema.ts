@@ -730,6 +730,41 @@ export const searchConsoleSnapshots = pgTable(
   (table) => [    index("search_console_snapshots_org_idx").on(table.organizationId)],
 );
 
+export type Ga4Totals = {
+  sessions: number
+  activeUsers: number
+};
+
+export type Ga4MetricRow = {
+  key: string
+  sessions: number
+};
+
+export const ga4Snapshots = pgTable(
+  "ga4_snapshots",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    propertyId: text("property_id").notNull(),
+    propertyName: text("property_name").notNull(),
+    startDate: text("start_date").notNull(),
+    endDate: text("end_date").notNull(),
+    totals: jsonb("totals").$type<Ga4Totals>().notNull().default({
+      sessions: 0,
+      activeUsers: 0,
+    }),
+    topPages: jsonb("top_pages").$type<Ga4MetricRow[]>().notNull().default([]),
+    topSources: jsonb("top_sources").$type<Ga4MetricRow[]>().notNull().default([]),
+    createdBy: uuid("created_by").references(() => users.id),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [index("ga4_snapshots_org_idx").on(table.organizationId)],
+);
+
 export const KEYWORD_SOURCE_SEARCH_CONSOLE = "search_console";
 
 export const keywords = pgTable(
