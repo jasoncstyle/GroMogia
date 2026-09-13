@@ -115,7 +115,7 @@ describe("SEOgro proposal packs", () => {
     assert.match(page, /publicPages/);
     assert.match(page, /api\/bots\/scout/);
     assert.match(page, /Search desk/);
-    assert.match(page, /DRAFTgro and BOOKSgro/);
+    assert.match(page, /DRAFTgro, WRITEgro, and BOOKSgro/);
     assert.doesNotMatch(page, /SEO Scout|Draft Locker/);
     const panel = readFileSync(
       join(process.cwd(), "src/components/scout-proposal-panel.tsx"),
@@ -151,7 +151,8 @@ describe("SEOgro proposal packs", () => {
     );
     const team = describeBotTeam();
     assert.equal(team.seogro.status, "live");
-    assert.equal(team.draftgro.status, "later");
-    assert.equal(team.booksgro.status, "later");
+    assert.equal(team.draftgro.status, "live");
+    assert.equal(team.writegro.status, "live");
+    assert.equal(team.booksgro.status, "live");
   });
 });

@@ -21,11 +21,17 @@ import {
 export function BotAccessPanel({
   deskUrl,
   scoutUrl,
+  draftUrl,
+  writeUrl,
+  booksUrl,
   tokenCount,
   canManage,
 }: {
   deskUrl: string
   scoutUrl: string
+  draftUrl: string
+  writeUrl: string
+  booksUrl: string
   tokenCount: number
   canManage: boolean
 }) {
@@ -47,13 +53,12 @@ export function BotAccessPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>SEOgro handoff</CardTitle>
+        <CardTitle>Bot team handoff</CardTitle>
         <CardDescription>
-          GroovGro talks to the bots. SEOgro reads stored Search Console and
-          public URL inventory, then writes proposal packs back with this
-          token. You review on Monday. You are not the courier. DRAFTgro and
-          BOOKSgro handoffs come later. Search partner and Goal checker can
-          still read the desk. None of them log into Google or publish.
+          GroovGro talks to the bots. SEOgro, DRAFTgro, WRITEgro, and BOOKSgro
+          read stored facts and write packs back with this token. You review
+          on Monday. You are not the courier. None of them log into Google,
+          send, publish, or move money.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -65,6 +70,18 @@ export function BotAccessPanel({
           <p className="text-sm text-muted-foreground">SEOgro handoff: {scoutUrl}</p>
           <CopyText text={scoutUrl} label="Copy SEOgro handoff URL" />
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-sm text-muted-foreground">DRAFTgro handoff: {draftUrl}</p>
+          <CopyText text={draftUrl} label="Copy DRAFTgro handoff URL" />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-sm text-muted-foreground">WRITEgro handoff: {writeUrl}</p>
+          <CopyText text={writeUrl} label="Copy WRITEgro handoff URL" />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-sm text-muted-foreground">BOOKSgro handoff: {booksUrl}</p>
+          <CopyText text={booksUrl} label="Copy BOOKSgro handoff URL" />
+        </div>
         {tokenCount > 0 ? (
           <p className="text-sm text-muted-foreground">
             {tokenCount} desk token{tokenCount === 1 ? "" : "s"} can read the
@@ -72,8 +89,8 @@ export function BotAccessPanel({
           </p>
         ) : (
           <p className="text-sm text-muted-foreground">
-            No desk token yet. Create one after you point SEOgro at the
-            handoff, then paste the token into the bot.
+            No desk token yet. Create one after you point the bots at their
+            handoffs, then paste the token into each bot.
           </p>
         )}
         {revealed ? (
@@ -103,10 +120,11 @@ export function BotAccessPanel({
           </div>
         ) : null}
         <p className="text-sm text-muted-foreground">
-          SEOgro: GET the handoff URL, then POST the proposal pack, with
+          Each bot: GET its handoff URL, then POST the proposal pack, with
           Authorization: Bearer and the token. Search partner and Goal checker:
           GET the desk URL. Do not log into Google. Do not invent prices. Do
-          not publish. Do not set shipped. Do not mix brands.
+          not send, publish, or move money. Do not set shipped. Do not mix
+          brands.
         </p>
       </CardContent>
     </Card>
