@@ -1,3 +1,4 @@
+import { createContentBrief } from "@/lib/actions/content-briefs";
 import {
   describeKeywordHistory,
   describeKeywordHistoryHeading,
@@ -8,6 +9,11 @@ import {
 } from "@/lib/growth/keywords";
 import { keywordScoreLabelTitle } from "@/lib/growth/keyword-score";
 import {
+  hasSavedContentBriefForTopic,
+  suggestBriefOutline,
+} from "@/lib/growth/content-briefs";
+import { SaveButton, SaveForm } from "@/components/save-form";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -17,8 +23,12 @@ import {
 
 export function KeywordHistoryPanel({
   keywords,
+  briefs = [],
+  canManage = false,
 }: {
   keywords: KeywordWithHistory[]
+  briefs?: Array<{ query: string; title: string }>
+  canManage?: boolean
 }) {
   const rows = sortKeywordsForPanel(keywords).slice(0, 12);
 
@@ -64,7 +74,25 @@ export function KeywordHistoryPanel({
                 <p className="text-xs text-muted-foreground">
                   {keyword.opportunityWhy || describeKeywordHistory(keyword.points)}
                 </p>
-              </div>
+                {canManage &&
+                !hasSavedContentBriefForTopic(briefs, keyword.query) ? (
+                  <SaveForm
+                    action={createContentBrief}
+                    successMessage="Content brief saved to the planner. GroovGro did not write a page."
+                  >
+                    <input type="hidden" name="query" value={keyword.query} />
+                    <input type="hidden" name="title" value={keyword.query} />
+                    <input type="hidden" name="source" value="content_gap" />
+                    <input
+                      type="hidden"
+                      name="outline"
+                      value={suggestBriefOutline(keyword.query)}
+                    />
+                    <SaveButton type="submit" size="sm" variant="outline">
+                      Use this search
+                    </SaveButton>
+                  </SaveForm>
+                ) : null}
             );
           })
         )}

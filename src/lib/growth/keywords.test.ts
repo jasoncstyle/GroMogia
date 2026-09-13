@@ -180,6 +180,9 @@ describe("keyword history from Search Console", () => {
     assert.match(panel, /describeKeywordHistoryHeading/);
     assert.match(panel, /sortKeywordsForPanel/);
     assert.match(panel, /listed first/);
+    assert.match(panel, /Use this search/);
+    assert.match(panel, /createContentBrief/);
+    assert.match(panel, /hasSavedContentBriefForTopic/);
     assert.deepEqual(
       sortKeywordsForPanel([
         { opportunityLabel: "watch" },
