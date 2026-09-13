@@ -11,6 +11,8 @@ import { applySeoDraftToBuilder } from "@/lib/actions/website-builder";
 import { getAppSession } from "@/lib/auth/session";
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { getSearchLoopView } from "@/lib/growth/search-loop-query";
+import { getScoutProposalInbox } from "@/lib/growth/scout-proposal-query";
+import { buildScoutGscExport } from "@/lib/growth/scout-proposals";
 import { explainSeoCheck } from "@/lib/seo/explain";
 import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
 import { isBuilderApplyableFinding } from "@/lib/website-builder/apply-seo";
@@ -20,6 +22,7 @@ import { CmsPublishPanel } from "@/components/cms-publish-panel";
 import { ContentBriefsPanel } from "@/components/content-briefs-panel";
 import { ContentGapsPanel } from "@/components/content-gaps-panel";
 import { SearchLoopPanel } from "@/components/search-loop-panel";
+import { ScoutProposalPanel } from "@/components/scout-proposal-panel";
 import { PageStructurePanel } from "@/components/page-structure-panel";
 import { KeywordHistoryPanel } from "@/components/keyword-history-panel";
 import { SearchConsolePanel, searchConsoleNotice } from "@/components/search-console-panel";
@@ -56,6 +59,9 @@ export default async function SeoPage({
   const searchLoop = session.organizationId
     ? await getSearchLoopView(session.organizationId)
     : null;
+  const scoutInbox = session.organizationId
+    ? await getScoutProposalInbox(session.organizationId)
+    : { heading: "SEO Scout proposals", items: [] };
   const view = params.view ?? "";
   const selectedPage =
     data?.builderPages.find((page) => page.id === view) ?? null;
@@ -112,9 +118,9 @@ export default async function SeoPage({
         <h1 className="text-2xl font-semibold tracking-tight">Search desk</h1>
         <p className="text-muted-foreground">
           GroovGro stores Search Console here. Your Search partner and Goal
-          checker read this store — they do not log into Google. See the Goal,
-          do the next step, and watch the trail fill in. Create a desk token on
-          Integrations for the two bots. GroovGro does not publish, invent
+          checker read this store — they do not log into Google. Copy stored
+          Search Console into SEO Scout, paste the proposal pack back, and
+          approve what you will apply. GroovGro does not publish, invent
           prices, or scrape Google.
         </p>
       </div>
@@ -155,6 +161,25 @@ export default async function SeoPage({
           <SearchConsolePanel
             searchConsole={data.searchConsole}
             notice={searchConsoleNotice(params.gsc, params.error)}
+          />
+
+          <ScoutProposalPanel
+            heading={scoutInbox.heading}
+            items={scoutInbox.items}
+            gscExport={
+              data.searchConsole.snapshots[0]
+                ? buildScoutGscExport({
+                    pulledAt: data.searchConsole.snapshots[0].createdAt,
+                    propertyUrl: data.searchConsole.snapshots[0].propertyUrl,
+                    startDate: data.searchConsole.snapshots[0].startDate,
+                    endDate: data.searchConsole.snapshots[0].endDate,
+                    totals: data.searchConsole.snapshots[0].totals,
+                    queries: data.searchConsole.snapshots[0].topQueries,
+                    pages: data.searchConsole.snapshots[0].topPages,
+                  })
+                : null
+            }
+            canManage={session.permissions.includes("manage_seo")}
           />
 
           <details className="rounded-xl border px-4 py-3">
