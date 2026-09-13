@@ -1,13 +1,15 @@
 /**
- * SEOgro proposal packs. SEOgro analyzes stored Search Console that
- * GroovGro already pulled. SEOgro writes the pack into GroovGro through
- * the handoff. Items stay proposals until the owner approves. Only
- * GroovGro may mark shipped, after a real apply. SEOgro does not log into
- * Google, publish, or set shipped. Paste is a sample of that same pack,
- * not the product.
+ * SEOgro proposal packs. GroovGro is the pipe and applicator. SEOgro
+ * reads stored Search Console and public URL inventory GroovGro already
+ * pulled, then writes packs through the handoff. Items stay proposed
+ * until the Monday reviewer approves. Only GroovGro may mark shipped,
+ * after a real apply. SEOgro does not log into Google, publish, or set
+ * shipped. DRAFTgro and BOOKSgro handoffs are later. Paste is a sample
+ * of the live API, not the product.
  */
 
 export const SCOUT_SOURCE_GSC = "gsc";
+export const SCOUT_SOURCE_PUBLIC_PAGES = "public_pages";
 export const SCOUT_ITEM_SUGGESTION = "suggestion";
 export const SCOUT_ITEM_ON_PAGE = "on_page_draft";
 export const SCOUT_ITEM_TECHNICAL = "technical";
@@ -79,15 +81,49 @@ export type ScoutGscExport = {
   walls: string[]
 };
 
-const WALLS = [
+export type ScoutPublicPage = {
+  url: string
+  title: string
+  label: string
+};
+
+export type ScoutDeskPayload = {
+  gsc: ScoutGscExport | null
+  publicPages: ScoutPublicPage[]
+};
+
+export const SCOUT_WALLS = [
   "Do not log into Google, Search Console, Analytics, or Ads.",
   "Do not fetch or refresh Search Console. GroovGro already pulled this.",
+  "Public pages and sitemaps only. Do not fetch anything behind a login.",
   "Do not publish, patch a live page, or change a sitemap or robots file.",
   "Return a proposal pack only. Never set status to shipped.",
   "Do not invent metrics, rankings, or backlinks that are not in this payload.",
-  "Do not write social posts, newsletters, or ads. That is not this job.",
+  "Do not write social posts, newsletters, or ads. That is DRAFTgro, later.",
+  "Do not categorize books or move money. That is BOOKSgro, later.",
+  "One property per pack. Do not mix brands.",
   "POST the proposal pack back to GroovGro. Do not ask Jason to carry the file.",
 ] as const;
+
+export function describeBotTeam() {
+  return {
+    seogro: {
+      seat: "SEOgro",
+      status: "live",
+      role: "SEO analyst. Read GroovGro payloads. Return proposed packs.",
+    },
+    draftgro: {
+      seat: "DRAFTgro",
+      status: "later",
+      role: "Draft social, newsletters, and reel scripts. Do not send.",
+    },
+    booksgro: {
+      seat: "BOOKSgro",
+      status: "later",
+      role: "QuickBooks questions and simple reports. Do not move money.",
+    },
+  };
+}
 
 export function describeScoutHandoff(): {
   read: string
@@ -95,10 +131,23 @@ export function describeScoutHandoff(): {
   reviewer: string
 } {
   return {
-    read: "GET this URL with the desk token to read stored Search Console. Do not log into Google.",
+    read: "GET this URL with the desk token to read stored Search Console and public URL inventory. Do not log into Google.",
     write: "POST a proposal pack JSON to this URL with the same token. Items must stay proposed. Do not set shipped.",
-    reviewer: "Jason reviews approved and rejected in GroovGro on Monday. GroovGro applies after he marks worthy.",
+    reviewer: "Jason reviews on Monday. GroovGro is the applicator. Only GroovGro sets shipped after a real apply.",
   };
+}
+
+export function normalizeScoutSource(value: unknown): string {
+  const parts = clean(value, 80)
+    .toLowerCase()
+    .replace(/[+;/|]+/g, ",")
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const allowed = new Set<string>([SCOUT_SOURCE_GSC, SCOUT_SOURCE_PUBLIC_PAGES]);
+  const unique = [...new Set(parts.filter((part) => allowed.has(part)))];
+  if (unique.length === 0) return SCOUT_SOURCE_GSC;
+  return unique.join("+");
 }
 
 function clean(value: unknown, max: number): string {
@@ -181,7 +230,7 @@ export function parseScoutProposalPack(raw: string): ScoutProposalPack {
   if (!property) {
     throw new Error("The pack needs a property label so brands are not mixed.");
   }
-  const source = clean(body.source, 40).toLowerCase() || SCOUT_SOURCE_GSC;
+  const source = normalizeScoutSource(body.source);
   const sourceRange = clean(body.sourceRange ?? body.dateRange ?? body.source_range, 80);
   const rows = Array.isArray(body.items) ? body.items : [];
   if (rows.length === 0) {
@@ -196,7 +245,9 @@ export function parseScoutProposalPack(raw: string): ScoutProposalPack {
     }
     const evidence = clean(item.evidence, 2000);
     if (!evidence) {
-      throw new Error(`Item ${index + 1} needs evidence from the stored Search Console payload.`);
+      throw new Error(
+        `Item ${index + 1} needs evidence from the stored Search Console or public page payload.`,
+      );
     }
     const id = clean(item.id, 80) || `item-${index + 1}`;
     return {
@@ -277,8 +328,21 @@ export function buildScoutGscExport(input: {
     queries,
     pages,
     gaps,
-    walls: [...WALLS],
+    walls: [...SCOUT_WALLS],
   };
+}
+
+export function buildScoutPublicPages(
+  rows: Array<{ url?: string | null; title?: string | null; label?: string | null }> | null,
+): ScoutPublicPage[] {
+  return (rows ?? [])
+    .map((row) => ({
+      url: clean(row.url, 400),
+      title: clean(row.title, 200),
+      label: clean(row.label, 80),
+    }))
+    .filter((row) => row.url)
+    .slice(0, 80);
 }
 
 export function describeScoutInboxHeading(counts: {

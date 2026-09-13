@@ -12,8 +12,10 @@ import { getAppSession } from "@/lib/auth/session";
 import { appUrl } from "@/lib/env";
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { getSearchLoopView } from "@/lib/growth/search-loop-query";
-import { getScoutProposalInbox } from "@/lib/growth/scout-proposal-query";
-import { buildScoutGscExport } from "@/lib/growth/scout-proposals";
+import {
+  getScoutDeskPayload,
+  getScoutProposalInbox,
+} from "@/lib/growth/scout-proposal-query";
 import { explainSeoCheck } from "@/lib/seo/explain";
 import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
 import { isBuilderApplyableFinding } from "@/lib/website-builder/apply-seo";
@@ -60,9 +62,15 @@ export default async function SeoPage({
   const searchLoop = session.organizationId
     ? await getSearchLoopView(session.organizationId)
     : null;
-  const scoutInbox = session.organizationId
-    ? await getScoutProposalInbox(session.organizationId)
-    : { heading: "SEOgro proposals", items: [] };
+  const [scoutInbox, scoutDesk] = session.organizationId
+    ? await Promise.all([
+        getScoutProposalInbox(session.organizationId),
+        getScoutDeskPayload(session.organizationId),
+      ])
+    : [
+        { heading: "SEOgro proposals", items: [] },
+        { gsc: null, publicPages: [] },
+      ];
   const view = params.view ?? "";
   const selectedPage =
     data?.builderPages.find((page) => page.id === view) ?? null;
@@ -118,10 +126,10 @@ export default async function SeoPage({
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Search desk</h1>
         <p className="text-muted-foreground">
-          GroovGro stores Search Console here. Your Search partner and Goal
-          checker read this store — they do not log into Google. SEOgro
-          reads that store and writes proposal packs back. You review on
-          Monday. GroovGro does not publish, invent prices, or scrape Google.
+          GroovGro stores Search Console and public URL inventory here, then
+          talks to SEOgro. You review on Monday. You are not the courier.
+          DRAFTgro and BOOKSgro come later. GroovGro does not publish, invent
+          prices, or scrape Google. SEOgro does not log into Google.
         </p>
       </div>
 
@@ -166,19 +174,8 @@ export default async function SeoPage({
           <ScoutProposalPanel
             heading={scoutInbox.heading}
             items={scoutInbox.items}
-            gscExport={
-              data.searchConsole.snapshots[0]
-                ? buildScoutGscExport({
-                    pulledAt: data.searchConsole.snapshots[0].createdAt,
-                    propertyUrl: data.searchConsole.snapshots[0].propertyUrl,
-                    startDate: data.searchConsole.snapshots[0].startDate,
-                    endDate: data.searchConsole.snapshots[0].endDate,
-                    totals: data.searchConsole.snapshots[0].totals,
-                    queries: data.searchConsole.snapshots[0].topQueries,
-                    pages: data.searchConsole.snapshots[0].topPages,
-                  })
-                : null
-            }
+            gscExport={scoutDesk.gsc}
+            publicPages={scoutDesk.publicPages}
             handoffUrl={`${appUrl()}/api/bots/scout`}
             canManage={session.permissions.includes("manage_seo")}
           />

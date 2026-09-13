@@ -350,8 +350,9 @@ export default async function DashboardPage() {
                 {seogroProposed}
               </p>
               <p className="mt-1 text-sm text-muted-foreground">
-                SEOgro proposals waiting for Monday review. SEOgro reads stored
-                Search Console. It does not log into Google or publish.
+                SEOgro proposals waiting for Monday review. GroovGro talks to
+                SEOgro. You mark what ships. SEOgro does not log into Google
+                or publish.
               </p>
               <Button asChild variant="outline" size="sm" className="mt-4">
                 <Link href="/app/seo">Open Search desk</Link>

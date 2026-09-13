@@ -4,6 +4,7 @@ These rules apply to every Cloud Agent and every human working in this repositor
 
 Product intent: [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) (V2). V1 brief: [docs/MASTER_BRIEF_V1.md](docs/MASTER_BRIEF_V1.md).  
 Approved architecture (until superseded): [docs/phase-0/](docs/phase-0/) plus [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).  
+Bot team: [docs/v2/BOT_TEAM.md](docs/v2/BOT_TEAM.md) — **SEOgro**, **DRAFTgro**, **BOOKSgro**. Discard SEO Scout, Draft Locker, and Books.  
 Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
 
 The product is **GroovGro** (domain groovgro.com). The GitHub repository may still be named GroMogia until it is renamed on GitHub.
@@ -41,7 +42,7 @@ GroovGro is a business partner. The owner runs day-to-day operations. GroovGro r
 
 - Before implementing a component, check whether it would require a local computer to remain online. If it would, replace it with a cloud-hosted solution.
 - Keep a modular monolith. Do not add microservices, native apps, or unrestricted AI automation unless the current approved phase says so.
-- Do not hard-code sailing businesses or organization IDs. Generalize (events, not sailing classes).
+- Do not hard-code sailing businesses or organization IDs. Generalize (events, not sailing classes). Property slugs on SEOgro packs are labels, not the product type.
 - Never store payment card data. Never scrape third parties in violation of their terms.
 
 ## Phase gate

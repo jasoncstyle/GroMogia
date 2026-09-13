@@ -20,6 +20,7 @@ describe("visual owner dashboard", () => {
     assert.match(page, /getScoutGscExport/);
     assert.match(page, /getScoutProposalInbox/);
     assert.match(page, /SEOgro proposals/);
+    assert.match(page, /GroovGro talks to/);
     assert.match(page, /Open Search desk/);
     assert.match(desk, /Goal progress is not computed yet/);
     assert.doesNotMatch(page, /Page Views|Totalprofit|AI Assistant|Shopeeters/);
@@ -44,8 +45,9 @@ describe("visual owner dashboard", () => {
     assert.match(panel, /SEOgro wrote into GroovGro/);
     assert.match(panel, /Copy SEOgro handoff URL/);
     assert.doesNotMatch(panel, /SEO Scout/);
-    assert.match(bots, /SEOgro reads that/);
+    assert.match(bots, /GroovGro talks to the bots/);
     assert.match(bots, /SEOgro: GET the handoff URL/);
-    assert.doesNotMatch(bots, /SEO Scout/);
+    assert.match(bots, /DRAFTgro and\s+BOOKSgro/);
+    assert.doesNotMatch(bots, /SEO Scout|Draft Locker/);
   });
 });

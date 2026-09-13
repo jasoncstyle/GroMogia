@@ -47,12 +47,13 @@ export function BotAccessPanel({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Search partner and Goal checker</CardTitle>
+        <CardTitle>SEOgro handoff</CardTitle>
         <CardDescription>
-          GroovGro pulls Search Console and stores it. SEOgro reads that
-          store and writes proposal packs back with this token. Search partner
-          and Goal checker can still read the desk. They do not log into
-          Google. They do not publish.
+          GroovGro talks to the bots. SEOgro reads stored Search Console and
+          public URL inventory, then writes proposal packs back with this
+          token. You review on Monday. You are not the courier. DRAFTgro and
+          BOOKSgro handoffs come later. Search partner and Goal checker can
+          still read the desk. None of them log into Google or publish.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
@@ -71,8 +72,8 @@ export function BotAccessPanel({
           </p>
         ) : (
           <p className="text-sm text-muted-foreground">
-            No desk token yet. Create one after you make the two bots, then
-            paste the token into each bot.
+            No desk token yet. Create one after you point SEOgro at the
+            handoff, then paste the token into the bot.
           </p>
         )}
         {revealed ? (
@@ -105,7 +106,7 @@ export function BotAccessPanel({
           SEOgro: GET the handoff URL, then POST the proposal pack, with
           Authorization: Bearer and the token. Search partner and Goal checker:
           GET the desk URL. Do not log into Google. Do not invent prices. Do
-          not publish. Do not set shipped.
+          not publish. Do not set shipped. Do not mix brands.
         </p>
       </CardContent>
     </Card>
