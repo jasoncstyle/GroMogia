@@ -1,46 +1,11 @@
-import { eq } from "drizzle-orm";
-
-import { getDb } from "@/lib/db";
-import { botAccessTokens } from "@/lib/db/schema";
-import {
-  hashBotAccessToken,
-  readBotAccessToken,
-  tokensMatch,
-} from "@/lib/growth/bot-access";
 import { getSearchDeskForBots } from "@/lib/growth/search-loop-query";
+import { requireBotOrganization } from "@/lib/growth/require-bot-org";
 
 export async function GET(request: Request) {
-  const token = readBotAccessToken(request);
-  if (!token) {
-    return Response.json(
-      { error: "Add the desk token as a Bearer token. Do not log into Google." },
-      { status: 401 },
-    );
+  const access = await requireBotOrganization(request);
+  if (!access.ok) {
+    return Response.json({ error: access.error }, { status: access.status });
   }
-  const db = getDb();
-  if (!db) {
-    return Response.json({ error: "Database is not configured." }, { status: 503 });
-  }
-  const hash = hashBotAccessToken(token);
-  const [row] = await db
-    .select({
-      id: botAccessTokens.id,
-      organizationId: botAccessTokens.organizationId,
-      tokenHash: botAccessTokens.tokenHash,
-    })
-    .from(botAccessTokens)
-    .where(eq(botAccessTokens.tokenHash, hash))
-    .limit(1);
-  if (!row || !tokensMatch(token, row.tokenHash)) {
-    return Response.json(
-      { error: "That desk token is not valid." },
-      { status: 401 },
-    );
-  }
-  await db
-    .update(botAccessTokens)
-    .set({ lastUsedAt: new Date(), updatedAt: new Date() })
-    .where(eq(botAccessTokens.id, row.id));
-  const desk = await getSearchDeskForBots(row.organizationId);
+  const desk = await getSearchDeskForBots(access.organizationId);
   return Response.json(desk);
 }

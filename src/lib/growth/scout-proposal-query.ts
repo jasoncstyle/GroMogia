@@ -1,11 +1,17 @@
 import { desc, eq } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
-import { seoProposalItems, seoProposalPacks } from "@/lib/db/schema";
+import {
+  searchConsoleSnapshots,
+  seoProposalItems,
+  seoProposalPacks,
+} from "@/lib/db/schema";
 import {
   SCOUT_STATUS_APPROVED,
   SCOUT_STATUS_PROPOSED,
+  buildScoutGscExport,
   describeScoutInboxHeading,
+  type ScoutGscExport,
   type ScoutItemStatus,
   type ScoutItemType,
 } from "@/lib/growth/scout-proposals";
@@ -65,4 +71,27 @@ export async function getScoutProposalInbox(organizationId: string): Promise<{
     heading: describeScoutInboxHeading({ proposed, approved }),
     items,
   };
+}
+
+export async function getScoutGscExport(
+  organizationId: string,
+): Promise<ScoutGscExport | null> {
+  const db = getDb();
+  if (!db || !organizationId) return null;
+  const [latest] = await db
+    .select()
+    .from(searchConsoleSnapshots)
+    .where(eq(searchConsoleSnapshots.organizationId, organizationId))
+    .orderBy(desc(searchConsoleSnapshots.createdAt))
+    .limit(1);
+  if (!latest) return null;
+  return buildScoutGscExport({
+    pulledAt: latest.createdAt,
+    propertyUrl: latest.propertyUrl,
+    startDate: latest.startDate,
+    endDate: latest.endDate,
+    totals: latest.totals,
+    queries: latest.topQueries,
+    pages: latest.topPages,
+  });
 }

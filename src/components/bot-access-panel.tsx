@@ -20,10 +20,12 @@ import {
 
 export function BotAccessPanel({
   deskUrl,
+  scoutUrl,
   tokenCount,
   canManage,
 }: {
   deskUrl: string
+  scoutUrl: string
   tokenCount: number
   canManage: boolean
 }) {
@@ -47,14 +49,20 @@ export function BotAccessPanel({
       <CardHeader>
         <CardTitle>Search partner and Goal checker</CardTitle>
         <CardDescription>
-          GroovGro pulls Search Console and stores it. Your Grok bots read this
-          desk with a token. They do not log into Google. They do not publish.
+          GroovGro pulls Search Console and stores it. SEO Scout reads that
+          store and writes proposal packs back with this token. Search partner
+          and Goal checker can still read the desk. They do not log into
+          Google. They do not publish.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-sm text-muted-foreground">Desk URL: {deskUrl}</p>
           <CopyText text={deskUrl} label="Copy desk URL" />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-sm text-muted-foreground">Scout handoff: {scoutUrl}</p>
+          <CopyText text={scoutUrl} label="Copy Scout handoff URL" />
         </div>
         {tokenCount > 0 ? (
           <p className="text-sm text-muted-foreground">
@@ -94,9 +102,10 @@ export function BotAccessPanel({
           </div>
         ) : null}
         <p className="text-sm text-muted-foreground">
-          In each bot, say: GET this desk URL with header Authorization: Bearer
-          and the token. Use stored queries only. Do not log into Google. Do
-          not invent prices. Do not publish.
+          SEO Scout: GET the handoff URL, then POST the proposal pack, with
+          Authorization: Bearer and the token. Search partner and Goal checker:
+          GET the desk URL. Do not log into Google. Do not invent prices. Do
+          not publish. Do not set shipped.
         </p>
       </CardContent>
     </Card>

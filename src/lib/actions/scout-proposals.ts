@@ -7,7 +7,8 @@ import { z } from "zod";
 import { recordAudit } from "@/lib/audit";
 import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
-import { seoProposalItems, seoProposalPacks } from "@/lib/db/schema";
+import { seoProposalItems } from "@/lib/db/schema";
+import { recordScoutProposalPack } from "@/lib/growth/record-scout-pack";
 import {
   SCOUT_STATUS_SHIPPED,
   nextScoutStatus,
@@ -39,43 +40,13 @@ export async function saveScoutProposalPack(formData: FormData): Promise<ActionR
     }
     const parsed = packSchema.parse({ pack: formData.get("pack") ?? "" });
     const pack = parseScoutProposalPack(parsed.pack);
-    const db = getDb();
-    if (!db) throw new Error("Database is not configured");
-    const [saved] = await db
-      .insert(seoProposalPacks)
-      .values({
-        organizationId: session.organizationId,
-        property: pack.property,
-        source: pack.source,
-        sourceRange: pack.sourceRange,
-        createdBy: session.userId,
-      })
-      .returning({ id: seoProposalPacks.id });
-    if (!saved) throw new Error("Could not save that proposal pack.");
-    await db.insert(seoProposalItems).values(
-      pack.items.map((item) => ({
-        organizationId: session.organizationId,
-        packId: saved.id,
-        externalId: item.id,
-        type: item.type,
-        priority: item.priority,
-        evidence: item.evidence,
-        draft: item.draft,
-        expectedEffect: item.expectedEffect,
-        status: item.status,
-        createdBy: session.userId,
-      })),
-    );
-    await recordAudit({
+    const saved = await recordScoutProposalPack({
       organizationId: session.organizationId,
+      pack,
       actorUserId: session.userId,
-      action: "scout_proposal.saved",
-      targetType: "seo_proposal_pack",
-      targetId: saved.id,
-      metadata: { property: pack.property, items: pack.items.length },
+      via: "paste",
     });
-    revalidateScoutInbox();
-    return `Saved ${pack.items.length} SEO Scout proposal${pack.items.length === 1 ? "" : "s"} for ${pack.property}. Nothing was applied.`;
+    return `Saved ${saved.count} SEO Scout proposal${saved.count === 1 ? "" : "s"} for ${pack.property}. Nothing was applied.`;
   });
 }
 

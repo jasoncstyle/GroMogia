@@ -54,7 +54,7 @@ describe("bot desk access", () => {
       "utf8",
     );
     assert.match(route, /getSearchDeskForBots/);
-    assert.match(route, /hashBotAccessToken/);
+    assert.match(route, /requireBotOrganization/);
     assert.doesNotMatch(route, /googleapis|searchconsole|generateText/i);
     assert.match(action, /tokenHash: hashBotAccessToken/);
     assert.doesNotMatch(action, /googleapis|searchconsole/i);
