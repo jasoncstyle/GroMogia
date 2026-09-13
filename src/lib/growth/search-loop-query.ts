@@ -15,7 +15,7 @@ import {
   websiteDiscoveredPages,
 } from "@/lib/db/schema";
 import { CONTENT_GAP_STATUS_GAP } from "@/lib/growth/content-gaps";
-import { getKeywordHistory } from "@/lib/growth/persist-keywords";
+import { getKeywordHistory, persistKeywordHistory } from "@/lib/growth/persist-keywords";
 import {
   SEARCH_LOOP_ACTION,
   planSearchLoop,
@@ -28,6 +28,7 @@ export async function getSearchLoopView(
   const empty = planSearchLoop({});
   const db = getDb();
   if (!db || !organizationId) return empty;
+  await persistKeywordHistory(db, organizationId);
 
   const [
     keywords,

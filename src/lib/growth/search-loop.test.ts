@@ -324,6 +324,7 @@ describe("search-to-page loop", () => {
     assert.match(nextStep, /searchLoopNextStep/);
     assert.match(query, /brandVoiceProfiles/);
     assert.match(query, /more_like_this/);
+    assert.match(query, /persistKeywordHistory/);
     assert.doesNotMatch(helper, /fetch\(/);
     assert.doesNotMatch(helper, /generateText|openai|anthropic/i);
   });
