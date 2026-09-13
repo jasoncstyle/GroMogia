@@ -128,6 +128,36 @@ export function SearchLoopPanel({
           </SaveButton>
         </SaveForm>
       ) : null}
+      {canManage &&
+      loop.step === SEARCH_LOOP_STEP_SAVE_BRIEF &&
+      loop.candidates.length > 0 ? (
+        <div className="space-y-2">
+          <p className="text-sm text-muted-foreground">
+            Or use another stored search. GroovGro will not invent a topic or
+            scrape Google.
+          </p>
+          {loop.candidates.map((candidate) => (
+            <SaveForm
+              key={candidate.query}
+              action={createContentBrief}
+              successMessage="Content brief saved to the planner. GroovGro did not write a page."
+            >
+              <input type="hidden" name="query" value={candidate.query} />
+              <input type="hidden" name="title" value={candidate.query} />
+              <input type="hidden" name="source" value="content_gap" />
+              <input type="hidden" name="audience" value={loop.offerName} />
+              <input
+                type="hidden"
+                name="outline"
+                value={suggestBriefOutline(candidate.query)}
+              />
+              <SaveButton type="submit" size="sm" variant="outline">
+                Use “{candidate.query}”
+              </SaveButton>
+            </SaveForm>
+          ))}
+        </div>
+      ) : null}
       {canManage && loop.step === SEARCH_LOOP_STEP_WRITE_DRAFT && loop.brief ? (
         <SaveForm
           action={createContentDraft}

@@ -2168,6 +2168,7 @@ Organization
 362. **Search-to-page owner loop** — **IMPLEMENTED** this slice. SEO, Next step, and Intelligence walk one worth-a-look Search Console query: save a brief, write a workspace draft in this business’s words, paste it on the existing site, then check stored Search Console numbers and the Goal. GroovGro does not publish, scrape Google, buy ads, or overwrite the live website.
 363. **Search-to-page paste copy from saved voice** — **IMPLEMENTED** this slice. Search-loop drafts assemble paste-ready words from saved brand, offer, difference, and brand-voice facts. GroovGro does not invent prices, call a model, publish, or overwrite the live website.
 364. **Search-to-page steps when waiting** — **IMPLEMENTED** this slice. Search to page lists the owner steps and, when no worth-a-look query is stored, says there is no Google search box and offers Refresh Search Console, Open Search Console, and Read the website. GroovGro does not scrape Google or publish.
+365. **Search-to-page uses a stored query even if it is not worth a look** — **IMPLEMENTED** this slice. If Search Console has stored queries but none are marked worth a look, the loop picks the best stored query and can start a brief. The owner can use another stored search. GroovGro does not invent a topic, scrape Google, or publish.
 
 V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 

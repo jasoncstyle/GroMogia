@@ -112,6 +112,13 @@ export type SearchLoopView = {
   nextStepTitle: string
   nextStepBody: string
   voice: SearchLoopVoice
+  candidates: SearchLoopCandidate[]
+};
+
+export type SearchLoopCandidate = {
+  query: string
+  impressions: number
+  opportunityLabel: SearchLoopKeyword["opportunityLabel"]
 };
 
 export type SearchQueryLearningKind =
@@ -346,41 +353,90 @@ function pasteIsChecked(paste: SearchLoopPaste | null): boolean {
   return Boolean(workLearningFromResult(paste.result ?? ""));
 }
 
+function labelRank(label: SearchLoopKeyword["opportunityLabel"]): number {
+  if (label === "review") return 3;
+  if (label === "watch") return 2;
+  return 1;
+}
+
+function topicProgress(
+  keyword: SearchLoopKeyword,
+  briefs: SearchLoopBrief[],
+  pastes: SearchLoopPaste[],
+): number {
+  const paste = pasteForQuery(pastes, keyword.query);
+  if (pasteIsChecked(paste)) return -1;
+  if (paste) return 4;
+  const brief = briefForQuery(briefs, keyword.query);
+  if (brief?.draft) return 3;
+  if (brief) return 2;
+  return 1;
+}
+
+function rankSearchLoopKeywords(input: {
+  keywords?: SearchLoopKeyword[] | null
+  gaps?: SearchLoopGap[] | null
+  briefs?: SearchLoopBrief[] | null
+  pastes?: SearchLoopPaste[] | null
+}): SearchLoopKeyword[] {
+  const gapKeys = new Set(
+    (input.gaps ?? []).map((gap) => normalizeQueryKey(gap.query || gap.queryKey)),
+  );
+  return [...(input.keywords ?? [])]
+    .filter((keyword) => clean(keyword.query))
+    .map((keyword) => ({
+      keyword,
+      progress: topicProgress(keyword, input.briefs ?? [], input.pastes ?? []),
+      gap: gapKeys.has(normalizeQueryKey(keyword.query || keyword.queryKey)),
+      label: labelRank(keyword.opportunityLabel),
+    }))
+    .sort((left, right) => {
+      if (right.progress !== left.progress) return right.progress - left.progress;
+      if (left.gap !== right.gap) return left.gap ? -1 : 1;
+      if (right.label !== left.label) return right.label - left.label;
+      if (right.keyword.opportunityScore !== left.keyword.opportunityScore) {
+        return right.keyword.opportunityScore - left.keyword.opportunityScore;
+      }
+      return right.keyword.impressions - left.keyword.impressions;
+    })
+    .map((row) => row.keyword);
+}
+
 export function pickSearchLoopTopic(input: {
   keywords?: SearchLoopKeyword[] | null
   gaps?: SearchLoopGap[] | null
   briefs?: SearchLoopBrief[] | null
   pastes?: SearchLoopPaste[] | null
 }): SearchLoopKeyword | null {
-  const keywords = [...(input.keywords ?? [])]
-    .filter((keyword) => keyword.opportunityLabel === "review")
-    .sort((left, right) => {
-      if (right.opportunityScore !== left.opportunityScore) {
-        return right.opportunityScore - left.opportunityScore;
-      }
-      return right.impressions - left.impressions;
-    });
-  if (keywords.length === 0) return null;
-
-  const gapKeys = new Set(
-    (input.gaps ?? []).map((gap) => normalizeQueryKey(gap.query || gap.queryKey)),
-  );
-  const ranked = [
-    ...keywords.filter((keyword) =>
-      gapKeys.has(normalizeQueryKey(keyword.query || keyword.queryKey)),
-    ),
-    ...keywords.filter(
-      (keyword) =>
-        !gapKeys.has(normalizeQueryKey(keyword.query || keyword.queryKey)),
-    ),
-  ];
-
+  const ranked = rankSearchLoopKeywords(input);
+  if (ranked.length === 0) return null;
   for (const keyword of ranked) {
     const paste = pasteForQuery(input.pastes ?? [], keyword.query);
     if (pasteIsChecked(paste)) continue;
     return keyword;
   }
   return ranked[0] ?? null;
+}
+
+export function listSearchLoopCandidates(
+  input: {
+    keywords?: SearchLoopKeyword[] | null
+    gaps?: SearchLoopGap[] | null
+    briefs?: SearchLoopBrief[] | null
+    pastes?: SearchLoopPaste[] | null
+  },
+  picked?: string | null,
+  limit = 3,
+): SearchLoopCandidate[] {
+  const pickedKey = normalizeQueryKey(picked ?? "");
+  return rankSearchLoopKeywords(input)
+    .filter((keyword) => normalizeQueryKey(keyword.query) !== pickedKey)
+    .slice(0, limit)
+    .map((keyword) => ({
+      query: keyword.query,
+      impressions: keyword.impressions,
+      opportunityLabel: keyword.opportunityLabel,
+    }));
 }
 
 export function describeSearchLoopHeading(view: Pick<SearchLoopView, "step" | "query">): string {
@@ -438,10 +494,13 @@ function whyForTopic(
   offerName: string,
   goalTitle: string,
 ): string {
-  const parts = [
-    gap?.why?.trim() ||
-      `“${keyword.query}” is a stored Search Console query marked worth a look.`,
-  ];
+  const stored =
+    keyword.opportunityLabel === "review"
+      ? `“${keyword.query}” is a stored Search Console query marked worth a look.`
+      : keyword.opportunityLabel === "watch"
+        ? `“${keyword.query}” is a stored Search Console query GroovGro is watching. It is not marked worth a look yet. You can still write words for it.`
+        : `“${keyword.query}” is a stored Search Console query. There is not enough evidence yet to mark it worth a look. You can still write words for it.`;
+  const parts = [gap?.why?.trim() || stored];
   if (offerName) {
     parts.push(`It lines up with the offer “${offerName}”.`);
   }
@@ -522,6 +581,7 @@ export function planSearchLoop(input: {
     nextStepTitle: "",
     nextStepBody: "",
     voice,
+    candidates: [],
   };
 
   const topic = pickSearchLoopTopic(input);
@@ -570,6 +630,7 @@ export function planSearchLoop(input: {
     nextStepTitle: copy.title,
     nextStepBody: copy.body,
     voice,
+    candidates: listSearchLoopCandidates(input, topic.query),
   };
   view.heading = describeSearchLoopHeading(view);
   return view;
