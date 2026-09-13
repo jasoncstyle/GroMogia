@@ -87,9 +87,40 @@ export type ScoutPublicPage = {
   label: string
 };
 
+export type ScoutKeywordPoint = {
+  startDate: string
+  endDate: string
+  clicks: number
+  impressions: number
+  ctr: number
+  position: number
+};
+
+export type ScoutKeyword = {
+  query: string
+  queryKey: string
+  source: "search_console"
+  opportunityLabel: "none" | "watch" | "review"
+  worthALook: boolean
+  opportunityScore: number
+  opportunityWhy: string
+  firstSeenAt: string
+  lastSeenAt: string
+  latest: ScoutKeywordPoint | null
+  points: ScoutKeywordPoint[]
+};
+
+export type ScoutKeywordExport = {
+  source: "search_console_history"
+  notice: string
+  worthALookCount: number
+  keywords: ScoutKeyword[]
+};
+
 export type ScoutDeskPayload = {
   gsc: ScoutGscExport | null
   publicPages: ScoutPublicPage[]
+  keywords: ScoutKeywordExport
 };
 
 export const SCOUT_WALLS = [
@@ -98,7 +129,9 @@ export const SCOUT_WALLS = [
   "Public pages and sitemaps only. Do not fetch anything behind a login.",
   "Do not publish, patch a live page, or change a sitemap or robots file.",
   "Return a proposal pack only. Never set status to shipped.",
-  "Do not invent metrics, rankings, or backlinks that are not in this payload.",
+  "Do not invent metrics, rankings, volume, or backlinks that are not in this payload.",
+  "Keyword labels are estimates from stored Search Console history. They are not Keyword Planner and not a live Google search.",
+  "Do not scrape Google or call a SERP tool, including OpenSERP.",
   "Do not write social posts, newsletters, or ads. That is DRAFTgro.",
   "Do not write long-form page copy. That is WRITEgro.",
   "Do not categorize books or move money. That is BOOKSgro.",
@@ -114,7 +147,7 @@ export function describeScoutHandoff(): {
   reviewer: string
 } {
   return {
-    read: "GET this URL with the desk token to read stored Search Console and public URL inventory. Do not log into Google.",
+    read: "GET this URL with the desk token to read stored Search Console, keyword history, and public URL inventory. Do not log into Google.",
     write: "POST a proposal pack JSON to this URL with the same token. Items must stay proposed. Do not set shipped.",
     reviewer: "Jason reviews on Monday. GroovGro is the applicator. Only GroovGro sets shipped after a real apply.",
   };
@@ -326,6 +359,77 @@ export function buildScoutPublicPages(
     }))
     .filter((row) => row.url)
     .slice(0, 80);
+}
+
+export function buildScoutKeywordHistory(
+  rows: Array<{
+    query?: string | null
+    queryKey?: string | null
+    source?: string | null
+    opportunityLabel?: string | null
+    opportunityScore?: number | null
+    opportunityWhy?: string | null
+    firstSeenAt?: Date | string | null
+    lastSeenAt?: Date | string | null
+    points?: Array<{
+      startDate?: string | null
+      endDate?: string | null
+      clicks?: number | null
+      impressions?: number | null
+      ctr?: number | null
+      position?: number | null
+    }> | null
+  }> | null,
+): ScoutKeywordExport {
+  const keywords = (rows ?? [])
+    .map((row) => {
+      const query = clean(row.query, 200);
+      const points = (row.points ?? [])
+        .map((point) => ({
+          startDate: clean(point.startDate, 20),
+          endDate: clean(point.endDate, 20),
+          clicks: Number(point.clicks) || 0,
+          impressions: Number(point.impressions) || 0,
+          ctr: Number(point.ctr) || 0,
+          position: Number(point.position) || 0,
+        }))
+        .filter((point) => point.startDate || point.endDate)
+        .slice(-8);
+      const label =
+        row.opportunityLabel === "review" ||
+        row.opportunityLabel === "watch" ||
+        row.opportunityLabel === "none"
+          ? row.opportunityLabel
+          : "none";
+      return {
+        query,
+        queryKey: clean(row.queryKey, 80) || clipKey(query),
+        source: "search_console" as const,
+        opportunityLabel: label,
+        worthALook: label === "review",
+        opportunityScore: Number(row.opportunityScore) || 0,
+        opportunityWhy: clean(row.opportunityWhy, 400),
+        firstSeenAt: asIso(row.firstSeenAt),
+        lastSeenAt: asIso(row.lastSeenAt),
+        latest: points[points.length - 1] ?? null,
+        points,
+      };
+    })
+    .filter((row) => row.query)
+    .slice(0, 40);
+  const worthALookCount = keywords.filter((row) => row.worthALook).length;
+  return {
+    source: "search_console_history",
+    notice:
+      "Estimates from stored Search Console only. Not Keyword Planner. Not a live rank tracker. Do not scrape Google.",
+    worthALookCount,
+    keywords,
+  };
+}
+
+function asIso(value: Date | string | null | undefined): string {
+  if (value instanceof Date) return value.toISOString();
+  return clean(value, 40);
 }
 
 export function describeScoutInboxHeading(counts: {

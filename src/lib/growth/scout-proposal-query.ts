@@ -7,10 +7,12 @@ import {
   seoProposalPacks,
   websiteDiscoveredPages,
 } from "@/lib/db/schema";
+import { getKeywordHistory } from "@/lib/growth/persist-keywords";
 import {
   SCOUT_STATUS_APPROVED,
   SCOUT_STATUS_PROPOSED,
   buildScoutGscExport,
+  buildScoutKeywordHistory,
   buildScoutPublicPages,
   describeScoutInboxHeading,
   type ScoutDeskPayload,
@@ -104,9 +106,9 @@ export async function getScoutDeskPayload(
 ): Promise<ScoutDeskPayload> {
   const db = getDb();
   if (!db || !organizationId) {
-    return { gsc: null, publicPages: [] };
+    return { gsc: null, publicPages: [], keywords: buildScoutKeywordHistory([]) };
   }
-  const [gsc, pageRows] = await Promise.all([
+  const [gsc, pageRows, keywords] = await Promise.all([
     getScoutGscExport(organizationId),
     db
       .select({
@@ -118,9 +120,11 @@ export async function getScoutDeskPayload(
       .where(eq(websiteDiscoveredPages.organizationId, organizationId))
       .orderBy(desc(websiteDiscoveredPages.lastSeenAt))
       .limit(80),
+    getKeywordHistory(db, organizationId),
   ]);
   return {
     gsc,
     publicPages: buildScoutPublicPages(pageRows),
+    keywords: buildScoutKeywordHistory(keywords),
   };
 }

@@ -8,6 +8,7 @@ import {
   SCOUT_STATUS_PROPOSED,
   SCOUT_STATUS_SHIPPED,
   buildScoutGscExport,
+  buildScoutKeywordHistory,
   buildScoutPublicPages,
   describeBotTeam,
   describeScoutInboxHeading,
@@ -69,6 +70,8 @@ describe("SEOgro proposal packs", () => {
     assert.match(empty.walls.join(" "), /DRAFTgro/);
     assert.match(empty.walls.join(" "), /BOOKSgro/);
     assert.match(empty.walls.join(" "), /Do not mix brands/);
+    assert.match(empty.walls.join(" "), /OpenSERP/);
+    assert.match(empty.walls.join(" "), /Keyword Planner/);
     const full = buildScoutGscExport({
       propertyUrl: "https://example.com/",
       startDate: "2026-09-01",
@@ -108,6 +111,7 @@ describe("SEOgro proposal packs", () => {
     assert.match(handoff, /via: \"handoff\"/);
     assert.match(handoff, /getScoutDeskPayload/);
     assert.match(handoff, /publicPages/);
+    assert.match(handoff, /keywords: desk.keywords/);
     assert.match(handoff, /describeBotTeam/);
     assert.doesNotMatch(handoff, /googleapis|requestCmsPublish/i);
     assert.match(page, /ScoutProposalPanel/);
@@ -123,7 +127,7 @@ describe("SEOgro proposal packs", () => {
       "utf8",
     );
     assert.match(panel, /publicPages/);
-    assert.match(panel, /gsc: gscExport, publicPages/);
+    assert.match(panel, /gsc: gscExport, publicPages, keywords/);
   });
 
   it("accepts a public_pages pack and lists stored public URLs", () => {
@@ -150,6 +154,34 @@ describe("SEOgro proposal packs", () => {
       ]),
       [{ url: "https://example.com/", title: "Home", label: "home" }],
     );
+    const keywords = buildScoutKeywordHistory([
+      {
+        query: "harbor lessons",
+        queryKey: "harbor-lessons",
+        opportunityLabel: "review",
+        opportunityScore: 70,
+        opportunityWhy: "Visible but not a strong page-one result.",
+        points: [
+          {
+            startDate: "2026-08-01",
+            endDate: "2026-08-28",
+            clicks: 2,
+            impressions: 40,
+            ctr: 0.05,
+            position: 14,
+          },
+        ],
+      },
+      {
+        query: "skip me",
+        opportunityLabel: "none",
+      },
+    ]);
+    assert.equal(keywords.source, "search_console_history");
+    assert.equal(keywords.worthALookCount, 1);
+    assert.equal(keywords.keywords[0]?.worthALook, true);
+    assert.equal(keywords.keywords[0]?.latest?.position, 14);
+    assert.match(keywords.notice, /Not Keyword Planner/);
     const team = describeBotTeam();
     assert.equal(team.seogro.status, "live");
     assert.equal(team.draftgro.status, "live");

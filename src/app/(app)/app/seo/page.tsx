@@ -74,7 +74,7 @@ export default async function SeoPage({
       ])
     : [
         { heading: "SEOgro proposals", items: [] },
-        { gsc: null, publicPages: [] },
+        { gsc: null, publicPages: [], keywords: { source: "search_console_history", notice: "", worthALookCount: 0, keywords: [] } },
       ];
   const view = params.view ?? "";
   const selectedPage =
@@ -194,6 +194,7 @@ export default async function SeoPage({
             items={scoutInbox.items}
             gscExport={scoutDesk.gsc}
             publicPages={scoutDesk.publicPages}
+            keywords={scoutDesk.keywords}
             handoffUrl={`${appUrl()}/api/bots/scout`}
             canManage={session.permissions.includes("manage_seo")}
           />

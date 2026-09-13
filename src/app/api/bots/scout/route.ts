@@ -25,6 +25,7 @@ export async function GET(request: Request) {
     handoff: describeScoutHandoff(),
     gsc: desk.gsc,
     publicPages: desk.publicPages,
+    keywords: desk.keywords,
     inbox: {
       heading: inbox.heading,
       proposed: inbox.items
