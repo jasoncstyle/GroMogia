@@ -76,9 +76,20 @@ describe("workspace drafts from saved briefs", () => {
       query: "harbor sailing lessons",
       briefSource: "content_gap",
       ourOffers: ["Harbor sailing lessons"],
+      ourDifference: ["Smaller groups"],
+      businessName: "Harbor Sailing Co",
+      doSay: "Learn on the harbor.",
+      dontSay: "guaranteed ranking",
+      tone: "calm and clear",
+      exampleTitle: "First-lesson welcome",
     });
-    assert.match(fromSearch, /Copy this onto your existing website/);
-    assert.match(fromSearch, /Harbor sailing lessons/);
+    assert.match(fromSearch, /Harbor Sailing Co helps people looking for harbor sailing lessons/);
+    assert.match(fromSearch, /The offer is Harbor sailing lessons/);
+    assert.match(fromSearch, /Smaller groups/);
+    assert.match(fromSearch, /Learn on the harbor/);
+    assert.match(fromSearch, /Do not say: guaranteed ranking/);
+    assert.match(fromSearch, /First-lesson welcome/);
+    assert.doesNotMatch(fromSearch, /Copy this onto your existing website/);
     assert.doesNotMatch(fromSearch, /\$\d|5-star|Jane Doe/i);
   });
 
@@ -138,6 +149,9 @@ describe("workspace drafts from saved briefs", () => {
     assert.match(action, /did not publish/);
     assert.match(action, /briefSource: brief\.source/);
     assert.match(action, /ourOffers/);
+    assert.match(action, /brandVoiceProfiles/);
+    assert.match(action, /doSay: voice\?\.doSay/);
+    assert.match(helper, /writeSearchLoopPasteCopy/);
     assert.match(panel, /Write a workspace draft/);
     assert.match(panel, /this business’s words/);
     assert.match(panel, /will not publish/);
