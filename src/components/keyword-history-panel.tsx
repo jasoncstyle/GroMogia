@@ -93,6 +93,7 @@ export function KeywordHistoryPanel({
                     </SaveButton>
                   </SaveForm>
                 ) : null}
+              </div>
             );
           })
         )}
