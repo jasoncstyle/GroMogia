@@ -39,20 +39,20 @@ export function ScoutProposalPanel({
       <CardHeader>
         <CardTitle>{heading}</CardTitle>
         <CardDescription>
-          Monday review: approve or reject what SEO Scout wrote into GroovGro.
-          Scout reads stored Search Console and posts the pack here. You are
-          the reviewer, not the courier. Scout does not log into Google.
+          Monday review: approve or reject what SEOgro wrote into GroovGro.
+          SEOgro reads stored Search Console and posts the pack here. You are
+          the reviewer, not the courier. SEOgro does not log into Google.
           GroovGro does not publish.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="text-sm text-muted-foreground">Scout handoff: {handoffUrl}</p>
-          <CopyText text={handoffUrl} label="Copy Scout handoff URL" />
+          <p className="text-sm text-muted-foreground">SEOgro handoff: {handoffUrl}</p>
+          <CopyText text={handoffUrl} label="Copy SEOgro handoff URL" />
         </div>
         <p className="text-sm text-muted-foreground">
-          SEO Scout uses the desk token: GET this URL to read stored Search
-          Console, then POST the proposal pack back. Do not give Scout a
+          SEOgro uses the desk token: GET this URL to read stored Search
+          Console, then POST the proposal pack back. Do not give SEOgro a
           Google login.
         </p>
         {exportText ? (
@@ -66,7 +66,7 @@ export function ScoutProposalPanel({
           </details>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Refresh Search Console so GroovGro has a stored snapshot for Scout.
+            Refresh Search Console so GroovGro has a stored snapshot for SEOgro.
           </p>
         )}
 
@@ -96,7 +96,7 @@ export function ScoutProposalPanel({
 
         {open.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No Scout proposals waiting. Stay quiet when nothing is worth doing.
+            No SEOgro proposals waiting. Stay quiet when nothing is worth doing.
           </p>
         ) : (
           <ul className="space-y-3">

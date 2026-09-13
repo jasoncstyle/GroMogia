@@ -1,8 +1,8 @@
 /**
- * SEO Scout proposal packs. Scout analyzes stored Search Console that
- * GroovGro already pulled. Scout writes the pack into GroovGro through
+ * SEOgro proposal packs. SEOgro analyzes stored Search Console that
+ * GroovGro already pulled. SEOgro writes the pack into GroovGro through
  * the handoff. Items stay proposals until the owner approves. Only
- * GroovGro may mark shipped, after a real apply. Scout does not log into
+ * GroovGro may mark shipped, after a real apply. SEOgro does not log into
  * Google, publish, or set shipped. Paste is a sample of that same pack,
  * not the product.
  */
@@ -138,7 +138,7 @@ function asType(value: unknown): ScoutItemType | null {
 
 export function refuseShippedFromScout(status: string): void {
   if (clean(status, 20).toLowerCase() === SCOUT_STATUS_SHIPPED) {
-    throw new Error("SEO Scout cannot mark work shipped. GroovGro does that after a real apply.");
+    throw new Error("SEOgro cannot mark work shipped. GroovGro does that after a real apply.");
   }
 }
 
@@ -166,14 +166,14 @@ export function nextScoutStatus(
 
 export function parseScoutProposalPack(raw: string): ScoutProposalPack {
   const text = raw.trim();
-  if (!text) throw new Error("Paste the proposal pack from SEO Scout.");
+  if (!text) throw new Error("Paste the proposal pack from SEOgro.");
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/);
   const jsonText = fenced?.[1]?.trim() || text;
   let parsed: unknown;
   try {
     parsed = JSON.parse(jsonText);
   } catch {
-    throw new Error("That pack must be JSON from SEO Scout. GroovGro will not guess a proposal.");
+    throw new Error("That pack must be JSON from SEOgro. GroovGro will not guess a proposal.");
   }
   const body = parsed as Record<string, unknown>;
   refuseShippedFromScout(String(body.status ?? ""));
@@ -185,7 +185,7 @@ export function parseScoutProposalPack(raw: string): ScoutProposalPack {
   const sourceRange = clean(body.sourceRange ?? body.dateRange ?? body.source_range, 80);
   const rows = Array.isArray(body.items) ? body.items : [];
   if (rows.length === 0) {
-    throw new Error("That pack has no items. Scout should stay quiet when nothing is worth proposing.");
+    throw new Error("That pack has no items. SEOgro should stay quiet when nothing is worth proposing.");
   }
   const items = rows.map((row, index) => {
     const item = (row ?? {}) as Record<string, unknown>;
@@ -286,7 +286,7 @@ export function describeScoutInboxHeading(counts: {
   approved: number
 }): string {
   if (counts.proposed === 0 && counts.approved === 0) {
-    return "SEO Scout proposals";
+    return "SEOgro proposals";
   }
-  return `SEO Scout proposals · ${counts.proposed} to review, ${counts.approved} approved`;
+  return `SEOgro proposals · ${counts.proposed} to review, ${counts.approved} approved`;
 }

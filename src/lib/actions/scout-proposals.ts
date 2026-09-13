@@ -19,6 +19,7 @@ import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
 function revalidateScoutInbox() {
+  revalidatePath("/app");
   revalidatePath("/app/seo");
   revalidatePath("/app/next-step");
 }
@@ -36,7 +37,7 @@ export async function saveScoutProposalPack(formData: FormData): Promise<ActionR
   return runAction("Could not save that proposal pack.", async () => {
     const session = await requireOrgSession();
     if (!hasPermission(session.permissions, "manage_seo")) {
-      throw new Error("You do not have permission to save SEO Scout proposals.");
+      throw new Error("You do not have permission to save SEOgro proposals.");
     }
     const parsed = packSchema.parse({ pack: formData.get("pack") ?? "" });
     const pack = parseScoutProposalPack(parsed.pack);
@@ -46,7 +47,7 @@ export async function saveScoutProposalPack(formData: FormData): Promise<ActionR
       actorUserId: session.userId,
       via: "paste",
     });
-    return `Saved ${saved.count} SEO Scout proposal${saved.count === 1 ? "" : "s"} for ${pack.property}. Nothing was applied.`;
+    return `Saved ${saved.count} SEOgro proposal${saved.count === 1 ? "" : "s"} for ${pack.property}. Nothing was applied.`;
   });
 }
 
@@ -54,7 +55,7 @@ export async function decideScoutProposal(formData: FormData): Promise<ActionRes
   return runAction("Could not update that proposal.", async () => {
     const session = await requireOrgSession();
     if (!hasPermission(session.permissions, "manage_seo")) {
-      throw new Error("You do not have permission to review SEO Scout proposals.");
+      throw new Error("You do not have permission to review SEOgro proposals.");
     }
     const parsed = decideSchema.parse({
       itemId: formData.get("itemId") ?? "",
