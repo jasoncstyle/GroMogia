@@ -17,6 +17,7 @@ import {
   getScoutDeskPayload,
   getScoutProposalInbox,
 } from "@/lib/growth/scout-proposal-query";
+import { buildScoutKeywordHistory } from "@/lib/growth/scout-proposals";
 import { explainSeoCheck } from "@/lib/seo/explain";
 import { compareSeoChecks, scoreTrendLabel } from "@/lib/seo/monitor";
 import { isBuilderApplyableFinding } from "@/lib/website-builder/apply-seo";
@@ -74,7 +75,7 @@ export default async function SeoPage({
       ])
     : [
         { heading: "SEOgro proposals", items: [] },
-        { gsc: null, publicPages: [], keywords: { source: "search_console_history", notice: "", worthALookCount: 0, keywords: [] } },
+        { gsc: null, publicPages: [], keywords: buildScoutKeywordHistory([]) },
       ];
   const view = params.view ?? "";
   const selectedPage =

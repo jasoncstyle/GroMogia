@@ -395,7 +395,7 @@ export function buildScoutKeywordHistory(
         }))
         .filter((point) => point.startDate || point.endDate)
         .slice(-8);
-      const label =
+      const label: ScoutKeyword["opportunityLabel"] =
         row.opportunityLabel === "review" ||
         row.opportunityLabel === "watch" ||
         row.opportunityLabel === "none"
