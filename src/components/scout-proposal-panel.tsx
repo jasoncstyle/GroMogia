@@ -19,11 +19,13 @@ export function ScoutProposalPanel({
   heading,
   items,
   gscExport,
+  handoffUrl,
   canManage = false,
 }: {
   heading: string
   items: ScoutProposalRow[]
   gscExport: ScoutGscExport | null
+  handoffUrl: string
   canManage?: boolean
 }) {
   const exportText = gscExport ? JSON.stringify(gscExport, null, 2) : "";
@@ -37,22 +39,34 @@ export function ScoutProposalPanel({
       <CardHeader>
         <CardTitle>{heading}</CardTitle>
         <CardDescription>
-          Monday review: copy stored Search Console into SEO Scout, paste the
-          proposal pack back, then approve what ships. Scout does not log into
-          Google. GroovGro does not publish.
+          Monday review: approve or reject what SEO Scout wrote into GroovGro.
+          Scout reads stored Search Console and posts the pack here. You are
+          the reviewer, not the courier. Scout does not log into Google.
+          GroovGro does not publish.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-sm text-muted-foreground">Scout handoff: {handoffUrl}</p>
+          <CopyText text={handoffUrl} label="Copy Scout handoff URL" />
+        </div>
+        <p className="text-sm text-muted-foreground">
+          SEO Scout uses the desk token: GET this URL to read stored Search
+          Console, then POST the proposal pack back. Do not give Scout a
+          Google login.
+        </p>
         {exportText ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <CopyText text={exportText} label="Copy stored Search Console for Scout" />
-            <p className="text-sm text-muted-foreground">
-              Paste that into SEO Scout. Do not give Scout a Google login.
-            </p>
-          </div>
+          <details className="text-sm">
+            <summary className="cursor-pointer font-medium">
+              Sample payload (same contract as the handoff)
+            </summary>
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <CopyText text={exportText} label="Copy stored Search Console sample" />
+            </div>
+          </details>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Refresh Search Console so GroovGro has a stored snapshot to copy.
+            Refresh Search Console so GroovGro has a stored snapshot for Scout.
           </p>
         )}
 
@@ -64,7 +78,7 @@ export function ScoutProposalPanel({
             className="space-y-2"
           >
             <label className="block text-sm font-medium" htmlFor="scout-pack">
-              Paste Scout’s JSON pack
+              Fallback: paste a sample pack
             </label>
             <textarea
               id="scout-pack"

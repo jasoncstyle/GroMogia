@@ -130,6 +130,7 @@ export default async function IntegrationsPage() {
 
       <BotAccessPanel
         deskUrl={`${appUrl()}/api/bots/search-desk`}
+        scoutUrl={`${appUrl()}/api/bots/scout`}
         tokenCount={tokenCount}
         canManage={canManageBots}
       />

@@ -61,6 +61,7 @@ describe("SEO Scout proposal packs", () => {
     assert.equal(empty.source, "gsc");
     assert.ok(empty.gaps.some((gap) => /No query rows/.test(gap)));
     assert.match(empty.walls.join(" "), /Do not log into Google/);
+    assert.match(empty.walls.join(" "), /POST the proposal pack back/);
     const full = buildScoutGscExport({
       propertyUrl: "https://example.com/",
       startDate: "2026-09-01",
@@ -79,11 +80,20 @@ describe("SEO Scout proposal packs", () => {
       join(process.cwd(), "src/lib/actions/scout-proposals.ts"),
       "utf8",
     );
+    const handoff = readFileSync(
+      join(process.cwd(), "src/app/api/bots/scout/route.ts"),
+      "utf8",
+    );
     const page = readFileSync(join(process.cwd(), "src/app/(app)/app/seo/page.tsx"), "utf8");
     assert.match(helper, /Never set status to shipped/);
+    assert.match(helper, /POST the proposal pack back/);
     assert.match(action, /parseScoutProposalPack/);
     assert.doesNotMatch(action, /requestCmsPublish|requestExecute|googleapis/i);
+    assert.match(handoff, /recordScoutProposalPack/);
+    assert.match(handoff, /via: \"handoff\"/);
+    assert.doesNotMatch(handoff, /googleapis|requestCmsPublish/i);
     assert.match(page, /ScoutProposalPanel/);
+    assert.match(page, /api\/bots\/scout/);
     assert.match(page, /Search desk/);
   });
 });

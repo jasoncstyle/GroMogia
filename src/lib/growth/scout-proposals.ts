@@ -1,8 +1,10 @@
 /**
  * SEO Scout proposal packs. Scout analyzes stored Search Console that
- * GroovGro already pulled. Jason pastes the pack. Items stay proposals
- * until the owner approves. Only GroovGro may mark shipped, after a real
- * apply. Scout does not log into Google, publish, or set shipped.
+ * GroovGro already pulled. Scout writes the pack into GroovGro through
+ * the handoff. Items stay proposals until the owner approves. Only
+ * GroovGro may mark shipped, after a real apply. Scout does not log into
+ * Google, publish, or set shipped. Paste is a sample of that same pack,
+ * not the product.
  */
 
 export const SCOUT_SOURCE_GSC = "gsc";
@@ -84,7 +86,20 @@ const WALLS = [
   "Return a proposal pack only. Never set status to shipped.",
   "Do not invent metrics, rankings, or backlinks that are not in this payload.",
   "Do not write social posts, newsletters, or ads. That is not this job.",
+  "POST the proposal pack back to GroovGro. Do not ask Jason to carry the file.",
 ] as const;
+
+export function describeScoutHandoff(): {
+  read: string
+  write: string
+  reviewer: string
+} {
+  return {
+    read: "GET this URL with the desk token to read stored Search Console. Do not log into Google.",
+    write: "POST a proposal pack JSON to this URL with the same token. Items must stay proposed. Do not set shipped.",
+    reviewer: "Jason reviews approved and rejected in GroovGro on Monday. GroovGro applies after he marks worthy.",
+  };
+}
 
 function clean(value: unknown, max: number): string {
   return String(value ?? "").replace(/\s+/g, " ").trim().slice(0, max);

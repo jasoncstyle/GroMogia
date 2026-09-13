@@ -9,6 +9,7 @@ import {
 } from "@/lib/actions/seo";
 import { applySeoDraftToBuilder } from "@/lib/actions/website-builder";
 import { getAppSession } from "@/lib/auth/session";
+import { appUrl } from "@/lib/env";
 import { getSeoPageData } from "@/lib/phase6/queries";
 import { getSearchLoopView } from "@/lib/growth/search-loop-query";
 import { getScoutProposalInbox } from "@/lib/growth/scout-proposal-query";
@@ -118,10 +119,9 @@ export default async function SeoPage({
         <h1 className="text-2xl font-semibold tracking-tight">Search desk</h1>
         <p className="text-muted-foreground">
           GroovGro stores Search Console here. Your Search partner and Goal
-          checker read this store — they do not log into Google. Copy stored
-          Search Console into SEO Scout, paste the proposal pack back, and
-          approve what you will apply. GroovGro does not publish, invent
-          prices, or scrape Google.
+          checker read this store — they do not log into Google. SEO Scout
+          reads that store and writes proposal packs back. You review on
+          Monday. GroovGro does not publish, invent prices, or scrape Google.
         </p>
       </div>
 
@@ -179,6 +179,7 @@ export default async function SeoPage({
                   })
                 : null
             }
+            handoffUrl={`${appUrl()}/api/bots/scout`}
             canManage={session.permissions.includes("manage_seo")}
           />
 
