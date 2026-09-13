@@ -311,6 +311,7 @@ describe("search-to-page loop", () => {
     assert.match(panel, /describeSearchLoopOwnerSteps/);
     assert.match(panel, /another stored search/);
     assert.match(panel, /Use “/);
+    assert.match(panel, /SEARCH_LOOP_STEP_SAVE_BRIEF/);
     const consolePanel = readFileSync(
       join(process.cwd(), "src/components/search-console-panel.tsx"),
       "utf8",

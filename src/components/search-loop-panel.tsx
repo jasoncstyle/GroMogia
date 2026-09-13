@@ -97,7 +97,11 @@ export function SearchLoopPanel({
           </Button>
         </div>
       ) : null}
-      {loop.step === SEARCH_LOOP_STEP_PASTE || loop.brief?.draft ? (
+      {(loop.step === SEARCH_LOOP_STEP_SAVE_BRIEF ||
+        loop.step === SEARCH_LOOP_STEP_WRITE_DRAFT ||
+        loop.step === SEARCH_LOOP_STEP_PASTE ||
+        loop.brief?.draft) &&
+      loop.query ? (
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground">
             These words come from saved facts and brand voice. Change anything
