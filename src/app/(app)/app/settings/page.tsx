@@ -17,7 +17,9 @@ export default function SettingsPage() {
           Organization settings
         </h1>
         <p className="text-muted-foreground">
-          Central settings other modules should reuse, not copy.
+          Central settings other modules should reuse, not copy. If you belong
+          to more than one business, switch from the name in the sidebar. GroovGro
+          opens one business at a time.
         </p>
       </div>
       <div className="grid gap-4">

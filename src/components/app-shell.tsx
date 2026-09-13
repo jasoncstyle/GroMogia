@@ -32,6 +32,7 @@ import {
 
 import type { AppSession } from "@/lib/auth/session";
 import { PRODUCT_NAME } from "@/lib/brand";
+import { WorkspaceSwitcher } from "@/components/workspace-switcher";
 import { isModuleEnabled, navModules, type ModuleId } from "@/lib/modules/catalog";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -221,9 +222,11 @@ export function AppShell({
           <Link href="/app" className="font-semibold tracking-tight">
             {PRODUCT_NAME}
           </Link>
-          <p className="mt-1 truncate text-xs text-muted-foreground">
-            {session.organizationName ?? "Workspace"}
-          </p>
+          <WorkspaceSwitcher
+            workspaces={session.workspaces}
+            currentId={session.organizationId}
+            currentName={session.organizationName}
+          />
         </div>
         <AppNav pathname={pathname} session={session} />
       </aside>
@@ -235,9 +238,14 @@ export function AppShell({
         >
           <SheetHeader className="border-b">
             <SheetTitle>{PRODUCT_NAME}</SheetTitle>
-            <SheetDescription>
-              {session.organizationName ?? "Workspace"}
+            <SheetDescription className="sr-only">
+              Switch business or open a page
             </SheetDescription>
+            <WorkspaceSwitcher
+              workspaces={session.workspaces}
+              currentId={session.organizationId}
+              currentName={session.organizationName}
+            />
           </SheetHeader>
           <AppNav
             pathname={pathname}
