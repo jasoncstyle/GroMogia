@@ -417,4 +417,12 @@ export async function ensureSchema(): Promise<void> {
   if (!competeMovesTable[0]?.name) {
     await applyMigration(sql, "0041_compete_moves.sql");
   }
+
+  const botAccessTable = (await sql.query(
+    "select to_regclass('public.bot_access_tokens') as name",
+  )) as RegistryRow[];
+
+  if (!botAccessTable[0]?.name) {
+    await applyMigration(sql, "0042_bot_access_tokens.sql");
+  }
 }

@@ -454,6 +454,43 @@ export type SearchLoopOwnerStep = {
   current: boolean
 };
 
+export type SearchLoopTrailItem = {
+  title: string
+  done: boolean
+};
+
+export function describeSearchLoopTrail(step: SearchLoopStep): SearchLoopTrailItem[] {
+  return [
+    {
+      title: "Stored a Search Console query",
+      done: step !== SEARCH_LOOP_STEP_WAIT,
+    },
+    {
+      title: "Saved a brief",
+      done:
+        step === SEARCH_LOOP_STEP_WRITE_DRAFT ||
+        step === SEARCH_LOOP_STEP_PASTE ||
+        step === SEARCH_LOOP_STEP_CHECK ||
+        step === SEARCH_LOOP_STEP_DONE,
+    },
+    {
+      title: "Wrote words to paste",
+      done:
+        step === SEARCH_LOOP_STEP_PASTE ||
+        step === SEARCH_LOOP_STEP_CHECK ||
+        step === SEARCH_LOOP_STEP_DONE,
+    },
+    {
+      title: "Pasted on the site",
+      done: step === SEARCH_LOOP_STEP_CHECK || step === SEARCH_LOOP_STEP_DONE,
+    },
+    {
+      title: "Checked the Goal",
+      done: step === SEARCH_LOOP_STEP_DONE,
+    },
+  ];
+}
+
 export function describeSearchLoopOwnerSteps(
   step: SearchLoopStep,
 ): SearchLoopOwnerStep[] {
@@ -756,4 +793,116 @@ export function composeSearchLoopCheck(
   searchOutcome: string,
 ): string {
   return clip(`${clean(goalOutcome)} ${clean(searchOutcome)}`, 4000);
+}
+
+export const SEARCH_DESK_WALLS = [
+  "Do not log into Google or Search Console. GroovGro already pulled and stored these numbers.",
+  "Use only this stored desk. Do not invent a search, scrape Google, or look the query up elsewhere.",
+  "Do not invent prices, reviews, or customer names. If a fact is missing, leave it out.",
+  "Do not publish or change the live website. The owner pastes.",
+  "Do not buy ads or touch Stripe.",
+  "The owner decides the next step.",
+] as const;
+
+export type SearchDeskQuery = {
+  query: string
+  impressions: number
+  clicks: number
+  position: number
+  label: SearchLoopKeyword["opportunityLabel"]
+};
+
+export type SearchDeskForBots = {
+  walls: string[]
+  goal: { title: string; id: string | null }
+  step: SearchLoopStep
+  nextForOwner: string
+  query: string
+  why: string
+  offerName: string
+  page: SearchLoopPageTarget | null
+  stored: SearchQueryMetrics
+  storedQueries: SearchDeskQuery[]
+  candidates: SearchLoopCandidate[]
+  trail: SearchLoopTrailItem[]
+  voice: SearchLoopVoice
+  pasteWords: string
+  searchPartner: { job: string; doNow: string }
+  goalChecker: { job: string; doNow: string }
+};
+
+export function buildSearchDeskForBots(input: {
+  view: SearchLoopView
+  queries?: SearchDeskQuery[] | null
+}): SearchDeskForBots {
+  const view = input.view;
+  const trail = describeSearchLoopTrail(view.step);
+  const storedQueries = (input.queries ?? []).slice(0, 12);
+  const pasteWords =
+    view.brief?.draft?.body ||
+    (view.query
+      ? writeSearchLoopPasteCopy({
+          query: view.query,
+          title: view.brief?.title || view.query,
+          audience: view.brief?.audience || view.voice.audience || view.offerName,
+          outline: view.brief?.outline,
+          offerName: view.offerName,
+          page: view.page,
+          businessName: view.voice.businessName,
+          difference: view.voice.difference,
+          doSay: view.voice.doSay,
+          dontSay: view.voice.dontSay,
+          tone: view.voice.tone,
+          exampleTitle: view.voice.exampleTitle,
+          exampleBody: view.voice.exampleBody,
+        })
+      : "");
+
+  const searchDoNow =
+    view.step === SEARCH_LOOP_STEP_WAIT
+      ? "Tell the owner to refresh Search Console in GroovGro. Do not invent a query."
+      : view.step === SEARCH_LOOP_STEP_SAVE_BRIEF
+        ? `Suggest saving a brief for “${view.query}”. You may point at another stored query. Do not invent one.`
+        : view.step === SEARCH_LOOP_STEP_WRITE_DRAFT
+          ? `Use the stored paste words for “${view.query}”. Change only what is missing or wrong. Do not invent prices.`
+          : view.step === SEARCH_LOOP_STEP_PASTE
+            ? `Tell the owner to paste the stored words on ${view.page?.url || "the existing site"}. GroovGro will not paste.`
+            : "The Search partner is done with this query. Wait for the Goal checker.";
+
+  const goalDoNow =
+    view.step === SEARCH_LOOP_STEP_CHECK || view.step === SEARCH_LOOP_STEP_DONE
+      ? view.goalTitle
+        ? `Compare stored Search Console for “${view.query}” to the Goal “${view.goalTitle}”. Say if it moved, it is too soon, or another stored query should be next. Do not change the plan.`
+        : `Compare stored Search Console for “${view.query}”. There is no active Goal yet. Do not invent a Goal number.`
+      : "Wait. The owner has not pasted yet. Do not judge the Goal from missing paste work.";
+
+  return {
+    walls: [...SEARCH_DESK_WALLS],
+    goal: { title: view.goalTitle, id: view.goalId },
+    step: view.step,
+    nextForOwner: view.nextStepTitle || view.heading,
+    query: view.query,
+    why: view.why,
+    offerName: view.offerName,
+    page: view.page,
+    stored: {
+      impressions: view.impressions,
+      clicks: view.clicks,
+      position: view.position,
+      ctr: view.ctr,
+    },
+    storedQueries,
+    candidates: view.candidates,
+    trail,
+    voice: view.voice,
+    pasteWords,
+    searchPartner: {
+      job: "Pick one stored Search Console query. Help the owner save a brief and write paste words from saved facts only.",
+      doNow: searchDoNow,
+    },
+    goalChecker: {
+      job: "After the owner pastes, read stored Search Console and the Goal. Say if it moved. Do not change the website.",
+      doNow: goalDoNow,
+    },
+  };
 }

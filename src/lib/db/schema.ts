@@ -1739,6 +1739,24 @@ export const growthSettings = pgTable("growth_settings", {
   ...timestamps,
 });
 
+export const botAccessTokens = pgTable(
+  "bot_access_tokens",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull(),
+    label: text("label").notNull().default("search desk"),
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("bot_access_tokens_hash_idx").on(table.tokenHash),
+    index("bot_access_tokens_org_idx").on(table.organizationId),
+  ],
+);
+
 export const evidencePolicies = pgTable(
   "evidence_policies",
   {

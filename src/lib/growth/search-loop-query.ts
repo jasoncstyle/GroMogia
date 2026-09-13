@@ -18,7 +18,9 @@ import { CONTENT_GAP_STATUS_GAP } from "@/lib/growth/content-gaps";
 import { getKeywordHistory, persistKeywordHistory } from "@/lib/growth/persist-keywords";
 import {
   SEARCH_LOOP_ACTION,
+  buildSearchDeskForBots,
   planSearchLoop,
+  type SearchDeskForBots,
   type SearchLoopView,
 } from "@/lib/growth/search-loop";
 
@@ -210,5 +212,26 @@ export async function getSearchLoopView(
       exampleTitle: example?.title ?? "",
       exampleBody: example?.body ?? "",
     },
+  });
+}
+
+export async function getSearchDeskForBots(
+  organizationId: string,
+): Promise<SearchDeskForBots> {
+  const view = await getSearchLoopView(organizationId);
+  const db = getDb();
+  const keywords = db ? await getKeywordHistory(db, organizationId) : [];
+  return buildSearchDeskForBots({
+    view,
+    queries: keywords.slice(0, 12).map((keyword) => {
+      const point = keyword.points[keyword.points.length - 1];
+      return {
+        query: keyword.query,
+        impressions: point?.impressions ?? 0,
+        clicks: point?.clicks ?? 0,
+        position: point?.position ?? 0,
+        label: keyword.opportunityLabel,
+      };
+    }),
   });
 }

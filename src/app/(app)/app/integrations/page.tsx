@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 
 import { disconnectSearchConsole } from "@/lib/actions/search-console";
 import { connectStripe, disconnectStripe } from "@/lib/actions/stripe";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
-import { integrationConnections } from "@/lib/db/schema";
-import { isGoogleOAuthConfigured, isStripeConfigured } from "@/lib/env";
+import { botAccessTokens, integrationConnections } from "@/lib/db/schema";
+import { appUrl, isGoogleOAuthConfigured, isStripeConfigured } from "@/lib/env";
+import { hasPermission } from "@/lib/permissions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { BotAccessPanel } from "@/components/bot-access-panel";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
 import {
@@ -30,6 +32,17 @@ export default async function IntegrationsPage() {
           .from(integrationConnections)
           .where(eq(integrationConnections.organizationId, session.organizationId))
       : [];
+  const tokenCount =
+    db && session.organizationId
+      ? await db
+          .select({ value: count() })
+          .from(botAccessTokens)
+          .where(eq(botAccessTokens.organizationId, session.organizationId))
+          .then((rows) => Number(rows[0]?.value ?? 0))
+      : 0;
+  const canManageBots =
+    hasPermission(session.permissions, "manage_integrations") ||
+    hasPermission(session.permissions, "manage_seo");
 
   const stripeReady = isStripeConfigured();
   const googleReady = isGoogleOAuthConfigured();
@@ -114,6 +127,12 @@ export default async function IntegrationsPage() {
           );
         })}
       </div>
+
+      <BotAccessPanel
+        deskUrl={`${appUrl()}/api/bots/search-desk`}
+        tokenCount={tokenCount}
+        canManage={canManageBots}
+      />
 
       <OpenNextStepLink />
     </div>

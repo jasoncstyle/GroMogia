@@ -12,11 +12,11 @@ import {
   SEARCH_LOOP_STEP_SAVE_BRIEF,
   SEARCH_LOOP_STEP_WAIT,
   SEARCH_LOOP_STEP_WRITE_DRAFT,
-  describeSearchLoopOwnerSteps,
   writeSearchLoopPasteCopy,
   type SearchLoopView,
 } from "@/lib/growth/search-loop";
 import { CopyText } from "@/components/copy-text";
+import { SearchLoopTrail } from "@/components/search-loop-trail";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,7 +51,6 @@ export function SearchLoopPanel({
     exampleTitle: loop.voice.exampleTitle,
     exampleBody: loop.voice.exampleBody,
   });
-  const ownerSteps = describeSearchLoopOwnerSteps(loop.step);
   const searchConsoleHref = embed ? "/app/seo#search-console" : "#search-console";
   const body = (
     <div className="space-y-3">
@@ -70,17 +69,7 @@ export function SearchLoopPanel({
           ) : null}
         </>
       )}
-      <ol className="list-decimal space-y-1 pl-5 text-sm">
-        {ownerSteps.map((item) => (
-          <li
-            key={item.title}
-            className={item.current ? "font-medium text-foreground" : "text-muted-foreground"}
-          >
-            {item.title}
-            {item.current ? " (now)" : ""}
-          </li>
-        ))}
-      </ol>
+      <SearchLoopTrail step={loop.step} />
       {canManage && loop.step === SEARCH_LOOP_STEP_WAIT ? (
         <div className="flex flex-wrap gap-2">
           <SaveForm

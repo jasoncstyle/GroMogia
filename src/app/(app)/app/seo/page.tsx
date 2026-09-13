@@ -107,10 +107,62 @@ export default async function SeoPage({
         : "a page";
 
   return (
-    <div className="mx-auto flex max-w-5xl flex-col gap-6">
+    <div className="mx-auto flex max-w-3xl flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">SEO</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Search desk</h1>
         <p className="text-muted-foreground">
+          GroovGro stores Search Console here. Your Search partner and Goal
+          checker read this store — they do not log into Google. See the Goal,
+          do the next step, and watch the trail fill in. Create a desk token on
+          Integrations for the two bots. GroovGro does not publish, invent
+          prices, or scrape Google.
+        </p>
+      </div>
+
+      {!data || !session.organizationId ? (
+        <p className="text-sm text-muted-foreground">
+          Sign in to open the search desk.
+        </p>
+      ) : (
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {searchLoop?.goalTitle
+                  ? `Goal · ${searchLoop.goalTitle}`
+                  : "Goal"}
+              </CardTitle>
+              <CardDescription>
+                {searchLoop?.nextStepTitle
+                  ? searchLoop.nextStepTitle
+                  : "Refresh Search Console when you are ready. There is no box to type a Google search."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button asChild variant="outline" size="sm">
+                <Link href="/app/integrations">Desk token for the two bots</Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {searchLoop ? (
+            <SearchLoopPanel
+              loop={searchLoop}
+              canManage={session.permissions.includes("manage_seo")}
+            />
+          ) : null}
+
+          <SearchConsolePanel
+            searchConsole={data.searchConsole}
+            notice={searchConsoleNotice(params.gsc, params.error)}
+          />
+
+          <details className="rounded-xl border px-4 py-3">
+            <summary className="cursor-pointer text-sm font-medium">
+              More SEO tools
+            </summary>
+            <div className="mt-4 flex flex-col gap-6">
+      <p className="text-sm text-muted-foreground">
           Finish one search-to-page loop first: one worth-a-look query, a brief,
           a draft in this business’s words, then paste it on your existing site
           and check stored Search Console numbers and the Goal. GroovGro does
@@ -139,17 +191,9 @@ export default async function SeoPage({
           systems, scrape answers, scrape Google, buy keyword or SERP data,
           buy ads, or change Stripe checkout. It may read a competitor
           website you saved.
-        </p>
-      </div>
-
+      </p>
       <WebsiteUpdateExpectation />
 
-      {!data || !session.organizationId ? (
-        <p className="text-sm text-muted-foreground">
-          Sign in to check the connected website and GroovGro pages.
-        </p>
-      ) : (
-        <>
           <Card>
             <CardHeader>
               <CardTitle>Connected homepage</CardTitle>
@@ -283,18 +327,6 @@ export default async function SeoPage({
               )}
             </CardContent>
           </Card>
-
-          <SearchConsolePanel
-            searchConsole={data.searchConsole}
-            notice={searchConsoleNotice(params.gsc, params.error)}
-          />
-
-          {searchLoop ? (
-            <SearchLoopPanel
-              loop={searchLoop}
-              canManage={session.permissions.includes("manage_seo")}
-            />
-          ) : null}
 
           <KeywordHistoryPanel
             keywords={data.keywords}
@@ -568,6 +600,8 @@ export default async function SeoPage({
               </CardContent>
             </Card>
           ) : null}
+            </div>
+          </details>
         </>
       )}
 
