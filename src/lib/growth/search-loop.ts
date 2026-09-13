@@ -10,9 +10,10 @@ import { workLearningFromResult, WORK_LEARNING_WAIT_DAYS } from "@/lib/growth/wo
 
 /**
  * One owner search-to-page loop. Pick one worth-a-look query, save a brief,
- * write a workspace draft, paste it on the existing site, then check stored
- * Search Console numbers and the Goal. GroovGro does not publish, scrape
- * Google, buy ads, or change checkout.
+ * write a workspace draft from saved brand, offer, difference, and brand-voice
+ * facts, paste it on the existing site, then check stored Search Console
+ * numbers and the Goal. GroovGro does not publish, invent prices, call a
+ * model, scrape Google, buy ads, or change checkout.
  */
 
 export const SEARCH_LOOP_ACTION = "seo_search_loop";
@@ -81,6 +82,17 @@ export type SearchLoopPageTarget = {
   kind: "improve" | "create"
 };
 
+export type SearchLoopVoice = {
+  businessName: string
+  difference: string
+  doSay: string
+  dontSay: string
+  tone: string
+  audience: string
+  exampleTitle: string
+  exampleBody: string
+};
+
 export type SearchLoopView = {
   step: SearchLoopStep
   query: string
@@ -99,6 +111,7 @@ export type SearchLoopView = {
   heading: string
   nextStepTitle: string
   nextStepBody: string
+  voice: SearchLoopVoice
 };
 
 export type SearchQueryLearningKind =
@@ -213,36 +226,73 @@ export function writeSearchLoopPasteCopy(input: {
   outline?: string | null
   offerName?: string | null
   page?: SearchLoopPageTarget | null
+  businessName?: string | null
+  difference?: string | null
+  doSay?: string | null
+  dontSay?: string | null
+  tone?: string | null
+  exampleTitle?: string | null
+  exampleBody?: string | null
 }): string {
   const query = clean(input.query ?? "");
   const title = clean(input.title ?? "") || query || "This search";
   const audience = clean(input.audience ?? "");
   const offer = clean(input.offerName ?? "");
   const outline = clean(input.outline ?? "");
+  const name = clean(input.businessName ?? "");
+  const difference = clean(input.difference ?? "");
+  const doSay = clean(input.doSay ?? "");
+  const dontSay = clean(input.dontSay ?? "");
+  const tone = clean(input.tone ?? "");
+  const exampleTitle = clean(input.exampleTitle ?? "");
+  const exampleBody = clean(input.exampleBody ?? "");
   const page = input.page;
-  const lines = [
-    title,
-    "",
-    "Copy this onto your existing website. GroovGro has not published it or changed the live site.",
-  ];
-  if (query) {
-    lines.push("", `Search this should serve: ${query}`);
-  }
-  if (audience) {
-    lines.push(`Who this is for: ${audience}`);
-  }
-  if (offer) {
-    lines.push(`Lead with “${offer}”, in this business’s words.`);
-  }
+  const who = name || "this business";
+  const topic = query || title;
+
+  const opening = [
+    name
+      ? `${name} helps people looking for ${topic}.`
+      : `This page is for people looking for ${topic}.`,
+    offer ? `The offer is ${offer}.` : null,
+    difference || null,
+    doSay || null,
+  ]
+    .filter((line): line is string => Boolean(line))
+    .join(" ");
+
+  const lines = [title, "", opening, "", "What to cover:"];
   if (outline) {
-    lines.push("", "What to cover:", outline);
+    lines.push(`- ${outline}`);
+  } else {
+    lines.push(`- What ${who} offers for ${topic}`);
   }
+  lines.push(`- Who it is for${audience ? ` (${audience})` : ""}`);
+  lines.push("- How to start");
+
+  if (tone || dontSay || exampleTitle) {
+    lines.push("", "How to say it");
+    if (tone) {
+      lines.push(`Tone: ${tone}.`);
+    }
+    if (dontSay) {
+      lines.push(`Do not say: ${dontSay}`);
+    }
+    if (exampleTitle) {
+      lines.push(`Shape it like your saved example “${exampleTitle}.”`);
+    }
+  }
+
+  if (exampleBody) {
+    lines.push("", "Saved example to match", exampleBody);
+  }
+
   if (page) {
     lines.push(
       "",
       page.kind === "improve"
         ? `Where to paste: the existing page ${page.url} (${page.label}). Add or rewrite the heading and the first section so it answers that search.`
-        : `Where to put this: a new page on your existing site about “${query || title}”. GroovGro will not create that page. A starting place on the connected site is ${page.url}.`,
+        : `Where to put this: a new page on your existing site about “${topic}”. GroovGro will not create that page. A starting place on the connected site is ${page.url}.`,
     );
   } else {
     lines.push(
@@ -252,7 +302,7 @@ export function writeSearchLoopPasteCopy(input: {
   }
   lines.push(
     "",
-    "Do not invent prices, reviews, or customer names. Publishing stays off.",
+    "GroovGro did not invent prices, reviews, or customer names. If a fact is missing, leave it out. Publishing stays off. GroovGro has not published this or changed the live site.",
   );
   return lines.join("\n");
 }
@@ -390,6 +440,19 @@ function nextStepCopy(step: SearchLoopStep, query: string): {
   return { title: "", body: "" };
 }
 
+function cleanVoice(voice?: Partial<SearchLoopVoice> | null): SearchLoopVoice {
+  return {
+    businessName: clean(voice?.businessName ?? ""),
+    difference: clean(voice?.difference ?? ""),
+    doSay: clean(voice?.doSay ?? ""),
+    dontSay: clean(voice?.dontSay ?? ""),
+    tone: clean(voice?.tone ?? ""),
+    audience: clean(voice?.audience ?? ""),
+    exampleTitle: clean(voice?.exampleTitle ?? ""),
+    exampleBody: clean(voice?.exampleBody ?? ""),
+  };
+}
+
 export function planSearchLoop(input: {
   keywords?: SearchLoopKeyword[] | null
   gaps?: SearchLoopGap[] | null
@@ -398,7 +461,9 @@ export function planSearchLoop(input: {
   pages?: ContentGapPage[] | null
   offers?: string[] | null
   goal?: SearchLoopGoal | null
+  voice?: Partial<SearchLoopVoice> | null
 }): SearchLoopView {
+  const voice = cleanVoice(input.voice);
   const empty: SearchLoopView = {
     step: SEARCH_LOOP_STEP_WAIT,
     query: "",
@@ -417,6 +482,7 @@ export function planSearchLoop(input: {
     heading: "Search to page",
     nextStepTitle: "",
     nextStepBody: "",
+    voice,
   };
 
   const topic = pickSearchLoopTopic(input);
@@ -464,6 +530,7 @@ export function planSearchLoop(input: {
     heading: "",
     nextStepTitle: copy.title,
     nextStepBody: copy.body,
+    voice,
   };
   view.heading = describeSearchLoopHeading(view);
   return view;

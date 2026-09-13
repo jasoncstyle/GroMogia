@@ -7,6 +7,10 @@ import {
   CONTENT_BRIEF_SOURCE_COMPETITOR_GAP,
   CONTENT_BRIEF_SOURCE_CONTENT_GAP,
 } from "@/lib/growth/content-briefs";
+import {
+  writeSearchLoopPasteCopy,
+  type SearchLoopPageTarget,
+} from "@/lib/growth/search-loop";
 
 export const CONTENT_DRAFT_SOURCE_STORED_BRIEF = "stored_brief";
 export const CONTENT_DRAFT_STATUS_DRAFT = "draft";
@@ -27,6 +31,14 @@ export type ContentDraftBrief = {
   briefSource?: string | null
   ourOffers?: string[] | null
   ourDifference?: string[] | null
+  businessName?: string | null
+  doSay?: string | null
+  dontSay?: string | null
+  tone?: string | null
+  voiceAudience?: string | null
+  exampleTitle?: string | null
+  exampleBody?: string | null
+  pastePage?: SearchLoopPageTarget | null
 };
 
 export type ContentDraftPlan = {
@@ -109,7 +121,33 @@ export function planContentDraft(input: ContentDraftBrief): ContentDraftPlan {
   };
 }
 
+function firstNamed(values?: string[] | null): string {
+  return (
+    (values ?? [])
+      .map((row) => row.replace(/\s+/g, " ").trim())
+      .find(Boolean) ?? ""
+  );
+}
+
 export function writeDraftFromBrief(input: ContentDraftBrief): string {
+  if (input.briefSource === CONTENT_BRIEF_SOURCE_CONTENT_GAP) {
+    return writeSearchLoopPasteCopy({
+      query: input.query,
+      title: input.title,
+      audience: input.audience || input.voiceAudience,
+      outline: input.outline,
+      offerName: firstNamed(input.ourOffers),
+      page: input.pastePage ?? null,
+      businessName: input.businessName,
+      difference: firstNamed(input.ourDifference),
+      doSay: input.doSay,
+      dontSay: input.dontSay,
+      tone: input.tone,
+      exampleTitle: input.exampleTitle,
+      exampleBody: input.exampleBody,
+    });
+  }
+
   const title = (input.title ?? "").trim().replace(/\s+/g, " ");
   const query = (input.query ?? "").trim();
   const audience = (input.audience ?? "").trim();
@@ -133,33 +171,15 @@ export function writeDraftFromBrief(input: ContentDraftBrief): string {
       "The brief did not say what to cover yet. Add that on the planner, then write another draft.",
     );
   }
-  if (
-    input.briefSource === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP ||
-    input.briefSource === CONTENT_BRIEF_SOURCE_CONTENT_GAP
-  ) {
-    const offer = (input.ourOffers ?? [])
-      .map((row) => row.replace(/\s+/g, " ").trim())
-      .filter(Boolean)[0];
-    const difference = (input.ourDifference ?? [])
-      .map((row) => row.replace(/\s+/g, " ").trim())
-      .filter(Boolean)[0];
-    if (input.briefSource === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP) {
-      lines.push(
-        "",
-        "Write this in this business’s words. Do not copy a competitor.",
-      );
-    } else {
-      lines.push(
-        "",
-        "Copy this onto your existing website in this business’s words. GroovGro has not published it.",
-      );
-    }
+  if (input.briefSource === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP) {
+    const offer = firstNamed(input.ourOffers);
+    const difference = firstNamed(input.ourDifference);
+    lines.push(
+      "",
+      "Write this in this business’s words. Do not copy a competitor.",
+    );
     if (offer) {
-      lines.push(
-        input.briefSource === CONTENT_BRIEF_SOURCE_COMPETITOR_GAP
-          ? `Lead with “${offer}”, not with their words.`
-          : `Lead with “${offer}”.`,
-      );
+      lines.push(`Lead with “${offer}”, not with their words.`);
     }
     if (difference) {
       lines.push(`What makes this business different: ${difference}.`);

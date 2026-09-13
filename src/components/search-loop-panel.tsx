@@ -34,10 +34,17 @@ export function SearchLoopPanel({
   const pasteCopy = writeSearchLoopPasteCopy({
     query: loop.query,
     title: loop.brief?.title || loop.query,
-    audience: loop.brief?.audience || loop.offerName,
+    audience: loop.brief?.audience || loop.voice.audience || loop.offerName,
     outline: loop.brief?.outline,
     offerName: loop.offerName,
     page: loop.page,
+    businessName: loop.voice.businessName,
+    difference: loop.voice.difference,
+    doSay: loop.voice.doSay,
+    dontSay: loop.voice.dontSay,
+    tone: loop.voice.tone,
+    exampleTitle: loop.voice.exampleTitle,
+    exampleBody: loop.voice.exampleBody,
   });
   const body = (
     <div className="space-y-3">
@@ -58,6 +65,10 @@ export function SearchLoopPanel({
       )}
       {loop.step === SEARCH_LOOP_STEP_PASTE || loop.brief?.draft ? (
         <div className="space-y-2">
+          <p className="text-sm text-muted-foreground">
+            These words come from saved facts and brand voice. Change anything
+            that is missing or wrong before you paste.
+          </p>
           <p className="whitespace-pre-wrap text-sm text-muted-foreground">
             {loop.brief?.draft?.body || pasteCopy}
           </p>
@@ -134,10 +145,11 @@ export function SearchLoopPanel({
       <CardHeader>
         <CardTitle>{loop.heading}</CardTitle>
         <CardDescription>
-          One search topic at a time: save a brief, write a draft in this
-          business’s words, paste it on your existing site, then check stored
-          Search Console numbers and the Goal. GroovGro does not publish,
-          scrape Google, buy ads, or overwrite the live website.
+          One search topic at a time: save a brief, write a draft from saved
+          facts and brand voice, paste it on your existing site, then check
+          stored Search Console numbers and the Goal. GroovGro does not
+          invent prices, publish, scrape Google, buy ads, or overwrite the
+          live website.
         </CardDescription>
       </CardHeader>
       <CardContent>{body}</CardContent>

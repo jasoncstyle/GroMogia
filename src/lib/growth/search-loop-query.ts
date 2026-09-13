@@ -2,6 +2,10 @@ import { and, desc, eq } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import {
+  brandSettings,
+  brandVoiceExamples,
+  brandVoiceProfiles,
+  businessBrains,
   contentBriefs,
   contentDrafts,
   contentGaps,
@@ -34,6 +38,10 @@ export async function getSearchLoopView(
     offerRows,
     goalRows,
     pasteRows,
+    brand,
+    voice,
+    example,
+    brain,
   ] = await Promise.all([
     getKeywordHistory(db, organizationId),
     db
@@ -106,6 +114,44 @@ export async function getSearchLoopView(
           eq(growthActions.actionType, SEARCH_LOOP_ACTION),
         ),
       ),
+    db
+      .select({ businessName: brandSettings.businessName })
+      .from(brandSettings)
+      .where(eq(brandSettings.organizationId, organizationId))
+      .limit(1)
+      .then((rows) => rows[0] ?? null),
+    db
+      .select({
+        tone: brandVoiceProfiles.tone,
+        audience: brandVoiceProfiles.audience,
+        doSay: brandVoiceProfiles.doSay,
+        dontSay: brandVoiceProfiles.dontSay,
+      })
+      .from(brandVoiceProfiles)
+      .where(eq(brandVoiceProfiles.organizationId, organizationId))
+      .limit(1)
+      .then((rows) => rows[0] ?? null),
+    db
+      .select({
+        title: brandVoiceExamples.title,
+        body: brandVoiceExamples.body,
+      })
+      .from(brandVoiceExamples)
+      .where(
+        and(
+          eq(brandVoiceExamples.organizationId, organizationId),
+          eq(brandVoiceExamples.direction, "more_like_this"),
+        ),
+      )
+      .orderBy(desc(brandVoiceExamples.createdAt))
+      .limit(1)
+      .then((rows) => rows[0] ?? null),
+    db
+      .select({ differentiators: businessBrains.differentiators })
+      .from(businessBrains)
+      .where(eq(businessBrains.organizationId, organizationId))
+      .limit(1)
+      .then((rows) => rows[0] ?? null),
   ]);
 
   const latestPoint = (points: { impressions: number; clicks: number; position: number; ctr: number }[]) =>
@@ -153,5 +199,15 @@ export async function getSearchLoopView(
     pages: pageRows,
     offers: offerRows.map((row) => row.name),
     goal: goalRows[0] ?? null,
+    voice: {
+      businessName: brand?.businessName ?? "",
+      difference: (brain?.differentiators ?? []).find((row) => row.trim()) ?? "",
+      doSay: voice?.doSay ?? "",
+      dontSay: voice?.dontSay ?? "",
+      tone: voice?.tone ?? "",
+      audience: voice?.audience ?? "",
+      exampleTitle: example?.title ?? "",
+      exampleBody: example?.body ?? "",
+    },
   });
 }

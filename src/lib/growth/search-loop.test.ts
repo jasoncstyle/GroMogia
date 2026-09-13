@@ -86,10 +86,16 @@ describe("search-to-page loop", () => {
       gaps: [{ query: KEYWORD.query, queryKey: KEYWORD.queryKey }],
       offers: ["Harbor sailing lessons"],
       goal: { id: "goal-1", title: "More lesson bookings" },
+      voice: {
+        businessName: "Harbor Sailing Co",
+        doSay: "Learn on the harbor.",
+      },
     });
     assert.equal(start.step, SEARCH_LOOP_STEP_SAVE_BRIEF);
     assert.equal(start.offerName, "Harbor sailing lessons");
     assert.equal(start.goalTitle, "More lesson bookings");
+    assert.equal(start.voice.businessName, "Harbor Sailing Co");
+    assert.equal(start.voice.doSay, "Learn on the harbor.");
     assert.match(start.why, /Harbor sailing lessons/);
     assert.equal(start.nextStepTitle, SAVE_SEARCH_LOOP_BRIEF_STEP_TITLE);
     assert.match(describeSearchLoopHeading(start), /harbor sailing lessons/);
@@ -156,7 +162,7 @@ describe("search-to-page loop", () => {
     assert.equal(create?.url, "https://example.com/");
   });
 
-  it("writes paste-ready copy without inventing prices or reviews", () => {
+  it("writes paste-ready copy from saved facts without inventing prices or reviews", () => {
     const copy = writeSearchLoopPasteCopy({
       query: "harbor sailing lessons",
       title: "Harbor sailing lessons",
@@ -168,9 +174,22 @@ describe("search-to-page loop", () => {
         label: "Lessons",
         kind: "improve",
       },
+      businessName: "Harbor Sailing Co",
+      difference: "Smaller groups on the water.",
+      doSay: "Learn on the harbor.",
+      dontSay: "guaranteed ranking",
+      tone: "calm and clear",
+      exampleTitle: "First-lesson welcome",
+      exampleBody: "Come as you are. We start on the dock.",
     });
-    assert.match(copy, /Search this should serve: harbor sailing lessons/);
-    assert.match(copy, /Lead with “Harbor sailing lessons”/);
+    assert.match(copy, /Harbor Sailing Co helps people looking for harbor sailing lessons/);
+    assert.match(copy, /The offer is Harbor sailing lessons/);
+    assert.match(copy, /Smaller groups on the water/);
+    assert.match(copy, /Learn on the harbor/);
+    assert.match(copy, /Do not say: guaranteed ranking/);
+    assert.match(copy, /Tone: calm and clear/);
+    assert.match(copy, /First-lesson welcome/);
+    assert.match(copy, /Come as you are/);
     assert.match(copy, /https:\/\/example.com\/lessons/);
     assert.match(copy, /has not published/);
     assert.doesNotMatch(copy, /\$\d|5-star|Jane Doe/i);
@@ -221,6 +240,10 @@ describe("search-to-page loop", () => {
       join(process.cwd(), "src/lib/actions/search-loop.ts"),
       "utf8",
     );
+    const query = readFileSync(
+      join(process.cwd(), "src/lib/growth/search-loop-query.ts"),
+      "utf8",
+    );
     const seoPage = readFileSync(
       join(process.cwd(), "src/app/(app)/app/seo/page.tsx"),
       "utf8",
@@ -234,11 +257,16 @@ describe("search-to-page loop", () => {
     assert.match(panel, /markSearchLoopPasted/);
     assert.match(panel, /createContentBrief/);
     assert.match(panel, /createContentDraft/);
+    assert.match(panel, /saved facts and brand voice/);
+    assert.match(panel, /loop\.voice\.doSay/);
     assert.match(action, /completed_by_owner/);
     assert.match(action, /did not publish/);
     assert.doesNotMatch(action, /requestCmsPublish|requestExecute|requestCompetitorSearch/);
     assert.match(seoPage, /SearchLoopPanel/);
     assert.match(nextStep, /searchLoopNextStep/);
+    assert.match(query, /brandVoiceProfiles/);
+    assert.match(query, /more_like_this/);
     assert.doesNotMatch(helper, /fetch\(/);
+    assert.doesNotMatch(helper, /generateText|openai|anthropic/i);
   });
 });

@@ -1,21 +1,25 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { recordAudit } from "@/lib/audit";
 import { runAction, type ActionResult } from "@/lib/action-result";
 import { getDb } from "@/lib/db";
 import {
+  brandSettings,
+  brandVoiceExamples,
+  brandVoiceProfiles,
   businessBrains,
   contentBriefs,
   contentDrafts,
   offers,
+  websiteDiscoveredPages,
 } from "@/lib/db/schema";
 import { CONTENT_BRIEF_SOURCE_CONTENT_GAP } from "@/lib/growth/content-briefs";
 import { planContentDraft } from "@/lib/growth/content-drafts";
-import { matchOfferToQuery } from "@/lib/growth/search-loop";
+import { matchOfferToQuery, pickPastePage } from "@/lib/growth/search-loop";
 import { hasPermission } from "@/lib/permissions";
 import { requireOrgSession } from "@/lib/require-org";
 
@@ -61,20 +65,69 @@ export async function createContentDraft(formData: FormData): Promise<ActionResu
     if (!brief) {
       throw new Error("That brief is not in this workspace.");
     }
-    const [brain] = await db
-      .select({ differentiators: businessBrains.differentiators })
-      .from(businessBrains)
-      .where(eq(businessBrains.organizationId, session.organizationId))
-      .limit(1);
-    const offerRows = await db
-      .select({ name: offers.name })
-      .from(offers)
-      .where(eq(offers.organizationId, session.organizationId));
+    const [brain, offerRows, brand, voice, example, pageRows] = await Promise.all([
+      db
+        .select({ differentiators: businessBrains.differentiators })
+        .from(businessBrains)
+        .where(eq(businessBrains.organizationId, session.organizationId))
+        .limit(1)
+        .then((rows) => rows[0] ?? null),
+      db
+        .select({ name: offers.name })
+        .from(offers)
+        .where(eq(offers.organizationId, session.organizationId)),
+      db
+        .select({ businessName: brandSettings.businessName })
+        .from(brandSettings)
+        .where(eq(brandSettings.organizationId, session.organizationId))
+        .limit(1)
+        .then((rows) => rows[0] ?? null),
+      db
+        .select({
+          tone: brandVoiceProfiles.tone,
+          audience: brandVoiceProfiles.audience,
+          doSay: brandVoiceProfiles.doSay,
+          dontSay: brandVoiceProfiles.dontSay,
+        })
+        .from(brandVoiceProfiles)
+        .where(eq(brandVoiceProfiles.organizationId, session.organizationId))
+        .limit(1)
+        .then((rows) => rows[0] ?? null),
+      db
+        .select({
+          title: brandVoiceExamples.title,
+          body: brandVoiceExamples.body,
+        })
+        .from(brandVoiceExamples)
+        .where(
+          and(
+            eq(brandVoiceExamples.organizationId, session.organizationId),
+            eq(brandVoiceExamples.direction, "more_like_this"),
+          ),
+        )
+        .orderBy(desc(brandVoiceExamples.createdAt))
+        .limit(1)
+        .then((rows) => rows[0] ?? null),
+      db
+        .select({
+          url: websiteDiscoveredPages.url,
+          title: websiteDiscoveredPages.title,
+          label: websiteDiscoveredPages.label,
+          description: websiteDiscoveredPages.description,
+          headings: websiteDiscoveredPages.headings,
+        })
+        .from(websiteDiscoveredPages)
+        .where(eq(websiteDiscoveredPages.organizationId, session.organizationId)),
+    ]);
     const offerNames = offerRows.map((row) => row.name);
     const matchedOffer =
       brief.source === CONTENT_BRIEF_SOURCE_CONTENT_GAP
         ? matchOfferToQuery(brief.query || brief.title, offerNames)
         : "";
+    const pastePage =
+      brief.source === CONTENT_BRIEF_SOURCE_CONTENT_GAP
+        ? pickPastePage(brief.query || brief.title, pageRows)
+        : null;
     const draft = planContentDraft({
       organizationId: session.organizationId,
       briefId: brief.id,
@@ -85,6 +138,14 @@ export async function createContentDraft(formData: FormData): Promise<ActionResu
       briefSource: brief.source,
       ourOffers: matchedOffer ? [matchedOffer, ...offerNames] : offerNames,
       ourDifference: brain?.differentiators ?? [],
+      businessName: brand?.businessName ?? "",
+      doSay: voice?.doSay ?? "",
+      dontSay: voice?.dontSay ?? "",
+      tone: voice?.tone ?? "",
+      voiceAudience: voice?.audience ?? "",
+      exampleTitle: example?.title ?? "",
+      exampleBody: example?.body ?? "",
+      pastePage,
     });
     const now = new Date();
     const [row] = await db

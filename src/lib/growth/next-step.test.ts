@@ -3069,6 +3069,16 @@ describe("coordinated next step", () => {
       nextStepTitle: "Save a brief for this search",
       nextStepBody:
         "Save one brief for “harbor sailing lessons” on SEO. That starts the search-to-page loop. GroovGro will not write or publish the page.",
+      voice: {
+        businessName: "",
+        difference: "",
+        doSay: "",
+        dontSay: "",
+        tone: "",
+        audience: "",
+        exampleTitle: "",
+        exampleBody: "",
+      },
     };
     const blocked = coordinateNextStep({
       inferredDraftCount: 1,
