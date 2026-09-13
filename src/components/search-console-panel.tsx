@@ -182,7 +182,7 @@ export function SearchConsolePanel({
   }
 
   return (
-    <Card>
+    <Card id="search-console">
       <CardHeader>
         <CardTitle>Google Search Console</CardTitle>
         <CardDescription>

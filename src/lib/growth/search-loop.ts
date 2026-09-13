@@ -393,6 +393,45 @@ export function describeSearchLoopHeading(view: Pick<SearchLoopView, "step" | "q
   return `Search to page · next: ${view.query}`;
 }
 
+export type SearchLoopOwnerStep = {
+  title: string
+  current: boolean
+};
+
+export function describeSearchLoopOwnerSteps(
+  step: SearchLoopStep,
+): SearchLoopOwnerStep[] {
+  const current =
+    step === SEARCH_LOOP_STEP_WAIT
+      ? "setup"
+      : step === SEARCH_LOOP_STEP_SAVE_BRIEF
+        ? "brief"
+        : step === SEARCH_LOOP_STEP_WRITE_DRAFT
+          ? "draft"
+          : step === SEARCH_LOOP_STEP_PASTE
+            ? "paste"
+            : "check";
+  return (
+    [
+      ["setup", "Refresh Search Console and read the website"],
+      ["brief", "Save a brief for that search"],
+      ["draft", "Write a draft in this business’s words"],
+      ["paste", "Paste it on your existing site"],
+      ["check", "Check stored Search Console and the Goal"],
+    ] as const
+  ).map(([id, title]) => ({ title, current: id === current }));
+}
+
+export function describeSearchLoopWait(input: {
+  keywords?: SearchLoopKeyword[] | null
+}): string {
+  const stored = (input.keywords ?? []).length;
+  if (stored > 0) {
+    return "Search Console already has stored queries, but none are marked worth a look yet. There is no box to type a Google search. Refresh Search Console after Google has more numbers. GroovGro will not invent a topic, scrape Google, or publish.";
+  }
+  return "There is no box to type a Google search. Refresh Search Console so GroovGro can store the searches people already used, then read the website on Next step. GroovGro will pick one worth-a-look query. It will not invent a topic, scrape Google, or publish.";
+}
+
 function whyForTopic(
   keyword: SearchLoopKeyword,
   gap: SearchLoopGap | undefined,
@@ -468,7 +507,7 @@ export function planSearchLoop(input: {
     step: SEARCH_LOOP_STEP_WAIT,
     query: "",
     queryKey: "",
-    why: "Connect Search Console and read the website first. GroovGro needs a stored worth-a-look query and pages it already read. It will not invent a topic, scrape Google, or publish.",
+    why: describeSearchLoopWait(input),
     offerName: "",
     goalId: null,
     goalTitle: "",

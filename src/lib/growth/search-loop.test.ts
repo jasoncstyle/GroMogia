@@ -14,6 +14,8 @@ import {
   WRITE_SEARCH_LOOP_DRAFT_STEP_TITLE,
   composeSearchLoopCheck,
   describeSearchLoopHeading,
+  describeSearchLoopOwnerSteps,
+  describeSearchLoopWait,
   encodeSearchBaseline,
   learnFromSearchQuery,
   matchOfferToQuery,
@@ -124,12 +126,21 @@ describe("search-to-page loop", () => {
   });
 
   it("waits when there is no worth-a-look query", () => {
+    const empty = planSearchLoop({});
+    assert.equal(empty.step, SEARCH_LOOP_STEP_WAIT);
+    assert.match(empty.why, /no box to type a Google search/);
+    assert.match(empty.why, /Refresh Search Console/);
     const loop = planSearchLoop({
       keywords: [{ ...KEYWORD, opportunityLabel: "watch" }],
     });
     assert.equal(loop.step, SEARCH_LOOP_STEP_WAIT);
+    assert.match(loop.why, /already has stored queries/);
     assert.match(loop.why, /will not invent a topic/);
     assert.equal(searchLoopNextStep(loop), null);
+    const steps = describeSearchLoopOwnerSteps(SEARCH_LOOP_STEP_WAIT);
+    assert.equal(steps[0]?.current, true);
+    assert.match(steps[0]?.title ?? "", /Refresh Search Console/);
+    assert.match(describeSearchLoopWait({}), /no box to type/);
   });
 
   it("matches an offer only when the search shares a word", () => {
@@ -258,6 +269,15 @@ describe("search-to-page loop", () => {
     assert.match(panel, /createContentBrief/);
     assert.match(panel, /createContentDraft/);
     assert.match(panel, /saved facts and brand voice/);
+    assert.match(panel, /no box to type a Google search/);
+    assert.match(panel, /Refresh Search Console/);
+    assert.match(panel, /Read the website/);
+    assert.match(panel, /describeSearchLoopOwnerSteps/);
+    const consolePanel = readFileSync(
+      join(process.cwd(), "src/components/search-console-panel.tsx"),
+      "utf8",
+    );
+    assert.match(consolePanel, /id="search-console"/);
     assert.match(panel, /loop\.voice\.doSay/);
     assert.match(action, /completed_by_owner/);
     assert.match(action, /did not publish/);

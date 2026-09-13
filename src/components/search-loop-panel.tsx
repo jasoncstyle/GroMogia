@@ -1,5 +1,8 @@
+import Link from "next/link";
+
 import { createContentBrief } from "@/lib/actions/content-briefs";
 import { createContentDraft } from "@/lib/actions/content-drafts";
+import { syncSearchConsole } from "@/lib/actions/search-console";
 import { markSearchLoopPasted } from "@/lib/actions/search-loop";
 import { suggestBriefOutline } from "@/lib/growth/content-briefs";
 import {
@@ -9,11 +12,13 @@ import {
   SEARCH_LOOP_STEP_SAVE_BRIEF,
   SEARCH_LOOP_STEP_WAIT,
   SEARCH_LOOP_STEP_WRITE_DRAFT,
+  describeSearchLoopOwnerSteps,
   writeSearchLoopPasteCopy,
   type SearchLoopView,
 } from "@/lib/growth/search-loop";
 import { CopyText } from "@/components/copy-text";
 import { SaveButton, SaveForm } from "@/components/save-form";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -46,6 +51,8 @@ export function SearchLoopPanel({
     exampleTitle: loop.voice.exampleTitle,
     exampleBody: loop.voice.exampleBody,
   });
+  const ownerSteps = describeSearchLoopOwnerSteps(loop.step);
+  const searchConsoleHref = embed ? "/app/seo#search-console" : "#search-console";
   const body = (
     <div className="space-y-3">
       {loop.step === SEARCH_LOOP_STEP_WAIT ? (
@@ -63,6 +70,33 @@ export function SearchLoopPanel({
           ) : null}
         </>
       )}
+      <ol className="list-decimal space-y-1 pl-5 text-sm">
+        {ownerSteps.map((item) => (
+          <li
+            key={item.title}
+            className={item.current ? "font-medium text-foreground" : "text-muted-foreground"}
+          >
+            {item.title}
+            {item.current ? " (now)" : ""}
+          </li>
+        ))}
+      </ol>
+      {canManage && loop.step === SEARCH_LOOP_STEP_WAIT ? (
+        <div className="flex flex-wrap gap-2">
+          <SaveForm
+            action={syncSearchConsole}
+            successMessage="Search Console numbers saved."
+          >
+            <SaveButton pendingLabel="Refreshing…">Refresh Search Console</SaveButton>
+          </SaveForm>
+          <Button asChild variant="outline">
+            <Link href={searchConsoleHref}>Open Search Console</Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/app/next-step">Read the website</Link>
+          </Button>
+        </div>
+      ) : null}
       {loop.step === SEARCH_LOOP_STEP_PASTE || loop.brief?.draft ? (
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground">
@@ -145,11 +179,10 @@ export function SearchLoopPanel({
       <CardHeader>
         <CardTitle>{loop.heading}</CardTitle>
         <CardDescription>
-          One search topic at a time: save a brief, write a draft from saved
-          facts and brand voice, paste it on your existing site, then check
-          stored Search Console numbers and the Goal. GroovGro does not
-          invent prices, publish, scrape Google, buy ads, or overwrite the
-          live website.
+          GroovGro picks one stored Search Console query. There is no box to type a Google search. You save a brief, write a draft, paste it on
+          your existing site, then check the stored numbers and the Goal.
+          GroovGro does not invent prices, publish, scrape Google, buy ads,
+          or overwrite the live website.
         </CardDescription>
       </CardHeader>
       <CardContent>{body}</CardContent>
