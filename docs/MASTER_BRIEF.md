@@ -75,7 +75,7 @@ Customers are not required to use every capability. Design database, permissions
 | Growth Plan | Coordinated strategy pursuing a goal |
 | Action | Shared recommendation object (`growth_actions`). Proposed, approved, or later executed. Also the preferred home for SEO / GEO / content / lead opportunities. |
 
-Isolate per organization: users, roles, websites, customers, leads, marketing data, integrations, analytics, AI context, Business Brain, Brand Voice, assets, events, settings, goals, plans, **growth actions**, decision history, and later keywords, content items, and AI visibility scans. SEO, competitor, content, and AI-visibility data from one organization must never appear in another.
+Isolate per organization: users, roles, websites, customers, leads, marketing data, integrations, analytics, AI context, Business Brain, Brand Voice, assets, events, settings, goals, plans, **growth actions**, decision history, and later keywords, content items, and AI visibility scans. SEO, competitor, content, and AI-visibility data from one organization must never appear in another. An owner who belongs to more than one organization switches the whole workspace from the sidebar. Do not show two businesses on one screen.
 
 Do not add a separate `growth_opportunities` table unless `growth_actions` cannot cleanly hold the shared recommendation. See §15.
 

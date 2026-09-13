@@ -1,5 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
+import { cookies } from "next/headers";
 
 import {
   ensureCatalog,
@@ -15,6 +16,12 @@ import { memberships, organizations, users } from "@/lib/db/schema";
 import { isClerkConfigured, isDatabaseConfigured } from "@/lib/env";
 import { ENABLED_BY_DEFAULT_MODULES } from "@/lib/modules/catalog";
 import { ROLE_PERMISSIONS } from "@/lib/permissions";
+import {
+  WORKSPACE_COOKIE,
+  pickActiveWorkspace,
+  sortWorkspaces,
+  type WorkspaceChoice,
+} from "@/lib/auth/workspace";
 
 export type AppSession = {
   setupIncomplete: boolean
@@ -26,6 +33,7 @@ export type AppSession = {
   organizationId?: string
   organizationName?: string
   organizationSlug?: string
+  workspaces: WorkspaceChoice[]
   permissions: string[]
   enabledModules: string[]
   isPlatformAdmin: boolean
@@ -44,6 +52,7 @@ export async function getAppSession(): Promise<AppSession> {
     return {
       setupIncomplete: true,
       missingServices: missing,
+      workspaces: [],
       permissions: [],
       enabledModules: [...ENABLED_BY_DEFAULT_MODULES],
       isPlatformAdmin: false,
@@ -55,6 +64,7 @@ export async function getAppSession(): Promise<AppSession> {
     return {
       setupIncomplete: false,
       missingServices: [],
+      workspaces: [],
       permissions: [],
       enabledModules: [...ENABLED_BY_DEFAULT_MODULES],
       isPlatformAdmin: false,
@@ -79,6 +89,7 @@ export async function getAppSession(): Promise<AppSession> {
       clerkUserId,
       email,
       name,
+      workspaces: [],
       permissions: [],
       enabledModules: [...ENABLED_BY_DEFAULT_MODULES],
       isPlatformAdmin: false,
@@ -118,10 +129,25 @@ export async function getAppSession(): Promise<AppSession> {
       .innerJoin(organizations, eq(memberships.organizationId, organizations.id))
       .where(
         and(eq(memberships.userId, user.id), eq(memberships.status, "active")),
-      )
-      .limit(1);
+      );
 
-    let organization = existingMemberships[0]?.organization;
+    let workspaces = sortWorkspaces(
+      existingMemberships.map((row) => ({
+        id: row.organization.id,
+        name: row.organization.name,
+        slug: row.organization.slug,
+      })),
+    );
+    let preferredId: string | undefined;
+    try {
+      preferredId = (await cookies()).get(WORKSPACE_COOKIE)?.value;
+    } catch {
+      preferredId = undefined;
+    }
+    let organization = existingMemberships.find(
+      (row) => row.organization.id === pickActiveWorkspace(workspaces, preferredId)?.id,
+    )?.organization;
+
     if (!organization) {
       const slug = `org-${user.id.slice(0, 8)}`;
       await db.insert(organizations).values({
@@ -143,6 +169,13 @@ export async function getAppSession(): Promise<AppSession> {
         status: "active",
       });
       await provisionOrganization(organization.id, organization.name);
+      workspaces = sortWorkspaces([
+        {
+          id: organization.id,
+          name: organization.name,
+          slug: organization.slug,
+        },
+      ]);
     }
 
     await ensureOrganizationModules(organization.id);
@@ -160,6 +193,7 @@ export async function getAppSession(): Promise<AppSession> {
       organizationId: organization.id,
       organizationName: organization.name,
       organizationSlug: organization.slug,
+      workspaces,
       permissions: [...ROLE_PERMISSIONS.owner],
       enabledModules,
       isPlatformAdmin: user.platformRole === "super_admin",
