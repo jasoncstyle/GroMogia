@@ -128,7 +128,7 @@ export default async function SeoPage({
         <p className="text-muted-foreground">
           GroovGro stores Search Console and public URL inventory here, then
           talks to SEOgro. You review on Monday. You are not the courier.
-          DRAFTgro, WRITEgro, and BOOKSgro review on Bot team. GroovGro does
+          DRAFTgro and WRITEgro review on Bot team. BOOKSgro waits. GroovGro does
           not publish, invent prices, or scrape Google. SEOgro does not log
           into Google.
         </p>

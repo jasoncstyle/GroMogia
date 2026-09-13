@@ -74,8 +74,7 @@ export function BotTeamPanel({
           </details>
         ) : (
           <p className="text-sm text-muted-foreground">
-            Save brand, offers, or payments so {meta.name} has stored facts to
-            read.
+            Save brand or offers so {meta.name} has stored facts to read.
           </p>
         )}
         {canManage ? (

@@ -4,7 +4,7 @@
  * pulled, then writes packs through the handoff. Items stay proposed
  * until the Monday reviewer approves. Only GroovGro may mark shipped,
  * after a real apply. SEOgro does not log into Google, publish, or set
- * shipped. DRAFTgro, WRITEgro, and BOOKSgro have their own handoffs.
+ * shipped. DRAFTgro and WRITEgro have their own handoffs. BOOKSgro waits.
  * Paste is a sample of the live API, not the product.
  */
 
