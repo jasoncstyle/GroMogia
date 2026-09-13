@@ -131,9 +131,20 @@ export default async function IntegrationsPage() {
       <BotAccessPanel
         deskUrl={`${appUrl()}/api/bots/search-desk`}
         scoutUrl={`${appUrl()}/api/bots/scout`}
+        draftUrl={`${appUrl()}/api/bots/draft`}
+        writeUrl={`${appUrl()}/api/bots/write`}
+        booksUrl={`${appUrl()}/api/bots/books`}
         tokenCount={tokenCount}
         canManage={canManageBots}
       />
+
+      <p className="text-sm text-muted-foreground">
+        Review DRAFTgro, WRITEgro, and BOOKSgro packs on{" "}
+        <Link href="/app/bot-team" className="underline">
+          Bot team
+        </Link>
+        . SEOgro stays on Search desk.
+      </p>
 
       <OpenNextStepLink />
     </div>

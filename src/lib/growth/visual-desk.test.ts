@@ -46,8 +46,8 @@ describe("visual owner dashboard", () => {
     assert.match(panel, /Copy SEOgro handoff URL/);
     assert.doesNotMatch(panel, /SEO Scout/);
     assert.match(bots, /GroovGro talks to the bots/);
-    assert.match(bots, /SEOgro: GET the handoff URL/);
-    assert.match(bots, /DRAFTgro and\s+BOOKSgro/);
+    assert.match(bots, /Each bot: GET its handoff URL/);
+    assert.match(bots, /DRAFTgro, WRITEgro, and BOOKSgro/);
     assert.doesNotMatch(bots, /SEO Scout|Draft Locker/);
   });
 });

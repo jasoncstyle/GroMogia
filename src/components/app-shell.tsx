@@ -7,6 +7,7 @@ import { UserButton } from "@clerk/nextjs";
 import {
   BarChart3,
   Bell,
+  Bot,
   Brain,
   Building2,
   CalendarClock,
@@ -173,6 +174,13 @@ function AppNav({
             onNavigate={onNavigate}
           />
         ))}
+        <NavLink
+          href="/app/bot-team"
+          label="Bot team"
+          icon={Bot}
+          active={pathname.startsWith("/app/bot-team")}
+          onNavigate={onNavigate}
+        />
         <NavLink
           href="/app/settings"
           label="Organization"

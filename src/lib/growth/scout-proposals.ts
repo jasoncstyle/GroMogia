@@ -4,8 +4,8 @@
  * pulled, then writes packs through the handoff. Items stay proposed
  * until the Monday reviewer approves. Only GroovGro may mark shipped,
  * after a real apply. SEOgro does not log into Google, publish, or set
- * shipped. DRAFTgro and BOOKSgro handoffs are later. Paste is a sample
- * of the live API, not the product.
+ * shipped. DRAFTgro, WRITEgro, and BOOKSgro have their own handoffs.
+ * Paste is a sample of the live API, not the product.
  */
 
 export const SCOUT_SOURCE_GSC = "gsc";
@@ -99,31 +99,14 @@ export const SCOUT_WALLS = [
   "Do not publish, patch a live page, or change a sitemap or robots file.",
   "Return a proposal pack only. Never set status to shipped.",
   "Do not invent metrics, rankings, or backlinks that are not in this payload.",
-  "Do not write social posts, newsletters, or ads. That is DRAFTgro, later.",
-  "Do not categorize books or move money. That is BOOKSgro, later.",
+  "Do not write social posts, newsletters, or ads. That is DRAFTgro.",
+  "Do not write long-form page copy. That is WRITEgro.",
+  "Do not categorize books or move money. That is BOOKSgro.",
   "One property per pack. Do not mix brands.",
   "POST the proposal pack back to GroovGro. Do not ask Jason to carry the file.",
 ] as const;
 
-export function describeBotTeam() {
-  return {
-    seogro: {
-      seat: "SEOgro",
-      status: "live",
-      role: "SEO analyst. Read GroovGro payloads. Return proposed packs.",
-    },
-    draftgro: {
-      seat: "DRAFTgro",
-      status: "later",
-      role: "Draft social, newsletters, and reel scripts. Do not send.",
-    },
-    booksgro: {
-      seat: "BOOKSgro",
-      status: "later",
-      role: "QuickBooks questions and simple reports. Do not move money.",
-    },
-  };
-}
+export { describeBotTeam } from "@/lib/growth/bot-team";
 
 export function describeScoutHandoff(): {
   read: string

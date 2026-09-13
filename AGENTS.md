@@ -4,7 +4,7 @@ These rules apply to every Cloud Agent and every human working in this repositor
 
 Product intent: [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) (V2). V1 brief: [docs/MASTER_BRIEF_V1.md](docs/MASTER_BRIEF_V1.md).  
 Approved architecture (until superseded): [docs/phase-0/](docs/phase-0/) plus [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).  
-Bot team: [docs/v2/BOT_TEAM.md](docs/v2/BOT_TEAM.md) — **SEOgro**, **DRAFTgro**, **BOOKSgro**. Discard SEO Scout, Draft Locker, and Books.  
+Bot team: [docs/v2/BOT_TEAM.md](docs/v2/BOT_TEAM.md) — **SEOgro**, **DRAFTgro**, **WRITEgro**, **BOOKSgro**. Discard SEO Scout, Draft Locker, and Books.  
 Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
 
 The product is **GroovGro** (domain groovgro.com). The GitHub repository may still be named GroMogia until it is renamed on GitHub.

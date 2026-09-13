@@ -1783,6 +1783,54 @@ export const seoProposalItems = pgTable(
   ],
 );
 
+export const botProposalPacks = pgTable(
+  "bot_proposal_packs",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    seat: text("seat").notNull(),
+    property: text("property").notNull(),
+    source: text("source").notNull().default(""),
+    sourceRange: text("source_range").notNull().default(""),
+    createdBy: uuid("created_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    index("bot_proposal_packs_org_idx").on(table.organizationId),
+    index("bot_proposal_packs_org_seat_idx").on(table.organizationId, table.seat),
+  ],
+);
+
+export const botProposalItems = pgTable(
+  "bot_proposal_items",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    packId: uuid("pack_id")
+      .notNull()
+      .references(() => botProposalPacks.id, { onDelete: "cascade" }),
+    externalId: text("external_id").notNull(),
+    type: text("type").notNull(),
+    priority: integer("priority").notNull().default(50),
+    evidence: text("evidence").notNull(),
+    draft: text("draft").notNull().default(""),
+    expectedEffect: text("expected_effect").notNull().default(""),
+    status: text("status").notNull().default("proposed"),
+    shippedAt: timestamp("shipped_at", { withTimezone: true }),
+    createdBy: uuid("created_by").references(() => users.id),
+    decidedBy: uuid("decided_by").references(() => users.id),
+    ...timestamps,
+  },
+  (table) => [
+    index("bot_proposal_items_org_idx").on(table.organizationId),
+    index("bot_proposal_items_pack_idx").on(table.packId),
+  ],
+);
+
 export const botAccessTokens = pgTable(
   "bot_access_tokens",
   {
