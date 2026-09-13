@@ -21,6 +21,7 @@ export const KNOWN_PROVIDERS = [
   { key: "stripe", name: "Stripe", capabilities: ["payments", "bookings"] },
   { key: "resend", name: "Resend", capabilities: ["email"] },
   { key: "wordpress", name: "WordPress / SiteGround", capabilities: ["website"] },
-  { key: "google", name: "Google", capabilities: ["analytics", "ads", "search"] },
+  { key: "google", name: "Google", capabilities: ["search"] },
+  { key: "google_analytics", name: "Google Analytics", capabilities: ["analytics"] },
   { key: "meta", name: "Meta", capabilities: ["ads", "social"] },
 ] as const;

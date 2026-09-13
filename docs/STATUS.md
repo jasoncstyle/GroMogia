@@ -21,6 +21,8 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Execute stays off until that authorization exists and the adapter is turned on.
 
+**GA4 (this branch):** GroovGro can connect Google Analytics read-only. Same Google Cloud app as Search Console, separate sign-in and token. Stores sessions, landing pages, and sources for 28 days. Ads stay off. SEOgro does not read this snapshot yet. See [phase-6/USER_SETUP.md](phase-6/USER_SETUP.md).
+
 **Bot team (this branch):** GroovGro talks to **SEOgro**, **DRAFTgro**, and **WRITEgro**. Same desk token. Handoffs: `/api/bots/scout`, `/draft`, `/write`. Packs land as proposed. None send or publish. **BOOKSgro waits** — money work is later, and GroovGro will not send payment copies or take a books pack. Review on Search desk (SEOgro) and Bot team (DRAFTgro and WRITEgro). See [v2/BOT_TEAM.md](v2/BOT_TEAM.md).
 
 **Business switcher (this branch):** An owner who belongs to more than one organization can switch the whole workspace from the business name in the sidebar (and the phone menu). GroovGro remembers the last business in a cookie. One business is open at a time. Desk tokens stay per business and can be added later.

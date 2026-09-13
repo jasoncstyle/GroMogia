@@ -192,6 +192,7 @@ Every new feature should, when possible, produce: an insight, an opportunity sto
 - Goals, Growth Plans, Next step, Intelligence, weekly / monthly review, Decision History, what changed
 - SEO **page** checks and homepage SEO copy drafts the owner approves (they do not edit the connected live site)
 - Search Console **read-only** snapshots: totals, top queries, top pages
+- Google Analytics (GA4) **read-only** snapshots: sessions, top landing pages, top sources. Separate Google connect from Search Console. Ads stay off. SEOgro does not read this snapshot yet.
 - Keyword model and history from those stored Search Console queries, with a conservative estimate rank (no vendor volume)
 - Owner-entered competitor notes for queries the owner already sees (no lookup, scrape, or SERP vendor)
 - Owner-named competitor websites: GroovGro can read that homepage and a few public pages on the same site, then store how they sell, how they market, and how we might compete. If the host blocks GroovGro’s server, it can read the same named URL through a public page reader, or the owner can paste the page. The owner can run a suggested search themselves and save a site they found. SEO can compare those stored looks to what this business sells, and name topics those sites show that GroovGro has not read on this business’s pages. The owner can save what they will do, including from a competitor page topic (no Google scrape, no copy onto a live site, no new page, GroovGro does not do that work, search discovery adapter off)
@@ -352,7 +353,7 @@ Current product: **LEVEL 1 Observe · LEVEL 2 Recommend · LEVEL 3 Draft · owne
 
 High-impact or hard-to-reverse actions stay approval-gated unless the owner explicitly authorizes them.
 
-Future third-party capabilities use adapters, not core `if (vendor === …)` logic: keyword data, SERP, AI visibility, CMS publish, ads, analytics. Search Console already exists as a read-only Google adapter.
+Future third-party capabilities use adapters, not core `if (vendor === …)` logic: keyword data, SERP, AI visibility, CMS publish, ads, analytics. Search Console and GA4 already exist as read-only Google adapters.
 
 Variable API cost is an architecture requirement: caching, batching, scheduled/weekly jobs, priority-query scans, org usage limits, provider rate limits, token budgets, deduplication, retries, and skip re-analysis when evidence has not changed. Do not assume unlimited AI calls.
 

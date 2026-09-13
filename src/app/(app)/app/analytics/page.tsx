@@ -1,9 +1,11 @@
 import Link from "next/link";
 
 import { getAppSession } from "@/lib/auth/session";
+import { getGa4PageData, ga4Notice } from "@/lib/ga4/query";
 import { getGrowthSnapshot } from "@/lib/growth/queries";
 import { formatMoney } from "@/lib/money";
 import { getDashboardSnapshot } from "@/lib/phase2/queries";
+import { Ga4Panel } from "@/components/ga4-panel";
 import { GoalShareNote } from "@/components/goal-share-note";
 import {
   Card,
@@ -14,10 +16,18 @@ import {
 } from "@/components/ui/card";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
 
-export default async function AnalyticsPage() {
+export default async function AnalyticsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ ga4?: string; error?: string }>
+}) {
+  const params = await searchParams;
   const session = await getAppSession();
   const snapshot = session.organizationId
     ? await getDashboardSnapshot(session.organizationId)
+    : null;
+  const ga4 = session.organizationId
+    ? await getGa4PageData(session.organizationId)
     : null;
   const growth = session.organizationId
     ? await getGrowthSnapshot(session.organizationId)
@@ -29,10 +39,10 @@ export default async function AnalyticsPage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Analytics</h1>
         <p className="text-muted-foreground">
-          Basic outcomes from connected data. Open Marketing for campaign →
-          lead → customer → revenue, including the share name. Open Next step
-          to read which share moved the Goal number. GroovGro will not buy
-          ads.
+          Basic outcomes from connected data, plus a read-only GA4 snapshot
+          when you connect it. Open Marketing for campaign → lead → customer →
+          revenue, including the share name. Open Next step to read which
+          share moved the Goal number. GroovGro will not buy ads.
         </p>
       </div>
 
@@ -40,6 +50,16 @@ export default async function AnalyticsPage() {
         <p className="text-sm text-muted-foreground">Sign in to see analytics.</p>
       ) : (
         <>
+          {ga4 ? (
+            <Ga4Panel
+              analytics={ga4}
+              notice={ga4Notice(params.ga4, params.error)}
+              canManage={
+                session.permissions.includes("manage_seo") ||
+                session.permissions.includes("manage_integrations")
+              }
+            />
+          ) : null}
           <div className="grid gap-3 sm:grid-cols-3">
             <Card>
               <CardHeader>
