@@ -425,4 +425,12 @@ export async function ensureSchema(): Promise<void> {
   if (!botAccessTable[0]?.name) {
     await applyMigration(sql, "0042_bot_access_tokens.sql");
   }
+
+  const proposalPacksTable = (await sql.query(
+    "select to_regclass('public.seo_proposal_packs') as name",
+  )) as RegistryRow[];
+
+  if (!proposalPacksTable[0]?.name) {
+    await applyMigration(sql, "0043_seo_proposal_packs.sql");
+  }
 }
