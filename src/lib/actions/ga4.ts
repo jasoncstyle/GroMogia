@@ -46,7 +46,10 @@ export async function syncGa4(_formData?: FormData): Promise<ActionResult> {
       throw new Error("You do not have permission to refresh Google Analytics.");
     }
     try {
-      const snapshot = await refreshGa4ForOrganization(session);
+      const snapshot = await refreshGa4ForOrganization({
+        organizationId: session.organizationId,
+        userId: session.userId,
+      });
       return snapshot
         ? "Analytics numbers saved. GroovGro did not change the website."
         : "Pick the GA4 property that matches this business, then refresh.";
@@ -79,7 +82,10 @@ export async function selectGa4Property(formData: FormData): Promise<ActionResul
       propertyId,
       propertyName: chosen?.displayName ?? current.propertyName ?? propertyId,
     });
-    await refreshGa4ForOrganization(session);
+    await refreshGa4ForOrganization({
+      organizationId: session.organizationId,
+      userId: session.userId,
+    });
     return "Analytics property saved. GroovGro did not change the website.";
   });
 }
@@ -158,7 +164,7 @@ export async function completeGa4OAuth(input: {
     await refreshGa4ForOrganization({
       organizationId: input.organizationId,
       userId: input.userId,
-    } as OrgSession);
+    });
     return "/app/analytics?ga4=connected";
   }
   if (match.candidates.length > 0) {
@@ -167,14 +173,15 @@ export async function completeGa4OAuth(input: {
   return "/app/analytics?ga4=missing";
 }
 
-async function refreshGa4ForOrganization(
-  session: Pick<OrgSession, "organizationId" | "userId">,
-) {
+export async function refreshGa4ForOrganization(input: {
+  organizationId: string
+  userId?: string | null
+}) {
   const config = googleAnalyticsOAuthConfig();
   if (!config) {
     throw new Error("Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel, then redeploy.");
   }
-  const secret = await readGa4Secret(session.organizationId);
+  const secret = await readGa4Secret(input.organizationId);
   if (!secret?.refreshToken) {
     throw new Error("Connect Google Analytics first.");
   }
@@ -185,7 +192,7 @@ async function refreshGa4ForOrganization(
   const [website] = await db
     .select()
     .from(websites)
-    .where(eq(websites.organizationId, session.organizationId))
+    .where(eq(websites.organizationId, input.organizationId))
     .limit(1);
 
   let propertyId = secret.propertyId;
@@ -198,7 +205,7 @@ async function refreshGa4ForOrganization(
     propertyId = match.matched?.propertyId;
     propertyName = match.matched?.displayName;
     candidates = match.candidates;
-    await writeGa4Secret(session.organizationId, {
+    await writeGa4Secret(input.organizationId, {
       ...secret,
       propertyId,
       propertyName,
@@ -219,7 +226,7 @@ async function refreshGa4ForOrganization(
     } satisfies Ga4PropertyChoice);
   const snapshot = await fetchGa4Snapshot(accessToken, chosen);
   await db.insert(ga4Snapshots).values({
-    organizationId: session.organizationId,
+    organizationId: input.organizationId,
     propertyId: snapshot.propertyId,
     propertyName: snapshot.propertyName,
     startDate: snapshot.startDate,
@@ -227,21 +234,22 @@ async function refreshGa4ForOrganization(
     totals: snapshot.totals,
     topPages: snapshot.topPages,
     topSources: snapshot.topSources,
-    createdBy: session.userId,
+    createdBy: input.userId ?? null,
   });
-  await upsertGa4Connection(session.organizationId, {
+  await upsertGa4Connection(input.organizationId, {
     status: "connected",
     lastError: null,
     lastSyncAt: new Date(),
   });
   await recordAudit({
-    organizationId: session.organizationId,
-    actorUserId: session.userId,
+    organizationId: input.organizationId,
+    actorUserId: input.userId ?? null,
     action: "analytics.ga4_synced",
     targetType: "ga4_snapshot",
     metadata: {
       propertyId: snapshot.propertyId,
       sessions: snapshot.totals.sessions,
+      via: input.userId ? "owner" : "schedule",
     },
   });
   revalidateGa4();

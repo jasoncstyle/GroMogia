@@ -1,5 +1,6 @@
 import { connectStripe, disconnectStripe, syncStripePayments } from "@/lib/actions/stripe";
 import { SaveButton, SaveForm } from "@/components/save-form";
+import { TaskScheduleForm } from "@/components/task-schedule-form";
 
 export function StripeReadCopyPanel({
   configured,
@@ -61,6 +62,11 @@ export function StripeReadCopyPanel({
       ) : null}
       {lastError ? (
         <p className="w-full text-sm text-destructive">{lastError}</p>
+      ) : null}
+      {showSync && connected ? (
+        <div className="w-full">
+          <TaskScheduleForm taskKey="stripe.sync" canManage={canManage} />
+        </div>
       ) : null}
     </div>
   );

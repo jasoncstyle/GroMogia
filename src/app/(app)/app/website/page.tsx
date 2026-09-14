@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import Link from "next/link";
 
+import { findWebsitePages } from "@/lib/actions/growth";
 import { saveWebsiteConnection } from "@/lib/actions/website";
 import { getAppSession } from "@/lib/auth/session";
 import { getDb } from "@/lib/db";
@@ -15,6 +16,7 @@ import { resolveOrganizationSlug } from "@/lib/org";
 import { CopyLink } from "@/components/copy-link";
 import { SaveButton, SaveForm } from "@/components/save-form";
 import { StatusAlertList } from "@/components/status-alert";
+import { TaskScheduleForm } from "@/components/task-schedule-form";
 import { TrackingSnippet } from "@/components/tracking-snippet";
 import { WebsiteUpdateExpectation } from "@/components/website-update-expectation";
 import { OpenNextStepLink } from "@/components/open-next-step-link";
@@ -147,6 +149,14 @@ export default async function WebsitePage() {
               review. GroovGro does not change the live site.
             </CardDescription>
           </CardHeader>
+          <CardContent className="space-y-4">
+            <SaveForm action={findWebsitePages} successMessage="Pages found">
+              <SaveButton type="submit" pendingLabel="Finding pages…">
+                Find pages
+              </SaveButton>
+            </SaveForm>
+            <TaskScheduleForm taskKey="website.read" />
+          </CardContent>
         </Card>
       ) : null}
 

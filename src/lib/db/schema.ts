@@ -1907,3 +1907,32 @@ export const evidencePolicies = pgTable(
   ],
 );
 
+export const SCHEDULE_FREQUENCY_OFF = "off";
+export const SCHEDULE_FREQUENCY_DAILY = "daily";
+export const SCHEDULE_FREQUENCY_WEEKLY = "weekly";
+
+export const scheduledJobs = pgTable(
+  "scheduled_jobs",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    taskKey: text("task_key").notNull(),
+    frequency: text("frequency").notNull().default("off"),
+    lastRunAt: timestamp("last_run_at", { withTimezone: true }),
+    nextRunAt: timestamp("next_run_at", { withTimezone: true }),
+    lastStatus: text("last_status"),
+    lastError: text("last_error"),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("scheduled_jobs_org_task_idx").on(
+      table.organizationId,
+      table.taskKey,
+    ),
+    index("scheduled_jobs_due_idx").on(table.nextRunAt),
+    index("scheduled_jobs_org_idx").on(table.organizationId),
+  ],
+);
+

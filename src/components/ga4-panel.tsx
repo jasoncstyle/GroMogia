@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { TaskScheduleForm } from "@/components/task-schedule-form";
 
 type Ga4State = Awaited<ReturnType<typeof getGa4PageData>>;
 
@@ -137,6 +138,9 @@ export function Ga4Panel({
               </SaveButton>
             </SaveForm>
           </div>
+        ) : null}
+        {analytics.connected ? (
+          <TaskScheduleForm taskKey="ga4.refresh" canManage={canManage} />
         ) : null}
       </CardContent>
     </Card>

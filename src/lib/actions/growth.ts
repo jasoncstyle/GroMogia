@@ -1035,42 +1035,57 @@ async function loadWebsiteDiscoveryPages(
   return { pages, note };
 }
 
+export async function findWebsitePagesForOrganization(input: {
+  organizationId: string
+  userId?: string | null
+}): Promise<string> {
+  const db = getDb();
+  if (!db) throw new Error("Database is not configured");
+  const [website] = await db
+    .select()
+    .from(websites)
+    .where(eq(websites.organizationId, input.organizationId))
+    .limit(1);
+  if (!website?.publicUrl) {
+    throw new Error("Save a website address first.");
+  }
+  const home = isSafePublicHttpUrl(website.publicUrl);
+  if (!home) {
+    throw new Error("The saved website address is not a public page GroovGro can open.");
+  }
+
+  const crawled = await crawlConnectedWebsite(home.toString(), fetchPublicText);
+  const incoming = crawled.pages.map((page) =>
+    discoveredPageFromExtract(page, home.origin, "crawl"),
+  );
+  await persistDiscoveredPages(db, input.organizationId, website.id, incoming);
+
+  await recordAudit({
+    organizationId: input.organizationId,
+    actorUserId: input.userId ?? null,
+    action: "website_pages.found",
+    targetType: "website",
+    targetId: website.id,
+    metadata: {
+      pageCount: crawled.pages.length,
+      via: input.userId ? "owner" : "schedule",
+    },
+  });
+  revalidateGrowth();
+
+  if (crawled.pages.length === 0) return crawled.note;
+  return `Found ${crawled.pages.length} pages. Check the important ones, then Review connected data.`;
+}
+
 export async function findWebsitePages(
   _formData?: FormData,
 ): Promise<ActionResult> {
   return runAction("Could not find website pages.", async () => {
-    const { session, db } = await requireWebsitePageEditor();
-    const [website] = await db
-      .select()
-      .from(websites)
-      .where(eq(websites.organizationId, session.organizationId))
-      .limit(1);
-    if (!website?.publicUrl) {
-      throw new Error("Save a website address first.");
-    }
-    const home = isSafePublicHttpUrl(website.publicUrl);
-    if (!home) {
-      throw new Error("The saved website address is not a public page GroovGro can open.");
-    }
-
-    const crawled = await crawlConnectedWebsite(home.toString(), fetchPublicText);
-    const incoming = crawled.pages.map((page) =>
-      discoveredPageFromExtract(page, home.origin, "crawl"),
-    );
-    await persistDiscoveredPages(db, session.organizationId, website.id, incoming);
-
-    await recordAudit({
+    const { session } = await requireWebsitePageEditor();
+    return findWebsitePagesForOrganization({
       organizationId: session.organizationId,
-      actorUserId: session.userId,
-      action: "website_pages.found",
-      targetType: "website",
-      targetId: website.id,
-      metadata: { pageCount: crawled.pages.length },
+      userId: session.userId,
     });
-    revalidateGrowth();
-
-    if (crawled.pages.length === 0) return crawled.note;
-    return `Found ${crawled.pages.length} pages. Check the important ones, then Review connected data.`;
   });
 }
 

@@ -100,7 +100,7 @@ You can also start the same connect from **Next step** or **Integrations** → G
 - **Redirect URI mismatch:** In Google Cloud, the redirect URI must match exactly, including `https` and `/api/google/callback`.
 - **Access blocked / app is in testing:** Add your Google email as a test user, then try again.
 - **No property matched:** The Google account you picked must already have that website in Search Console.
-- **Still no numbers:** New properties can take a few days. Click **Refresh Search Console** later.
+- **Still no numbers:** New properties can take a few days. Click **Refresh Search Console** later. Or set **Every day** / **Every week** under Refresh on a schedule (also on Organization → Refresh schedules). The button stays.
 
 Disconnect is on the same SEO card. Disconnect revokes Google access for GroovGro. It does not change Search Console itself or the website.
 
@@ -164,7 +164,7 @@ You do **not** need new Vercel keys. `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRE
 5. Choose the Google account that already sees that business’s GA4 property.
 6. Allow the **read-only** permission. GroovGro should not ask for Ads.
 7. If GroovGro asks you to pick a property, choose the one for this website, then save.
-8. Click **Refresh Analytics** if numbers are not there yet.
+8. Click **Refresh Analytics** if numbers are not there yet. You can also set **Every day** or **Every week** on that card. The button stays.
 9. You should see sessions, landing pages, and sources for about 28 days. That is a copy. GroovGro does not change the website.
 
 Disconnect is on the same card. It does not change Google Analytics itself.

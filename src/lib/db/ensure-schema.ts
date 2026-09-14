@@ -449,4 +449,12 @@ export async function ensureSchema(): Promise<void> {
   if (!ga4SnapshotsTable[0]?.name) {
     await applyMigration(sql, "0045_ga4_snapshots.sql");
   }
+
+  const scheduledJobsTable = (await sql.query(
+    "select to_regclass('public.scheduled_jobs') as name",
+  )) as RegistryRow[];
+
+  if (!scheduledJobsTable[0]?.name) {
+    await applyMigration(sql, "0046_scheduled_jobs.sql");
+  }
 }

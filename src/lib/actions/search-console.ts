@@ -51,7 +51,10 @@ export async function syncSearchConsole(_formData?: FormData): Promise<ActionRes
       throw new Error("You do not have permission to refresh Search Console.");
     }
     try {
-      const snapshot = await refreshSearchConsoleForOrganization(session);
+      const snapshot = await refreshSearchConsoleForOrganization({
+        organizationId: session.organizationId,
+        userId: session.userId,
+      });
       return snapshot
         ? "Search Console numbers saved. GroovGro did not change the website."
         : "Pick the Search Console property that matches the connected website, then refresh.";
@@ -87,7 +90,10 @@ export async function selectSearchConsoleProperty(
       ...current,
       siteUrl,
     });
-    await refreshSearchConsoleForOrganization(session);
+    await refreshSearchConsoleForOrganization({
+      organizationId: session.organizationId,
+      userId: session.userId,
+    });
     return "Search Console property saved. GroovGro did not change the website.";
   });
 }
@@ -168,7 +174,7 @@ export async function completeGoogleOAuth(input: {
     await refreshSearchConsoleForOrganization({
       organizationId: input.organizationId,
       userId: input.userId,
-    } as OrgSession);
+    });
     return "/app/next-step?gsc=connected";
   }
   if (match.candidates.length > 0) {
@@ -177,14 +183,15 @@ export async function completeGoogleOAuth(input: {
   return "/app/next-step?gsc=missing";
 }
 
-async function refreshSearchConsoleForOrganization(
-  session: Pick<OrgSession, "organizationId" | "userId">,
-) {
+export async function refreshSearchConsoleForOrganization(input: {
+  organizationId: string
+  userId?: string | null
+}) {
   const config = googleOAuthConfig();
   if (!config) {
     throw new Error("Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in Vercel, then redeploy.");
   }
-  const secret = await readGoogleSecret(session.organizationId);
+  const secret = await readGoogleSecret(input.organizationId);
   if (!secret?.refreshToken) {
     throw new Error("Connect Search Console first.");
   }
@@ -195,7 +202,7 @@ async function refreshSearchConsoleForOrganization(
   const [website] = await db
     .select()
     .from(websites)
-    .where(eq(websites.organizationId, session.organizationId))
+    .where(eq(websites.organizationId, input.organizationId))
     .limit(1);
 
   let siteUrl = secret.siteUrl;
@@ -204,7 +211,7 @@ async function refreshSearchConsoleForOrganization(
       ? matchSearchConsoleProperty(website.publicUrl, properties)
       : { matched: null, candidates: properties };
     siteUrl = match.matched ?? undefined;
-    await writeGoogleSecret(session.organizationId, {
+    await writeGoogleSecret(input.organizationId, {
       ...secret,
       siteUrl,
       candidates: match.candidates,
@@ -217,36 +224,37 @@ async function refreshSearchConsoleForOrganization(
 
   const snapshot = await fetchSearchConsoleSnapshot(accessToken, siteUrl);
   await db.insert(searchConsoleSnapshots).values({
-    organizationId: session.organizationId,
+    organizationId: input.organizationId,
     propertyUrl: snapshot.propertyUrl,
     startDate: snapshot.startDate,
     endDate: snapshot.endDate,
     totals: snapshot.totals,
     topQueries: snapshot.topQueries,
     topPages: snapshot.topPages,
-    createdBy: session.userId,
+    createdBy: input.userId ?? null,
   });
   try {
-    await persistSeoGrowthActions(db, session.organizationId);
+    await persistSeoGrowthActions(db, input.organizationId);
   } catch (error) {
     console.error("GroovGro SEO growth action persist failed", {
-      organizationId: session.organizationId,
+      organizationId: input.organizationId,
       message: error instanceof Error ? error.message : "unknown",
     });
   }
-  await upsertGoogleConnection(session.organizationId, {
+  await upsertGoogleConnection(input.organizationId, {
     status: "connected",
     lastError: null,
     lastSyncAt: new Date(),
   });
   await recordAudit({
-    organizationId: session.organizationId,
-    actorUserId: session.userId,
+    organizationId: input.organizationId,
+    actorUserId: input.userId ?? null,
     action: "seo.search_console_synced",
     targetType: "search_console_snapshot",
     metadata: {
       propertyUrl: snapshot.propertyUrl,
       clicks: snapshot.totals.clicks,
+      via: input.userId ? "owner" : "schedule",
     },
   });
   revalidateSearchConsole();
