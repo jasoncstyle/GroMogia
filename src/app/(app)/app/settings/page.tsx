@@ -37,6 +37,18 @@ export default function SettingsPage() {
         </Card>
         <Card>
           <CardHeader>
+            <CardTitle>Refresh schedules</CardTitle>
+            <CardDescription>
+              Choose how often GroovGro pulls Search Console, Analytics, the
+              website, or Stripe copies. Refresh buttons stay on each page.
+            </CardDescription>
+            <Button asChild className="w-fit">
+              <Link href="/app/settings/schedules">Set refresh schedules</Link>
+            </Button>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
             <CardTitle>Business</CardTitle>
             <CardDescription>
               Structured understanding of the organization: model, locations,

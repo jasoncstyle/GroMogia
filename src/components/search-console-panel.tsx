@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { TaskScheduleForm } from "@/components/task-schedule-form";
 import type { getSeoPageData } from "@/lib/phase6/queries";
 
 type SearchConsoleState = Awaited<ReturnType<typeof getSeoPageData>>["searchConsole"];
@@ -173,6 +174,12 @@ export function SearchConsolePanel({
             </SaveButton>
           </SaveForm>
         </div>
+      ) : null}
+      {searchConsole.connected && !embedded ? (
+        <TaskScheduleForm
+          taskKey="search_console.refresh"
+          canManage={canManage}
+        />
       ) : null}
     </>
   );
