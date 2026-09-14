@@ -4,8 +4,10 @@ import { describe, it } from "node:test";
 import { join } from "node:path";
 
 import {
+  nextAvailableSlug,
   pickActiveWorkspace,
   safeAppPath,
+  slugFromBusinessName,
   sortWorkspaces,
 } from "./workspace";
 
@@ -32,6 +34,13 @@ describe("workspace switcher", () => {
     assert.equal(safeAppPath("/login"), "/app");
   });
 
+  it("makes a unique slug from the name the owner types", () => {
+    assert.equal(slugFromBusinessName("Harbor Fitness"), "harbor-fitness");
+    assert.equal(slugFromBusinessName("  Cove's Shop  "), "coves-shop");
+    assert.equal(nextAvailableSlug("Harbor Fitness", ["harbor-fitness"]), "harbor-fitness-2");
+    assert.equal(nextAvailableSlug("Harbor Fitness", []), "harbor-fitness");
+  });
+
   it("switches the whole workspace from the sidebar and does not mix brands", () => {
     const helper = readFileSync(join(process.cwd(), "src/lib/auth/workspace.ts"), "utf8");
     const session = readFileSync(join(process.cwd(), "src/lib/auth/session.ts"), "utf8");
@@ -45,12 +54,28 @@ describe("workspace switcher", () => {
     assert.match(session, /pickActiveWorkspace/);
     assert.match(session, /workspaces/);
     assert.match(session, /existingMemberships\.map/);
+    const addPage = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/settings/new-business/page.tsx"),
+      "utf8",
+    );
+    const settings = readFileSync(
+      join(process.cwd(), "src/app/(app)/app/settings/page.tsx"),
+      "utf8",
+    );
     assert.match(action, /switchWorkspace/);
+    assert.match(action, /createWorkspace/);
     assert.match(action, /You do not belong to that business/);
+    assert.match(action, /workspace.created/);
     assert.doesNotMatch(action, /requestCmsPublish|requestExecute|googleapis/i);
     assert.match(shell, /WorkspaceSwitcher/);
     assert.match(switcher, /Switch business/);
+    assert.match(switcher, /Add a business/);
     assert.match(switcher, /Do not mix brands/);
+    assert.doesNotMatch(switcher, /workspaces\.length <= 1/);
     assert.doesNotMatch(switcher, /myrtle|ocean sailing|seamark/i);
+    assert.match(addPage, /createWorkspace/);
+    assert.match(addPage, /Add a business/);
+    assert.doesNotMatch(addPage, /myrtle|ocean sailing|seamark/i);
+    assert.match(settings, /new-business/);
   });
 });
