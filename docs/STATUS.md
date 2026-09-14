@@ -21,7 +21,15 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 
 GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Execute stays off until that authorization exists and the adapter is turned on.
 
-**GA4 (this branch):** GroovGro can connect Google Analytics read-only. Same Google Cloud app as Search Console, separate sign-in and token. Stores sessions, landing pages, and sources for 28 days. Ads stay off. SEOgro does not read this snapshot yet. See [phase-6/USER_SETUP.md](phase-6/USER_SETUP.md).
+**SEOgro keyword history (this branch):** `GET /api/bots/scout` now includes stored Search Console keyword history and worth-a-look labels. Estimates only. Not Keyword Planner. Not a scrape.
+
+**Owner next — GA4 Cloud setup (do not forget):** Production has the GA4 read-only connect. Before Jason clicks Connect, Google Cloud still needs Analytics Admin API, Analytics Data API, the `analytics.readonly` scope (not Ads), and `/api/google-analytics/callback` next to the Search Console callback. Then connect one business at a time on Analytics or Integrations. GroovGro only reads. It does not change the website. Click-by-click: [phase-6/USER_SETUP.md](phase-6/USER_SETUP.md) section G.
+
+**Do not install OpenSERP** or any self-hosted “free SERP API.” That is still scraping Google. Licensed SERP adapter only, and only when Jason asks by name.
+
+**Do not connect Google Ads / Keyword Planner.** Search Console remains the keyword store. An owner-pasted Planner export can wait.
+
+**GA4 (on main):** GroovGro can connect Google Analytics read-only. Same Google Cloud app as Search Console, separate sign-in and token. Stores sessions, landing pages, and sources for 28 days. Ads stay off. SEOgro does not read this snapshot yet. See [phase-6/USER_SETUP.md](phase-6/USER_SETUP.md).
 
 **Bot team (this branch):** GroovGro talks to **SEOgro**, **DRAFTgro**, and **WRITEgro**. Same desk token. Handoffs: `/api/bots/scout`, `/draft`, `/write`. Packs land as proposed. None send or publish. **BOOKSgro waits** — money work is later, and GroovGro will not send payment copies or take a books pack. Review on Search desk (SEOgro) and Bot team (DRAFTgro and WRITEgro). See [v2/BOT_TEAM.md](v2/BOT_TEAM.md).
 

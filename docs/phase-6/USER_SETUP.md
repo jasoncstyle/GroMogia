@@ -117,17 +117,62 @@ Keyword history is stored from Search Console. AI Visibility owner notes and a q
 
 ## G. Connect Google Analytics (GA4)
 
-Same Google Cloud app. Separate connect. Read-only. Ads stay off.
+Same Google Cloud app as Search Console. **Separate** connect in GroovGro. Read-only. Ads stay off. Do this **one business at a time**. The Google account must already see that business’s GA4 property.
 
-1. In Google Cloud **Library**, enable **Google Analytics Admin API** and **Google Analytics Data API**.
-2. On the OAuth consent screen, add the scope that ends with `analytics.readonly`. Do not add Ads.
-3. Add the `/api/google-analytics/callback` redirect URIs above if they are not there yet.
-4. The Google account you pick must already see the GA4 property for this website.
-5. In GroovGro, open **Analytics** or **Integrations** → Google Analytics → **Connect Google Analytics**.
-6. Allow the read-only permission. Pick the property if GroovGro asks.
-7. You should see sessions, landing pages, and sources for the last 28 days. That is a copy. GroovGro does not change the website.
+Do not paste Client IDs, Client secrets, or Google tokens into chat.
+
+### G1. Turn on the two Analytics APIs
+
+1. Open https://console.cloud.google.com and sign in.
+2. Top bar: open the project picker and click the **GroovGro** project (the same one used for Search Console).
+3. Left menu (☰) → **APIs & Services** → **Library**.
+4. Search box: `Google Analytics Admin API`.
+5. Click **Google Analytics Admin API** → **Enable**. Wait until it says enabled.
+6. Back to **Library**. Search: `Google Analytics Data API`.
+7. Click **Google Analytics Data API** → **Enable**. Wait until it says enabled.
+
+### G2. Add the read-only Analytics scope (not Ads)
+
+1. Left menu → **APIs & Services** → **OAuth consent screen** (or **Google Auth Platform** → **Data access**).
+2. Open **Scopes** / **Data access**.
+3. Add the scope that ends with `analytics.readonly`.
+4. Do **not** add Ads, AdWords, or any write Analytics scope.
+5. Save.
+6. Under **Test users** / **Audience**, make sure the Google email that owns GA4 for this website is listed.
+
+### G3. Add the Analytics callback addresses
+
+1. Left menu → **APIs & Services** → **Credentials** (or **Google Auth Platform** → **Clients**).
+2. Open the **GroovGro web** client.
+3. **Authorized redirect URIs** — add these if they are missing (exact, including `https`):
+   - `https://www.groovgro.com/api/google-analytics/callback`
+   - `https://groovgro.com/api/google-analytics/callback`
+   - `https://gro-mogia.vercel.app/api/google-analytics/callback`
+4. Keep the existing Search Console `/api/google/callback` URIs. Do not remove them.
+5. Save.
+
+You do **not** need new Vercel keys. `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` stay the same.
+
+### G4. Connect it inside GroovGro
+
+1. Open https://www.groovgro.com/app and sign in.
+2. Switch to the **one** business whose GA4 you are connecting.
+3. Open **Analytics** (or **Integrations** → Google Analytics).
+4. Click **Connect Google Analytics**.
+5. Choose the Google account that already sees that business’s GA4 property.
+6. Allow the **read-only** permission. GroovGro should not ask for Ads.
+7. If GroovGro asks you to pick a property, choose the one for this website, then save.
+8. Click **Refresh Analytics** if numbers are not there yet.
+9. You should see sessions, landing pages, and sources for about 28 days. That is a copy. GroovGro does not change the website.
 
 Disconnect is on the same card. It does not change Google Analytics itself.
 
 SEOgro does not read this GA4 snapshot yet. Search Console stays the keyword source.
+
+### If something fails
+
+- **Redirect URI mismatch:** the URI must match exactly, including `https` and `/api/google-analytics/callback`.
+- **Access blocked / app is in testing:** add your Google email as a test user, then try again.
+- **No properties:** that Google account must already have a GA4 property for this website.
+- **API not enabled:** both Admin API and Data API must show Enabled on the GroovGro Cloud project.
 

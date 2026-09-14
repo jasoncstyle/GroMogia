@@ -3,6 +3,7 @@ import {
   SCOUT_STATUS_APPROVED,
   SCOUT_STATUS_PROPOSED,
   type ScoutGscExport,
+  type ScoutKeywordExport,
   type ScoutPublicPage,
 } from "@/lib/growth/scout-proposals";
 import type { ScoutProposalRow } from "@/lib/growth/scout-proposal-query";
@@ -21,6 +22,7 @@ export function ScoutProposalPanel({
   items,
   gscExport,
   publicPages = [],
+  keywords = null,
   handoffUrl,
   canManage = false,
 }: {
@@ -28,12 +30,13 @@ export function ScoutProposalPanel({
   items: ScoutProposalRow[]
   gscExport: ScoutGscExport | null
   publicPages?: ScoutPublicPage[]
+  keywords?: ScoutKeywordExport | null
   handoffUrl: string
   canManage?: boolean
 }) {
   const exportText =
-    gscExport || publicPages.length > 0
-      ? JSON.stringify({ gsc: gscExport, publicPages }, null, 2)
+    gscExport || publicPages.length > 0 || (keywords?.keywords.length ?? 0) > 0
+      ? JSON.stringify({ gsc: gscExport, publicPages, keywords }, null, 2)
       : "";
   const open = items.filter(
     (item) =>
@@ -58,7 +61,8 @@ export function ScoutProposalPanel({
         </div>
         <p className="text-sm text-muted-foreground">
           SEOgro uses the desk token: GET this URL to read stored Search
-          Console and public URL inventory, then POST the proposal pack back.
+          Console, keyword history, and public URL inventory, then POST the
+          proposal pack back.
           One property per pack. Do not give SEOgro a Google login.
         </p>
         {exportText ? (

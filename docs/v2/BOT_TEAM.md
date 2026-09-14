@@ -24,7 +24,7 @@ Pipe + store. Same desk token for every live seat.
 
 | Seat | Read / write |
 |---|---|
-| SEOgro | `GET/POST /api/bots/scout` |
+| SEOgro | `GET/POST /api/bots/scout` (includes stored Search Console, keyword history / worth-a-look labels, and public URL inventory) |
 | DRAFTgro | `GET/POST /api/bots/draft` |
 | WRITEgro | `GET/POST /api/bots/write` |
 | BOOKSgro | Parked. `GET/POST /api/bots/books` returns 403. GroovGro does not send payment copies. |
@@ -36,6 +36,7 @@ GroovGro does not call the bots yet. Each bot GETs its payload and POSTs a pack 
 - Keep Jason in the data path as a feature
 - Ask a bot to publish, send, or apply
 - Let SEOgro log into Google
+- Install OpenSERP or scrape Google / Bing search results
 - Let DRAFTgro send
 - Let WRITEgro publish
 - Turn on BOOKSgro or send money facts before the owner asks
