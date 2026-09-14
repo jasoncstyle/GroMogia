@@ -39,7 +39,7 @@ describe("refresh scheduler", () => {
     const catalog = readFileSync(join(process.cwd(), "src/lib/jobs/catalog.ts"), "utf8");
     const run = readFileSync(join(process.cwd(), "src/lib/jobs/run.ts"), "utf8");
     const cron = readFileSync(join(process.cwd(), "src/app/api/cron/jobs/route.ts"), "utf8");
-    const vercel = readFileSync(join(process.cwd(), "vercel.json"), "utf8");
+    const vercel = readFileSync(join(process.cwd(), "vercel.ts"), "utf8");
     const panel = readFileSync(
       join(process.cwd(), "src/components/search-console-panel.tsx"),
       "utf8",
@@ -56,6 +56,7 @@ describe("refresh scheduler", () => {
     assert.match(cron, /CRON_SECRET/);
     assert.match(cron, /runDueScheduledJobs/);
     assert.match(vercel, /\/api\/cron\/jobs/);
+    assert.doesNotMatch(vercel, /vercel\.json/);
     assert.match(panel, /Refresh Search Console/);
     assert.match(panel, /search_console.refresh/);
     assert.match(ga4, /Refresh Analytics/);
