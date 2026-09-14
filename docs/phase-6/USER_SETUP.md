@@ -133,12 +133,14 @@ Do not paste Client IDs, Client secrets, or Google tokens into chat.
 
 ### G2. Add the read-only Analytics scope (not Ads)
 
-1. Left menu → **APIs & Services** → **OAuth consent screen** (or **Google Auth Platform** → **Data access**).
-2. Open **Scopes** / **Data access**.
-3. Add the scope that ends with `analytics.readonly`.
+Google Auth Platform’s **Overview** has no Scopes button. Use **Data access** in the left sidebar.
+
+1. Left sidebar → **Google Auth Platform** → **Data access** (under Clients).
+2. Click **Add or remove scopes**.
+3. Search `analytics.readonly` and check that one. Google may label it “See and download your Google Analytics data.”
 4. Do **not** add Ads, AdWords, or any write Analytics scope.
-5. Save.
-6. Under **Test users** / **Audience**, make sure the Google email that owns GA4 for this website is listed.
+5. Click **Update**, then **Save**.
+6. Left sidebar → **Audience**. Keep the app in **Testing**. Make sure the Google email that owns GA4 for this website is a test user. Do not publish the app.
 
 ### G3. Add the Analytics callback addresses
 
@@ -156,7 +158,7 @@ You do **not** need new Vercel keys. `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRE
 ### G4. Connect it inside GroovGro
 
 1. Open https://www.groovgro.com/app and sign in.
-2. Switch to the **one** business whose GA4 you are connecting.
+2. Switch to the **one** business whose GA4 you are connecting. Click the business name under GroovGro in the sidebar. If that business is not in the list yet, click **Add a business**, type its name (and website if you have it), then connect Analytics from that workspace.
 3. Open **Analytics** (or **Integrations** → Google Analytics).
 4. Click **Connect Google Analytics**.
 5. Choose the Google account that already sees that business’s GA4 property.

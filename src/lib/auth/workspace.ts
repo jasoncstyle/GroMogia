@@ -38,6 +38,31 @@ export function cleanWorkspaceId(value: unknown): string {
   return cleanId(value);
 }
 
+export function cleanBusinessName(value: unknown): string {
+  return String(value ?? "").replace(/\s+/g, " ").trim().slice(0, 80);
+}
+
+export function slugFromBusinessName(name: string): string {
+  const slug = cleanBusinessName(name)
+    .toLowerCase()
+    .replace(/['’]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 48);
+  return slug || "business";
+}
+
+export function nextAvailableSlug(base: string, taken: readonly string[]): string {
+  const used = new Set(taken.map((slug) => slug.toLowerCase()));
+  const root = slugFromBusinessName(base);
+  if (!used.has(root)) return root;
+  for (let index = 2; index < 1000; index += 1) {
+    const candidate = `${root}-${index}`.slice(0, 60);
+    if (!used.has(candidate)) return candidate;
+  }
+  return `${root}-${Date.now().toString(36)}`.slice(0, 60);
+}
+
 function cleanId(value: unknown): string {
   const text = String(value ?? "").trim();
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(

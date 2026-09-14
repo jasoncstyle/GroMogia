@@ -17,12 +17,24 @@ export default function SettingsPage() {
           Organization settings
         </h1>
         <p className="text-muted-foreground">
-          Central settings other modules should reuse, not copy. If you belong
-          to more than one business, switch from the name in the sidebar. GroovGro
-          opens one business at a time.
+          Central settings other modules should reuse, not copy. Switch
+          businesses from the name under GroovGro in the sidebar, or add
+          another business. GroovGro opens one business at a time.
         </p>
       </div>
       <div className="grid gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle>Another business</CardTitle>
+            <CardDescription>
+              Add a separate organization. GroovGro will open that workspace
+              and keep this one&apos;s data apart.
+            </CardDescription>
+            <Button asChild className="w-fit">
+              <Link href="/app/settings/new-business">Add a business</Link>
+            </Button>
+          </CardHeader>
+        </Card>
         <Card>
           <CardHeader>
             <CardTitle>Business</CardTitle>
