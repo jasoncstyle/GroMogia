@@ -369,4 +369,4 @@ The question remains: **did this help the business grow?**
 
 ## 19. Documentation
 
-Canonical files: this brief, [v2/ARCHITECTURE.md](v2/ARCHITECTURE.md), [STATUS.md](STATUS.md), [AGENTS.md](../AGENTS.md). Phase 0 is **historical** platform planning. Setup guides under `docs/phase-1` through `docs/phase-7` are how-to for services that are already connected. Do not add a second SEO brief.
+Canonical files: this brief, [v2/ARCHITECTURE.md](v2/ARCHITECTURE.md), [STATUS.md](STATUS.md), [REMAINING.md](REMAINING.md), [AGENTS.md](../AGENTS.md). Phase 0 is **historical** platform planning. Setup guides under `docs/phase-1` through `docs/phase-7` are how-to for services that are already connected. Do not add a second SEO brief.
