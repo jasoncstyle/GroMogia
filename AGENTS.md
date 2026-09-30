@@ -2,9 +2,10 @@
 
 These rules apply to every Cloud Agent and every human working in this repository.
 
-Product intent: [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) (V2). V1 brief: [docs/MASTER_BRIEF_V1.md](docs/MASTER_BRIEF_V1.md).  
-Approved architecture (until superseded): [docs/phase-0/](docs/phase-0/) plus [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).  
-Bot team: [docs/v2/BOT_TEAM.md](docs/v2/BOT_TEAM.md) — **SEOgro**, **DRAFTgro**, **WRITEgro** live; **BOOKSgro** later. Discard SEO Scout, Draft Locker, and Books.  
+Product intent: [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) (**V3**). Archived: [docs/MASTER_BRIEF_V2.md](docs/MASTER_BRIEF_V2.md), [docs/MASTER_BRIEF_V1.md](docs/MASTER_BRIEF_V1.md).  
+Phase 0 audit (accept before major V3 UI): [docs/v2/PHASE_0_AUDIT.md](docs/v2/PHASE_0_AUDIT.md). Binding fences: [docs/v2/V2_AMENDMENTS.md](docs/v2/V2_AMENDMENTS.md).  
+V2.2 backend notes: [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md). Historical platform plan: [docs/phase-0/](docs/phase-0/).  
+Internal workers: [docs/v2/BOT_TEAM.md](docs/v2/BOT_TEAM.md) — SEOgro, DRAFTgro, WRITEgro live; BOOKSgro later. Owner screens hide bot names. Discard SEO Scout, Draft Locker, and Books.  
 Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
 
 The product is **GroovGro** (domain groovgro.com). The GitHub repository may still be named GroMogia until it is renamed on GitHub.
@@ -47,10 +48,13 @@ GroovGro is a business partner. The owner runs day-to-day operations. GroovGro r
 
 ## Phase gate
 
-- Phase 0 architecture is approved in `docs/phase-0/` (historical platform plan). Current product intent is [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) **v2.2**.
-- V2 owner-assistance is on `main`: Business Brain, Offers, Goals, Next step, named shares, SEO checks, Search Console read-only, Brand Voice drafts. See [docs/STATUS.md](docs/STATUS.md) and [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).
-- Keep working V1 features. The optional website builder stays in the app and is **paused** unless Jason asks to resume it. Do not rewrite working features to match a later phase number.
-- SEO Intelligence, Content Engine, and AI Visibility / GEO are an approved **vision expansion**. They extend GroovGro. They are not a second app and not a clone of another SEO product. Status: MASTER_BRIEF §§15–19 and v2/ARCHITECTURE “Expansion”.
+- Current product intent is [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) **V3**. Fences in [docs/v2/V2_AMENDMENTS.md](docs/v2/V2_AMENDMENTS.md) outrank “execute,” “SERP,” or “Playbook” language in the source plan.
+- **Do not begin major V3 UI** (five-screen shell, nav rewrite) until [docs/STATUS.md](docs/STATUS.md) says Phase 0 is accepted. Until then, keep production running and do not add listed-first polish to the old console.
+- Do not wipe Neon, Clerk, or Vercel. Preserve sound backend. Replace confusing owner experience.
+- Owner screens say “GroovGro is working on it.” Do not expose bot names, pack schemas, or workflow nodes on primary screens after the shell ships.
+- Historical Phase 0 platform plan lives in `docs/phase-0/`. V2.2 owner-assistance remains on `main`: Business Brain, Offers, Goals, Next step, named shares, SEO checks, Search Console read-only, Brand Voice drafts. See [docs/STATUS.md](docs/STATUS.md) and [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).
+- Keep working V1 features. The optional website builder stays in the app and is **paused** unless Jason asks to resume it. Do not rewrite working backend features only to match a later phase number.
+- SEO Intelligence, Content Engine, and AI Visibility / GEO remain stored-data modules that feed the Action Engine. They are not a second app. Owner UI for them waits for the V3 shell. Adapters stay off. See [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md) “Expansion” and [docs/v2/V2_AMENDMENTS.md](docs/v2/V2_AMENDMENTS.md).
 - Shared recommendations live on **`growth_actions`**. Do not create `growth_opportunities` unless a later review proves that table cannot hold them.
 - Phase C first slice is implemented: existing Search Console + SEO findings can create recommend-only `growth_actions` for Next step and Intelligence. No new paid API. No content factory. No AI-platform scraping. No live-site edits.
 - Phase B first slice is implemented: `growth_actions` can store title, evidence JSON, confidence, expected impact, and priority. Do not parse `description`. Do not use `priority` to reorder Next step until Jason asks.

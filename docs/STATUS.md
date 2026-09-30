@@ -1,12 +1,29 @@
 # Build status
 
-Last updated: 15 September 2026.
+Last updated: 30 September 2026.
 
-## V1 checkpoint (do not mix with V2)
+## Current phase
 
-GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 / early-build snapshot. Commit `7d4c9be` — *Add background colors to the GroovGro header and footer. (#45)*.
+**V3 Phase 0 — audit written, not yet accepted.**
 
-Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-assistance is on `main`. Do not start new work on the old `cursor/v2-hand-goal-visits-a329` branch.
+Jason’s new master plan is now the product direction: [MASTER_BRIEF.md](MASTER_BRIEF.md) (V3). Read [v2/PHASE_0_AUDIT.md](v2/PHASE_0_AUDIT.md) and [v2/V2_AMENDMENTS.md](v2/V2_AMENDMENTS.md).
+
+**Do not begin major V3 UI coding** (Home / Grow / Work / Results / Business shell, nav rewrite) until this file says Phase 0 is accepted.
+
+Decision waiting on Jason:
+
+1. Keep the data and integrations (no wipe).
+2. Replace the owner surface (five screens; hide bot names).
+3. Keep A3 execute, ads, send, scrape, and live CMS write **off**.
+4. After accept, first slice is the new shell over existing `growth_actions`.
+
+The live app on `main` is still the V2.2 owner-assistance console. Production stays up. Do not add listed-first polish to that console.
+
+V2.2 backend remains in use: Brain, Voice, Goals, Next step, Search Console, GA4, Stripe copies, scheduler, bot pipe, `growth_actions`. GroovGro does not execute.
+
+## Checkpoints
+
+GitHub tag **`pre-v2-architecture-checkpoint`** on `main` is the last known-good V1 snapshot (`7d4c9be`). V2.2 owner-assistance is on `main`. Archived brief: [MASTER_BRIEF_V2.md](MASTER_BRIEF_V2.md).
 
 **Product name:** GroovGro (formerly GroMogia)  
 **Product domain:** groovgro.com  
@@ -15,11 +32,9 @@ Use that tag to compare, roll back, or see what V2 actually changed. V2 owner-as
 **Vercel project (unchanged until renamed in Vercel):** gro-mogia  
 **GitHub repo (unchanged until renamed on GitHub):** https://github.com/jasoncstyle/GroMogia
 
-## Current phase
+## Still true on the live app
 
-**V2 owner-assistance is on `main`.** The owner can name a share, count a Traffic Goal from visits, name a share next to a typed Goal, match a payment copy on Bookings, and draft or approve a plan on Next step. GroovGro does not execute.
-
-GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. Execute stays off until that authorization exists and the adapter is turned on.
+GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides. Execute stays off until that authorization exists and the adapter is turned on.
 
 **SEOgro keyword history (this branch):** `GET /api/bots/scout` now includes stored Search Console keyword history and worth-a-look labels. Estimates only. Not Keyword Planner. Not a scrape.
 
@@ -37,9 +52,9 @@ GroovGro is a business partner. The owner runs day-to-day operations. GroovGro r
 
 **Business switcher (this branch):** The sidebar (and phone menu) always shows the open business. Click it to switch or **Add a business**. GroovGro remembers the last business in a cookie. One business is open at a time. Desk tokens stay per business. Do not hard-code business names.
 
-**Remaining brief and draft groups (this branch):** SEO headings, page copy, and Intelligence can say how many missing-page queries, competitor page topics, planner briefs, workspace drafts, compete moves, citation gaps, suggested links, schema facts, AI-visibility notes, library questions, visibility snapshots, recorded Search Console queries (worth-a-look listed first), competitor notes, channel compares, and before-and-after looks still need the next owner step or are already listed. Mixed lists group remaining work first and count each group. Library questions that still need a snapshot are listed first. The later-review queue and Content planner headings name remaining drafts. An empty later-review queue still names remaining drafts. SEO, the planner, the queue, and Intelligence say remaining drafts are listed first and how many are waiting. Intelligence points at those remaining groups, names listed counts for worth-a-look queries, worth-a-look channel compares, before-and-after looks that moved down, and later-run items, and hides a review after every item already has a brief. The later-run form hides work already saved for later. An empty later-run queue still names remaining approved work. Intelligence says remaining later-run work is listed first. The Intelligence intro also says channels worth a look, looks that moved down, and remaining later-run work are listed first. The Your work intro also says remaining later-run work is listed first. GroovGro does not write the page, publish, scrape Google, buy ads, or change checkout.
+**Do not add more listed-first / remaining-count copy.** That console is not the V3 owner experience.
 
-Phase T first slice is in #113. Phases A–T first slices are on `main`. What remains (pipe, apply, licensed intel, GEO lookup, books, send, builder): [REMAINING.md](REMAINING.md). Growth Director and guarded automation stay off. See [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19.
+Phases A–T first slices of the V2.2 expansion remain on `main` as backend. What to build next is the V3 shell after Phase 0 accept, then the remaining pipe / apply / licensed intel work in [REMAINING.md](REMAINING.md). Growth Director and guarded automation stay off.
 
 The website builder is paused. Public groovgro.com homepage stays Coming soon.
 

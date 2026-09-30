@@ -1,10 +1,14 @@
 # GroovGro ↔ Grok Bot team
 
+Internal worker roster and loop. This is the first Worker Gateway adapter, not an owner-facing product.
+
+**Owner screens** say “GroovGro is working on it.” They do not show bot names, IDs, or pack schemas. After the V3 shell ships, Bot team belongs in Settings → advanced.
+
 Authoritative roster and loop. Discard: Jason as permanent middleman; paste-forever as the UX; the names SEO Scout, Draft Locker, and Books.
 
-Current names: **SEOgro**, **DRAFTgro**, **WRITEgro**, **BOOKSgro**.
+Current internal names: **SEOgro**, **DRAFTgro**, **WRITEgro**, **BOOKSgro**.
 
-Jason is the **Monday reviewer**. He marks what ships. He is not the long-term paste courier. The product is GroovGro talking to the bots.
+Jason is the **Monday reviewer**. He marks what ships. He is not the long-term paste courier. GroovGro talks to the bots. The owner talks to GroovGro.
 
 ## Roster
 

@@ -1,119 +1,69 @@
 # What remains
 
-Last updated: 15 September 2026.
+Last updated: 30 September 2026.
 
-This is the remaining-work map. Phases **A–T** first slices are already on `main`. Do not treat those letters as unfinished.
+Product intent: [MASTER_BRIEF.md](MASTER_BRIEF.md) (V3). Audit: [v2/PHASE_0_AUDIT.md](v2/PHASE_0_AUDIT.md). Fences: [v2/V2_AMENDMENTS.md](v2/V2_AMENDMENTS.md). Internal workers: [v2/BOT_TEAM.md](v2/BOT_TEAM.md). Live checkpoint: [STATUS.md](STATUS.md).
 
-Product today: GroovGro watches, stores, and suggests. The owner decides. Live write, ads, email send, social post, Growth Director, and the website builder stay off until Jason asks **by name**.
-
-Canonical intent: [MASTER_BRIEF.md](MASTER_BRIEF.md) §§15–19. Bot rules: [v2/BOT_TEAM.md](v2/BOT_TEAM.md). Live checkpoint: [STATUS.md](STATUS.md).
+The V2.2 A–T first slices are already on `main`. Do not treat those letters as unfinished. Do not add listed-first polish to the old console.
 
 ---
 
-## Now — owner setup (no new code)
+## Now — owner decision (no UI rewrite)
 
-Do this on production after #332 is Ready.
+Accept or correct the four Phase 0 decisions in [STATUS.md](STATUS.md). Until that happens, do not build the five-screen shell.
 
-1. Confirm **Organization → Refresh schedules** loads (not a 404).
-2. Switch to **each** business. Set Search Console (and Analytics if connected) to Every day or Every week. Refresh buttons stay.
+Owner setup that can still happen on production:
+
+1. Confirm Organization → Refresh schedules loads.
+2. Set Search Console (and Analytics if connected) per business to every day or every week.
 3. Confirm `CRON_SECRET` is set in Vercel Production (do not paste it into chat).
-4. Leave Ocean Sailing Adventures Analytics disconnected until that site has a GA4 property. Then switch to that business and connect it.
+4. Leave a business disconnected from Analytics until that site has a GA4 property.
 5. Keep one desk token per organization. Do not mix brands on one SEOgro pack.
 
 ---
 
-## Phase 1 — Finish the pipe (next product work)
+## After Phase 0 accept — V3 Phase 1 (next product work)
 
-GroovGro is the pipe. Bots GET, then POST. GroovGro does not wake bots. Do this before vendors, ads, or live write.
+New owner surface over existing data. No wipe. No live write.
 
-1. Put the stored **GA4** snapshot on `GET /api/bots/scout` (sessions, landing pages, sources already in GroovGro). SEOgro still must not log into Google.
-2. Send **richer public pages** on the scout GET (description and headings are already stored; today the pack is mostly url / title / label).
-3. Put saved Brand Voice **“more like this”** samples on DRAFTgro and WRITEgro GET.
-4. Pull Search Console **links to you** (first-party backlinks GroovGro is allowed to read). Store them. Do not scrape Google.
-5. Add a `content_brief` pack type on the SEOgro inbox if the bot needs to hand a brief, not only a page note.
-6. When Jason has a Grok inbound URL, GroovGro may call the bots. Until then, bots keep asking GroovGro.
+1. Home / Grow / Work / Results / Business shell. Old routes redirect.
+2. Home: pulse, one Best Next Move, GroovGro is working, recent win, today.
+3. Grow: today’s Next step coordinator + Watching.
+4. Work: Working / Needs you / Finished. Hide bot names.
+5. Results: measured vs estimated vs unknown.
+6. Business: Brain, Offers, Voice, Goals, What we’ve learned.
+7. Action Ledger fields on `growth_actions` only when a slice needs them.
+8. Worker Gateway wrapping existing scout / draft / write routes.
+9. Contextual chat that explains and navigates. No state-changing commands yet.
+10. Mobile approval / status.
 
-Walls: no OpenSERP, no Keyword Planner connect, no Ads scopes, no scrape, no `shipped` from a bot.
-
----
-
-## Phase 2 — Owner-authorized apply
-
-Paste-forever is not the product. Only GroovGro marks **shipped** after a real apply.
-
-1. Turn on a **CMS publish adapter** only when Jason names the host (for example WordPress) and says to write.
-2. GroovGro applies an approved pack to that connected site, then marks shipped.
-3. Until that adapter is on, the owner still pastes, then marks it done.
-4. Do not overwrite a connected live site from the GroovGro builder.
+Walls: no OpenSERP, no Keyword Planner connect, no Ads scopes, no scrape, no `shipped` from a bot, no CMS write, no execute.
 
 ---
 
-## Phase 3 — Licensed market file (only if Jason asks by name)
+## Still later — pipe, apply, licensed intel
 
-GroovGro already has **your** pile: Search Console, GA4, public pages, named competitor pages.
+These stay after the shell, and still need Jason to ask **by name** where noted.
 
-1. Licensed SERP adapter — only if Jason asks **by name**. Official or contracted. No scrape.
-2. Optional: owner-pasted Keyword Planner **CSV**. Do not connect Google Ads.
-3. Keyword groups, intent, and create-vs-improve — after a real store exists, not invented volume.
-4. Cost caps before any paid vendor.
-
-Do not install OpenSERP or any “free SERP API.”
-
----
-
-## Phase 4 — AI visibility lookup (only if Jason asks by name)
-
-Owner notes, a query library, history snapshots, and citation-gap estimates exist. Lookup stays off.
-
-1. Confirm an official API, terms, and cost for one AI surface.
-2. Turn on that adapter only. Store history. Do not treat one answer as truth.
-3. Share of voice and live GEO audits wait until that adapter is honest.
-
-Do not scrape ChatGPT, Gemini, Perplexity, or similar.
-
----
-
-## Phase 5 — Attribution and Next step (later)
-
-1. Keyword → page → person (from stored Search Console + site + named shares). Label DIRECT / ASSISTED / ESTIMATED / UNKNOWN.
-2. AI-referral path — only after Phase 4 has a real adapter.
-3. Use stored channel scores to **reorder** Next step only after Jason wants that. Today the estimate is shown and does not reorder.
-4. Use a before-and-after look to change a plan — only with owner approval. No A/B traffic split yet.
-
----
-
-## Phase 6 — Books (parked)
-
-**BOOKSgro** waits. `/api/bots/books` stays 403.
-
-1. Resume only when Jason asks and GroovGro is closer to books.
-2. Read-only copies first. No invoices, no payments, no inventing balances.
-
----
-
-## Phase 7 — Marketing send (parked)
-
-Do not start these until Jason opens the door **by name**.
-
-1. Ads (Google Ads / Meta). Execute stays off.
-2. Email send (Resend campaign send).
-3. Social post / schedule.
-4. Growth Director and guarded automation.
-
----
-
-## Phase 8 — Website builder (paused)
-
-The builder exists. Do not add features until Jason asks.
-
-1. Resume GroovGro-hosted pages only (not a clone of the live site).
-2. Custom domains later.
-3. Never overwrite a connected existing website.
+1. Put the stored **GA4** snapshot on `GET /api/bots/scout`. SEOgro must not log into Google.
+2. Richer public pages on the scout GET.
+3. Brand Voice “more like this” samples on DRAFTgro and WRITEgro GET.
+4. Search Console **links to you** (first-party). Do not scrape Google.
+5. CMS publish adapter only when Jason names the host and says to write. Until then the owner pastes and marks done.
+6. Licensed SERP adapter — only if Jason asks by name. No OpenSERP.
+7. Optional owner-pasted Keyword Planner CSV. Do not connect Google Ads.
+8. GEO lookup — only with an official API. Do not scrape AI systems.
+9. Reorder Grow from channel scores only after Jason wants that.
+10. BOOKSgro stays 403 until Jason asks.
+11. Ads, email send, social post, Growth Director — parked until Jason opens the door by name.
+12. Website builder stays paused. Never overwrite a connected live site.
 
 ---
 
 ## Do not
 
+- Begin the V3 shell before Phase 0 is accepted
+- Wipe Neon, Clerk, or Vercel
 - Scrape Google or install OpenSERP
 - Connect Keyword Planner / Ads scopes
 - Let SEOgro log into Google
@@ -122,3 +72,4 @@ The builder exists. Do not add features until Jason asks.
 - Charge a card or touch stripe-osa
 - Make Jason the permanent paste courier
 - Skip to ads, builder, or autonomous AI because a list exists
+- Add more listed-first / remaining-count copy on the old console

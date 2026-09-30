@@ -2,7 +2,7 @@
 
 This folder is the **historical** architecture and planning deliverable. Phase 1–7 and V2 owner-assistance are already on `main`.
 
-**Current product intent:** [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.2.  
+**Current product intent:** [MASTER_BRIEF.md](../MASTER_BRIEF.md) V3. Phase 0 audit: [v2/PHASE_0_AUDIT.md](../v2/PHASE_0_AUDIT.md).  
 **What V2 built, and the SEO / content / GEO expansion:** [v2/ARCHITECTURE.md](../v2/ARCHITECTURE.md).  
 **Live checkpoint:** [STATUS.md](../STATUS.md).
 
