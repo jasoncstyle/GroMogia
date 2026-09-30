@@ -1,372 +1,277 @@
 # GroovGro — Project Master Brief
 
-**Version 2.2 — Business Partner + Competitor Looks** (11 September 2026)
+**Version 3.0 — Growth operating system** (30 September 2026)
 
-Source of truth for product intent. Architecture and implementation must follow this document unless a later approved decision supersedes it. The V1 brief is archived at [MASTER_BRIEF_V1.md](MASTER_BRIEF_V1.md). Implementation notes and status of each slice: [v2/ARCHITECTURE.md](v2/ARCHITECTURE.md) and [STATUS.md](STATUS.md). Bot team roster: [v2/BOT_TEAM.md](v2/BOT_TEAM.md).
+Source of truth for product intent. Architecture and implementation must follow this document unless a later approved decision supersedes it.
 
-Version 2.1 added SEO Intelligence, a Content Engine, and AI Visibility / GEO as **modules that feed the same growth loop**. It does not replace V2. It does not make GroovGro a standalone SEO app.
+V1 brief: [MASTER_BRIEF_V1.md](MASTER_BRIEF_V1.md). V2.2 brief (archived): [MASTER_BRIEF_V2.md](MASTER_BRIEF_V2.md).  
+Phase 0 audit: [v2/PHASE_0_AUDIT.md](v2/PHASE_0_AUDIT.md). Binding fences: [v2/V2_AMENDMENTS.md](v2/V2_AMENDMENTS.md).  
+Status: [STATUS.md](STATUS.md). Historical platform plan: [phase-0/](phase-0/). Implementation notes for the V2.2 backend: [v2/ARCHITECTURE.md](v2/ARCHITECTURE.md). Worker roster (internal): [v2/BOT_TEAM.md](v2/BOT_TEAM.md).
 
-Version 2.2 names the working relationship: GroovGro is a **business partner**. The owner runs day-to-day operations. GroovGro runs the marketing side — it watches, analyzes, and suggests work that can grow the business and bring in more revenue. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. It also records competitor looks: the owner can save a known competitor website, run a suggested search themselves, and GroovGro can read a public page they named. Automated search-engine discovery stays **PLANNED** behind an off adapter.
+This brief adopts Jason’s GroovGro V2 Master Plan (30 September 2026) and the amendments. The current implementation is **not** authoritative for owner experience. Preserve sound backend work. Do not preserve a confusing owner experience because it already exists.
 
 **Product:** GroovGro  
 **Primary domain:** groovgro.com  
 **Alternate domain:** groovegro.com  
 **Parent company:** Mogia Group · mogiagroup.com  
+**GitHub repo (until renamed):** GroMogia
 
 ---
 
-## 1. Vision
+## 1. Product vision
 
-Build GroovGro as a professional, cloud-based, modular business growth, marketing, website, automation, analytics, CRM, and AI platform.
+**Core promise:** You run your business. GroovGro handles the marketing machinery.
 
-GroovGro should help a business connect the systems it already uses, understand itself, understand what it sells, understand its customers and constraints, define measurable growth objectives, create coordinated strategies, execute marketing, capture leads, connect customers to revenue, analyze performance, recommend actions, eventually execute approved actions, and learn from outcomes.
+**Operating loop:** Observe → Recommend → Review → Do the work → Measure → Learn.
 
-GroovGro must not simply become another website builder, CRM, social scheduler, SEO app, ads dashboard, AI content generator, analytics platform, or collection of unrelated AI agents.
+“Do the work” means GroovGro **prepares** work in Phase 1, and **performs a specifically approved external action** only in a later phase when an official adapter is on. See [v2/V2_AMENDMENTS.md](v2/V2_AMENDMENTS.md).
 
-Primary value comes from understanding the relationships between the business, its objectives, its customers, its marketing activities, and its financial outcomes.
+GroovGro should feel like a capable, friendly business partner — not an enterprise dashboard, a collection of AI tools, or a marketing control panel. It understands the business, notices meaningful opportunities, explains why they matter, offers to do the work, keeps the owner in control, measures outcomes, and learns.
 
-**CONNECT THE BUSINESS. UNDERSTAND THE BUSINESS. DEFINE THE GOAL. GROW THE BUSINESS.**
+- Simple first; detail only when requested.
+- Every primary screen must pass the **10-second test**.
+- Explain conclusions instead of dumping data.
+- Always show what GroovGro is doing and when it needs the owner.
+- Show why recommendations exist and where evidence came from.
+- Admit when evidence is insufficient.
+- Measure outcomes whenever possible.
+- Celebrate genuine wins; never manufacture wins.
+- Complexity belongs behind the interface.
+- GroovGro sells **progress**, not AI.
 
-Official intelligence loop:
+The AI infrastructure should almost disappear. The owner should experience progress.
 
-CONNECT → UNDERSTAND → OBSERVE → ANALYZE → IDENTIFY OPPORTUNITIES → PRIORITIZE → RECOMMEND → OWNER REVIEW → EXECUTE WHEN AUTHORIZED → MEASURE → LEARN → REPEAT
+**Final product definition:** GroovGro is a small-business growth operating system with an AI workforce underneath it. The owner sees a simple, friendly business partner. Behind the interface, GroovGro observes the business, prioritizes opportunities, coordinates specialized workers, enforces permissions, verifies work, measures results, and learns.
 
-GroovGro is a business partner, not a second operator of the whole company. The owner runs day-to-day operations. GroovGro runs the marketing side: it watches the business, studies competitors the owner names (and later ones it is allowed to find), and suggests work that can grow the business and bring in more revenue. The owner decides. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do. GroovGro does not implement marketing work until the owner says so.
+---
 
-The owner should not have to think in separate marketing disciplines. GroovGro should eventually synthesize website, SEO, content, AI visibility, advertising, traffic, leads, customers, and revenue, then recommend the highest-value next action.
+## 2. Industry neutrality and tenants
 
-Journeys to understand:
+Examples (sailing school, pottery studio) are illustrations only. Do not design the core around seat, student, boat, class, or any one trade.
 
-Website → Traffic → Marketing Source → Lead → Customer → Booking / Purchase / Conversion → Payment / Revenue → Review → Repeat Customer
+Do not hard-code organization IDs or domains.
 
-The longer growth chain GroovGro should eventually understand:
+GroovGro is multi-tenant. One user may belong to several organizations. One business is open at a time. Isolate per organization: users, roles, websites, customers, leads, marketing data, integrations, analytics, Business Brain, Brand Voice, goals, plans, actions, decision history, and worker artifacts.
 
-BUSINESS → MARKET → WEBSITE → SEO → AI SEARCH VISIBILITY → CONTENT → ADVERTISING → TRAFFIC → LEADS → CUSTOMERS → REVENUE → LEARNING → NEXT BEST ACTION
+Do not add `growth_opportunities`. Shared recommendations live on **`growth_actions`**.
 
-V2 layer:
+Modules stay independently enableable. They do not each need a sidebar item.
 
-BUSINESS OBJECTIVE → GROWTH PLAN → MARKETING ACTIONS → CUSTOMER RESPONSE → BUSINESS OUTCOME → LEARNING → NEXT ACTION
+---
 
-Sometimes the next best action is SEO. Sometimes it is content. Sometimes it is AI visibility. Sometimes it is following up a person, fixing a page, or waiting. GroovGro should compare those options against the Goal, not optimize one channel because it is easy to measure.
+## 3. Knowledge and learning
 
-The system should eventually answer: what is this business trying to accomplish, are we closer, which activities help or waste, what should get more or fewer resources, what should happen next, is there enough evidence to change, should we leave something unchanged, has a constraint changed, has the objective already been achieved, and what did GroovGro learn?
-
-## 2. Industry neutrality
-
-Examples in this brief are illustrative only. They are never universal business models, database fields, terminology, customer types, capacity types, inventory models, sales processes, conversion types, workflows, or industry assumptions.
-
-Do not design the core around seat, student, appointment, room, class, ticket, boat, or product unit. Model availability, availability_unit, resource, and constraint. Industry meaning belongs in organization data.
-
-GroovGro must understand the actual business rather than force the business into GroovGro's assumptions.
-
-## 3. Modular architecture
-
-Customers are not required to use every capability. Design database, permissions, navigation, billing, application architecture, AI architecture, and integrations around independently enabled modules. Do not tightly couple modules.
-
-## 4. Multi-tenant architecture
-
-| Term | Meaning |
+| Store | Role |
 | --- | --- |
-| Organization | Customer / business account |
-| User | Person accessing an organization |
-| Module | GroovGro capability |
-| Integration | Connected external service |
-| Goal | Measurable business objective |
-| Growth Plan | Coordinated strategy pursuing a goal |
-| Action | Shared recommendation object (`growth_actions`). Proposed, approved, or later executed. Also the preferred home for SEO / GEO / content / lead opportunities. |
+| **Business Brain** | Authoritative facts about one business: products, services, pricing, customers, locations, differentiators, constraints, goals, and approved rules. |
+| **Brand Voice** | How the business communicates. |
+| **Growth Memory** | What GroovGro learned about **this** business from prior actions and measured results. Decision history is the seed. |
+| **GroovGro Playbook** | Generalized growth knowledge. **Phase 4 only.** Aggregated and anonymized. |
 
-Isolate per organization: users, roles, websites, customers, leads, marketing data, integrations, analytics, AI context, Business Brain, Brand Voice, assets, events, settings, goals, plans, **growth actions**, decision history, and later keywords, content items, and AI visibility scans. SEO, competitor, content, and AI-visibility data from one organization must never appear in another. An owner who belongs to more than one organization switches the whole workspace from the sidebar. Do not show two businesses on one screen.
+Approved Business Brain facts and verified connected sources outrank research, Growth Memory, Playbook guidance, and worker memory. Worker memory is never authoritative business truth.
 
-Do not add a separate `growth_opportunities` table unless `growth_actions` cannot cleanly hold the shared recommendation. See §15.
+---
 
-## 5. Business Brain
+## 4. Action Engine and Ledger
 
-Every organization develops a structured Business Brain. It is the shared source of organizational context. It may contain identity, offers, customers, brand, constraints, and performance.
+The Action Engine asks: **What is the most valuable next thing this business should do, and how can GroovGro get it done safely?**
 
-Use structured data. Do not represent the Business Brain solely as an AI prompt or vector store. Store confidence and source where inference is used. Owners can correct GroovGro.
+Ingest connected data → observations → opportunities → evaluate → recommend → approve when needed → work plan → assign skills/workers → QA → execute (only if authority allows) → verify → measure → learn.
 
-Discovery flow: DISCOVER → INFER → ASK → CONFIRM → LEARN. AI inference must not silently become authoritative when uncertainty is meaningful.
+Opportunity types: Growth, Efficiency, Risk, Maintenance, Experiment, Strategic.
 
-For a connected website, GroovGro finds pages, asks which ones matter, then reads only the checked pages. Drafts from those pages stay inactive until the owner confirms.
+The **Action Ledger** records opportunity, evidence, approval, workers/skills, changes, before/after, cost, verification, measurement, outcome, and learning. It must answer: **What did GroovGro actually accomplish for my business?**
 
-## 6. Offers, availability, and constraints
+Today’s `growth_actions` is the seed. Extend it; do not replace it with a second recommendations table.
 
-An Offer is what an organization promotes, sells, provides, or wants customers to act upon. It is not assumed to be a physical product.
+---
 
-Availability is optional and generalized: inventory, capacity, schedule, resource, workload, time window, externally determined, or unconstrained. Organizations may use several at once.
+## 5. Authority, risk, and safety
 
-## 7. Growth Goals, Plans, Actions, and Decision History
+**Authority**
 
-Goals are first-class measurable outcomes. Plans are versioned strategies for a Goal. Do not overwrite meaningful historical strategy. Store computed Goal progress when connected data can measure it, so later reviews can compare a history instead of only a live count.
-
-Decision History records what GroovGro decided and why. Audit History records what changed. Both are required.
-
-Actions (`growth_actions`) are the shared recommendation object: module, type, description, risk, approval, and later execution fields. They are **not executed** in the current product. SEO, content, AI visibility, website, and lead recommendations should become rows here so Next step can compare them. Do not invent a second opportunity table first.
-
-## 8. Evidence and cadence
-
-Do not equate new data with a requirement to act. “No change is recommended yet” is a valid and important recommendation.
-
-Separate monitoring, analysis, decision-making, execution, and user review. Daily analysis does not imply daily optimization changes.
-
-Users control when routine Growth Reviews are presented. That schedule does not force GroovGro to change the business.
-
-Channel-specific evidence windows: advertising, SEO, email, social, and website/CRO each wait differently.
-
-Classify changes as operational, optimization, or strategic. That classification influences evidence threshold, approval, cadence, and automation eligibility.
-
-Urgent operational issues may bypass the routine review schedule.
-
-## 9. Autonomy and guardrails
-
-1 Observe · 2 Recommend · 3 Draft · 4 Approve to execute · 5 Guarded autopilot · 6 Future autonomous growth.
-
-Do not build unrestricted autonomy. Growth Director and guarded automation stay feature-flagged off until later phases.
-
-The owner decides what happens. Some suggestions are owner work. Some suggestions wait until the owner authorizes GroovGro. Execute stays off until that authorization exists and the adapter is turned on.
-
-Every automated action must pass authentication, organization authorization, module entitlement, provider capability, risk policy, and automation guardrails. AI must never bypass application authorization.
-
-## 10. Dashboard and reviews
-
-The dashboard answers: what are we trying to accomplish, how are we doing, what changed, why, what needs attention, what should happen next, and what is intentionally being left alone.
-
-Show those answers as a visual desk: large stored counts, Goal progress, Search Console queries GroovGro already pulled, named-share visits, SEOgro proposals waiting for Monday review, recent leads, and one next step. Do not invent shop metrics, page-view guesses, or an AI orb. Traditional analytics remain accessible but should not dominate. Weekly and monthly reviews are generated from connected evidence and can be saved to Decision History. Speak plain English. Do not design around AI employee personas.
-
-## 11. What stays from V1
-
-Multi-tenancy, modularity, RBAC, cloud architecture, provider adapters, jobs, audit, notifications, tenant isolation, generic events, Stripe read-copy strategy, optional website builder, lightweight CRM, provider independence, feature flags, modular monolith, incremental development, and security.
-
-Do not delete or rewrite working V1 functionality simply because V2 adds concepts. The website builder remains optional and must not overwrite a connected existing website or change Stripe checkout.
-
-## 12. What not to build yet
-
-Unrestricted Growth Director, autonomous cross-channel budget management, fully autonomous advertising, premature sophisticated attribution, native mobile apps, unnecessary microservices, unrestricted website canvas, dozens of integrations at once, gimmicky AI employees, unsupported predictive models, or complex ML infrastructure.
-
-Do not create fake sophistication. Do not start ads. Do not store payment card data.
-
-Do not build a disconnected SEO / GEO product. Do not clone another company’s branding, wording, or UI. Do not auto-publish content by default. Do not generate large amounts of low-quality content. Do not chase traffic, impressions, or AI mentions without asking whether the business grew. Do not present estimates as facts. Do not treat a single AI answer as absolute truth. Do not scrape Google, Bing, social networks, or other providers in violation of their terms. Reading a public page the owner named — the same way GroovGro reads the owner’s own site — is allowed. Do not copy competitor words onto a live site. Do not hard-code a fixed list of AI companies through business logic. Do not buy keyword or SERP vendors until an adapter and a cost cap exist.
-
-## 13. Operating principle
-
-**Continuously observe without continuously interfering.**
-
-More activity is not inherently better. More changes are not inherently better. The objective is better business outcomes.
-
-North star: *What is this business trying to accomplish, and based on sufficient evidence, what should happen next to increase the probability of achieving it?*
-
-Sometimes the correct answer is: nothing yet. Keep collecting evidence.
-
-## 14. Development
-
-Cloud-first. GitHub is the source of truth. Production is Vercel, not a laptop. Public repository: never commit secrets. TypeScript, strong typing, modular files, tests for critical logic, migrations, documented env vars.
-
-Current implementation checkpoint: [STATUS.md](STATUS.md).
-
-## 15. Status words used in this brief
-
-Use these labels. Do not make planned work sound shipped.
-
-| Label | Meaning |
+| Code | Meaning |
 | --- | --- |
-| **IMPLEMENTED** | In the live app on `main` |
-| **PARTIALLY IMPLEMENTED** | Real, but thinner than the vision |
-| **PLANNED** | Approved direction, not built |
-| **EXPERIMENTAL** | In code or docs for learning; not a product promise |
-| **PAUSED** | Built or designed; do not extend until Jason asks |
-| **DEPRECATED** | Do not follow for new work |
+| A0 | Observe — read/analyze only |
+| A1 | Recommend — analyze and propose |
+| A2 | Prepare — finished drafts; do not publish |
+| A3 | Execute approved — one specifically approved external action |
+| A4 | Autonomous — narrowly predefined low-risk work under standing permission |
 
-## 16. SEO, content, and AI visibility feed Growth Intelligence
+**Risk**
 
-**Status:** vision approved 10 September 2026. Partner model recorded 11 September 2026. Phases A–T first slices are implemented. Owner-named competitor looks, owner-run suggested searches, stored-look compares, competitor page-topic gaps, briefs from those gaps, workspace drafts in this business’s words, offer checks on those drafts, later-review from the Content planner, and owner-saved compete moves are implemented. Do not turn on execute, Growth Director, SERP lookup, competitor search, GEO lookup, or CMS publish.
+R0 no external effect · R1 reversible internal work · R2 reversible public change · R3 customer-facing communication · R4 financial impact · R5 high-consequence payment, legal, contract, or security action.
 
-GroovGro is an AI-powered business growth system. SEO Intelligence, Content Intelligence, and AI Visibility / GEO are modules that feed the same loop. They are not a second application and not a clone of another SEO product.
+Approval creates scoped authorization for a specific job. Credentials never belong in prompts. Least privilege, separate read/write, bounded retries, schema validation, idempotency, rollback where possible.
 
-Every new feature should, when possible, produce: an insight, an opportunity stored as a **growth action**, a recommendation on Next step, a measurable result, and learning.
+**Current cap:** A0–A2 on. A3–A4 off. See amendments.
 
-### IMPLEMENTED
+---
 
-- Business Brain (including owner-entered who-to-reach, problems, known competitors, differences, and prohibited claims), Brand, Offers, Brand Voice (profile, examples, in-workspace drafts)
-- Website connect, discovered pages, review of checked pages only
-- Named marketing shares: visit → lead → customer → payment copy
-- Goals, Growth Plans, Next step, Intelligence, weekly / monthly review, Decision History, what changed
-- SEO **page** checks and homepage SEO copy drafts the owner approves (they do not edit the connected live site)
-- Search Console **read-only** snapshots: totals, top queries, top pages
-- Google Analytics (GA4) **read-only** snapshots: sessions, top landing pages, top sources. Separate Google connect from Search Console. Ads stay off. SEOgro does not read this snapshot yet.
-- Keyword model and history from those stored Search Console queries, with a conservative estimate rank (no vendor volume)
-- Owner-entered competitor notes for queries the owner already sees (no lookup, scrape, or SERP vendor)
-- Owner-named competitor websites: GroovGro can read that homepage and a few public pages on the same site, then store how they sell, how they market, and how we might compete. If the host blocks GroovGro’s server, it can read the same named URL through a public page reader, or the owner can paste the page. The owner can run a suggested search themselves and save a site they found. SEO can compare those stored looks to what this business sells, and name topics those sites show that GroovGro has not read on this business’s pages. The owner can save what they will do, including from a competitor page topic (no Google scrape, no copy onto a live site, no new page, GroovGro does not do that work, search discovery adapter off)
-- Content gaps: worth-a-look Search Console queries compared to pages GroovGro already read (no new pages)
-- Content briefs and planner: the owner can save a brief for a stored query, or for a competitor page topic GroovGro has not read on this business’s pages (no publish, no copy)
-- Content drafts: GroovGro can write a workspace draft from a saved brief. A draft from a competitor-topic brief uses this business’s words and saved offers. GroovGro can check whether that draft names a saved offer or what makes this business different. The owner can save that draft for later review from the planner (no publish, no copy)
-- Search-to-page loop (first slice): one stored Search Console query, tied to a matching offer and the active Goal when those exist. Worth-a-look queries come first. If none are marked worth a look, GroovGro still picks a stored query and the owner can use another stored search. There is no box to type a Google search. When no query is stored, the card lists the steps and offers Refresh Search Console and Read the website. The owner saves a brief, writes a workspace draft from saved brand, offer, difference, and brand-voice facts, pastes it on the existing site, then checks stored Search Console numbers and the Goal. SEO is a quiet search desk; other SEO tools sit behind More SEO tools. A hashed desk token lets owner-created Grok bots read the stored snapshot. **SEOgro** GETs stored Search Console, keyword history with worth-a-look labels, and public URL inventory from `/api/bots/scout` and POSTs a proposal pack back as proposed. The owner reviews on Monday. GroovGro is the pipe and applicator. Paste is a sample of that API, not the product. Only GroovGro marks shipped, after a real apply. Live CMS write stays off, so apply on a connected live site is still the owner pasting, then marking it done. **DRAFTgro** and **WRITEgro** use the same desk token on `/api/bots/draft` and `/write`. They do not send or publish. **BOOKSgro** waits — GroovGro will not send money facts or take a books pack yet. See [v2/BOT_TEAM.md](v2/BOT_TEAM.md). GroovGro does not invent prices, call a model, publish, scrape Google, or overwrite the live website. SEOgro does not log into Google.
-- Owner-entered CMS publish review queue from a workspace draft (adapter exists and stays off)
-- Internal link suggestions and schema type estimates from pages GroovGro already read (no live-site write)
-- Owner-entered AI visibility notes from what the owner already heard (no AI query, no scrape)
-- Owner-entered AI query library for later visibility work (no live lookup)
-- Owner-entered AI visibility history snapshots for a saved library question (no live lookup, no share of voice)
-- Citation-gap estimates from those saved snapshots (no live lookup, no share of voice)
-- Conservative cross-channel estimates from stored people, page, content, and AI-visibility facts (does not reorder Next step)
-- DIRECT / ASSISTED / ESTIMATED / UNKNOWN labels on stored people-to-revenue joins (no keyword or AI-referral path)
-- First stored Goal number compared to the latest stored Goal number (not an experiment GroovGro ran, and not a reason to change the plan)
-- Owner-entered later-run queue from approved work (adapter exists and stays off)
-- Specialists that read and recommend only. Ads, email, and social stay left alone
-- Autonomy in product use: observe, recommend, draft, owner approve. Execute stays off
+## 6. Workforce, skills, and Worker Gateway
 
-### PARTIALLY IMPLEMENTED
+Bot = employee. Skill = SOP. Action = assignment. GroovGro = manager.
 
-- Business knowledge: owner can save who to reach, pain points, known competitors, differentiators, and prohibited claims (Phase D). Later keyword/GEO work still does not read these into a scoring engine.
-- Keywords: Search Console queries are stored as a keyword model with snapshot history (Phase E) and a conservative estimate rank (Phase F). Groups, intent, and paid keyword vendors stay **PLANNED**.
-- Competitor / SERP notes: the owner can save who they already see for a stored query (Phase G first slice). The owner can also save a competitor website and ask GroovGro to read that public page. The owner can run a suggested search themselves and save a site they found. SEO can compare those stored looks to what this business sells, and name topics those sites show that GroovGro has not read on this business’s pages. The owner can save what they will do. Automated search-engine discovery, SERP vendors, and Google scrape stay **PLANNED** / off. GroovGro does not do that owner-saved work.
-- Content gaps: worth-a-look stored queries are compared to pages GroovGro already read (Phase H first slice). Generation stays **PLANNED**.
-- Content briefs: the owner can save a planner brief for a stored query or a competitor page-topic gap (Phase I first slice plus competitor gap briefs). Publishing stays **PLANNED**.
-- Content drafts: a workspace draft can be written from a saved brief (Phase J first slice). A competitor-topic brief draft uses this business’s words. GroovGro can check whether that draft names a saved offer (Optimization first slice). The owner can save that draft for later CMS review from the Content planner (Review first slice; Phase P queue). Live CMS write stays **PLANNED**.
-- Internal links and schema: suggestions and type estimates from pages GroovGro already read (Phase K first slice). Writing links or JSON-LD onto the live site stays **PLANNED**.
-- AI Visibility / GEO: the owner can save what they already heard (Phase L), questions to remember (Phase M first slice), another history snapshot (Phase N first slice), and citation-gap estimates from that history (Phase O first slice). Live adapters and share of voice stay **PLANNED**.
-- Attribution: named share → person → revenue exists. Phase R labels those stored joins DIRECT / ASSISTED / ESTIMATED / UNKNOWN. Keyword → page → person and AI-referral stay **PLANNED**.
-- Experimentation: Phase S compares the first stored Goal number to the latest stored Goal number. A/B tests, split traffic, and using that look to change the plan stay **PLANNED**.
-- Execution: Phase T lets the owner save approved work for later. The adapter stays off. Turning on execute, ads, email, social, Growth Director, and guarded automation stay **PLANNED**.
-- Prioritization: Next step uses a fixed owner-assistance order. Phase Q stores a conservative channel comparison from workspace facts. That estimate does not reorder Next step.
-- Brand Voice: does not learn from repeated owner edits
-- Publishing: GroovGro-hosted builder exists and is **PAUSED**. Owner can queue a workspace draft for later review (Phase P first slice). No WordPress / Shopify write. Do not overwrite a connected existing website. The CMS adapter stays off.
-- Notifications: table exists; the page is a stub (**PAUSED** as a product)
-- `growth_actions`: exists for plan/owner work and recommend-only SEO rows. Phase B added optional `title`, `evidence` (JSON), `confidence`, `expected_impact`, and `priority`. Do not parse `description` as machine data.
+Launch workers (internal): Coordinator, Research, SEO, Content, QA.
 
-### PLANNED (not implemented)
+Later: Website, Social, Email, Analytics, Conversion, Ads, Reputation.
 
-- Keyword groups, intent, create-vs-improve, paid keyword vendors
-- Competitor and SERP lookup (contracted, allowed providers only). Owner-entered notes, owner-named website looks, owner-run suggested searches, stored-look compares, and competitor page-topic gaps exist. Automated finding from search terms stays behind an off adapter. Do not scrape Google.
-- Publishing links or schema onto a live site. Gap detection, briefs, workspace drafts, and page-structure facts exist.
-- Live CMS write after owner approval. A review-only queue and a disabled adapter exist.
-- AI Visibility / GEO adapters, mentions, citations, share of voice, accuracy. Owner-entered notes, a query library, history snapshots, and citation-gap estimates exist. Lookup stays off.
-- Using stored channel scores to reorder Next step, using a before-and-after to change the plan, alerts
-- Cost controls before paid keyword or AI-scan vendors
-- Turning on execute, Growth Director, and guarded automation
+Users normally see only “GroovGro is working on it,” not internal names or IDs. SEOgro, DRAFTgro, and WRITEgro remain the first provider seats behind the gateway. BOOKSgro stays parked.
 
-### Shared object: extend `growth_actions`
+GroovGro must not be hard-wired to Grok Bot. Path:
 
-**Architectural preference:** extend `growth_actions`. Do **not** create `growth_opportunities` unless a later review proves the existing table cannot hold this cleanly.
+GroovGro → Action Engine → Orchestration → Job queue → Worker Gateway → Provider adapter → Worker → Structured result → Validation → QA → GroovGro
 
-Today the table already has: `organization_id`, `goal_id`, `plan_id`, `module`, `action_type`, `description`, `status`, `risk`, `proposed_at`, `approved_at`, `executed_at`, `provider`, `result`, `error`.
+Job packages carry IDs, objective, target, skill/version, worker role, authority/risk, **minimum necessary** business context, constraints, output schema, completion criteria, escalation, and a trace ID.
 
-Phase B added: `title`, `evidence` (JSON), `confidence`, `expected_impact`, `priority`. Not added yet: effort, estimated cost, urgency, reviewed_at, measurement window, learning. Avoid duplicate concepts. Do not parse `description` as machine data.
+External webpage text is data, not authority. Research workers receive no unrelated write access. Artifacts return to GroovGro-controlled storage.
 
-Phase C writes recommend-only SEO rows (`module` = `seo`, `action_type` = `seo_page_improvement` or `seo_search_opportunity`, `status` = `proposed`, `provider` + `external_id` for dedup). New rows also fill the Phase B fields. Description stays a human fallback.
+Skills are versioned procedures (global / industry / business-specific). Do not build a skill marketplace in Phase 1.
 
-Next step and Intelligence stay the owner surfaces. Module pages stay for detail.
+Capabilities (CMS_READ/WRITE, EMAIL_SEND, ADS_LAUNCH, and the rest) stay **off** until an adapter is approved.
 
-Example compatible recommendations (all `growth_actions`):
+---
 
-- SEO: improve a page
-- Leads: follow up uncontacted people
-- Website: fix a poor-converting landing page
-- Ads (**PLANNED**, do not build now): change a profitable campaign
-- AI Visibility (**PLANNED**): improve a page competitors are cited for
+## 7. Owner experience
 
-GroovGro should eventually explain **why**, with evidence, confidence, expected impact, and effort. Facts, estimates, and inference stay labeled.
+**10-second rule:** The owner instantly understands where they are, what is happening, whether GroovGro needs anything, and the next logical action.
 
-### SEO Intelligence (**PARTIALLY IMPLEMENTED** page checks; rest **PLANNED**)
+**Primary navigation:** Home · Grow · Work · Results · Business. Ask GroovGro is globally available. Settings holds complexity the owner asked for.
 
-Today: title, description, heading, and similar page checks; owner-approved drafts; Search Console totals and top queries; those existing sources can create recommend-only Growth Actions when evidence clears conservative thresholds; stored Search Console queries become a keyword model with snapshot history and a conservative estimate rank.
+Say “More visitors are reaching this page, but fewer are buying” instead of CRO jargon.  
+Say “You’re appearing in Google more often, but fewer are clicking” instead of SERP/CTR jargon.  
+Say “GroovGro is working on it” instead of Executing.  
+Say “GroovGro needs something from you” instead of Blocked.  
+Say “Watching the results” instead of Monitoring.
 
-Future: keyword groups; intent; SERP and competitor lookup; page improvement; create vs improve; conversion- and revenue-aware priority.
+Never expose workflow nodes, schemas, internal scores, or bot IDs on normal owner screens.
 
-Search volume is not success. Traffic is not success. Prefer activity that produces qualified people, customers, revenue, and a Goal.
+### Home
 
-### Content Intelligence (**PARTIALLY IMPLEMENTED**; Brand Voice drafts are **IMPLEMENTED** in-workspace only)
+Friendly greeting. Business Pulse (about three meaningful metrics). One dominant Best Next Move. GroovGro is working. Recent win. Today: what GroovGro needs. Ask GroovGro.
 
-Today: worth-a-look Search Console queries can be compared to pages GroovGro already read. The owner can save a brief to the SEO planner, write a workspace draft from it, check a competitor-topic draft against a saved offer, and save that draft for later CMS review from the planner. GroovGro can suggest internal links and estimate schema types from pages it already read. GroovGro does not publish or write the live site. The CMS adapter stays off.
+Strong default: GroovGro needs nothing from you right now. It is working on a few things and watching a few opportunities.
 
-Future workflow: Opportunity → Research → Brief → Draft → Optimization → Review → Publish when authorized → Measure → Learn.
+### Grow
 
-Possible later work: brand-voice generation, improve existing pages, recommend new pages, write links or schema onto a live site, measure content.
+Exactly one Best Next Move. A small Also Worth Doing. Watching (not enough evidence yet).
 
-GroovGro does **not** currently auto-generate or publish a large volume of content.
+### Work
 
-### AI Visibility / GEO (**PARTIALLY IMPLEMENTED**)
+Tabs: Working · Needs you · Finished. Human stages: Research → Create → Review → Approve → Publish → Measure. Publish is owner-approved and adapter-gated.
 
-Traditional SEO: can customers find the business in search engines?
+### Results
 
-AI Visibility: does the business appear when people ask AI systems questions or ask who to hire?
+Answer: Is GroovGro helping? Completed improvements, actions still measuring, and attributable traffic / leads / bookings / orders / revenue **only where evidence supports the claim**.
 
-Today: the owner can save what they already heard when they asked an AI system, questions to remember for later, and another snapshot of that history. GroovGro can estimate citation gaps from those snapshots. GroovGro does not ask AI systems. The adapter stays off. One answer is not treated as truth.
+### Business
 
-Future: brand mentions and citations; competitor mentions and citations; share of voice; trends; content and citation gaps; accuracy issues; GEO audits; recommendations for AI-readable, citable pages.
+What GroovGro knows: About, Products & services, Customers, Brand, Goals, Rules, What we’ve learned.
 
-Possible environments (examples only, not a hard-coded vendor list, not all available today): ChatGPT, Google AI experiences, Gemini, Perplexity, Claude, Grok, DeepSeek, and later systems. Use modular **provider adapters**. Confirm API, terms, cost, and permission before any automated query. **Do not scrape.** Do not treat one AI answer as truth. Store history. Lookup stays off until an adapter is approved.
+### Approval, chat, notifications
 
-### Revenue-aware attribution (**PARTIALLY IMPLEMENTED**)
+Approvals summarize what changed, why, before/after, and whether anything is live. Actions: Approve & publish (A3 only when allowed), Ask for changes, Do not use. Until A3 is on, the live action is Approve for later / I’ll paste this myself / Do not use.
 
-**IMPLEMENTED:** named share → visitor/lead → customer → Stripe charge copy. Those stored joins can be labeled DIRECT, ASSISTED, ESTIMATED, or UNKNOWN.
+Chat explains and controls. It is not the product. Phase 1 chat does not change app state.
 
-**PLANNED:** keyword → page → visitor → lead → customer → revenue; ad → visitor → lead → customer → revenue; AI referral → visitor → lead → customer → revenue.
+Notification classes: Needs you, Good news, Something needs attention, Worth knowing.
 
-Never invent certainty. Label each link:
+Weekly GroovGro Brief: what happened, what GroovGro completed, what worked, what it is watching, and the Best Next Move.
 
-- **DIRECT** — GroovGro stored the join
-- **ASSISTED** — the person or visit touched more than one source
-- **ESTIMATED** — inferred, not measured
-- **UNKNOWN** — missing
+### Autonomy
 
-### Weekly review (**IMPLEMENTED**, cadence options **PARTIALLY IMPLEMENTED**)
+- Guide me — find opportunities and recommend
+- Prepare it for me — research/create; owner approves before external action (**recommended default**)
+- Handle safe work automatically — later, earned
+- Custom — granular control
 
-GroovGro may observe continuously. It must not nag the owner every day. The owner controls when they look (weekly is the default; daily / bi-weekly / monthly / custom may be offered later). Collect evidence between reviews. Present a few meaningful items, including “nothing yet.”
+GroovGro earns autonomy through reliable work. It does not ask for blind trust on day one.
 
-### Evidence provenance and history (**PARTIALLY IMPLEMENTED**)
+---
 
-Store where important facts came from when practical: user-entered, website crawl, Search Console, analytics, Stripe, CRM, later ads/CMS/AI/keyword providers, or GroovGro inference.
+## 8. Visual direction and onboarding
 
-Do not overwrite the only copy of a metric. Keep snapshots (Search Console already stores snapshots). Later: rankings, content, AI visibility, citations, competitors, conversions, opportunities, experiments. Learning needs before and after.
+Warm, optimistic, light, visual, modern, professional — not corporate and not childish. Cards, stories, progress, friendly icons, before/after, subtle motion, progressive disclosure. Charts support conclusions. Tables live in advanced views.
 
-### Expansion phases (conceptual — do not rebuild V2 to fit)
+Onboarding feels like GroovGro learning the business. Simple goals: More sales, More customers, Better marketing, Get found online, Save time, I’m not sure. Research the website to prefill knowledge. Owner confirms or corrects. Integrations explained by benefit. “I’ll do this later” is allowed. End with an immediate useful insight, not “Setup complete.”
 
-| Phase | Work | Status |
-| --- | --- | --- |
-| A | Documentation and architecture alignment | **IMPLEMENTED** |
-| B | Extend `growth_actions` with optional opportunity fields | **IMPLEMENTED** — title, evidence JSON, confidence, expected impact, priority. No second table. |
-| C | Existing Search Console + SEO findings → `growth_actions` → Next step + Intelligence (recommend-only) | **IMPLEMENTED**. No paid API. No scrape. No live-site edit. |
-| D | Business Brain extras SEO/GEO need | **IMPLEMENTED** — owner-entered lists only. No scrape. No keyword engine. |
-| E | Keyword model and history from Search Console | **IMPLEMENTED** — stored GSC queries only. No vendor. No score. |
-| F | Keyword opportunity scoring | **IMPLEMENTED** — estimate from stored GSC numbers only. No vendor volume. No SERP. |
-| G | Competitor and SERP intelligence | **IMPLEMENTED** first slice — owner-entered notes. Owner-named website looks are a later slice on the same module. Search discovery stays off. No Google scrape. No vendor. |
-| H | Content gap detection | **IMPLEMENTED** first slice — stored worth-a-look queries vs pages already read. No brief. No new page. |
-| I | Content briefs and planner | **IMPLEMENTED** first slice — owner-entered briefs on the SEO planner. No article copy. No publish. |
-| J | Content generation / optimization | **IMPLEMENTED** first slice — workspace draft from a saved brief. No publish. No live-site edit. |
-| K | Internal linking and schema | **IMPLEMENTED** first slice — suggestions and type estimates from pages already read. No live-site write. |
-| L | AI Visibility / GEO architecture | **IMPLEMENTED** first slice — owner-entered notes only. No scrape. No adapter. |
-| M | AI query library and provider adapters | **IMPLEMENTED** first slice — owner-entered library. Adapter exists and stays off. No scrape. |
-| N | AI visibility measurement and history | **IMPLEMENTED** first slice — owner-entered snapshots from a saved library question. Adapter stays off. No scrape. No share of voice. |
-| O | GEO audits and citation gaps | **IMPLEMENTED** first slice — citation-gap estimates from the latest saved history snapshot. Adapter stays off. No scrape. No share of voice. |
-| P | CMS publishing adapters | **IMPLEMENTED** first slice — owner-entered review queue from a workspace draft. Adapter exists and stays off. No live-site write. |
-| Q | Cross-channel opportunity scoring | **IMPLEMENTED** first slice — estimate from stored people, page, content, and AI-visibility facts. Does not reorder Next step. No ads. No execute. |
-| R | Attribution improvements | **IMPLEMENTED** first slice — DIRECT / ASSISTED / ESTIMATED / UNKNOWN on stored people-to-revenue joins. No keyword path. No AI referral. Matching charges stays on Bookings. |
-| S | Experimentation / before-and-after | **IMPLEMENTED** first slice — first stored Goal number vs latest stored Goal number. Not an experiment GroovGro ran. Does not change the plan. No ads. No A/B. |
-| T | Carefully expanded execution | **IMPLEMENTED** first slice — owner-entered later-run queue from approved work. Adapter exists and stays off. No ads. No email. No live-site write. Growth Director stays off. |
+**Mobile-first is mandatory.** An owner should review a recommendation or approval from a phone in seconds.
 
-**Do not expand yet:** Google Ads execution, email send, social post, Growth Director autopilot, hosted website builder, autonomous publishing.
+---
 
-Phase C rules: recommend-only. No automatic execution or publishing. No paid keyword API. No AI-platform scraping. No live website editing.
+## 9. Measurement, QA, and reliability
 
-## 17. Human control, adapters, and cost
+Define success metrics before execution. Independent pre-execution QA and post-execution verification.
 
-Current product: **LEVEL 1 Observe · LEVEL 2 Recommend · LEVEL 3 Draft · owner approve**. LEVEL 4 execute-after-approval and LEVEL 5 guarded autopilot stay off.
+Outcomes: SUCCESS / PARTIAL_SUCCESS / BLOCKED / FAILED / NEEDS_DECISION.
 
-High-impact or hard-to-reverse actions stay approval-gated unless the owner explicitly authorizes them.
+Controlled retries. Heartbeats for long jobs. Structured validation. Human escalation for conflicting facts. Developer replay stays in advanced views.
 
-Future third-party capabilities use adapters, not core `if (vendor === …)` logic: keyword data, SERP, AI visibility, CMS publish, ads, analytics. Search Console and GA4 already exist as read-only Google adapters.
+Business-specific learning → Growth Memory. Generalized learning → Playbook only after enough comparable evidence (Phase 4).
 
-Variable API cost is an architecture requirement: caching, batching, scheduled/weekly jobs, priority-query scans, org usage limits, provider rate limits, token budgets, deduplication, retries, and skip re-analysis when evidence has not changed. Do not assume unlimited AI calls.
+Comfortably say **we don’t know yet** when a measurement window is immature.
 
-Credentials stay in Vercel. This repository is public. Minimum scopes. Search Console stays read-only until a later approved write adapter exists.
+---
 
-## 18. The differentiator
+## 10. Implementation roadmap
 
-GroovGro must not optimize a metric only because it is easy to measure.
+### Phase 0 — Repository audit
 
-More impressions, clicks, traffic, content, or AI mentions are not automatically success.
+Inventory, reusable backend, UI debt, preserve/refactor/rebuild. **Do not begin major V3 UI coding until Jason accepts the audit.**
+
+Status: audit written in [v2/PHASE_0_AUDIT.md](v2/PHASE_0_AUDIT.md). Acceptance is recorded in [STATUS.md](STATUS.md).
+
+### Phase 1 — V3 foundation (after accept)
+
+- New Home / Grow / Work / Results / Business shell
+- Friendly onboarding
+- Business Brain + Brand Voice (already exist; move under Business)
+- Action model + Action Ledger fields on `growth_actions`
+- Authority / risk on jobs
+- Worker + Skill contracts; Worker Gateway wrapping existing bot routes
+- Research / SEO / Content / QA (internal)
+- Contextual chat (explain / navigate)
+- **No live publish. No ads. No send. No scrape.**
+
+### Phase 2 — Execution and measurement
+
+Only after Jason names a connector.
+
+- Website (and later Social / Email / Analytics) workers
+- Approval and execution flow (A3, scoped)
+- Capabilities / adapters
+- Before/after state
+- Post-execution QA
+- Measurement windows
+- Growth Memory
+
+### Phase 3 — Optimization
+
+Conversion, Ads, Reputation — each only if Jason asks by name. Standing approvals. Event-driven actions. Provider routing. Cost caps. Expanded skills.
+
+### Phase 4 — Mature learning
+
+Playbook (anonymized). Skill version comparison. Autonomy earned from history. Optional later skill ecosystem.
+
+---
+
+## 11. Cursor acceptance criteria
+
+- A first-time small-business owner can understand every primary screen without explanation.
+- Home answers how the business is doing, what GroovGro is doing, and what the owner should do next.
+- The owner can always see work status and approval needs.
+- No consequential external action occurs outside the authority / approval model.
+- Worker-provider logic is behind the Worker Gateway.
+- Business truth remains in GroovGro, not worker memory.
+- Every meaningful action is traceable in the Action Ledger.
+- Results distinguish measured outcomes from estimates and unknowns.
+- Mobile supports core approval and status.
+- Existing code is preserved only when it serves V3.
+
+---
+
+## 12. Differentiator
+
+GroovGro must not optimize a metric only because it is easy to measure. More impressions, clicks, traffic, content, or AI mentions are not automatically success.
 
 The question remains: **did this help the business grow?**
-
-## 19. Documentation
-
-Canonical files: this brief, [v2/ARCHITECTURE.md](v2/ARCHITECTURE.md), [STATUS.md](STATUS.md), [REMAINING.md](REMAINING.md), [AGENTS.md](../AGENTS.md). Phase 0 is **historical** platform planning. Setup guides under `docs/phase-1` through `docs/phase-7` are how-to for services that are already connected. Do not add a second SEO brief.

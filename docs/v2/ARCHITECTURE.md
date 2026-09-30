@@ -1,6 +1,8 @@
 # V1 → V2 Architecture Change Report
 
-First implementation slice: **V2 growth foundation**. This is not the Growth Director and not autonomous marketing.
+**V3 note (30 September 2026):** Product intent is now [MASTER_BRIEF.md](../MASTER_BRIEF.md) V3. This file describes the **V2.2 backend that we keep**. Owner-experience direction is [PHASE_0_AUDIT.md](PHASE_0_AUDIT.md). Do not treat the screens listed here as the V3 UI. Do not begin the five-screen shell until [STATUS.md](../STATUS.md) says Phase 0 is accepted.
+
+First implementation slice (historical): **V2 growth foundation**. This is not the Growth Director and not autonomous marketing.
 
 GroovGro is a business partner. The owner runs day-to-day operations. GroovGro runs the marketing side and makes suggestions. The owner decides what gets implemented. Some suggestions the owner does. Some suggestions the owner authorizes GroovGro to do.
 
@@ -2185,7 +2187,7 @@ V1 website builder, SEO, Brand Voice, and Stripe stay available throughout.
 
 ## Expansion: SEO Intelligence, Content, AI Visibility (10 September 2026)
 
-Canonical product text: [MASTER_BRIEF.md](../MASTER_BRIEF.md) v2.2 §§15–19. This section is the implementation map. Do not treat **PLANNED** lists as shipped.
+Canonical product text is now [MASTER_BRIEF.md](../MASTER_BRIEF.md) V3. This section is the V2.2 expansion implementation map. Do not treat **PLANNED** lists as shipped. Do not add listed-first UI on the old console.
 
 ### Shared recommendation: extend `growth_actions`
 

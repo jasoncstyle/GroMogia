@@ -1,8 +1,8 @@
 # GroovGro
 
-Cloud-based modular business growth platform from Mogia Group. Connect the business. Understand the business. Define the Goal. Grow the business.
+You run your business. GroovGro handles the marketing machinery.
 
-Formerly GroMogia.
+Cloud-based small-business growth operating system from Mogia Group. Formerly GroMogia.
 
 **Live app:** [https://www.groovgro.com/app](https://www.groovgro.com/app)  
 **Product domain:** [groovgro.com](https://www.groovgro.com)  
@@ -14,18 +14,18 @@ GitHub is the source of truth. Vercel is where the software runs. Cursor is deve
 
 ## Current status
 
-**V2 owner-assistance is on `main`.** Snapshot: [docs/STATUS.md](docs/STATUS.md).
+**V3 Phase 0 audit is written and waiting on owner accept.** Snapshot: [docs/STATUS.md](docs/STATUS.md). Do not begin the five-screen shell until that file says Phase 0 is accepted.
 
-The owner can connect an existing website, name a marketing share, capture people, match a Stripe payment copy, set a Goal, draft and approve a plan on Next step, and read SEO checks plus Search Console (read-only). GroovGro recommends. It does not run ads, send email, or change live checkout.
-
-**Approved vision (Phase A docs, not built yet):** SEO Intelligence, Content Intelligence, and AI Visibility / GEO feed the same growth loop. Recommendations should become `growth_actions`, not a second app. See [Master brief §§15–19](docs/MASTER_BRIEF.md).
+The live app is still the V2.2 console. The owner can connect a website, name a marketing share, capture people, match a Stripe payment copy, set a Goal, draft and approve a plan on Next step, and read SEO checks plus Search Console and GA4 (read-only). GroovGro recommends and prepares drafts. It does not run ads, send email, or change live checkout.
 
 Public groovgro.com homepage stays Coming soon. The optional website builder stays paused.
 
 | Doc | For |
 | --- | --- |
-| [Master brief](docs/MASTER_BRIEF.md) | Product vision (v2.2) |
-| [V2 architecture](docs/v2/ARCHITECTURE.md) | What V2 built, and the expansion roadmap |
+| [Master brief](docs/MASTER_BRIEF.md) | Product vision (V3) |
+| [Phase 0 audit](docs/v2/PHASE_0_AUDIT.md) | Keep / refactor / rebuild |
+| [V3 amendments](docs/v2/V2_AMENDMENTS.md) | Fences: no scrape, ads, or live write |
+| [V2 architecture](docs/v2/ARCHITECTURE.md) | Backend we keep |
 | [Build status](docs/STATUS.md) | Where the build is right now |
 | [Phase 0 architecture](docs/phase-0/) | Historical approved platform plan |
 | [Clerk + Neon setup](docs/phase-1/USER_SETUP.md) | Sign-in and database |
