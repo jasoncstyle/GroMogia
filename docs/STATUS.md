@@ -1,25 +1,22 @@
 # Build status
 
-Last updated: 30 September 2026.
+Last updated: 7 October 2026.
 
 ## Current phase
 
-**V3 Phase 0 — audit written, not yet accepted.**
+**Phase 0 — OWNER ACCEPTED** (7 October 2026, 7:18 AM ET, Jason).
 
-Jason’s new master plan is now the product direction: [MASTER_BRIEF.md](MASTER_BRIEF.md) (V3). Read [v2/PHASE_0_AUDIT.md](v2/PHASE_0_AUDIT.md) and [v2/V2_AMENDMENTS.md](v2/V2_AMENDMENTS.md).
+Accepted direction: **KEEP STORE / DATA / INTEGRATIONS · REPLACE OWNER SURFACE · KEEP A3/A4 OFF · EXTEND FOR STAGE 2.**
 
-**Do not begin major V3 UI coding** (Home / Grow / Work / Results / Business shell, nav rewrite) until this file says Phase 0 is accepted.
+This supersedes “Phase 0 awaiting owner acceptance.” It is **not** permission to wipe Neon, Clerk, or Vercel. It is **not** permission to keep the confusing console. It is **not** permission to turn on execute, ads, send, scrape, or live CMS write.
 
-Decision waiting on Jason:
+**Stage 2 Phase A** (this documentation): repository alignment and implementation plan. See [v2/stage2/](v2/stage2/README.md).
 
-1. Keep the data and integrations (no wipe).
-2. Replace the owner surface (five screens; hide bot names).
-3. Keep A3 execute, ads, send, scrape, and live CMS write **off**.
-4. After accept, first slice is the new shell over existing `growth_actions`.
+**Do not begin Phase B** (Home / Grow / Work / Results / Business shell) until this file says Phase B is authorized.
 
 The live app on `main` is still the V2.2 owner-assistance console. Production stays up. Do not add listed-first polish to that console.
 
-V2.2 backend remains in use: Brain, Voice, Goals, Next step, Search Console, GA4, Stripe copies, scheduler, bot pipe, `growth_actions`. GroovGro does not execute.
+V2.2 backend remains in use: Brain, Voice, Goals, Next step, Search Console, GA4, Stripe copies, scheduler, bot pipe, `growth_actions`. GroovGro does not execute. Stage 2 Fact / MVBB / ODQ / Worker Gateway are **not** built yet.
 
 ## Checkpoints
 

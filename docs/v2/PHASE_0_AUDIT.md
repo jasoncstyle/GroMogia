@@ -4,20 +4,20 @@
 **Commit audited:** `0346212` on `main` (*List remaining phases after A–T first slices*)  
 **Decision:** do **not** wipe the repo, Neon, Clerk, or Vercel. Restart the **owner experience**. Keep the store.
 
-This audit exists so Jason can accept or correct the keep / refactor / rebuild map **before** any major V3 UI coding. Do not begin the Home / Grow / Work / Results / Business shell until [STATUS.md](../STATUS.md) says Phase 0 is accepted.
+**OWNER ACCEPTED 7 October 2026** (Jason): KEEP STORE · REPLACE OWNER SURFACE · KEEP A3/A4 OFF · EXTEND FOR STAGE 2. Recorded in [STATUS.md](../STATUS.md). Stage 2 Phase A plan: [stage2/](stage2/README.md).
+
+Do not begin the Home / Grow / Work / Results / Business shell until [STATUS.md](../STATUS.md) says **Phase B is authorized**. Phase 0 acceptance is not Phase B authorization.
 
 Source plan: Jason’s GroovGro V2 Master Plan (30 September 2026). Binding fences: [V2_AMENDMENTS.md](V2_AMENDMENTS.md). New brief: [MASTER_BRIEF.md](../MASTER_BRIEF.md) (V3).
 
 ---
 
-## Owner decisions (accept or correct)
+## Owner decisions — ACCEPTED 7 October 2026
 
-1. **Keep the data and integrations.** Do not restart from an empty app.
-2. **Replace the owner surface.** Five primary screens. Hide bot names, desk tokens, and listed-first factory copy from normal use.
-3. **Accept the amendments.** Observe / recommend / prepare only until Jason names a connector. No scrape. No ads. No email send. No live-site write.
-4. **After accept:** first coding slice is the new shell over existing `growth_actions`, Next step, Brain, and Voice — not a new database.
-
-If any of those four is wrong, say so before UI work starts.
+1. **Keep the data and integrations.** Do not restart from an empty app. **Accepted.**
+2. **Replace the owner surface.** Five primary screens. Hide bot names, desk tokens, and listed-first factory copy from normal use. **Accepted.**
+3. **Accept the amendments.** Observe / recommend / prepare only until Jason names a connector. No scrape. No ads. No email send. No live-site write. **Accepted.**
+4. **After Phase B is authorized:** first coding slice is the new shell over existing `growth_actions`, Next step, Brain, and Voice — not a new database. Phase A writes the plan only.
 
 ---
 

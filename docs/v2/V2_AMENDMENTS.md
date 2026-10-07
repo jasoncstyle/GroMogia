@@ -109,8 +109,18 @@ Ask GroovGro explains and navigates. Phase 1 chat must not change application st
 
 ---
 
-## 10. No major V3 UI until Phase 0 is accepted
+## 10. Phase 0 accepted; Phase B waits for a separate authorize
 
-Do not build the five-screen shell, rewrite navigation, or delete current screens until [STATUS.md](../STATUS.md) records that Jason accepted [PHASE_0_AUDIT.md](PHASE_0_AUDIT.md).
+Phase 0 is **OWNER ACCEPTED** (7 October 2026). See [STATUS.md](../STATUS.md).
 
-Until then: keep production running. Fix breakage. Do not add listed-first polish to the old console.
+Do not build the five-screen shell, rewrite navigation, or delete current screens until STATUS says **Phase B is authorized**.
+
+Stage 2 Fact / MVBB / ODQ / Connection Manager / Worker Gateway / QA engine wait for their phases (C–F). Do not bolt them onto the old console.
+
+Until Phase B: keep production running. Fix breakage. Do not add listed-first polish to the old console.
+
+## 11. Stage 2 locks (extend Phase 0)
+
+Observation ≠ Fact. UNKNOWN > assumed. PROVISIONAL is allowed. Fact-Use Gate before material use. Two-gate authority (connector capability ∩ owner grant). QA PASS ≠ execute. Specialists never receive OAuth tokens. Retrieve → Need → Consequence → Ask. Attention Item ≠ Owner Question. CAPTCHA / required login must not be circumvented. Customer PII minimized. Business truth lives in GroovGro, not worker memory.
+
+Do not collapse Brain, Connections, Permissions, Queue, Ledger, and Growth Memory into one table.

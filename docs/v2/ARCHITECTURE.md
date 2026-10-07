@@ -1,6 +1,6 @@
 # V1 → V2 Architecture Change Report
 
-**V3 note (30 September 2026):** Product intent is now [MASTER_BRIEF.md](../MASTER_BRIEF.md) V3. This file describes the **V2.2 backend that we keep**. Owner-experience direction is [PHASE_0_AUDIT.md](PHASE_0_AUDIT.md). Do not treat the screens listed here as the V3 UI. Do not begin the five-screen shell until [STATUS.md](../STATUS.md) says Phase 0 is accepted.
+**V3 / Stage 2 note (7 October 2026):** Product intent is [MASTER_BRIEF.md](../MASTER_BRIEF.md) V3. Phase 0 is **OWNER ACCEPTED**. This file describes the **V2.2 backend that we keep**. Owner-experience direction is [PHASE_0_AUDIT.md](PHASE_0_AUDIT.md). Stage 2 Phase A plan: [stage2/](stage2/README.md). Do not treat the screens listed here as the V3 UI. Do not begin the five-screen shell until [STATUS.md](../STATUS.md) says Phase B is authorized.
 
 First implementation slice (historical): **V2 growth foundation**. This is not the Growth Director and not autonomous marketing.
 
