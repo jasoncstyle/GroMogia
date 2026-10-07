@@ -6,7 +6,7 @@ import { join } from "node:path";
 describe("visual owner dashboard", () => {
   it("paints stored GroovGro numbers and does not invent shop metrics", () => {
     const page = readFileSync(
-      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      join(process.cwd(), "src/app/(app)/app/settings/desk/page.tsx"),
       "utf8",
     );
     const desk = readFileSync(

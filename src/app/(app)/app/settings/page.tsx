@@ -25,6 +25,18 @@ export default function SettingsPage() {
       <div className="grid gap-4">
         <Card>
           <CardHeader>
+            <CardTitle>Connections</CardTitle>
+            <CardDescription>
+              Read-only services GroovGro already uses. Connecting does not let
+              GroovGro publish, send, spend, or change the live website.
+            </CardDescription>
+            <Button asChild className="w-fit">
+              <Link href="/app/settings/connections">Open Connections</Link>
+            </Button>
+          </CardHeader>
+        </Card>
+        <Card>
+          <CardHeader>
             <CardTitle>Another business</CardTitle>
             <CardDescription>
               Add a separate organization. GroovGro will open that workspace
