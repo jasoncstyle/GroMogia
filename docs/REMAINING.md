@@ -1,16 +1,16 @@
 # What remains
 
-Last updated: 30 September 2026.
+Last updated: 7 October 2026.
 
-Product intent: [MASTER_BRIEF.md](MASTER_BRIEF.md) (V3). Audit: [v2/PHASE_0_AUDIT.md](v2/PHASE_0_AUDIT.md). Fences: [v2/V2_AMENDMENTS.md](v2/V2_AMENDMENTS.md). Internal workers: [v2/BOT_TEAM.md](v2/BOT_TEAM.md). Live checkpoint: [STATUS.md](STATUS.md).
+Product intent: [MASTER_BRIEF.md](MASTER_BRIEF.md) (V3). Audit: [v2/PHASE_0_AUDIT.md](v2/PHASE_0_AUDIT.md) (**accepted**). Stage 2 Phase A: [v2/stage2/](v2/stage2/README.md). Fences: [v2/V2_AMENDMENTS.md](v2/V2_AMENDMENTS.md). Internal workers: [v2/BOT_TEAM.md](v2/BOT_TEAM.md). Live checkpoint: [STATUS.md](STATUS.md).
 
 The V2.2 A–T first slices are already on `main`. Do not treat those letters as unfinished. Do not add listed-first polish to the old console.
 
 ---
 
-## Now — owner decision (no UI rewrite)
+## Now — Phase A complete; Phase B waits
 
-Accept or correct the four Phase 0 decisions in [STATUS.md](STATUS.md). Until that happens, do not build the five-screen shell.
+Phase 0 is accepted. The Phase A plan is in `docs/v2/stage2/`. Do not build the five-screen shell until STATUS says Phase B is authorized.
 
 Owner setup that can still happen on production:
 
@@ -22,7 +22,7 @@ Owner setup that can still happen on production:
 
 ---
 
-## After Phase 0 accept — V3 Phase 1 (next product work)
+## After Phase B authorize — five-screen shell (no new tables)
 
 New owner surface over existing data. No wipe. No live write.
 

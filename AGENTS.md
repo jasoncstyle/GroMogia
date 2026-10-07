@@ -3,7 +3,8 @@
 These rules apply to every Cloud Agent and every human working in this repository.
 
 Product intent: [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) (**V3**). Archived: [docs/MASTER_BRIEF_V2.md](docs/MASTER_BRIEF_V2.md), [docs/MASTER_BRIEF_V1.md](docs/MASTER_BRIEF_V1.md).  
-Phase 0 audit (accept before major V3 UI): [docs/v2/PHASE_0_AUDIT.md](docs/v2/PHASE_0_AUDIT.md). Binding fences: [docs/v2/V2_AMENDMENTS.md](docs/v2/V2_AMENDMENTS.md).  
+Phase 0 audit (**OWNER ACCEPTED** 7 October 2026): [docs/v2/PHASE_0_AUDIT.md](docs/v2/PHASE_0_AUDIT.md). Binding fences: [docs/v2/V2_AMENDMENTS.md](docs/v2/V2_AMENDMENTS.md).  
+Stage 2 Phase A plan: [docs/v2/stage2/](docs/v2/stage2/README.md). Do not begin Phase B until [docs/STATUS.md](docs/STATUS.md) says Phase B is authorized.  
 V2.2 backend notes: [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md). Historical platform plan: [docs/phase-0/](docs/phase-0/).  
 Internal workers: [docs/v2/BOT_TEAM.md](docs/v2/BOT_TEAM.md) — SEOgro, DRAFTgro, WRITEgro live; BOOKSgro later. Owner screens hide bot names. Discard SEO Scout, Draft Locker, and Books.  
 Current checkpoint: [docs/STATUS.md](docs/STATUS.md).
@@ -49,7 +50,8 @@ GroovGro is a business partner. The owner runs day-to-day operations. GroovGro r
 ## Phase gate
 
 - Current product intent is [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) **V3**. Fences in [docs/v2/V2_AMENDMENTS.md](docs/v2/V2_AMENDMENTS.md) outrank “execute,” “SERP,” or “Playbook” language in the source plan.
-- **Do not begin major V3 UI** (five-screen shell, nav rewrite) until [docs/STATUS.md](docs/STATUS.md) says Phase 0 is accepted. Until then, keep production running and do not add listed-first polish to the old console.
+- Phase 0 is **OWNER ACCEPTED** (KEEP STORE · REPLACE OWNER SURFACE · KEEP A3/A4 OFF · EXTEND FOR STAGE 2). **Do not begin Phase B** (five-screen shell, nav rewrite) until [docs/STATUS.md](docs/STATUS.md) says Phase B is authorized. Until then, keep production running and do not add listed-first polish to the old console.
+- Stage 2 is a **partial rebuild**. Do not wipe Neon, Clerk, or Vercel. Do not treat the flat `business_brains` row as the Fact model. Observation ≠ Fact. Two-gate authority. QA PASS ≠ execute. Specialists never receive OAuth tokens. Do not circumvent CAPTCHA or required login.
 - Do not wipe Neon, Clerk, or Vercel. Preserve sound backend. Replace confusing owner experience.
 - Owner screens say “GroovGro is working on it.” Do not expose bot names, pack schemas, or workflow nodes on primary screens after the shell ships.
 - Historical Phase 0 platform plan lives in `docs/phase-0/`. V2.2 owner-assistance remains on `main`: Business Brain, Offers, Goals, Next step, named shares, SEO checks, Search Console read-only, Brand Voice drafts. See [docs/STATUS.md](docs/STATUS.md) and [docs/v2/ARCHITECTURE.md](docs/v2/ARCHITECTURE.md).

@@ -217,9 +217,9 @@ Comfortably say **we don’t know yet** when a measurement window is immature.
 
 ### Phase 0 — Repository audit
 
-Inventory, reusable backend, UI debt, preserve/refactor/rebuild. **Do not begin major V3 UI coding until Jason accepts the audit.**
+Inventory, reusable backend, UI debt, preserve/refactor/rebuild. **OWNER ACCEPTED 7 October 2026.** Do not begin the five-screen shell until [STATUS.md](STATUS.md) says Phase B is authorized.
 
-Status: audit written in [v2/PHASE_0_AUDIT.md](v2/PHASE_0_AUDIT.md). Acceptance is recorded in [STATUS.md](STATUS.md).
+Status: **OWNER ACCEPTED 7 October 2026.** Recorded in [STATUS.md](STATUS.md). Stage 2 Phase A plan: [v2/stage2/](v2/stage2/README.md). Phase B (shell) waits for a separate authorize. Implementation phases follow Stage 2 A–G, not a single bundled “Phase 1” PR.
 
 ### Phase 1 — V3 foundation (after accept)
 
