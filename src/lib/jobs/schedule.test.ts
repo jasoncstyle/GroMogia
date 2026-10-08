@@ -56,6 +56,7 @@ describe("refresh scheduler", () => {
     assert.match(cron, /CRON_SECRET/);
     assert.match(cron, /runDueScheduledJobs/);
     assert.match(vercel, /\/api\/cron\/jobs/);
+    assert.match(vercel, /"cursor\/\*\*": false/);
     assert.doesNotMatch(vercel, /vercel\.json/);
     assert.match(panel, /Refresh Search Console/);
     assert.match(panel, /search_console.refresh/);
