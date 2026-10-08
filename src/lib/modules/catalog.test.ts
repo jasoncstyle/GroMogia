@@ -92,17 +92,25 @@ describe("module catalog", () => {
     );
   });
 
-  it("puts Next step first after Dashboard in the signed-in nav", () => {
+  it("puts Home, Grow, Work, Results, and Business in the signed-in nav", () => {
     const source = readFileSync(
       join(process.cwd(), "src/components/app-shell.tsx"),
       "utf8",
     );
-    assert.match(
-      source,
-      /label="Dashboard"[\s\S]*\{nextStep \?[\s\S]*work\.map/,
+    assert.match(source, /PRIMARY_OWNER_NAV/);
+    assert.match(source, /item\.label/);
+    assert.doesNotMatch(source, /label="Dashboard"/);
+    assert.doesNotMatch(source, /label="Bot team"/);
+    assert.doesNotMatch(source, /growRest/);
+    const nav = readFileSync(
+      join(process.cwd(), "src/lib/owner-surface/nav.ts"),
+      "utf8",
     );
-    assert.match(source, /growRest/);
-    assert.doesNotMatch(source, /\{grow\.map/);
+    assert.match(nav, /label: "Home"/);
+    assert.match(nav, /label: "Grow"/);
+    assert.match(nav, /label: "Work"/);
+    assert.match(nav, /label: "Results"/);
+    assert.match(nav, /label: "Business"/);
   });
 
   it("shows Your work in grow nav independently of the website builder", () => {
@@ -148,15 +156,14 @@ describe("module catalog", () => {
     assert.match(source, /app-mobile-menu/);
   });
 
-  it("puts a Next step button in the phone header", () => {
+  it("puts the five owner pages in the phone nav", () => {
     const source = readFileSync(
       join(process.cwd(), "src/components/app-shell.tsx"),
       "utf8",
     );
-    assert.match(source, /isModuleEnabled\(session.enabledModules, "growth_next"\)/);
-    assert.match(
-      source,
-      /aria-controls="app-mobile-menu"[\s\S]*href="\/app\/next-step">Next step/,
-    );
+    assert.match(source, /layout="bottom"/);
+    assert.match(source, /PRIMARY_OWNER_NAV/);
+    assert.match(source, /aria-controls="app-mobile-menu"/);
+    assert.doesNotMatch(source, /href="\/app\/next-step">Next step/);
   });
 });

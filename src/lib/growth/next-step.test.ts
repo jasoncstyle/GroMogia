@@ -986,7 +986,7 @@ describe("coordinated next step", () => {
 
   it("keeps Review connected data off Dashboard, Goals, and Offers", () => {
     const dashboard = readFileSync(
-      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      join(process.cwd(), "src/app/(app)/app/settings/desk/page.tsx"),
       "utf8",
     );
     const goals = readFileSync(
@@ -2477,7 +2477,7 @@ describe("coordinated next step", () => {
 
   it("asks the Dashboard to propose first actions on Next step", () => {
     const source = readFileSync(
-      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      join(process.cwd(), "src/app/(app)/app/settings/desk/page.tsx"),
       "utf8",
     );
     assert.match(source, /Propose the first actions on Next step/);
@@ -2856,7 +2856,7 @@ describe("coordinated next step", () => {
     );
     assert.match(shareNote, /min-h-11/);
     const dashboard = readFileSync(
-      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      join(process.cwd(), "src/app/(app)/app/settings/desk/page.tsx"),
       "utf8",
     );
     assert.match(dashboard, /GoalShareNote/);
@@ -3017,7 +3017,7 @@ describe("coordinated next step", () => {
     assert.match(story, /hideNextStepLink/);
     assert.match(story, /The path so far/);
     const dashboard = readFileSync(
-      join(process.cwd(), "src/app/(app)/app/page.tsx"),
+      join(process.cwd(), "src/app/(app)/app/settings/desk/page.tsx"),
       "utf8",
     );
     const decisions = readFileSync(

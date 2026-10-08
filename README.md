@@ -14,9 +14,9 @@ GitHub is the source of truth. Vercel is where the software runs. Cursor is deve
 
 ## Current status
 
-**Phase 0 is owner-accepted (7 October 2026).** Snapshot: [docs/STATUS.md](docs/STATUS.md). Stage 2 Phase A plan: [docs/v2/stage2/](docs/v2/stage2/README.md). Do not begin the five-screen shell until STATUS says Phase B is authorized.
+**Phase 0 is owner-accepted (7 October 2026).** Snapshot: [docs/STATUS.md](docs/STATUS.md). Stage 2 Phase A plan: [docs/v2/stage2/](docs/v2/stage2/README.md). Stage 2 Phase B (Home / Grow / Work / Results / Business) is implemented on the Phase B branch. Do not begin Phase C until STATUS says Phase B is accepted.
 
-The live app is still the V2.2 console. The owner can connect a website, name a marketing share, capture people, match a Stripe payment copy, set a Goal, draft and approve a plan on Next step, and read SEO checks plus Search Console and GA4 (read-only). GroovGro recommends and prepares drafts. It does not run ads, send email, or change live checkout.
+The owner can connect a website, name a marketing share, capture people, match a Stripe payment copy, set a Goal, and read SEO checks plus Search Console and GA4 (read-only). GroovGro recommends and prepares drafts. It does not run ads, send email, or change live checkout.
 
 Public groovgro.com homepage stays Coming soon. The optional website builder stays paused.
 
@@ -24,7 +24,7 @@ Public groovgro.com homepage stays Coming soon. The optional website builder sta
 | --- | --- |
 | [Master brief](docs/MASTER_BRIEF.md) | Product vision (V3) |
 | [Phase 0 audit](docs/v2/PHASE_0_AUDIT.md) | Keep / refactor / rebuild (accepted) |
-| [Stage 2 Phase A](docs/v2/stage2/README.md) | Implementation plan — no feature coding yet |
+| [Stage 2](docs/v2/stage2/README.md) | Phase A plan and Phase B owner-surface map |
 | [V3 amendments](docs/v2/V2_AMENDMENTS.md) | Fences: no scrape, ads, or live write |
 | [V2 architecture](docs/v2/ARCHITECTURE.md) | Backend we keep |
 | [Build status](docs/STATUS.md) | Where the build is right now |
