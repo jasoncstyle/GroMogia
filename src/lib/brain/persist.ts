@@ -98,6 +98,35 @@ async function requireFact(organizationId: string, factId: string, db: Db) {
   return row;
 }
 
+export async function persistGetObservation(
+  organizationId: string,
+  observationId: string,
+  db?: Db | null,
+) {
+  const database = requireDb(db);
+  const rows = await database
+    .select()
+    .from(brainObservations)
+    .where(
+      and(
+        eq(brainObservations.id, observationId),
+        eq(brainObservations.organizationId, organizationId),
+      ),
+    )
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+async function requireObservation(
+  organizationId: string,
+  observationId: string,
+  db: Db,
+) {
+  const row = await persistGetObservation(organizationId, observationId, db);
+  if (!row) throw new Error("Unknown observation");
+  return row;
+}
+
 async function requireOffering(organizationId: string, offeringId: string, db: Db) {
   const rows = await db
     .select({ id: offers.id, organizationId: offers.organizationId })
@@ -385,8 +414,12 @@ export async function persistCreateContradiction(
   for (const member of input.members) {
     if (member.partyType === "fact") {
       await requireFact(organizationId, member.partyId, database);
+    } else if (member.partyType === "observation") {
+      await requireObservation(organizationId, member.partyId, database);
     } else if (member.partyType === "source") {
       await requireSource(organizationId, member.partyId, database);
+    } else {
+      throw new Error("Unknown contradiction member type");
     }
   }
   const [row] = await database

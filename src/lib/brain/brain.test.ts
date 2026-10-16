@@ -767,6 +767,23 @@ describe("RC-1 cross-organization references", () => {
       /Tenant isolation violation/,
     );
     assert.equal(TENANT_ISOLATION_ERROR, "Tenant isolation violation");
+    const cedarObservation = store.createObservation(CEDAR, {
+      sourceId: cedarSource.id,
+      subject: "catalog",
+      observedClaim: "Cedar listed a tote",
+      observedAt: new Date(),
+    });
+    assert.throws(
+      () =>
+        store.createContradiction(NORTHWIND, {
+          summary: "Should not cite another business observation",
+          members: [
+            { partyType: "observation", partyId: cedarObservation.id, role: "conflicting" },
+            { partyType: "fact", partyId: northwindFact.id, role: "conflicting" },
+          ],
+        }),
+      /Tenant isolation violation/,
+    );
   });
 });
 
@@ -847,6 +864,77 @@ describe("RC-2 Fact-Use Gate provenance", () => {
     assert.match(missingFlag.reasons.join(" "), /Contradiction context was not checked/);
     assert.match(missingList.reasons.join(" "), /Contradiction context was not checked/);
   });
+
+  it("withholds an unresolved contradiction even when other evidence is present", () => {
+    const store = new MemoryBrainStore();
+    const { fact, source } = verifiedHours(store);
+    const other = store.createFact(NORTHWIND, {
+      subject: "studio",
+      attribute: "hours",
+      valueText: "Mon–Fri",
+      status: "PROVISIONAL",
+      risk: "LOW",
+      freshness: "CURRENT_ENOUGH",
+      sourceId: source.id,
+      domain: "operations",
+    });
+    const contradiction = store.createContradiction(NORTHWIND, {
+      summary: "Hours disagree",
+      domain: "operations",
+      members: [
+        { partyType: "fact", partyId: fact.id, role: "conflicting" },
+        { partyType: "fact", partyId: other.id, role: "conflicting" },
+      ],
+    });
+    const decision = evaluateFactUse({
+      fact,
+      source,
+      intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: [contradiction],
+    });
+    assert.equal(decision.allowed, false);
+    assert.match(decision.reasons.join(" "), /unresolved contradiction/i);
+  });
+
+  it("rejects insufficient provenance when the source does not match the fact", () => {
+    const store = new MemoryBrainStore();
+    const { fact } = verifiedHours(store);
+    const other = store.createSource(NORTHWIND, {
+      sourceClass: "S3",
+      name: "Different hours page",
+      domain: "operations",
+      kind: "business_controlled",
+    });
+    const mismatched = evaluateFactUse({
+      fact,
+      source: other,
+      intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: [],
+    });
+    assert.equal(mismatched.allowed, false);
+    assert.match(mismatched.reasons.join(" "), /does not match the fact's provenance/);
+    const orphan = store.createFact(NORTHWIND, {
+      subject: "studio",
+      attribute: "hours",
+      valueText: "Tue–Sat",
+      status: "PROVISIONAL",
+      risk: "LOW",
+      freshness: "CURRENT_ENOUGH",
+      domain: "operations",
+    });
+    orphan.status = "VERIFIED";
+    const missingLink = evaluateFactUse({
+      fact: orphan,
+      source: other,
+      intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: [],
+    });
+    assert.equal(missingLink.allowed, false);
+    assert.match(missingLink.reasons.join(" "), /Insufficient provenance/);
+  });
 });
 
 describe("RC-3 low-risk S3 authority", () => {
@@ -901,6 +989,17 @@ describe("RC-3 low-risk S3 authority", () => {
       canPromoteToVerified({ fact: medium, source: site }).allowed,
       false,
     );
+    const high = store.createFact(NORTHWIND, {
+      subject: "workshop",
+      attribute: "insurance_required",
+      valueText: "Not required",
+      status: "PROVISIONAL",
+      risk: "HIGH",
+      freshness: "CURRENT_ENOUGH",
+      sourceId: site.id,
+      domain: "safety",
+    });
+    assert.equal(canPromoteToVerified({ fact: high, source: site }).allowed, false);
     const stale = store.createFact(NORTHWIND, {
       subject: "studio",
       attribute: "name",

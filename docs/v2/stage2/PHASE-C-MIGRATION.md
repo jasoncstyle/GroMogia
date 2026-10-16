@@ -1,6 +1,6 @@
 # Stage 2 Phase C — production migration runbook
 
-**Production status: not applied. Rollout stays blocked until isolated execution of `0047_brain_facts.sql` is recorded as passing and the owner approves a separate migrate step.**
+**Production status: not applied.** Isolated execution of `0047_brain_facts.sql` against a throwaway PostgreSQL 16 cluster is recorded as passing on this branch (`src/lib/brain/migration.isolated.test.ts`). Production Neon is unchanged. Do not merge this draft until the owner accepts that merging to `main` will apply 0047 on the next production Vercel build via `migrate-if-configured`.
 
 ## What the migration does
 

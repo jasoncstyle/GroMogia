@@ -153,7 +153,6 @@ export function provenanceSourceForAuthority(input: {
   source: Pick<BrainSourceRecord, "id" | "organizationId" | "sourceClass" | "domain">;
   reasons: string[];
 } | { source: null; reasons: string[] } {
-  const reasons: string[] = [];
   if (!input.source) {
     return {
       source: null,
@@ -168,8 +167,19 @@ export function provenanceSourceForAuthority(input: {
       reasons: ["Source record belongs to a different business."],
     };
   }
-  if (input.fact.sourceId && input.source.id !== input.fact.sourceId) {
-    reasons.push("Provided source does not match the fact's provenance.");
+  if (!input.fact.sourceId) {
+    return {
+      source: null,
+      reasons: [
+        "Insufficient provenance: this fact has no supporting source record.",
+      ],
+    };
+  }
+  if (input.source.id !== input.fact.sourceId) {
+    return {
+      source: null,
+      reasons: ["Provided source does not match the fact's provenance."],
+    };
   }
   return { source: input.source, reasons };
 }

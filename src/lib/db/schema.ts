@@ -1991,43 +1991,6 @@ export const brainIntakeItems = pgTable(
   ],
 );
 
-export const brainObservations = pgTable(
-  "brain_observations",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    organizationId: uuid("organization_id")
-      .notNull()
-      .references(() => organizations.id, { onDelete: "cascade" }),
-    sourceId: uuid("source_id")
-      .notNull()
-      .references(() => brainSources.id, { onDelete: "restrict" }),
-    intakeItemId: uuid("intake_item_id"),
-    subject: text("subject").notNull(),
-    observedClaim: text("observed_claim").notNull(),
-    locator: text("locator").notNull().default(""),
-    observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
-    coverageNote: text("coverage_note").notNull().default(""),
-    relatedFactId: uuid("related_fact_id"),
-    notes: text("notes").notNull().default(""),
-    ...timestamps,
-  },
-  (table) => [
-    index("brain_observations_org_idx").on(table.organizationId),
-    index("brain_observations_source_idx").on(table.sourceId),
-    uniqueIndex("brain_observations_id_org_idx").on(table.id, table.organizationId),
-    foreignKey({
-      name: "brain_observations_source_org_fk",
-      columns: [table.sourceId, table.organizationId],
-      foreignColumns: [brainSources.id, brainSources.organizationId],
-    }).onDelete("restrict"),
-    foreignKey({
-      name: "brain_observations_intake_org_fk",
-      columns: [table.intakeItemId, table.organizationId],
-      foreignColumns: [brainIntakeItems.id, brainIntakeItems.organizationId],
-    }).onDelete("set null"),
-  ],
-);
-
 export const brainFacts = pgTable(
   "brain_facts",
   {
@@ -2091,6 +2054,48 @@ export const brainFacts = pgTable(
       name: "brain_facts_supersedes_org_fk",
       columns: [table.supersedesFactId, table.organizationId],
       foreignColumns: [table.id, table.organizationId],
+    }).onDelete("set null"),
+  ],
+);
+
+export const brainObservations = pgTable(
+  "brain_observations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    sourceId: uuid("source_id")
+      .notNull()
+      .references(() => brainSources.id, { onDelete: "restrict" }),
+    intakeItemId: uuid("intake_item_id"),
+    subject: text("subject").notNull(),
+    observedClaim: text("observed_claim").notNull(),
+    locator: text("locator").notNull().default(""),
+    observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
+    coverageNote: text("coverage_note").notNull().default(""),
+    relatedFactId: uuid("related_fact_id"),
+    notes: text("notes").notNull().default(""),
+    ...timestamps,
+  },
+  (table) => [
+    index("brain_observations_org_idx").on(table.organizationId),
+    index("brain_observations_source_idx").on(table.sourceId),
+    uniqueIndex("brain_observations_id_org_idx").on(table.id, table.organizationId),
+    foreignKey({
+      name: "brain_observations_source_org_fk",
+      columns: [table.sourceId, table.organizationId],
+      foreignColumns: [brainSources.id, brainSources.organizationId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "brain_observations_intake_org_fk",
+      columns: [table.intakeItemId, table.organizationId],
+      foreignColumns: [brainIntakeItems.id, brainIntakeItems.organizationId],
+    }).onDelete("set null"),
+    foreignKey({
+      name: "brain_observations_related_fact_org_fk",
+      columns: [table.relatedFactId, table.organizationId],
+      foreignColumns: [brainFacts.id, brainFacts.organizationId],
     }).onDelete("set null"),
   ],
 );

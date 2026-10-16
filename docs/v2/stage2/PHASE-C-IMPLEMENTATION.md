@@ -74,14 +74,15 @@ Facts cannot be created as VERIFIED. Promotion is explicit and domain-checked.
 
 ## 8. Tests
 
-`src/lib/brain/brain.test.ts` covers AT-FACT-01–04, isolation, statuses, source classes, domain authority, high-risk provisional, freshness, contradictions, supersession, legacy snapshot, no auto-VERIFIED, no new external action, owner-screen jargon fences, cross-organization mutations, gate provenance, conditional S3 verification, and the authority boundary.
+`src/lib/brain/brain.test.ts` covers AT-FACT-01–04, isolation, statuses, source classes, domain authority, high-risk provisional, freshness, contradictions, supersession, legacy snapshot, no auto-VERIFIED, no new external action, owner-screen jargon fences, cross-organization mutations (including observation members), gate provenance (missing source, mismatched org, source mismatch, missing contradiction context, unresolved conflicts, insufficient provenance), conditional S3 verification (acceptable LOW and rejected MEDIUM/HIGH/stale/commitment), and the authority boundary.
 
 `src/lib/brain/migration.isolated.test.ts` executes `0047_brain_facts.sql` against a throwaway PostgreSQL cluster.
 
 ## 9. Known limitations
 
 - Production Neon migrate is **not** done in this PR.
-- Isolated PostgreSQL execution of `0047_brain_facts.sql` is required before recommending production rollout (see the migration runbook).
+- Isolated PostgreSQL 16 execution of `0047_brain_facts.sql` passed on this branch. Production rollout still waits for owner approval; merging to `main` would apply 0047 via Vercel `migrate-if-configured`.
+- `persist.ts` durable writes are implemented and organization-scoped; they are not executed against the isolated cluster (that test uses SQL). Phase D must use `persist.ts`, not `MemoryBrainStore`.
 - Owner UI does not display Facts (intentional).
 - Exact freshness TTLs remain deferred.
 - Brain Person / Location are scope labels on facts, not CRM tables.

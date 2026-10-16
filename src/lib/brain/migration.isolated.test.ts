@@ -138,7 +138,10 @@ describe("0047 isolated PostgreSQL migration", { timeout: 120_000 }, () => {
     );
     assert.match(composite, /brain_facts_source_org_fk/);
     assert.match(composite, /brain_observations_source_org_fk/);
+    assert.match(composite, /brain_observations_related_fact_org_fk/);
     assert.match(composite, /brain_facts_offering_org_fk/);
+    assert.match(composite, /brain_fact_history_fact_org_fk/);
+    assert.match(composite, /brain_contradiction_members_contradiction_org_fk/);
 
     const indexes = execFileSync(
       "psql",
