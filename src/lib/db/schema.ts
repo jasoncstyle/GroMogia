@@ -1936,3 +1936,196 @@ export const scheduledJobs = pgTable(
   ],
 );
 
+export const brainSources = pgTable(
+  "brain_sources",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    sourceClass: text("source_class").notNull(),
+    name: text("name").notNull(),
+    domain: text("domain").notNull().default(""),
+    kind: text("kind").notNull(),
+    providerKey: text("provider_key"),
+    locator: text("locator").notNull().default(""),
+    recordedAt: timestamp("recorded_at", { withTimezone: true }),
+    notes: text("notes").notNull().default(""),
+    ...timestamps,
+  },
+  (table) => [index("brain_sources_org_idx").on(table.organizationId)],
+);
+
+export const brainIntakeItems = pgTable(
+  "brain_intake_items",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    kind: text("kind").notNull(),
+    subject: text("subject").notNull().default(""),
+    payload: jsonb("payload").$type<Record<string, unknown>>().notNull().default({}),
+    sourceId: uuid("source_id").references(() => brainSources.id, {
+      onDelete: "set null",
+    }),
+    convertedToObservationId: uuid("converted_to_observation_id"),
+    convertedToFactId: uuid("converted_to_fact_id"),
+    notes: text("notes").notNull().default(""),
+    ...timestamps,
+  },
+  (table) => [index("brain_intake_items_org_idx").on(table.organizationId)],
+);
+
+export const brainObservations = pgTable(
+  "brain_observations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    sourceId: uuid("source_id")
+      .notNull()
+      .references(() => brainSources.id, { onDelete: "restrict" }),
+    intakeItemId: uuid("intake_item_id"),
+    subject: text("subject").notNull(),
+    observedClaim: text("observed_claim").notNull(),
+    locator: text("locator").notNull().default(""),
+    observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
+    coverageNote: text("coverage_note").notNull().default(""),
+    relatedFactId: uuid("related_fact_id"),
+    notes: text("notes").notNull().default(""),
+    ...timestamps,
+  },
+  (table) => [
+    index("brain_observations_org_idx").on(table.organizationId),
+    index("brain_observations_source_idx").on(table.sourceId),
+  ],
+);
+
+export const brainFacts = pgTable(
+  "brain_facts",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    subject: text("subject").notNull(),
+    attribute: text("attribute").notNull(),
+    valueText: text("value_text").notNull().default(""),
+    valueJson: jsonb("value_json").$type<Record<string, unknown>>(),
+    status: text("status").notNull(),
+    risk: text("risk").notNull(),
+    freshness: text("freshness").notNull(),
+    sourceId: uuid("source_id").references(() => brainSources.id, {
+      onDelete: "set null",
+    }),
+    sourceClass: text("source_class").notNull().default(""),
+    domain: text("domain").notNull(),
+    brandScope: text("brand_scope").notNull().default(""),
+    locationScope: text("location_scope").notNull().default(""),
+    offeringId: uuid("offering_id").references(() => offers.id, {
+      onDelete: "set null",
+    }),
+    personLabel: text("person_label").notNull().default(""),
+    coverageLimitation: text("coverage_limitation").notNull().default(""),
+    supersededByFactId: uuid("superseded_by_fact_id"),
+    supersedesFactId: uuid("supersedes_fact_id"),
+    observedAt: timestamp("observed_at", { withTimezone: true }),
+    lastVerifiedAt: timestamp("last_verified_at", { withTimezone: true }),
+    intakeItemId: uuid("intake_item_id"),
+    notes: text("notes").notNull().default(""),
+    ...timestamps,
+  },
+  (table) => [
+    index("brain_facts_org_idx").on(table.organizationId),
+    index("brain_facts_org_subject_idx").on(table.organizationId, table.subject, table.attribute),
+    index("brain_facts_source_idx").on(table.sourceId),
+  ],
+);
+
+export const brainFactHistory = pgTable(
+  "brain_fact_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    factId: uuid("fact_id")
+      .notNull()
+      .references(() => brainFacts.id, { onDelete: "cascade" }),
+    previousValueText: text("previous_value_text").notNull().default(""),
+    previousStatus: text("previous_status").notNull().default(""),
+    previousRisk: text("previous_risk").notNull().default(""),
+    previousSourceId: uuid("previous_source_id"),
+    changeKind: text("change_kind").notNull(),
+    note: text("note").notNull().default(""),
+    actorUserId: uuid("actor_user_id"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("brain_fact_history_org_idx").on(table.organizationId),
+    index("brain_fact_history_fact_idx").on(table.factId),
+  ],
+);
+
+export const brainContradictions = pgTable(
+  "brain_contradictions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    status: text("status").notNull(),
+    summary: text("summary").notNull(),
+    domain: text("domain").notNull().default(""),
+    resolutionNote: text("resolution_note").notNull().default(""),
+    resolvedAt: timestamp("resolved_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (table) => [index("brain_contradictions_org_idx").on(table.organizationId)],
+);
+
+export const brainContradictionMembers = pgTable(
+  "brain_contradiction_members",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    contradictionId: uuid("contradiction_id")
+      .notNull()
+      .references(() => brainContradictions.id, { onDelete: "cascade" }),
+    partyType: text("party_type").notNull(),
+    partyId: uuid("party_id").notNull(),
+    role: text("role").notNull().default("conflicting"),
+  },
+  (table) => [
+    index("brain_contradiction_members_org_idx").on(table.organizationId),
+    index("brain_contradiction_members_contradiction_idx").on(table.contradictionId),
+  ],
+);
+
+export const brainRelationships = pgTable(
+  "brain_relationships",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    fromKind: text("from_kind").notNull(),
+    fromRef: text("from_ref").notNull(),
+    toKind: text("to_kind").notNull(),
+    toRef: text("to_ref").notNull(),
+    relationType: text("relation_type").notNull(),
+    evidenceFactId: uuid("evidence_fact_id"),
+    evidenceObservationId: uuid("evidence_observation_id"),
+    status: text("status").notNull().default("recorded"),
+    notes: text("notes").notNull().default(""),
+    ...timestamps,
+  },
+  (table) => [index("brain_relationships_org_idx").on(table.organizationId)],
+);
+
