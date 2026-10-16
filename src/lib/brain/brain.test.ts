@@ -3,8 +3,10 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { join } from "node:path";
 
-import { executionEnabled } from "@/lib/execute/provider";
+import { requestCmsPublish } from "@/lib/cms/adapter";
+import { cmsPublishEnabled } from "@/lib/cms/provider";
 import { requestExecute } from "@/lib/execute/adapter";
+import { executionEnabled } from "@/lib/execute/provider";
 
 import { sourceAuthoritativeForDomain, canPromoteToVerified } from "./authority";
 import {
@@ -15,10 +17,13 @@ import {
   type LegacyBusinessBrain,
 } from "./compatibility";
 import { evaluateFactUse, evaluateObservationAsFact } from "./gate";
+import { TENANT_ISOLATION_ERROR } from "./isolation";
+import { PHASE_C_PERSISTENCE } from "./readiness";
 import { MemoryBrainStore } from "./store";
 import {
   FACT_RISKS,
   FACT_STATUSES,
+  FACT_USE_GATE_AUTHORITY_BOUNDARY,
   FRESHNESS_STATES,
   SOURCE_CLASSES,
   SOURCE_CLASS_NAMES,
@@ -191,6 +196,8 @@ describe("Fact versus Observation", () => {
       fact: { ...fact, status: "VERIFIED" },
       source: store.getSource(CEDAR, catalog.id),
       intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: [],
     });
     assert.equal(use.allowed, false);
     assert.match(use.reasons.join(" "), /sample|coverage|population/i);
@@ -220,6 +227,7 @@ describe("Fact-Use Gate", () => {
       fact,
       source: store.getSource(NORTHWIND, site.id),
       intendedUse: "internal_investigation",
+      contradictionsChecked: false,
     });
     assert.equal(decision.allowed, true);
     assert.equal(decision.grantsExternalAction, false);
@@ -247,6 +255,8 @@ describe("Fact-Use Gate", () => {
       fact,
       source: store.getSource(NORTHWIND, site.id),
       intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: [],
     });
     assert.equal(quote.allowed, false);
     assert.match(quote.reasons.join(" "), /HIGH-risk provisional|PROVISIONAL/i);
@@ -282,6 +292,8 @@ describe("Fact-Use Gate", () => {
       fact,
       source: store.getSource(CEDAR, shop.id),
       intendedUse: "promise_availability",
+      contradictionsChecked: true,
+      contradictions: [],
     });
     assert.equal(decision.allowed, false);
     assert.match(decision.reasons.join(" "), /stale/i);
@@ -311,6 +323,8 @@ describe("Fact-Use Gate", () => {
         fact: store.getFact(NORTHWIND, fact.id)!,
         source: store.getSource(NORTHWIND, owner.id),
         intendedUse,
+        contradictionsChecked: true,
+        contradictions: [],
       });
       assert.equal(decision.allowed, false, intendedUse);
       assert.equal(decision.grantsExternalAction, false);
@@ -332,6 +346,8 @@ describe("Fact-Use Gate", () => {
       fact,
       source: null,
       intendedUse: "quote_current_price",
+      contradictionsChecked: true,
+      contradictions: [],
     });
     store.recordGateDecision(NORTHWIND, fact.id, decision);
     assert.equal(
@@ -405,6 +421,7 @@ describe("Contradictions and supersession", () => {
       fact: fromCatalog,
       source: store.getSource(NORTHWIND, sheet.id),
       intendedUse: "quote_current_price",
+      contradictionsChecked: true,
       contradictions: store.openContradictionsForFact(NORTHWIND, fromCatalog.id),
     });
     assert.equal(gated.allowed, false);
@@ -457,6 +474,8 @@ describe("Contradictions and supersession", () => {
       fact: oldRow,
       source: store.getSource(NORTHWIND, owner.id),
       intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: [],
     });
     assert.equal(useOld.allowed, false);
   });
@@ -665,8 +684,328 @@ describe("Audit, fences, and owner screens", () => {
 
   it("scopes drizzle accessors to the active organization", () => {
     const queries = readFileSync(join(process.cwd(), "src/lib/brain/queries.ts"), "utf8");
+    const persist = readFileSync(join(process.cwd(), "src/lib/brain/persist.ts"), "utf8");
     assert.match(queries, /assertSameOrganization/);
     assert.match(queries, /from\(businessBrains\)/);
     assert.match(queries, /from\(brainFacts\)/);
+    assert.match(queries, /eq\(brainFacts.organizationId, organizationId\)/);
+    assert.match(persist, /eq\(brainSources.organizationId, organizationId\)/);
+    assert.match(persist, /eq\(brainFacts.organizationId, organizationId\)/);
+    assert.match(persist, /Facts must not be created as VERIFIED/);
+  });
+});
+
+describe("RC-1 cross-organization references", () => {
+  it("rejects observations, facts, and contradiction members that cite another business", () => {
+    const store = new MemoryBrainStore();
+    const northwindSource = store.createSource(NORTHWIND, {
+      sourceClass: "S3",
+      name: "Northwind site",
+      domain: "operations",
+      kind: "business_controlled",
+    });
+    const cedarSource = store.createSource(CEDAR, {
+      sourceClass: "S2",
+      name: "Cedar catalog",
+      domain: "inventory",
+      kind: "system_of_record",
+    });
+    assert.throws(
+      () =>
+        store.createObservation(CEDAR, {
+          sourceId: northwindSource.id,
+          subject: "stolen source",
+          observedClaim: "should fail",
+          observedAt: new Date(),
+        }),
+      /Tenant isolation violation/,
+    );
+    store.registerOffering(CEDAR, "33333333-3333-3333-3333-333333333333");
+    assert.throws(
+      () =>
+        store.createFact(NORTHWIND, {
+          subject: "workshop",
+          attribute: "name",
+          valueText: "Weekend studio",
+          status: "UNKNOWN",
+          risk: "LOW",
+          freshness: "CURRENT_ENOUGH",
+          domain: "offering",
+          offeringId: "33333333-3333-3333-3333-333333333333",
+        }),
+      /Tenant isolation violation/,
+    );
+    const northwindFact = store.createFact(NORTHWIND, {
+      subject: "business",
+      attribute: "name",
+      valueText: "Northwind Workshops",
+      status: "UNKNOWN",
+      risk: "LOW",
+      freshness: "CURRENT_ENOUGH",
+      sourceId: northwindSource.id,
+      domain: "identity",
+    });
+    const cedarFact = store.createFact(CEDAR, {
+      subject: "business",
+      attribute: "name",
+      valueText: "Cedar Goods",
+      status: "UNKNOWN",
+      risk: "LOW",
+      freshness: "CURRENT_ENOUGH",
+      sourceId: cedarSource.id,
+      domain: "identity",
+    });
+    assert.throws(
+      () =>
+        store.createContradiction(NORTHWIND, {
+          summary: "Should not mix businesses",
+          members: [
+            { partyType: "fact", partyId: cedarFact.id, role: "conflicting" },
+            { partyType: "fact", partyId: northwindFact.id, role: "conflicting" },
+          ],
+        }),
+      /Tenant isolation violation/,
+    );
+    assert.equal(TENANT_ISOLATION_ERROR, "Tenant isolation violation");
+  });
+});
+
+describe("RC-2 Fact-Use Gate provenance", () => {
+  function verifiedHours(store: MemoryBrainStore) {
+    const source = store.createSource(NORTHWIND, {
+      sourceClass: "S3",
+      name: "Hours page",
+      domain: "operations",
+      kind: "business_controlled",
+    });
+    const fact = store.createFact(NORTHWIND, {
+      subject: "studio",
+      attribute: "hours",
+      valueText: "Tue–Sat",
+      status: "PROVISIONAL",
+      risk: "LOW",
+      freshness: "CURRENT_ENOUGH",
+      sourceId: source.id,
+      domain: "operations",
+    });
+    store.promoteToVerified(NORTHWIND, fact.id, "Low-risk current hours page.");
+    return { source, fact: store.getFact(NORTHWIND, fact.id)! };
+  }
+
+  it("does not substitute a recorded source class for a missing source record", () => {
+    const store = new MemoryBrainStore();
+    const { fact } = verifiedHours(store);
+    const decision = evaluateFactUse({
+      fact,
+      source: null,
+      intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: [],
+    });
+    assert.equal(decision.allowed, false);
+    assert.match(decision.reasons.join(" "), /Missing source record/i);
+  });
+
+  it("rejects a source record from another business", () => {
+    const store = new MemoryBrainStore();
+    const { fact } = verifiedHours(store);
+    const other = store.createSource(CEDAR, {
+      sourceClass: "S3",
+      name: "Cedar hours",
+      domain: "operations",
+      kind: "business_controlled",
+    });
+    const decision = evaluateFactUse({
+      fact,
+      source: other,
+      intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: [],
+    });
+    assert.equal(decision.allowed, false);
+    assert.match(decision.reasons.join(" "), /different business/i);
+  });
+
+  it("treats missing contradiction context as unverified", () => {
+    const store = new MemoryBrainStore();
+    const { fact, source } = verifiedHours(store);
+    const missingFlag = evaluateFactUse({
+      fact,
+      source,
+      intendedUse: "customer_facing_claim",
+      contradictionsChecked: false,
+    });
+    const missingList = evaluateFactUse({
+      fact,
+      source,
+      intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: null,
+    });
+    assert.equal(missingFlag.allowed, false);
+    assert.equal(missingList.allowed, false);
+    assert.match(missingFlag.reasons.join(" "), /Contradiction context was not checked/);
+    assert.match(missingList.reasons.join(" "), /Contradiction context was not checked/);
+  });
+});
+
+describe("RC-3 low-risk S3 authority", () => {
+  it("allows a fresh domain-matched LOW-risk S3 fact to be verified", () => {
+    const store = new MemoryBrainStore();
+    const site = store.createSource(NORTHWIND, {
+      sourceClass: "S3",
+      name: "Studio homepage",
+      domain: "operations",
+      kind: "business_controlled",
+    });
+    const fact = store.createFact(NORTHWIND, {
+      subject: "studio",
+      attribute: "hours",
+      valueText: "Tue–Sat",
+      status: "PROVISIONAL",
+      risk: "LOW",
+      freshness: "CURRENT_ENOUGH",
+      sourceId: site.id,
+      domain: "operations",
+    });
+    store.promoteToVerified(NORTHWIND, fact.id, "Current hours page.");
+    const decision = evaluateFactUse({
+      fact: store.getFact(NORTHWIND, fact.id)!,
+      source: site,
+      intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: [],
+    });
+    assert.equal(decision.allowed, true);
+  });
+
+  it("does not verify MEDIUM, stale, mismatched, or commitment uses from S3", () => {
+    const store = new MemoryBrainStore();
+    const site = store.createSource(NORTHWIND, {
+      sourceClass: "S3",
+      name: "Studio homepage",
+      domain: "website_content",
+      kind: "business_controlled",
+    });
+    const medium = store.createFact(NORTHWIND, {
+      subject: "studio",
+      attribute: "hours",
+      valueText: "Tue–Sat",
+      status: "PROVISIONAL",
+      risk: "MEDIUM",
+      freshness: "CURRENT_ENOUGH",
+      sourceId: site.id,
+      domain: "operations",
+    });
+    assert.equal(
+      canPromoteToVerified({ fact: medium, source: site }).allowed,
+      false,
+    );
+    const stale = store.createFact(NORTHWIND, {
+      subject: "studio",
+      attribute: "name",
+      valueText: "Northwind Workshops",
+      status: "PROVISIONAL",
+      risk: "LOW",
+      freshness: "AGING",
+      sourceId: site.id,
+      domain: "identity",
+    });
+    assert.equal(canPromoteToVerified({ fact: stale, source: site }).allowed, false);
+    const hoursPage = store.createSource(NORTHWIND, {
+      sourceClass: "S3",
+      name: "Hours page",
+      domain: "operations",
+      kind: "business_controlled",
+    });
+    const hours = store.createFact(NORTHWIND, {
+      subject: "studio",
+      attribute: "hours",
+      valueText: "Tue–Sat",
+      status: "PROVISIONAL",
+      risk: "LOW",
+      freshness: "CURRENT_ENOUGH",
+      sourceId: hoursPage.id,
+      domain: "operations",
+    });
+    store.promoteToVerified(NORTHWIND, hours.id, "Hours.");
+    const commitment = evaluateFactUse({
+      fact: store.getFact(NORTHWIND, hours.id)!,
+      source: hoursPage,
+      intendedUse: "quote_current_price",
+      contradictionsChecked: true,
+      contradictions: [],
+    });
+    assert.equal(commitment.allowed, false);
+    assert.match(commitment.reasons.join(" "), /customer commitments/i);
+  });
+});
+
+describe("RC-5 and RC-6 persistence and authority boundary", () => {
+  it("classifies MemoryBrainStore as a reference, not production persistence", () => {
+    assert.equal(PHASE_C_PERSISTENCE.memoryIsNotProductionPersistence, true);
+    assert.equal(PHASE_C_PERSISTENCE.phaseDMayDependOnDurableWrites, true);
+    assert.match(PHASE_C_PERSISTENCE.durableWrites, /persist\.ts/);
+  });
+
+  it("does not turn a favorable gate result into execute, CMS, connector, or A3/A4 authority", () => {
+    const store = new MemoryBrainStore();
+    const owner = store.createSource(NORTHWIND, {
+      sourceClass: "S1",
+      name: "Owner",
+      domain: "strategy",
+      kind: "owner_confirmation",
+    });
+    const fact = store.createFact(NORTHWIND, {
+      subject: "business",
+      attribute: "positioning",
+      valueText: "hands-on workshops",
+      status: "PROVISIONAL",
+      risk: "LOW",
+      freshness: "CURRENT_ENOUGH",
+      sourceId: owner.id,
+      domain: "strategy",
+    });
+    store.promoteToVerified(NORTHWIND, fact.id, "Owner owns strategy.");
+    const decision = evaluateFactUse({
+      fact: store.getFact(NORTHWIND, fact.id)!,
+      source: owner,
+      intendedUse: "customer_facing_claim",
+      contradictionsChecked: true,
+      contradictions: [],
+    });
+    assert.equal(decision.allowed, true);
+    assert.deepEqual(
+      {
+        grantsExternalAction: decision.grantsExternalAction,
+        grantsConnectorAccess: decision.grantsConnectorAccess,
+        grantsOwnerBusinessPermission: decision.grantsOwnerBusinessPermission,
+        enablesA3: decision.enablesA3,
+        enablesA4: decision.enablesA4,
+      },
+      FACT_USE_GATE_AUTHORITY_BOUNDARY,
+    );
+    assert.equal(executionEnabled(), false);
+    assert.equal(cmsPublishEnabled(), false);
+    assert.equal(
+      requestExecute({
+        organizationId: NORTHWIND,
+        actionId: fact.id,
+        title: "Publish from a favorable gate",
+      }).status,
+      "off",
+    );
+    assert.equal(
+      requestCmsPublish({
+        organizationId: NORTHWIND,
+        draftId: fact.id,
+        title: "Publish from a favorable gate",
+      }).status,
+      "off",
+    );
+    const persist = readFileSync(join(process.cwd(), "src/lib/brain/persist.ts"), "utf8");
+    const gate = readFileSync(join(process.cwd(), "src/lib/brain/gate.ts"), "utf8");
+    assert.doesNotMatch(persist, /requestExecute|requestCmsPublish|autonomyLevel/);
+    assert.doesNotMatch(gate, /hasPermission|requestExecute|cmsPublishEnabled/);
   });
 });

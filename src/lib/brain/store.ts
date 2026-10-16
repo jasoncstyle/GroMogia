@@ -1,8 +1,7 @@
-import { assertSameOrganization } from "@/lib/db/tenant";
-
 import { BRAIN_AUDIT_ACTIONS, BRAIN_AUDIT_TARGET_TYPES } from "./audit";
 import { canPromoteToVerified } from "./authority";
 import { isMaterialGateDecision } from "./gate";
+import { ownedById, requireOwned } from "./isolation";
 import {
   OPEN_CONTRADICTION_STATUSES,
   type BrainContradictionMember,
@@ -88,14 +87,11 @@ export class MemoryBrainStore {
   members: BrainContradictionMember[] = [];
   relationships = new Map<string, BrainRelationshipRecord>();
   intake = new Map<string, BrainIntakeItemRecord>();
+  offerings = new Map<string, { id: string; organizationId: string }>();
   audits: BrainAuditEvent[] = [];
 
-  private scoped<T extends { organizationId: string }>(
-    organizationId: string,
-    row: T,
-  ): T {
-    assertSameOrganization(row.organizationId, organizationId);
-    return row;
+  registerOffering(organizationId: string, offeringId: string) {
+    this.offerings.set(offeringId, { id: offeringId, organizationId });
   }
 
   private audit(
@@ -157,6 +153,9 @@ export class MemoryBrainStore {
     organizationId: string,
     input: Omit<BrainIntakeItemRecord, "id" | "organizationId">,
   ): BrainIntakeItemRecord {
+    if (input.sourceId) {
+      ownedById(this.sources, input.sourceId, organizationId, "source");
+    }
     const record: BrainIntakeItemRecord = {
       id: id(),
       organizationId,
@@ -170,9 +169,13 @@ export class MemoryBrainStore {
     organizationId: string,
     input: CreateObservationInput,
   ): BrainObservationRecord {
-    const source = this.sources.get(input.sourceId);
-    if (!source) throw new Error("Unknown source");
-    this.scoped(organizationId, source);
+    ownedById(this.sources, input.sourceId, organizationId, "source");
+    if (input.intakeItemId) {
+      ownedById(this.intake, input.intakeItemId, organizationId, "intake item");
+    }
+    if (input.relatedFactId) {
+      ownedById(this.facts, input.relatedFactId, organizationId, "fact");
+    }
     const record: BrainObservationRecord = {
       id: id(),
       organizationId,
@@ -196,10 +199,14 @@ export class MemoryBrainStore {
     }
     let sourceClass: SourceClass | "" = "";
     if (input.sourceId) {
-      const source = this.sources.get(input.sourceId);
-      if (!source) throw new Error("Unknown source");
-      this.scoped(organizationId, source);
+      const source = ownedById(this.sources, input.sourceId, organizationId, "source");
       sourceClass = source.sourceClass;
+    }
+    if (input.offeringId) {
+      ownedById(this.offerings, input.offeringId, organizationId, "offering");
+    }
+    if (input.intakeItemId) {
+      ownedById(this.intake, input.intakeItemId, organizationId, "intake item");
     }
     const record: BrainFactRecord = {
       id: id(),
@@ -239,8 +246,7 @@ export class MemoryBrainStore {
   getFact(organizationId: string, factId: string): BrainFactRecord | null {
     const fact = this.facts.get(factId);
     if (!fact) return null;
-    this.scoped(organizationId, fact);
-    return fact;
+    return requireOwned(fact, organizationId, "fact");
   }
 
   listFacts(organizationId: string): BrainFactRecord[] {
@@ -256,8 +262,7 @@ export class MemoryBrainStore {
   getSource(organizationId: string, sourceId: string): BrainSourceRecord | null {
     const source = this.sources.get(sourceId);
     if (!source) return null;
-    this.scoped(organizationId, source);
-    return source;
+    return requireOwned(source, organizationId, "source");
   }
 
   changeFactStatus(
@@ -285,8 +290,9 @@ export class MemoryBrainStore {
     note: string,
   ): BrainFactRecord {
     const fact = this.requireFact(organizationId, factId);
-    const source = fact.sourceId ? this.sources.get(fact.sourceId) ?? null : null;
-    if (source) this.scoped(organizationId, source);
+    const source = fact.sourceId
+      ? ownedById(this.sources, fact.sourceId, organizationId, "source")
+      : null;
     const decision = canPromoteToVerified({ fact, source });
     if (!decision.allowed) {
       throw new Error(decision.reasons.join(" "));
@@ -378,6 +384,13 @@ export class MemoryBrainStore {
     };
     this.contradictions.set(record.id, record);
     for (const member of input.members) {
+      if (member.partyType === "fact") {
+        ownedById(this.facts, member.partyId, organizationId, "fact");
+      } else if (member.partyType === "observation") {
+        ownedById(this.observations, member.partyId, organizationId, "observation");
+      } else if (member.partyType === "source") {
+        ownedById(this.sources, member.partyId, organizationId, "source");
+      }
       this.members.push({
         id: id(),
         organizationId,
@@ -410,7 +423,9 @@ export class MemoryBrainStore {
   ): BrainContradictionRecord {
     const row = this.requireContradiction(organizationId, contradictionId);
     const chosen = this.requireFact(organizationId, chosenFactId);
-    const source = chosen.sourceId ? this.sources.get(chosen.sourceId) ?? null : null;
+    const source = chosen.sourceId
+      ? ownedById(this.sources, chosen.sourceId, organizationId, "source")
+      : null;
     const promotion = canPromoteToVerified({
       fact: { ...chosen, coverageLimitation: "" },
       source,
@@ -453,6 +468,12 @@ export class MemoryBrainStore {
     organizationId: string,
     input: Omit<BrainRelationshipRecord, "id" | "organizationId">,
   ): BrainRelationshipRecord {
+    if (input.evidenceFactId) {
+      ownedById(this.facts, input.evidenceFactId, organizationId, "fact");
+    }
+    if (input.evidenceObservationId) {
+      ownedById(this.observations, input.evidenceObservationId, organizationId, "observation");
+    }
     const record: BrainRelationshipRecord = {
       id: id(),
       organizationId,
@@ -488,23 +509,17 @@ export class MemoryBrainStore {
   }
 
   private requireFact(organizationId: string, factId: string): BrainFactRecord {
-    const fact = this.facts.get(factId);
-    if (!fact) throw new Error("Unknown fact");
-    return this.scoped(organizationId, fact);
+    return ownedById(this.facts, factId, organizationId, "fact");
   }
 
   private requireSource(organizationId: string, sourceId: string): BrainSourceRecord {
-    const source = this.sources.get(sourceId);
-    if (!source) throw new Error("Unknown source");
-    return this.scoped(organizationId, source);
+    return ownedById(this.sources, sourceId, organizationId, "source");
   }
 
   private requireContradiction(
     organizationId: string,
     contradictionId: string,
   ): BrainContradictionRecord {
-    const row = this.contradictions.get(contradictionId);
-    if (!row) throw new Error("Unknown contradiction");
-    return this.scoped(organizationId, row);
+    return ownedById(this.contradictions, contradictionId, organizationId, "contradiction");
   }
 }

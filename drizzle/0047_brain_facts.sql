@@ -175,3 +175,41 @@ CREATE INDEX "brain_contradiction_members_org_idx" ON "brain_contradiction_membe
 CREATE INDEX "brain_contradiction_members_contradiction_idx" ON "brain_contradiction_members" USING btree ("contradiction_id");
 --> statement-breakpoint
 CREATE INDEX "brain_relationships_org_idx" ON "brain_relationships" USING btree ("organization_id");
+--> statement-breakpoint
+CREATE UNIQUE INDEX "offers_id_org_idx" ON "offers" USING btree ("id","organization_id");
+--> statement-breakpoint
+CREATE UNIQUE INDEX "brain_sources_id_org_idx" ON "brain_sources" USING btree ("id","organization_id");
+--> statement-breakpoint
+CREATE UNIQUE INDEX "brain_intake_items_id_org_idx" ON "brain_intake_items" USING btree ("id","organization_id");
+--> statement-breakpoint
+CREATE UNIQUE INDEX "brain_observations_id_org_idx" ON "brain_observations" USING btree ("id","organization_id");
+--> statement-breakpoint
+CREATE UNIQUE INDEX "brain_facts_id_org_idx" ON "brain_facts" USING btree ("id","organization_id");
+--> statement-breakpoint
+CREATE UNIQUE INDEX "brain_contradictions_id_org_idx" ON "brain_contradictions" USING btree ("id","organization_id");
+--> statement-breakpoint
+ALTER TABLE "brain_intake_items" ADD CONSTRAINT "brain_intake_items_source_org_fk" FOREIGN KEY ("source_id","organization_id") REFERENCES "public"."brain_sources"("id","organization_id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_observations" ADD CONSTRAINT "brain_observations_source_org_fk" FOREIGN KEY ("source_id","organization_id") REFERENCES "public"."brain_sources"("id","organization_id") ON DELETE restrict ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_observations" ADD CONSTRAINT "brain_observations_intake_org_fk" FOREIGN KEY ("intake_item_id","organization_id") REFERENCES "public"."brain_intake_items"("id","organization_id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_observations" ADD CONSTRAINT "brain_observations_related_fact_org_fk" FOREIGN KEY ("related_fact_id","organization_id") REFERENCES "public"."brain_facts"("id","organization_id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_facts" ADD CONSTRAINT "brain_facts_source_org_fk" FOREIGN KEY ("source_id","organization_id") REFERENCES "public"."brain_sources"("id","organization_id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_facts" ADD CONSTRAINT "brain_facts_offering_org_fk" FOREIGN KEY ("offering_id","organization_id") REFERENCES "public"."offers"("id","organization_id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_facts" ADD CONSTRAINT "brain_facts_intake_org_fk" FOREIGN KEY ("intake_item_id","organization_id") REFERENCES "public"."brain_intake_items"("id","organization_id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_facts" ADD CONSTRAINT "brain_facts_superseded_by_org_fk" FOREIGN KEY ("superseded_by_fact_id","organization_id") REFERENCES "public"."brain_facts"("id","organization_id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_facts" ADD CONSTRAINT "brain_facts_supersedes_org_fk" FOREIGN KEY ("supersedes_fact_id","organization_id") REFERENCES "public"."brain_facts"("id","organization_id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_fact_history" ADD CONSTRAINT "brain_fact_history_fact_org_fk" FOREIGN KEY ("fact_id","organization_id") REFERENCES "public"."brain_facts"("id","organization_id") ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_contradiction_members" ADD CONSTRAINT "brain_contradiction_members_contradiction_org_fk" FOREIGN KEY ("contradiction_id","organization_id") REFERENCES "public"."brain_contradictions"("id","organization_id") ON DELETE cascade ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_relationships" ADD CONSTRAINT "brain_relationships_fact_org_fk" FOREIGN KEY ("evidence_fact_id","organization_id") REFERENCES "public"."brain_facts"("id","organization_id") ON DELETE set null ON UPDATE no action;
+--> statement-breakpoint
+ALTER TABLE "brain_relationships" ADD CONSTRAINT "brain_relationships_observation_org_fk" FOREIGN KEY ("evidence_observation_id","organization_id") REFERENCES "public"."brain_observations"("id","organization_id") ON DELETE set null ON UPDATE no action;

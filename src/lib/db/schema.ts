@@ -1460,7 +1460,10 @@ export const offers = pgTable(
     inferredFrom: text("inferred_from").notNull().default(""),
     ...timestamps,
   },
-  (table) => [index("offers_org_idx").on(table.organizationId)],
+  (table) => [
+    index("offers_org_idx").on(table.organizationId),
+    uniqueIndex("offers_id_org_idx").on(table.id, table.organizationId),
+  ],
 );
 
 export const availabilityConstraints = pgTable(
@@ -1953,7 +1956,10 @@ export const brainSources = pgTable(
     notes: text("notes").notNull().default(""),
     ...timestamps,
   },
-  (table) => [index("brain_sources_org_idx").on(table.organizationId)],
+  (table) => [
+    index("brain_sources_org_idx").on(table.organizationId),
+    uniqueIndex("brain_sources_id_org_idx").on(table.id, table.organizationId),
+  ],
 );
 
 export const brainIntakeItems = pgTable(
@@ -1974,7 +1980,15 @@ export const brainIntakeItems = pgTable(
     notes: text("notes").notNull().default(""),
     ...timestamps,
   },
-  (table) => [index("brain_intake_items_org_idx").on(table.organizationId)],
+  (table) => [
+    index("brain_intake_items_org_idx").on(table.organizationId),
+    uniqueIndex("brain_intake_items_id_org_idx").on(table.id, table.organizationId),
+    foreignKey({
+      name: "brain_intake_items_source_org_fk",
+      columns: [table.sourceId, table.organizationId],
+      foreignColumns: [brainSources.id, brainSources.organizationId],
+    }).onDelete("set null"),
+  ],
 );
 
 export const brainObservations = pgTable(
@@ -2000,6 +2014,17 @@ export const brainObservations = pgTable(
   (table) => [
     index("brain_observations_org_idx").on(table.organizationId),
     index("brain_observations_source_idx").on(table.sourceId),
+    uniqueIndex("brain_observations_id_org_idx").on(table.id, table.organizationId),
+    foreignKey({
+      name: "brain_observations_source_org_fk",
+      columns: [table.sourceId, table.organizationId],
+      foreignColumns: [brainSources.id, brainSources.organizationId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "brain_observations_intake_org_fk",
+      columns: [table.intakeItemId, table.organizationId],
+      foreignColumns: [brainIntakeItems.id, brainIntakeItems.organizationId],
+    }).onDelete("set null"),
   ],
 );
 
@@ -2041,6 +2066,32 @@ export const brainFacts = pgTable(
     index("brain_facts_org_idx").on(table.organizationId),
     index("brain_facts_org_subject_idx").on(table.organizationId, table.subject, table.attribute),
     index("brain_facts_source_idx").on(table.sourceId),
+    uniqueIndex("brain_facts_id_org_idx").on(table.id, table.organizationId),
+    foreignKey({
+      name: "brain_facts_source_org_fk",
+      columns: [table.sourceId, table.organizationId],
+      foreignColumns: [brainSources.id, brainSources.organizationId],
+    }).onDelete("set null"),
+    foreignKey({
+      name: "brain_facts_offering_org_fk",
+      columns: [table.offeringId, table.organizationId],
+      foreignColumns: [offers.id, offers.organizationId],
+    }).onDelete("set null"),
+    foreignKey({
+      name: "brain_facts_intake_org_fk",
+      columns: [table.intakeItemId, table.organizationId],
+      foreignColumns: [brainIntakeItems.id, brainIntakeItems.organizationId],
+    }).onDelete("set null"),
+    foreignKey({
+      name: "brain_facts_superseded_by_org_fk",
+      columns: [table.supersededByFactId, table.organizationId],
+      foreignColumns: [table.id, table.organizationId],
+    }).onDelete("set null"),
+    foreignKey({
+      name: "brain_facts_supersedes_org_fk",
+      columns: [table.supersedesFactId, table.organizationId],
+      foreignColumns: [table.id, table.organizationId],
+    }).onDelete("set null"),
   ],
 );
 
@@ -2068,6 +2119,11 @@ export const brainFactHistory = pgTable(
   (table) => [
     index("brain_fact_history_org_idx").on(table.organizationId),
     index("brain_fact_history_fact_idx").on(table.factId),
+    foreignKey({
+      name: "brain_fact_history_fact_org_fk",
+      columns: [table.factId, table.organizationId],
+      foreignColumns: [brainFacts.id, brainFacts.organizationId],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -2085,7 +2141,10 @@ export const brainContradictions = pgTable(
     resolvedAt: timestamp("resolved_at", { withTimezone: true }),
     ...timestamps,
   },
-  (table) => [index("brain_contradictions_org_idx").on(table.organizationId)],
+  (table) => [
+    index("brain_contradictions_org_idx").on(table.organizationId),
+    uniqueIndex("brain_contradictions_id_org_idx").on(table.id, table.organizationId),
+  ],
 );
 
 export const brainContradictionMembers = pgTable(
@@ -2105,6 +2164,11 @@ export const brainContradictionMembers = pgTable(
   (table) => [
     index("brain_contradiction_members_org_idx").on(table.organizationId),
     index("brain_contradiction_members_contradiction_idx").on(table.contradictionId),
+    foreignKey({
+      name: "brain_contradiction_members_contradiction_org_fk",
+      columns: [table.contradictionId, table.organizationId],
+      foreignColumns: [brainContradictions.id, brainContradictions.organizationId],
+    }).onDelete("cascade"),
   ],
 );
 
@@ -2126,6 +2190,18 @@ export const brainRelationships = pgTable(
     notes: text("notes").notNull().default(""),
     ...timestamps,
   },
-  (table) => [index("brain_relationships_org_idx").on(table.organizationId)],
+  (table) => [
+    index("brain_relationships_org_idx").on(table.organizationId),
+    foreignKey({
+      name: "brain_relationships_fact_org_fk",
+      columns: [table.evidenceFactId, table.organizationId],
+      foreignColumns: [brainFacts.id, brainFacts.organizationId],
+    }).onDelete("set null"),
+    foreignKey({
+      name: "brain_relationships_observation_org_fk",
+      columns: [table.evidenceObservationId, table.organizationId],
+      foreignColumns: [brainObservations.id, brainObservations.organizationId],
+    }).onDelete("set null"),
+  ],
 );
 

@@ -1,7 +1,11 @@
-import { sourceAuthoritativeForDomain } from "./authority";
+import {
+  provenanceSourceForAuthority,
+  sourceAuthoritativeForDomain,
+} from "./authority";
 import {
   CONSEQUENTIAL_USES,
   EXTERNAL_ACTION_USES,
+  FACT_USE_GATE_AUTHORITY_BOUNDARY,
   INTERNAL_USES,
   OPEN_CONTRADICTION_STATUSES,
   type BrainContradictionRecord,
@@ -16,7 +20,8 @@ export type FactUseInput = {
   fact: BrainFactRecord;
   source: BrainSourceRecord | null;
   intendedUse: IntendedUse;
-  contradictions?: BrainContradictionRecord[];
+  contradictionsChecked: boolean;
+  contradictions?: BrainContradictionRecord[] | null;
 };
 
 function decision(
@@ -28,15 +33,16 @@ function decision(
     allowed: !withheld,
     withheld,
     intendedUse,
-    grantsExternalAction: false,
+    ...FACT_USE_GATE_AUTHORITY_BOUNDARY,
     reasons,
   };
 }
 
 /**
- * Central Fact-Use Gate. Decides whether a fact is trustworthy enough for
- * an intended use. Never grants permission to publish, send, spend, or
- * change an external system.
+ * Central Fact-Use Gate. Decides whether a fact is sufficiently evidenced
+ * for an intended use. It never grants connector access, owner business
+ * permission, A3/A4, or authority to publish, send, spend, or change an
+ * external system.
  */
 export function evaluateFactUse(input: FactUseInput): FactUseDecision {
   const { fact, source, intendedUse } = input;
@@ -58,10 +64,7 @@ export function evaluateFactUse(input: FactUseInput): FactUseDecision {
     reasons.push("This fact is NOT CURRENT and must not be used as a live claim.");
   }
 
-  if (
-    fact.status === "OWNER_STATED_FUTURE_INTENT" &&
-    consequential
-  ) {
+  if (fact.status === "OWNER_STATED_FUTURE_INTENT" && consequential) {
     reasons.push("Owner-stated future intent is not a current fact.");
   }
 
@@ -75,10 +78,6 @@ export function evaluateFactUse(input: FactUseInput): FactUseDecision {
     );
   }
 
-  if (!fact.sourceClass && consequential) {
-    reasons.push("Missing provenance; withhold consequential use.");
-  }
-
   if (consequential && !fact.freshness) {
     reasons.push("Missing freshness; withhold consequential use.");
   }
@@ -87,21 +86,25 @@ export function evaluateFactUse(input: FactUseInput): FactUseDecision {
     reasons.push("Re-verify before consequential use; this fact is stale.");
   }
 
-  if (
-    consequential &&
-    fact.freshness === "AGING" &&
-    fact.risk === "HIGH"
-  ) {
+  if (consequential && fact.freshness === "AGING" && fact.risk === "HIGH") {
     reasons.push("HIGH-risk aging facts must be re-verified before consequential use.");
   }
 
-  const openConflicts = (input.contradictions ?? []).filter((row) =>
-    OPEN_CONTRADICTION_STATUSES.includes(row.status),
-  );
-  if (openConflicts.length > 0 && consequential) {
-    reasons.push(
-      "An unresolved contradiction blocks consequential use of this fact.",
-    );
+  if (consequential) {
+    if (!input.contradictionsChecked || !Array.isArray(input.contradictions)) {
+      reasons.push(
+        "Contradiction context was not checked. Missing context is not proof that no contradiction exists.",
+      );
+    } else {
+      const openConflicts = input.contradictions.filter((row) =>
+        OPEN_CONTRADICTION_STATUSES.includes(row.status),
+      );
+      if (openConflicts.length > 0) {
+        reasons.push(
+          "An unresolved contradiction blocks consequential use of this fact.",
+        );
+      }
+    }
   }
 
   if (fact.status === "PROVISIONAL" && consequential) {
@@ -117,13 +120,21 @@ export function evaluateFactUse(input: FactUseInput): FactUseDecision {
   }
 
   if (consequential) {
-    const authority = sourceAuthoritativeForDomain({
-      sourceClass: source?.sourceClass ?? fact.sourceClass,
-      sourceDomain: source?.domain ?? "",
-      factDomain: fact.domain,
-    });
-    if (!authority.authoritative) {
-      reasons.push(...authority.reasons);
+    const provenance = provenanceSourceForAuthority({ fact, source });
+    reasons.push(...provenance.reasons);
+    if (provenance.source) {
+      const authority = sourceAuthoritativeForDomain({
+        sourceClass: provenance.source.sourceClass,
+        sourceDomain: provenance.source.domain,
+        factDomain: fact.domain,
+        risk: fact.risk,
+        freshness: fact.freshness,
+        coverageLimitation: fact.coverageLimitation,
+        intendedUse,
+      });
+      if (!authority.authoritative) {
+        reasons.push(...authority.reasons);
+      }
     }
   }
 
@@ -131,18 +142,6 @@ export function evaluateFactUse(input: FactUseInput): FactUseDecision {
     reasons.push(
       "Coverage is limited to an observed sample; do not use as a population-wide claim.",
     );
-  }
-
-  if (consequential && fact.status !== "VERIFIED" && fact.status !== "PROVISIONAL") {
-    if (
-      fact.status !== "NEEDS_OWNER_CONFIRMATION" &&
-      fact.status !== "UNKNOWN" &&
-      fact.status !== "NOT_CURRENT" &&
-      fact.status !== "OWNER_STATED_FUTURE_INTENT" &&
-      fact.status !== "SUPERSEDED"
-    ) {
-      reasons.push("Required evidence or authority is missing.");
-    }
   }
 
   const unique = [...new Set(reasons)];

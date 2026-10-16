@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 import { recordAudit } from "@/lib/audit";
 import { getDb } from "@/lib/db";
@@ -42,11 +42,11 @@ export async function getBrainFact(organizationId: string, factId: string) {
   const [row] = await db
     .select()
     .from(brainFacts)
-    .where(eq(brainFacts.id, factId))
+    .where(
+      and(eq(brainFacts.id, factId), eq(brainFacts.organizationId, organizationId)),
+    )
     .limit(1);
-  if (!row) return null;
-  assertSameOrganization(row.organizationId, organizationId);
-  return row;
+  return row ?? null;
 }
 
 export async function listBrainObservations(organizationId: string) {
@@ -114,10 +114,12 @@ export async function listBrainFactHistory(organizationId: string, factId: strin
   const rows = await db
     .select()
     .from(brainFactHistory)
-    .where(eq(brainFactHistory.factId, factId));
-  for (const row of rows) {
-    assertSameOrganization(row.organizationId, organizationId);
-  }
+    .where(
+      and(
+        eq(brainFactHistory.factId, factId),
+        eq(brainFactHistory.organizationId, organizationId),
+      ),
+    );
   return rows;
 }
 

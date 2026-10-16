@@ -109,6 +109,24 @@ export const EXTERNAL_ACTION_USES: ReadonlySet<IntendedUse> = new Set([
   "advertise_discount",
 ]);
 
+export const CUSTOMER_COMMITMENT_USES: ReadonlySet<IntendedUse> = new Set([
+  "quote_current_price",
+  "promise_availability",
+  "credential_legal_safety_claim",
+  "material_customer_commitment",
+  "advertise_discount",
+  "spend_based_on_fact",
+]);
+
+export const S3_VERIFIABLE_LOW_DOMAINS: ReadonlySet<string> = new Set([
+  "identity",
+  "operations",
+  "offering",
+  "website_content",
+  "audience",
+  "brand_voice",
+]);
+
 export const FACT_DOMAINS = [
   "identity",
   "strategy",
@@ -279,8 +297,20 @@ export type FactUseDecision = {
   withheld: boolean;
   intendedUse: IntendedUse;
   grantsExternalAction: false;
+  grantsConnectorAccess: false;
+  grantsOwnerBusinessPermission: false;
+  enablesA3: false;
+  enablesA4: false;
   reasons: string[];
 };
+
+export const FACT_USE_GATE_AUTHORITY_BOUNDARY = {
+  grantsExternalAction: false,
+  grantsConnectorAccess: false,
+  grantsOwnerBusinessPermission: false,
+  enablesA3: false,
+  enablesA4: false,
+} as const;
 
 export function isFactStatus(value: string): value is FactStatus {
   return (FACT_STATUSES as readonly string[]).includes(value);

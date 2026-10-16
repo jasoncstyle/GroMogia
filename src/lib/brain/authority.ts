@@ -1,9 +1,13 @@
 import {
+  CUSTOMER_COMMITMENT_USES,
   OBJECTIVE_EXTERNAL_DOMAINS,
   OWNER_OWNED_DOMAINS,
+  S3_VERIFIABLE_LOW_DOMAINS,
   type BrainFactRecord,
   type BrainSourceRecord,
   type FactRisk,
+  type FreshnessState,
+  type IntendedUse,
   type SourceClass,
 } from "./types";
 
@@ -12,16 +16,28 @@ export type AuthorityDecision = {
   reasons: string[];
 };
 
+export type SourceAuthorityInput = {
+  sourceClass: SourceClass | "";
+  sourceDomain: string;
+  factDomain: string;
+  risk?: FactRisk;
+  freshness?: FreshnessState;
+  coverageLimitation?: string;
+  intendedUse?: IntendedUse;
+};
+
 /**
  * Authority is domain-specific. Source classes are not a universal ranking.
  * Shopify (S2) may own inventory; the owner (S1) owns strategy; neither
  * automatically owns the other's domain.
+ *
+ * S3 business-controlled sources are not automatic truth. Fresh, domain-
+ * appropriate S3 evidence may verify certain LOW-risk facts. MEDIUM/HIGH
+ * risk and customer commitments stay stricter.
  */
-export function sourceAuthoritativeForDomain(input: {
-  sourceClass: SourceClass | "";
-  sourceDomain: string;
-  factDomain: string;
-}): AuthorityDecision {
+export function sourceAuthoritativeForDomain(
+  input: SourceAuthorityInput,
+): AuthorityDecision {
   const reasons: string[] = [];
   const sourceClass = input.sourceClass;
   const sourceDomain = input.sourceDomain.trim();
@@ -49,12 +65,7 @@ export function sourceAuthoritativeForDomain(input: {
   }
 
   if (sourceClass === "S3") {
-    return {
-      authoritative: false,
-      reasons: [
-        "A business-controlled source is useful and may be stale; it is not automatic truth.",
-      ],
-    };
+    return evaluateS3Authority(input, sourceDomain, factDomain);
   }
 
   if (sourceClass === "S1") {
@@ -88,12 +99,97 @@ export function sourceAuthoritativeForDomain(input: {
   return { authoritative: false, reasons: ["Unrecognized source class."] };
 }
 
+function evaluateS3Authority(
+  input: SourceAuthorityInput,
+  sourceDomain: string,
+  factDomain: string,
+): AuthorityDecision {
+  const reasons: string[] = [];
+
+  if (input.risk && input.risk !== "LOW") {
+    reasons.push(
+      "Business-controlled sources do not verify MEDIUM or HIGH-risk facts on their own.",
+    );
+  }
+  if (input.freshness && input.freshness !== "CURRENT_ENOUGH") {
+    reasons.push(
+      "Business-controlled evidence must be current enough to verify.",
+    );
+  }
+  if (!sourceDomain || !factDomain || sourceDomain !== factDomain) {
+    reasons.push(
+      "A business-controlled source is authoritative only within the domain it actually covers.",
+    );
+  }
+  if (factDomain && !S3_VERIFIABLE_LOW_DOMAINS.has(factDomain)) {
+    reasons.push(
+      "This information domain cannot be verified from a business-controlled page alone.",
+    );
+  }
+  if (input.coverageLimitation?.trim()) {
+    reasons.push("Sample coverage cannot verify a population-wide fact.");
+  }
+  if (input.intendedUse && CUSTOMER_COMMITMENT_USES.has(input.intendedUse)) {
+    reasons.push(
+      "Business-controlled sources are not sufficient for customer commitments.",
+    );
+  }
+  if (input.risk === undefined || input.freshness === undefined) {
+    reasons.push(
+      "A business-controlled source is not automatically authoritative; LOW-risk, current, domain-matched evidence is required.",
+    );
+  }
+
+  if (reasons.length > 0) {
+    return { authoritative: false, reasons };
+  }
+  return { authoritative: true, reasons: [] };
+}
+
+export function provenanceSourceForAuthority(input: {
+  fact: Pick<BrainFactRecord, "organizationId" | "sourceId" | "sourceClass" | "domain">;
+  source: Pick<BrainSourceRecord, "id" | "organizationId" | "sourceClass" | "domain"> | null;
+}): {
+  source: Pick<BrainSourceRecord, "id" | "organizationId" | "sourceClass" | "domain">;
+  reasons: string[];
+} | { source: null; reasons: string[] } {
+  const reasons: string[] = [];
+  if (!input.source) {
+    return {
+      source: null,
+      reasons: [
+        "Missing source record. A fact's recorded source class is not a substitute for provenance.",
+      ],
+    };
+  }
+  if (input.source.organizationId !== input.fact.organizationId) {
+    return {
+      source: null,
+      reasons: ["Source record belongs to a different business."],
+    };
+  }
+  if (input.fact.sourceId && input.source.id !== input.fact.sourceId) {
+    reasons.push("Provided source does not match the fact's provenance.");
+  }
+  return { source: input.source, reasons };
+}
+
 export function canPromoteToVerified(input: {
-  fact: Pick<BrainFactRecord, "status" | "risk" | "domain" | "sourceClass" | "coverageLimitation">;
-  source: Pick<BrainSourceRecord, "sourceClass" | "domain"> | null;
+  fact: Pick<
+    BrainFactRecord,
+    | "organizationId"
+    | "status"
+    | "risk"
+    | "domain"
+    | "sourceId"
+    | "sourceClass"
+    | "coverageLimitation"
+    | "freshness"
+  >;
+  source: Pick<BrainSourceRecord, "id" | "organizationId" | "sourceClass" | "domain"> | null;
 }): { allowed: boolean; reasons: string[] } {
   const reasons: string[] = [];
-  const { fact, source } = input;
+  const { fact } = input;
 
   if (fact.status === "SUPERSEDED") {
     reasons.push("A superseded fact cannot become VERIFIED.");
@@ -113,23 +209,25 @@ export function canPromoteToVerified(input: {
     );
   }
 
-  const sourceClass = source?.sourceClass ?? fact.sourceClass;
+  const provenance = provenanceSourceForAuthority({ fact, source: input.source });
+  reasons.push(...provenance.reasons);
+  if (!provenance.source) {
+    return { allowed: false, reasons };
+  }
+
   const authority = sourceAuthoritativeForDomain({
-    sourceClass,
-    sourceDomain: source?.domain ?? fact.domain,
+    sourceClass: provenance.source.sourceClass,
+    sourceDomain: provenance.source.domain,
     factDomain: fact.domain,
+    risk: fact.risk,
+    freshness: fact.freshness,
+    coverageLimitation: fact.coverageLimitation,
   });
   if (!authority.authoritative) {
     reasons.push(...authority.reasons);
   }
 
-  if (fact.risk === "HIGH" && sourceClass === "S3") {
-    reasons.push(
-      "HIGH-risk facts must not become VERIFIED merely because one business-controlled page states them.",
-    );
-  }
-
-  if (sourceClass === "S6") {
+  if (provenance.source.sourceClass === "S6") {
     reasons.push("Worker inference must not be promoted to VERIFIED.");
   }
 

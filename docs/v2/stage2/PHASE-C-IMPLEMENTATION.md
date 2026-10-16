@@ -16,7 +16,9 @@ Authoritative design: Drive `02-DOMAIN-MODEL-AND-DATA.md`, `03-BUSINESS-BRAIN.md
 | Contradiction | `brain_contradictions` + `brain_contradiction_members` | OPEN / RESOLVING / NARROWED / RESOLVED / NO_LONGER_RELEVANT. |
 | Relationship | `brain_relationships` | Connections among businesses, brands, offerings, people, locations. Related businesses do not inherit facts. |
 
-Services: `src/lib/brain/` (`types`, `authority`, `gate`, `store`, `compatibility`, `queries`, `audit`).
+Services: `src/lib/brain/` (`types`, `authority`, `gate`, `store`, `persist`, `compatibility`, `queries`, `audit`, `isolation`, `readiness`).
+
+**Persistence:** `MemoryBrainStore` is an in-process reference for unit tests. It is not production persistence. Durable reads are `queries.ts`. Durable writes are `persist.ts`. Phase D must use `persist.ts`.
 
 ## 2. Existing systems reused
 
@@ -32,7 +34,7 @@ Services: `src/lib/brain/` (`types`, `authority`, `gate`, `store`, `compatibilit
 
 Additive file: `drizzle/0047_brain_facts.sql`. Journal entry `0047_brain_facts`. `ensure-schema.ts` applies it when `brain_facts` is missing.
 
-Does not alter or drop `business_brains`, offers, goals, Clerk, or integrations.
+Does not alter or drop `business_brains`, goals, Clerk, or integrations. Adds unique `(id, organization_id)` on `offers` so Brain offering FKs stay same-business.
 
 ## 4. Compatibility strategy
 
@@ -46,17 +48,21 @@ Future cutover steps live in `FUTURE_BRAIN_MIGRATION_STEPS` and [PHASE-C-MIGRATI
 
 `evaluateFactUse` checks status, source authority, risk, freshness, scope/coverage, contradictions, provenance, and intended use.
 
+For consequential use the caller must pass a real source record (not the fact’s stored class) and `contradictionsChecked: true` with an array. Missing contradiction context is not treated as “no contradiction.”
+
+S3 business-controlled sources may verify certain **LOW-risk**, current, domain-matched facts. They do not automatically verify MEDIUM/HIGH facts or customer commitments (price, availability, credentials, spend).
+
 Default: withhold consequential use when evidence or authority is missing.
 
 HIGH-risk PROVISIONAL facts may be stored and used for internal investigation. They are not authoritative for customer-facing claims, prices, availability, credentials, policy, spend, or commitments.
 
-The gate **never** grants publish, send, spend, or external change. That authority stays with later two-gate Permission Grants (Phase E) and adapters that remain off.
+The gate **never** grants connector access, owner business permission, A3/A4, publish, send, spend, or external change. That authority stays with later two-gate Permission Grants (Phase E) and adapters that remain off.
 
 Observations are evaluated separately: verifying that a page displayed a claim does not verify the underlying fact (AT-FACT-02).
 
 ## 6. Tenant isolation
 
-Every new table has `organization_id NOT NULL`, FK cascade to `organizations`, and an org index. `MemoryBrainStore` and `src/lib/brain/queries.ts` call `assertSameOrganization`. Related-business links do not copy facts.
+Every new table has `organization_id NOT NULL`, FK cascade to `organizations`, and an org index. Parent tables have unique `(id, organization_id)`. Child FKs are composite `(referenced_id, organization_id)` so a row cannot point at another business’s source, fact, observation, intake, offering, or contradiction. Accessors query `id` **and** `organization_id` together. Related-business links do not copy facts.
 
 ## 7. Audit and supersession
 
@@ -68,11 +74,14 @@ Facts cannot be created as VERIFIED. Promotion is explicit and domain-checked.
 
 ## 8. Tests
 
-`src/lib/brain/brain.test.ts` covers AT-FACT-01–04, isolation, statuses, source classes, domain authority, high-risk provisional, freshness, contradictions, supersession, legacy snapshot, no auto-VERIFIED, no new external action, and owner-screen jargon fences.
+`src/lib/brain/brain.test.ts` covers AT-FACT-01–04, isolation, statuses, source classes, domain authority, high-risk provisional, freshness, contradictions, supersession, legacy snapshot, no auto-VERIFIED, no new external action, owner-screen jargon fences, cross-organization mutations, gate provenance, conditional S3 verification, and the authority boundary.
+
+`src/lib/brain/migration.isolated.test.ts` executes `0047_brain_facts.sql` against a throwaway PostgreSQL cluster.
 
 ## 9. Known limitations
 
-- No production migrate in this PR.
+- Production Neon migrate is **not** done in this PR.
+- Isolated PostgreSQL execution of `0047_brain_facts.sql` is required before recommending production rollout (see the migration runbook).
 - Owner UI does not display Facts (intentional).
 - Exact freshness TTLs remain deferred.
 - Brain Person / Location are scope labels on facts, not CRM tables.
