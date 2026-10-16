@@ -181,7 +181,7 @@ export function provenanceSourceForAuthority(input: {
       reasons: ["Provided source does not match the fact's provenance."],
     };
   }
-  return { source: input.source, reasons };
+  return { source: input.source, reasons: [] };
 }
 
 export function canPromoteToVerified(input: {
