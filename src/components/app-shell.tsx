@@ -1,40 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
 import {
-  BarChart3,
-  Bell,
-  Bot,
-  Brain,
+  BriefcaseBusiness,
   Building2,
-  CalendarClock,
-  CalendarDays,
-  ClipboardCheck,
-  CreditCard,
-  Globe,
-  LayoutDashboard,
-  LayoutTemplate,
-  ListChecks,
-  Megaphone,
-  Menu,
-  Package,
-  Target,
-  Plug,
-  ScrollText,
+  Home,
+  LineChart,
+  MoreHorizontal,
   Settings,
-  Sparkles,
-  Users,
-  Quote,
-  Search,
+  Sprout,
 } from "lucide-react";
 
 import type { AppSession } from "@/lib/auth/session";
 import { PRODUCT_NAME } from "@/lib/brand";
 import { WorkspaceSwitcher } from "@/components/workspace-switcher";
-import { isModuleEnabled, navModules, type ModuleId } from "@/lib/modules/catalog";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -44,31 +26,20 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  HIDDEN_ADVANCED_HREFS,
+  isPrimaryNavActive,
+  PRIMARY_OWNER_NAV,
+  SETTINGS_LINKS,
+} from "@/lib/owner-surface/nav";
 
-const ICONS: Partial<Record<ModuleId | "dashboard" | "settings" | "audit" | "notifications", typeof LayoutDashboard>> = {
-  dashboard: LayoutDashboard,
-  website_connect: Globe,
-  website_builder: LayoutTemplate,
-  events: CalendarDays,
-  crm: Users,
-  commerce: CreditCard,
-  analytics: BarChart3,
-  marketing: Megaphone,
-  intelligence: Sparkles,
-  brand_voice: Quote,
-  seo: Search,
-  integrations: Plug,
-  brand: Building2,
-  business_brain: Brain,
-  offers: Package,
-  growth_goals: Target,
-  growth_reviews: CalendarClock,
-  growth_next: ListChecks,
-  growth_work: ClipboardCheck,
-  settings: Settings,
-  audit: ScrollText,
-  notifications: Bell,
-};
+const NAV_ICONS = {
+  home: Home,
+  grow: Sprout,
+  work: BriefcaseBusiness,
+  results: LineChart,
+  business: Building2,
+} as const;
 
 function NavLink({
   href,
@@ -76,134 +47,56 @@ function NavLink({
   icon: Icon,
   active,
   onNavigate,
+  layout,
 }: {
   href: string
   label: string
-  icon: typeof LayoutDashboard
+  icon: typeof Home
   active: boolean
   onNavigate?: () => void
+  layout: "side" | "bottom"
 }) {
   return (
     <Link
       href={href}
       onClick={onNavigate}
       className={cn(
-        "flex min-h-11 items-center gap-2 rounded-lg px-2.5 py-2 text-sm hover:bg-sidebar-accent",
-        active && "bg-sidebar-accent font-medium",
+        layout === "side"
+          ? "flex min-h-11 items-center gap-2.5 rounded-xl px-3 py-2 text-sm hover:bg-sidebar-accent"
+          : "flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 text-[11px] font-medium",
+        active && layout === "side" && "bg-sidebar-accent font-medium",
+        active && layout === "bottom" && "text-foreground",
+        !active && layout === "bottom" && "text-muted-foreground",
       )}
     >
-      <Icon className="size-4" />
+      <Icon className={cn(layout === "side" ? "size-4" : "size-5")} />
       {label}
     </Link>
   );
 }
 
-function AppNav({
-  pathname,
-  session,
-  onNavigate,
-}: {
-  pathname: string
-  session: AppSession
-  onNavigate?: () => void
-}) {
-  const work = navModules(session.enabledModules, "work");
-  const grow = navModules(session.enabledModules, "grow");
-  const settings = navModules(session.enabledModules, "settings");
-  const nextStep = grow.find((item) => item.id === "growth_next");
-  const growRest = grow.filter((item) => item.id !== "growth_next");
-
+function SettingsLinks({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <nav className="flex flex-1 flex-col gap-4 overflow-y-auto p-3">
-      <div className="flex flex-col gap-1">
-        <NavLink
-          href="/app"
-          label="Dashboard"
-          icon={LayoutDashboard}
-          active={pathname === "/app"}
-          onNavigate={onNavigate}
-        />
-        {nextStep ? (
-          <NavLink
-            href={nextStep.href}
-            label={nextStep.name}
-            icon={ICONS.growth_next ?? ListChecks}
-            active={pathname.startsWith(nextStep.href)}
-            onNavigate={onNavigate}
-          />
-        ) : null}
-        {work.map((item) => (
-          <NavLink
-            key={item.id}
-            href={item.href}
-            label={item.name}
-            icon={ICONS[item.id] ?? LayoutDashboard}
-            active={pathname.startsWith(item.href)}
-            onNavigate={onNavigate}
-          />
-        ))}
-      </div>
-      {growRest.length > 0 ? (
-        <div className="flex flex-col gap-1">
-          <p className="px-2.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-            Grow
-          </p>
-          {growRest.map((item) => (
-            <NavLink
-              key={item.id}
-              href={item.href}
-              label={item.name}
-              icon={ICONS[item.id] ?? LayoutDashboard}
-              active={pathname.startsWith(item.href)}
-              onNavigate={onNavigate}
-            />
-          ))}
-        </div>
-      ) : null}
-      <div className="flex flex-col gap-1">
-        <p className="px-2.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-          Settings
-        </p>
-        {settings.map((item) => (
-          <NavLink
-            key={item.id}
-            href={item.href}
-            label={item.name}
-            icon={ICONS[item.id] ?? Settings}
-            active={pathname.startsWith(item.href)}
-            onNavigate={onNavigate}
-          />
-        ))}
-        <NavLink
-          href="/app/bot-team"
-          label="Bot team"
-          icon={Bot}
-          active={pathname.startsWith("/app/bot-team")}
-          onNavigate={onNavigate}
-        />
-        <NavLink
-          href="/app/settings"
-          label="Organization"
-          icon={Settings}
-          active={pathname === "/app/settings" || pathname.startsWith("/app/settings/team")}
-          onNavigate={onNavigate}
-        />
-        <NavLink
-          href="/app/audit"
-          label="Audit log"
-          icon={ScrollText}
-          active={pathname.startsWith("/app/audit")}
-          onNavigate={onNavigate}
-        />
-        <NavLink
-          href="/app/notifications"
-          label="Notifications"
-          icon={Bell}
-          active={pathname.startsWith("/app/notifications")}
-          onNavigate={onNavigate}
-        />
-      </div>
-    </nav>
+    <div className="flex flex-col gap-1 p-3">
+      {SETTINGS_LINKS.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          onClick={onNavigate}
+          className="rounded-xl px-3 py-2 hover:bg-sidebar-accent"
+        >
+          <p className="text-sm font-medium">{item.label}</p>
+          <p className="text-xs leading-relaxed text-muted-foreground">{item.hint}</p>
+        </Link>
+      ))}
+      <Link
+        href={HIDDEN_ADVANCED_HREFS[0]}
+        onClick={onNavigate}
+        className="rounded-xl px-3 py-2 text-sm text-muted-foreground hover:bg-sidebar-accent"
+      >
+        Advanced helpers
+      </Link>
+    </div>
   );
 }
 
@@ -218,13 +111,10 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
-    <div className="flex min-h-full">
+    <div className="flex min-h-full flex-col md:flex-row">
       <aside className="hidden w-60 shrink-0 border-r bg-sidebar md:flex md:flex-col">
         <div className="border-b px-4 py-4">
           <Link href="/app" className="font-semibold tracking-tight">
@@ -236,65 +126,108 @@ export function AppShell({
             currentName={session.organizationName}
           />
         </div>
-        <AppNav pathname={pathname} session={session} />
+        <nav className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
+          {PRIMARY_OWNER_NAV.map((item) => {
+            const Icon = NAV_ICONS[item.id];
+            return (
+              <NavLink
+                key={item.id}
+                href={item.href}
+                label={item.label}
+                icon={Icon}
+                active={isPrimaryNavActive(pathname, item.href)}
+                layout="side"
+              />
+            );
+          })}
+        </nav>
+        <div className="border-t p-3">
+          <Button
+            type="button"
+            variant="ghost"
+            className="h-11 w-full justify-start gap-2.5"
+            onClick={() => setMenuOpen(true)}
+          >
+            <Settings className="size-4" />
+            Settings
+          </Button>
+        </div>
       </aside>
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         <SheetContent
           id="app-mobile-menu"
           side="left"
-          className="w-72 bg-sidebar p-0"
+          className="w-80 bg-sidebar p-0"
         >
           <SheetHeader className="border-b">
-            <SheetTitle>{PRODUCT_NAME}</SheetTitle>
-            <SheetDescription className="sr-only">
-              Switch business or open a page
+            <SheetTitle>Settings</SheetTitle>
+            <SheetDescription>
+              Advanced pages stay here. Everyday work is Home, Grow, Work, Results, and Business.
             </SheetDescription>
+          </SheetHeader>
+          <div className="border-b px-4 py-3 md:hidden">
             <WorkspaceSwitcher
               workspaces={session.workspaces}
               currentId={session.organizationId}
               currentName={session.organizationName}
             />
-          </SheetHeader>
-          <AppNav
-            pathname={pathname}
-            session={session}
-            onNavigate={() => setMenuOpen(false)}
-          />
+          </div>
+          <SettingsLinks onNavigate={closeMenu} />
         </SheetContent>
       </Sheet>
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col pb-20 md:pb-0">
         <header className="flex items-center justify-between gap-3 border-b px-4 py-3 md:px-6">
-          <div className="flex min-w-0 items-center gap-3">
+          <div className="min-w-0 md:hidden">
+            <Link href="/app" className="font-semibold tracking-tight">
+              {PRODUCT_NAME}
+            </Link>
+            <WorkspaceSwitcher
+              workspaces={session.workspaces}
+              currentId={session.organizationId}
+              currentName={session.organizationName}
+            />
+          </div>
+          <div className="hidden min-w-0 md:block">
+            <p className="truncate text-sm font-medium">
+              {session.organizationName ?? `${PRODUCT_NAME} workspace`}
+            </p>
+            <p className="text-xs text-muted-foreground">
+              GroovGro is working with you on this business.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
             <Button
               type="button"
-              variant="default"
+              variant="outline"
               size="lg"
-              className="h-11 px-4 md:hidden"
+              className="h-11 px-3 md:hidden"
               aria-expanded={menuOpen}
               aria-controls="app-mobile-menu"
               onClick={() => setMenuOpen(true)}
             >
-              <Menu className="size-5" />
+              <MoreHorizontal className="size-5" />
               Menu
             </Button>
-            {isModuleEnabled(session.enabledModules, "growth_next") ? (
-              <Button asChild size="lg" className="h-11 px-4 md:hidden">
-                <Link href="/app/next-step">Next step</Link>
-              </Button>
-            ) : null}
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium">
-                {session.name ?? `${PRODUCT_NAME} workspace`}
-              </p>
-              <p className="hidden text-xs text-muted-foreground sm:block">
-                What are we trying to accomplish, and what should happen next?
-              </p>
-            </div>
+            {clerkEnabled ? <UserButton /> : null}
           </div>
-          {clerkEnabled ? <UserButton /> : null}
         </header>
         <main className="flex-1 px-4 py-6 md:px-6">{children}</main>
       </div>
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t bg-background/95 backdrop-blur md:hidden">
+        {PRIMARY_OWNER_NAV.map((item) => {
+          const Icon = NAV_ICONS[item.id];
+          return (
+            <NavLink
+              key={item.id}
+              href={item.href}
+              label={item.label}
+              icon={Icon}
+              active={isPrimaryNavActive(pathname, item.href)}
+              layout="bottom"
+            />
+          );
+        })}
+      </nav>
     </div>
   );
 }

@@ -50,7 +50,7 @@ GroovGro is a business partner. The owner runs day-to-day operations. GroovGro r
 ## Phase gate
 
 - Current product intent is [docs/MASTER_BRIEF.md](docs/MASTER_BRIEF.md) **V3**. Fences in [docs/v2/V2_AMENDMENTS.md](docs/v2/V2_AMENDMENTS.md) outrank “execute,” “SERP,” or “Playbook” language in the source plan.
-- Phase 0 is **OWNER ACCEPTED** (KEEP STORE · REPLACE OWNER SURFACE · KEEP A3/A4 OFF · EXTEND FOR STAGE 2). **Do not begin Phase B** (five-screen shell, nav rewrite) until [docs/STATUS.md](docs/STATUS.md) says Phase B is authorized. Until then, keep production running and do not add listed-first polish to the old console.
+- Phase 0 is **OWNER ACCEPTED** (KEEP STORE · REPLACE OWNER SURFACE · KEEP A3/A4 OFF · EXTEND FOR STAGE 2). **Stage 2 Phase B** (five-screen owner shell) is the current owner surface. **Do not begin Phase C** until [docs/STATUS.md](docs/STATUS.md) says Phase B is accepted. Keep production running from `main` until that merge.
 - Stage 2 is a **partial rebuild**. Do not wipe Neon, Clerk, or Vercel. Do not treat the flat `business_brains` row as the Fact model. Observation ≠ Fact. Two-gate authority. QA PASS ≠ execute. Specialists never receive OAuth tokens. Do not circumvent CAPTCHA or required login.
 - Do not wipe Neon, Clerk, or Vercel. Preserve sound backend. Replace confusing owner experience.
 - Owner screens say “GroovGro is working on it.” Do not expose bot names, pack schemas, or workflow nodes on primary screens after the shell ships.

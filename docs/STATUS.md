@@ -10,11 +10,13 @@ Accepted direction: **KEEP STORE / DATA / INTEGRATIONS · REPLACE OWNER SURFACE 
 
 This supersedes “Phase 0 awaiting owner acceptance.” It is **not** permission to wipe Neon, Clerk, or Vercel. It is **not** permission to keep the confusing console. It is **not** permission to turn on execute, ads, send, scrape, or live CMS write.
 
-**Stage 2 Phase A** (this documentation): repository alignment and implementation plan. See [v2/stage2/](v2/stage2/README.md).
+**Stage 2 Phase A** (accepted, PR #335): repository alignment and implementation plan. See [v2/stage2/](v2/stage2/README.md).
 
-**Do not begin Phase B** (Home / Grow / Work / Results / Business shell) until this file says Phase B is authorized.
+**Stage 2 Phase B** is **authorized and implemented** on this branch: Home / Grow / Work / Results / Business over existing data. No Stage 2 tables. A3/A4 stay off.
 
-The live app on `main` is still the V2.2 owner-assistance console. Production stays up. Do not add listed-first polish to that console.
+**Do not begin Phase C** (Facts / Observation store) until the owner accepts Phase B.
+
+Production on `main` stays the V2.2 console until this PR is reviewed and merged.
 
 V2.2 backend remains in use: Brain, Voice, Goals, Next step, Search Console, GA4, Stripe copies, scheduler, bot pipe, `growth_actions`. GroovGro does not execute. Stage 2 Fact / MVBB / ODQ / Worker Gateway are **not** built yet.
 

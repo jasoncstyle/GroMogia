@@ -26,8 +26,22 @@ import { getExecutionRequests } from "@/lib/execute/queries";
 import { actionsToQueue } from "@/lib/execute/requests";
 import { labelFor } from "@/lib/growth/types";
 import { hasPermission } from "@/lib/permissions";
+import { parseWorkTab } from "@/lib/owner-surface/boards";
+import { cn } from "@/lib/utils";
 
-export default async function OwnerWorkPage() {
+const TABS = [
+  { id: "working", label: "Working", href: "/app/work?tab=working" },
+  { id: "needs-you", label: "Needs you", href: "/app/work?tab=needs-you" },
+  { id: "finished", label: "Finished", href: "/app/work?tab=finished" },
+] as const;
+
+export default async function OwnerWorkPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>
+}) {
+  const params = await searchParams;
+  const tab = parseWorkTab(params.tab);
   const session = await getAppSession();
   const snapshot = session.organizationId
     ? await getGrowthSnapshot(session.organizationId)
@@ -43,7 +57,7 @@ export default async function OwnerWorkPage() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Your work</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Work</h1>
         <p className="text-muted-foreground">
           These are actions you approved. You do them here or on Next step.
           Remaining later-run work is listed first. GroovGro does not run marketing, send email, change ads, or edit
@@ -51,6 +65,48 @@ export default async function OwnerWorkPage() {
         </p>
       </div>
 
+      <div className="grid grid-cols-3 gap-2">
+        {TABS.map((item) => (
+          <Link
+            key={item.id}
+            href={item.href}
+            className={cn(
+              "flex min-h-11 items-center justify-center rounded-xl border px-2 text-sm font-medium",
+              tab === item.id
+                ? "border-foreground bg-foreground text-background"
+                : "bg-card text-foreground",
+            )}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+
+      {tab === "working" ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>GroovGro is working on it</CardTitle>
+            <CardDescription>
+              Prepared work stays here. GroovGro has not run it outside this workspace.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <ExecutionPanel
+              requests={executionRequests}
+              actions={actionsToQueue(work.open)}
+              canManage={canApprove}
+            />
+            {executionRequests.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                GroovGro is not running anything outside this workspace. When it is preparing a look or a draft, it will show here.
+              </p>
+            ) : null}
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {tab === "needs-you" ? (
+        <>
       <Card>
         <CardHeader>
           <CardTitle>Ready for you</CardTitle>
@@ -90,12 +146,6 @@ export default async function OwnerWorkPage() {
         </CardContent>
       </Card>
 
-      <ExecutionPanel
-        requests={executionRequests}
-        actions={actionsToQueue(work.open)}
-        canManage={canApprove}
-      />
-
       {work.waiting.length > 0 ? (
         <Card>
           <CardHeader>
@@ -122,19 +172,26 @@ export default async function OwnerWorkPage() {
           </CardContent>
         </Card>
       ) : null}
+        </>
+      ) : null}
 
-      {work.finished.length > 0 ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Already handled</CardTitle>
-            <CardDescription>
-              You marked these. GroovGro did not execute them. Check what
-              changed compares the Goal number from when you finished to now.
-              You can also do that on Next step.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {work.finished.slice(0, 8).map((action) => {
+      {tab === "finished" ? (
+      <Card>
+        <CardHeader>
+          <CardTitle>Already handled</CardTitle>
+          <CardDescription>
+            You marked these. GroovGro did not execute them. Check what
+            changed compares the Goal number from when you finished to now.
+            You can also do that on Next step.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {work.finished.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Nothing is marked finished yet.
+            </p>
+          ) : (
+          work.finished.slice(0, 8).map((action) => {
               const learned = workLearningFromResult(action.result ?? "");
               return (
               <div key={action.id} className="space-y-2 rounded-lg border p-4 text-sm">
@@ -157,9 +214,10 @@ export default async function OwnerWorkPage() {
                 ) : null}
               </div>
               );
-            })}
-          </CardContent>
-        </Card>
+            })
+          )}
+        </CardContent>
+      </Card>
       ) : null}
 
       <div className="flex flex-wrap gap-2">

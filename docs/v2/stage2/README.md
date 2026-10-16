@@ -4,7 +4,7 @@ GroovGro Stage 2 (Business Onboarding & Brain Builder) is **design-complete** (1
 
 **Authoritative design package:** Drive archive `Stage-2-FINAL-ARCHIVE-2026-10-07` (Jason). Files `00-IMPLEMENTATION-OVERVIEW.md` through `20-TEST-FIXTURES.md`, Skill v1.3, QA reports.
 
-**Do not begin Phase B** (five-screen shell) until [STATUS.md](../../STATUS.md) says Phase B is authorized.
+**Phase B** (five-screen owner shell) is implemented on the Phase B branch. **Do not begin Phase C** until [STATUS.md](../../STATUS.md) says Phase B is accepted.
 
 | File | Role |
 | --- | --- |
