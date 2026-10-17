@@ -457,4 +457,12 @@ export async function ensureSchema(): Promise<void> {
   if (!scheduledJobsTable[0]?.name) {
     await applyMigration(sql, "0046_scheduled_jobs.sql");
   }
+
+  const brainFactsTable = (await sql.query(
+    "select to_regclass('public.brain_facts') as name",
+  )) as RegistryRow[];
+
+  if (!brainFactsTable[0]?.name) {
+    await applyMigration(sql, "0047_brain_facts.sql");
+  }
 }

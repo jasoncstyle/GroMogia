@@ -1,6 +1,6 @@
 # Stage 2 — Data model map
 
-Classification for Phase A only. **Do not create these tables in this phase.**
+Classification from Phase A. **Phase C implemented** the Fact / Observation / Source / Contradiction / Intake / Relationship tables. Do not treat this map as permission to build Phase D+ tables.
 
 Legend: **EXISTING TABLE SUFFICIENT** · **EXISTING TABLE — EXTEND** · **NEW TABLE / ENTITY NEEDED** · **DERIVED / NO TABLE REQUIRED** · **DEFERRED**
 

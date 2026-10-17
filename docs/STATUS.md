@@ -1,6 +1,6 @@
 # Build status
 
-Last updated: 7 October 2026.
+Last updated: 16 October 2026.
 
 ## Current phase
 
@@ -12,13 +12,15 @@ This supersedes “Phase 0 awaiting owner acceptance.” It is **not** permissio
 
 **Stage 2 Phase A** (accepted, PR #335): repository alignment and implementation plan. See [v2/stage2/](v2/stage2/README.md).
 
-**Stage 2 Phase B** is **authorized and implemented** on this branch: Home / Grow / Work / Results / Business over existing data. No Stage 2 tables. A3/A4 stay off.
+**Stage 2 Phase B** is merged: Home / Grow / Work / Results / Business over existing data.
 
-**Do not begin Phase C** (Facts / Observation store) until the owner accepts Phase B.
+**Stage 2 Phase C** is **authorized and implemented** on this branch: additive Fact / Observation / Source / Contradiction tables, Fact-Use Gate, and a compatibility layer over `business_brains`. No auto-VERIFIED promotion. No MVBB, ODQ, new connectors, or Worker Gateway. A3/A4 stay off.
 
-Production on `main` stays the V2.2 console until this PR is reviewed and merged.
+**Do not begin Phase D** (MVBB / Owner Decision Queue) until the owner authorizes it.
 
-V2.2 backend remains in use: Brain, Voice, Goals, Next step, Search Console, GA4, Stripe copies, scheduler, bot pipe, `growth_actions`. GroovGro does not execute. Stage 2 Fact / MVBB / ODQ / Worker Gateway are **not** built yet.
+Production on `main` stays the current app until this PR is reviewed and merged. Do not apply `0047_brain_facts.sql` to production Neon in this PR.
+
+V2.2 backend remains in use: Brain, Voice, Goals, Next step, Search Console, GA4, Stripe copies, scheduler, bot pipe, `growth_actions`. GroovGro does not execute. Stage 2 MVBB / ODQ / Worker Gateway are **not** built yet.
 
 ## Checkpoints
 

@@ -4,11 +4,14 @@ GroovGro Stage 2 (Business Onboarding & Brain Builder) is **design-complete** (1
 
 **Authoritative design package:** Drive archive `Stage-2-FINAL-ARCHIVE-2026-10-07` (Jason). Files `00-IMPLEMENTATION-OVERVIEW.md` through `20-TEST-FIXTURES.md`, Skill v1.3, QA reports.
 
-**Phase B** (five-screen owner shell) is implemented on the Phase B branch. **Do not begin Phase C** until [STATUS.md](../../STATUS.md) says Phase B is accepted.
+**Phase B** (five-screen owner shell) is implemented and merged. **Stage 2 Phase C** (Facts / Observation / Fact-Use Gate) is implemented on this branch. **Do not begin Phase D** (MVBB / Owner Decision Queue) until [STATUS.md](../../STATUS.md) says Phase D is authorized.
 
 | File | Role |
 | --- | --- |
 | [PHASE-A-IMPLEMENTATION-PLAN.md](PHASE-A-IMPLEMENTATION-PLAN.md) | Inspection result and build sequence |
+| [PHASE-C-IMPLEMENTATION.md](PHASE-C-IMPLEMENTATION.md) | Phase C entities, gate, compatibility |
+| [PHASE-C-MIGRATION.md](PHASE-C-MIGRATION.md) | Additive migration and rollback (not applied to production) |
+| [PHASE-C-OWNER-CLARITY.md](PHASE-C-OWNER-CLARITY.md) | Owner-screen jargon to avoid later |
 | [STAGE2-CURRENT-TARGET-MAP.md](STAGE2-CURRENT-TARGET-MAP.md) | Current systems → Stage 2 systems |
 | [STAGE2-DATA-MODEL-MAP.md](STAGE2-DATA-MODEL-MAP.md) | Entity → table classification |
 | [STAGE2-UI-MIGRATION-MAP.md](STAGE2-UI-MIGRATION-MAP.md) | Routes and screens |
